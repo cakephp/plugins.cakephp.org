@@ -22,7 +22,7 @@
 					<?php echo $this->Resource->searchableMaintainer($result['SearchIndex']['data'], array(
 						'primary' => 'Maintainer.name', 'fallback' => 'Maintainer.username')); ?><br />
 					<?php if (!empty($result['SearchIndex']['summary'])): ?>
-						<p><?php echo $this->Text->highlight($result['SearchIndex']['summary'], $term); ?></p>
+						<?php echo $this->Text->highlight($result['SearchIndex']['summary'], $term); ?>
 					<?php else : ?>
 						<?php echo $this->Searchable->snippets($result['SearchIndex']['data']); ?>
 					<?php endif; ?>
