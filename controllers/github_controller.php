@@ -6,7 +6,7 @@ class GithubController extends AppController {
 
 	function beforeFilter() {
 		parent::beforeFilter();
-		if (Configure::read() > 0) {
+		if (Configure::read() == 0) {
 			$this->Session->setFlash(__('Access denied', true));
 			$this->redirect('/');
 		}
