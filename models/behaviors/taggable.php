@@ -19,10 +19,12 @@ class TaggableBehavior extends ModelBehavior {
 					'contain' => array(
 						'Tag')));
 				$existingTags = array();
-				foreach ($rec['Tag'] as $aTag) {
-					$existingTags[] = $aTag['id'];
+				if (!empty($existingTags)) {
+					foreach ($rec['Tag'] as $aTag) {
+						$existingTags[] = $aTag['id'];
+					}
+					$existingTags = array_combine($existingTags, $existingTags);
 				}
-				$existingTags = array_combine($existingTags, $existingTags);
 				foreach ($tags as $tag) {
 					$tag = preg_replace("/[^a-zA-Z0-9\s]/", "", $tag);
 					$tag_id = $model->Tag->lookup($tag);
