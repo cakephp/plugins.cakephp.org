@@ -45,6 +45,7 @@
 		</table>
 	<?php endif; ?>
 </div>
+<?php if (Configure::read() != 0) : ?>
 <div class="actions">
 	<h3><?php __('Actions'); ?></h3>
 	<ul>
@@ -52,3 +53,4 @@
 		<li><?php echo $this->Html->link(sprintf(__('Delete %s', true), __('Package', true)), array('action' => 'delete', $package['Package']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $package['Package']['id'])); ?> </li>
 	</ul>
 </div>
+<?php endif; ?>

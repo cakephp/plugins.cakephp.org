@@ -36,9 +36,11 @@
 	</table>
 <?php endif; ?>
 </div>
+<?php if (Configure::read() != 0) : ?>
 <div class="actions">
 	<h3><?php __('Actions'); ?></h3>
 	<ul>
 		<li><?php echo $this->Maintainer->edit($maintainer['Maintainer']['id'], $maintainer['Maintainer']['username']); ?></li>
 	</ul>
 </div>
+<?php endif; ?>
