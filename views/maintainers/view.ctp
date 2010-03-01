@@ -28,7 +28,7 @@
 	<?php $i = 0; foreach ($maintainer['Package'] as $package): ?>
 		<tr<?php echo ($i++ % 2 == 0) ? ' class="altrow"' : '';?>>
 			<td>
-				<?php echo $this->Resource->package($maintainer['Maintainer']['username'], $package['name']); ?><br />
+				<?php echo $this->Resource->package($package['name'], $maintainer['Maintainer']['username']); ?><br />
 				<?php echo $package['description'];?>
 			</td>
 		</tr>
