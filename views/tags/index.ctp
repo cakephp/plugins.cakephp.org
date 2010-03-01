@@ -32,14 +32,3 @@
 	</table>
 <?php endif; ?>
 </div>
-<div class="actions">
-	<h3><?php __('Actions'); ?></h3>
-	<ul>
-		<li><?php echo $this->Html->link(sprintf(__('Edit %s', true), __('Tag', true)), array('action' => 'edit', $tag['Tag']['id'])); ?> </li>
-		<li><?php echo $this->Html->link(sprintf(__('Delete %s', true), __('Tag', true)), array('action' => 'delete', $tag['Tag']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $tag['Tag']['id'])); ?> </li>
-		<li><?php echo $this->Html->link(sprintf(__('List %s', true), __('Tags', true)), array('action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(sprintf(__('New %s', true), __('Tag', true)), array('action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(sprintf(__('List %s', true), __('Packages', true)), array('controller' => 'packages', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(sprintf(__('New %s', true), __('Package', true)), array('controller' => 'packages', 'action' => 'add')); ?> </li>
-	</ul>
-</div>
