@@ -13,8 +13,7 @@ class PackagesController extends AppController {
 
 	function index() {
 		$packages = $this->paginate();
-		$package = '';
-		$this->set(compact('packages', 'package'));
+		$this->set(compact('packages'));
 	}
 
 	function view() {
