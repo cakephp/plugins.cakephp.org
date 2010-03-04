@@ -3,6 +3,8 @@
 		'plugin' => null, 'controller' => 'packages', 'action' => 'index')); ?> | 
 	<?php echo $this->Html->link('about', array(
 		'plugin' => null, 'controller' => 'pages', 'action' => 'display', 'about')); ?> | 
+	<?php echo $this->Html->link('blog', array(
+		'plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'index')); ?> | 
 	<?php echo $this->Html->link('twitter', 'http://twitter.com/cakepackages'); ?> | 
 	<?php echo $this->Html->link('github', 'http://github.com/josegonzalez/cakepackages'); ?>
 	<br />
