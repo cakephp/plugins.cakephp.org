@@ -45,7 +45,7 @@ class AppError extends ErrorHandler {
 	}
 
 	function lost() {
-		$this->controller->redirect(array('controller' => 'lost', 'action' => 'index', $this->controller->params['url']['url']));
+		$this->controller->redirect(array('plugin' => null, 'controller' => 'lost', 'action' => 'index', $this->controller->params['url']['url']));
 	}
 }
 ?>
