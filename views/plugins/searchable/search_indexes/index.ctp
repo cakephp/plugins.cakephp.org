@@ -11,7 +11,6 @@
 	<table cellpadding="0" cellspacing="0">
 		<tr>
 				<th><?php echo $this->Paginator->sort('name');?></th>
-				<th class="actions"><?php __('Homepage');?></th>
 		</tr>
 		<?php $term = (isset($this->data['SearchIndex']['term'])) ? trim($this->data['SearchIndex']['term']) : '';?>
 		<?php $i = 0; foreach ($results as $result): ?>
@@ -27,9 +26,6 @@
 						<?php echo $this->Searchable->snippets($result['SearchIndex']['data']); ?>
 					<?php endif; ?>
 					&nbsp;
-				</td>
-				<td class="actions">
-					<?php //echo $this->Html->link(__('Homepage', true), $package['Package']['homepage']); ?>
 				</td>
 			</tr>
 		<?php endforeach; ?>
