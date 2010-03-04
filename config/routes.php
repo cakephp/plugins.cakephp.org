@@ -27,6 +27,11 @@
  * to use (in this case, /app/views/pages/home.ctp)...
  */
 	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
+	Router::connect('/login', array('controller' => 'users', 'action' => 'login'));
+	Router::connect('/logout', array('controller' => 'users', 'action' => 'logout'));
+	Router::connect('/forgot_password', array('controller' => 'users', 'action' => 'forgot_password'));
+	Router::connect('/reset_password', array('controller' => 'users', 'action' => 'reset_password'));
+	Router::connect('/change_password', array('controller' => 'users', 'action' => 'change_password'));
 	Router::connect('/package/:maintainer/:package', array('controller' => 'packages', 'action' => 'view'));
 	Router::connect('/maintainer/edit/*', array('controller' => 'maintainers', 'action' => 'edit'));
 	Router::connect('/maintainer/*', array('controller' => 'maintainers', 'action' => 'view'));
