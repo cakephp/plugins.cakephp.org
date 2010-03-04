@@ -17,10 +17,6 @@ class MaintainersController extends AppController {
 	}
 
 	function view($username = null) {
-		if (!$username) {
-			$this->Session->setFlash(sprintf(__('Invalid %s', true), 'maintainer'));
-			$this->redirect(array('action' => 'index'));
-		}
 		$maintainer = $this->Maintainer->find('view', $username);
 		if (!$maintainer) {
 			$this->Session->setFlash(sprintf(__('Invalid %s', true), 'maintainer'));
