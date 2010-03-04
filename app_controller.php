@@ -2,6 +2,7 @@
 class AppController extends Controller {
 	var $components = array(
 		'Authsome.Authsome' => array('model' => 'Maintainer'),
+		'Permit',
 		'DebugKit.Toolbar',
 		'Session',
 		'SwiftMailer'
