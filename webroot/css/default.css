@@ -16,7 +16,7 @@ a:hover{color: #367889;text-decoration:underline;}
 #footer a{color:#fff;}
 #footer a:hover{color:#aaa;}
 .content{background:#fff;border:1px solid #fff;border-radius:10px;-khtml-border-radius:10px;-moz-border-radius:10px;-opera-border-radius:10px;-webkit-border-radius:10px;padding:16px 20px;}
-.content-2{background:#fff;border:1px solid #fff;border-radius:10px;-khtml-border-radius:10px;-moz-border-radius:10px;-opera-border-radius:10px;-webkit-border-radius:10px;}
+.alternate-content{background:#fff;border:1px solid #fff;border-radius:10px;-khtml-border-radius:10px;-moz-border-radius:10px;-opera-border-radius:10px;-webkit-border-radius:10px;}
 .content-makeup{padding:16px 20px;}
 .content-makeup-horizontal{padding:0 20px;}
 .content-makeup-vertical{padding:16px 0;}
@@ -45,6 +45,7 @@ fieldset legend{background:#fff;color:#e32;font-size:160%;font-weight:bold;}
 fieldset fieldset{margin-top:0px;margin-bottom:20px;padding:16px 10px;}
 fieldset fieldset legend{font-size:120%;font-weight:normal;}
 fieldset fieldset div{clear:left;margin:0 20px;}
+.alternate-content form div{clear:both;margin-bottom:1em;padding:.5em;vertical-align:text-top;}
 form div{clear:both;vertical-align:text-top;}
 form div.input{color:#444;}
 form div.required{color:#333;font-weight:bold;}
@@ -60,8 +61,8 @@ input[type=radio]{float:left;width:auto;margin:0 3px 7px 0;}
 div.radio label{margin:0 0 6px 20px;}
 input[type=submit]{display:inline;font-size:110%;padding:2px 5px;width:auto;vertical-align:bottom;}
 form div.submit.cancel{display:inline;}
-a.cancel-action{color:#f00;text-decoration:underline;}
-a:hover.cancel-action{color:#f00;text-decoration:none;}
+a.cancel-action, a.forgot-action{color:#f00;text-decoration:underline;}
+a:hover.cancel-action, a:hover.forgot-action{color:#f00;text-decoration:none;}
 form div.input.left-input{display:inline;clear:none;}
 form div.input.left-input{display:inline;clear:none;}
 form div.input.right-input{display:inline;clear:none;}
@@ -74,3 +75,9 @@ p.error{background-color:#e32;color:#fff;font-size:120%;line-height:140%;padding
 p.error em{color:#000;font-weight:normal;line-height:140%;}
 .notice{background:#ffcc00;color:#000;display:block;padding:0.8em;margin:1em 0;text-align: center;}
 .success{background:green;color:#fff;}
+
+/** Users **/
+form div.submit.forgot{display:inline;}
+.forgot-action{float:right;text-align:right;margin:0;}
+.forgot-action a{color:#f00;text-decoration:underline;}
+.forgot-action a:hover{color:#f00;text-decoration:none;}
