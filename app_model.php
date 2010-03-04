@@ -1,6 +1,6 @@
 <?php
 class AppModel extends Model {
-	var $actsAs = array('Containable', 'Lookupable');
+	var $actsAs = array('Callbackable', 'Containable', 'Lookupable');
 	var $recursive = -1;
 
 /**
@@ -37,7 +37,100 @@ class AppModel extends Model {
 	}
 
 /**
- * Disables/detabches all behaviors from model
+ * Allows the returning of query parameters for use in pagination
+ *
+ * @param array $query 
+ * @return boolean
+ * @author Matt Curry
+ */
+	public function beforeFind($query) {
+		if (!empty($query['paginate'])) {
+			$keys = array('fields', 'order', 'limit', 'page');
+			foreach($keys as $key) {
+				if($query[$key] === null || (is_array($query[$key]) && $query[$key][0] === null) ) {
+					unset($query[$key]);
+				}
+			}
+			$this->query = $query;
+			return false;
+		}
+		return true;
+	}
+
+/**
+ * undocumented function
+ *
+ * @param array $data Data to save.
+ * @param mixed $validate Either a boolean, or an array.
+ *   If a boolean, indicates whether or not to validate before saving.
+ *   If an array, allows control of validate, callbacks, and fieldList
+ * @param array $fieldList List of fields to allow to be written
+ * @param array $extra controls access to optional data a Behavior may want
+ * @return mixed On success Model::$data if its not empty or true, false on failure
+ * @access public
+ * @author Jose Diaz-Gonzalez
+ **/
+	public function save($data = null, $validate = true, $fieldList = array(), $extra = array()) {
+		$options = array('validate' => true, 'fieldList' => array(), 'callbacks' => true);
+		if (is_array($validate)) {
+			$options = array_merge($options, $validate);
+			foreach($options as $key => &$value) {
+				if (!in_array($key, array('validate', 'fieldList', 'callbacks'))) {
+					$extra[$key] = $value;
+				}
+			}
+		} else {
+			$options = array_merge($options, compact('validate', 'fieldList', 'callbacks'));
+		}
+
+		$this->behaviorData = $extra;
+
+		$method = null;
+		if (isset($extra['callback']) and is_string($extra['callback'])) {
+			$method = sprintf('__beforeSave%s', Inflector::camelize($extra['callback']));
+		}
+
+		if($method && method_exists($this, $method)) {
+			$data = $this->{$method}($data, $extra);
+		}
+		if (!$data) return false;
+		return parent::save($data, $options);
+	}
+
+/**
+ * Unsets contain key for faster pagination counts
+ *
+ * @param array $conditions
+ * @param integer $recursive
+ * @param array $extra
+ * @return integer
+ * @author Jose Diaz-Gonzalez
+ */
+	public function paginateCount($conditions = null, $recursive = 0, $extra = array()) {
+		$conditions = compact('conditions');
+		if ($recursive != $this->recursive) {
+			$conditions['recursive'] = $recursive;
+		}
+		$extra['contain'] = false;
+		return $this->find('count', array_merge($conditions, $extra));
+	}
+
+/**
+ * Updates a particular record without invoking model callbacks
+ *
+ * @return boolean True on success, false on Model::id is not set or failure
+ * @author Jose Diaz-Gonzalez
+ **/
+	public function update($fields, $conditions = array()) {
+		if (!$this->id) return false;
+
+		$conditions = array_merge(array("{$this->alias}.$this->primaryKey" => $this->id), $conditions);
+
+		return $this->updateAll($fields, $conditions);
+	}
+
+/**
+ * Disables/detaches all behaviors from model
  *
  * @param mixed $except string or array of behaviors to exclude from detachment
  * @param boolean $detach If true, detaches the behavior instead of disabling it
@@ -73,6 +166,18 @@ class AppModel extends Model {
 				$this->Behaviors->enable($behavior);
 			}
 		}
+	}
+
+	public function __findDistinct($fields = array()) {
+		$fields = (is_array($fields)) ? $fields : array($fields);
+
+		foreach ($fields as &$field) {
+			$field = "DISTINCT {$field}";
+		}
+
+		return $this->find('all', array(
+			'contain' => false,
+			'fields' => $fields));
 	}
 }
 ?>
