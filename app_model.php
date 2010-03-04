@@ -71,6 +71,9 @@ class AppModel extends Model {
  * @author Jose Diaz-Gonzalez
  **/
 	public function save($data = null, $validate = true, $fieldList = array(), $extra = array()) {
+		$data = (!$data) ? $this->data : $data;
+		if (!$data) return false;
+
 		$options = array('validate' => true, 'fieldList' => array(), 'callbacks' => true);
 		if (is_array($validate)) {
 			$options = array_merge($options, $validate);
