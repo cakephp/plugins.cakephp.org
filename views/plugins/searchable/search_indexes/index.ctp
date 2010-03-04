@@ -34,10 +34,10 @@
 			</tr>
 		<?php endforeach; ?>
 	</table>
-	<?php $params = array_intersect_key($this->params, array_flip(array('type', 'term'))); ?>
+	<?php $params = array_intersect_key($this->params, array_flip(array('type', 'term')));//diebug($this->params); ?>
 	<?php $params = array_map('urlencode', $params); ?>
 	<?php $params = array_map('urlencode', $params); ?>
-	<?php $this->Paginator->options(array('url' => $params)); ?>
+	<?php $this->Paginator->options(array('url' => $params)); //diebug($this->Paginator); ?>
 	<div class="paging">
 		<?php echo $this->Paginator->prev('<< '.__('previous', true), array(), null,
 				array('class' => 'disabled')); ?>

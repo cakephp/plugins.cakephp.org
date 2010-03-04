@@ -37,7 +37,7 @@
 	Router::connect('/maintainer/*', array('controller' => 'maintainers', 'action' => 'view'));
 	Router::connect('/tag/*', array('controller' => 'tags', 'action' => 'index'));
 	Router::connect('/lost/*', array('controller' => 'lost', 'action' => 'index'));
-	Router::connect('/package_search/*', array('plugin' => 'searchable', 'controller' => 'search_indexes', 'action' => 'index', 'type' => 'Package'));
+	Router::connect('/package_search/:term/*', array('plugin' => 'searchable', 'controller' => 'search_indexes', 'action' => 'index', 'type' => 'Package'));
 
 /**
  * ...and connect the rest of 'Pages' controller's urls.

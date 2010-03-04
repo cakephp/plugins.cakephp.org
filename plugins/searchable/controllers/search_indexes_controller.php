@@ -18,11 +18,12 @@ class SearchIndexesController extends SearchableAppController {
 				$redirect['type'] = $this->params['type'];
 			}
 			if (isset($this->data['SearchIndex']['term'])) {
-				$redirect[] = $this->data['SearchIndex']['term'];
+				$redirect['term'] = $this->data['SearchIndex']['term'];
 			}
 			$this->redirect($redirect);
 		}
 
+		$term = (!$term) ? $this->params['term'] : $term;
 		// Add default scope condition
 		$this->paginate['SearchIndex']['conditions'] = array('SearchIndex.active' => 1);
 
@@ -52,7 +53,7 @@ class SearchIndexesController extends SearchableAppController {
 
 		// Get types for select drop down
 		$types = $this->SearchIndex->getTypes();
-		$this->set(compact('results', 'types'));
+		$this->set(compact('results', 'term', 'types'));
 		$this->pageTitle = 'Search';
 	}
 }
