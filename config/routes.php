@@ -29,6 +29,7 @@
 	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 	Router::connect('/login', array('controller' => 'users', 'action' => 'login'));
 	Router::connect('/logout', array('controller' => 'users', 'action' => 'logout'));
+	Router::connect('/dashboard', array('controller' => 'users', 'action' => 'dashboard'));
 	Router::connect('/forgot_password', array('controller' => 'users', 'action' => 'forgot_password'));
 	Router::connect('/reset_password', array('controller' => 'users', 'action' => 'reset_password'));
 	Router::connect('/change_password', array('controller' => 'users', 'action' => 'change_password'));

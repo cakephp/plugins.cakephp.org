@@ -4,8 +4,8 @@ class UsersController extends AppController {
 	var $uses = array('Maintainer');
 	var $layout = 'alternate';
 
-	public function dashboard() {
-		$user = $this->User->find('dashboard');
+	function dashboard() {
+		$user = $this->Maintainer->find('dashboard');
 		$this->set(compact('user'));
 	}
 
@@ -14,7 +14,7 @@ class UsersController extends AppController {
 			return;
 		}
 
-		$maintainer = Authsome::login($this->data['Maintainer']);
+		$maintainer = Authsome::login($this->data['User']);
 
 		if (!$maintainer) {
 			$this->Session->setFlash(__('Unknown user or Wrong Password', true));
@@ -45,7 +45,7 @@ class UsersController extends AppController {
 				$this->redirect(array('controller' => 'users', 'action' => 'forgot_password'));
 			}
 
-			$maintainer = $this->User->find('forgot_password', $this->data['Maintainer']['email']);
+			$maintainer = $this->Maintainer->find('forgot_password', $this->data['Maintainer']['email']);
 			if (!$maintainer) {
 				$this->Session->setFlash(__('No user found for this email address', true));
 				$this->redirect(array('controller' => 'users', 'action' => 'forgot_password'));
@@ -96,7 +96,7 @@ class UsersController extends AppController {
 
 	function change_password() {
 		if (!empty($this->data)) {
-			if ($this->User->save($this->data, array('fieldList' => array('id', 'password'), 'callback' => 'change_password'))) {
+			if ($this->Maintainer->save($this->data, array('fieldList' => array('id', 'password'), 'callback' => 'change_password'))) {
 				$this->Session->setFlash(__('Your password has been successfully changed', true));
 				$this->redirect(array('action' => 'dashboard'));
 			} else {

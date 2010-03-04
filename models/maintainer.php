@@ -42,15 +42,50 @@ class Maintainer extends AppModel {
 		)
 	);
 
-	public function __beforeSaveResetPassword($data, $extra) {
+	function __beforeSaveChangePassword($data, $extra) {
+		if (!$data || !isset($data[$this->alias])) return false;
+
+		$data = array(
+			$this->alias => array(
+				'password' => $data[$this->alias]['password'],
+				'new_password' => $data[$this->alias]['new_password'],
+				'new_password_confirm' => $data[$this->alias]['new_password_confirm']));
+
+		if ($data[$this->alias]['new_password'] != $data[$this->alias]['new_password_confirm']) return false;
+		foreach($data[$this->alias] as $key => &$value) {
+			$value = Security::hash($value, null, true);
+			if ($value == Security::hash('', null, true)) {
+				return false;
+			}
+		}
+		$data[$this->alias][$this->primaryKey] = Authsome::get('id');
+
+		$user = $this->find('first', array(
+			'conditions' => array(
+				"{$this->alias}.id" => Authsome::get('id'),
+				"{$this->alias}.password" => $data[$this->alias]['password']),
+			'contain' => false,
+			'fields' => array('id')));
+
+		if (!$user) return false;
+		return $data;
+	}
+
+	function __beforeSaveResetPassword($data, $extra) {
 		return array($this->alias => array(
 			$this->primaryKey => $extra['user_id'],
 			'password' => Authsome::hash($data[$this->alias]['password']),
 			'activation_key' => md5(uniqid())));
 	}
 
+	function __findDashboard() {
+		return $this->find('first', array(
+			'conditions' => array(
+				"{$this->alias}.{$this->primaryKey}" => Authsome::get('id')),
+			'contain' => false));
+	}
 
-	function __findByName($username = false) {
+	function __findByUsername($username = false) {
 		if (!$username) return false;
 
 		return $this->find('first', array(
@@ -109,7 +144,7 @@ class Maintainer extends AppModel {
 			case 'credentials':
 				// This is the logic for validating the login
 				$conditions = array(
-					"{$this->alias}.username" => $credentials['email'],
+					"{$this->alias}.email" => $credentials['email'],
 					"{$this->alias}.password" => Authsome::hash($credentials['password']),
 				);
 				break;
