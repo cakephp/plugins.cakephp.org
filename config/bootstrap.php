@@ -49,69 +49,31 @@
  *
  */
 
-function diebug($var = false, $showHtml = false, $showFrom = true) {
+function diebug($variables = false, $showHtml = true, $showFrom = true, $die = true) {
 	if (Configure::read() > 0) {
+		if (is_array($showHtml)) {
+			$showHtml = array_merge(array('showHtml' => true, 'showFrom' => true, 'die' => true), $showHtml);
+			extract($showHtml);
+		}
 		if ($showFrom) {
 			$calledFrom = debug_backtrace();
 			echo '<strong>' . substr(str_replace(ROOT, '', $calledFrom[0]['file']), 1) . '</strong>';
-			echo ' (line <strong>' . $calledFrom[0]['line'] . '</strong>)';
+			echo ' (line <strong>' . $calledFrom[0]['line'] . '</strong>)<br /><br />';
 		}
-		echo "\n<pre class=\"cake-debug\">\n";
-
-		$var = print_nice($var, true);
+		if (!is_array($variables)) $variables = array($variables);
 		if ($showHtml) {
-			$var = str_replace('<', '&lt;', str_replace('>', '&gt;', $var));
-		}
-		echo $var . "\n</pre>\n";
-		die;
-	}
-}
-function print_nice($elem, $max_level = 10, $print_nice_stack = array()){
-	if (is_array($elem) || is_object($elem)) {
-		if (in_array(&$elem, $print_nice_stack, true)) {
-			echo "<span style='color:#f00;'>RECURSION</span>";
-			return;
-		}
-		$print_nice_stack[] = &$elem;
-		if ($max_level<1) {
-			echo "<span style='color:#f00;'>max recursion level reached</span>";
-			return;
-		}
-		$max_level--;
-		echo "<table border=1 cellspacing=0 cellpadding=3 width=100%>";
-		if (is_array($elem)) {
-			echo '<tr><td colspan=2 style="background-color:#333;"><span style="color:#fff;font-weight:bold">ARRAY</span></td></tr>';
-		} else {
-			echo '<tr><td colspan=2 style="background-color:#333;"><span style="color:#fff;font-weight:bold">OBJECT Type: ' . get_class($elem) . '</span></td></tr>';
-		}
-		$color = 0;
-		foreach ($elem as $k => $v) {
-			if ($max_level%2) {
-				$rgb = ($color++%2) ? "#888" : "#bbb";
-			} else {
-				$rgb = ($color++%2) ? "#88b" : "#bbf";
+			App::import('Vendor', 'dBug', array('file' => 'dBug.php'));
+			foreach ($variables as $key => $variable) {
+				new dBug($variable);
+				echo '<br />';
 			}
-			echo "<tr><td valign='top' style='background-color:{$rgb};font-weight:bold;width:40px;'>{$k}</td><td>";
-			print_nice($v, $max_level, $print_nice_stack);
-			echo "</td></tr>";
+		} else {
+			foreach ($variables as $variable) {
+				debug($var, $showHtml, $showFrom);
+				echo '<br />';
+			}
 		}
-		echo "</table>";
-		return;
-	}
-	if ($elem === null) {
-		echo "<span style='color:#000;font-style:italic;'>NULL</span>";
-	} elseif ($elem === 0) {
-		echo "0";
-	} elseif ($elem === true) {
-		echo "<span style='color:#060;font-weight:bold;'>TRUE</span>";
-	} elseif ($elem === false) {
-		echo "<span style='color:#c00000;font-weight:bold;'>FALSE</span>";
-	} elseif ($elem === "") {
-		echo "<span style='color:#000;'>EMPTY STRING</span>";
-	} elseif (is_string($elem)) {
-		echo "<span style='color:#000;'>string</span><br /><span style='color:#060;font-weight:bold;'>{$elem}</span>";
-	} else {
-		echo str_replace("\n","<strong><font color=red>*</font></strong><br>\n",$elem);
+		if ($die) die;
 	}
 }
 ?>
