@@ -20,9 +20,9 @@
 			</div>
 			<div id="navigation" class="grid_6 clearfix">
 				<?php echo $this->Html->link('packages', array(
-					'plugin' => null, 'controller' => 'packages', 'action' => 'index')); ?> | 
+					'plugin' => null, 'controller' => 'packages', 'action' => 'index')); ?> &#183; 
 				<?php echo $this->Html->link('maintainers', array(
-					'plugin' => null, 'controller' => 'maintainers', 'action' => 'index')); ?> |
+					'plugin' => null, 'controller' => 'maintainers', 'action' => 'index')); ?> &#183; 
 				<?php echo $this->Html->link('search', 	array(
 					'plugin' => 'searchable', 'controller' => 'search_indexes', 'action' => 'index', 'type' => 'Package')); ?>
 			</div>
@@ -36,10 +36,10 @@
 			<div class="clear"></div>
 			<div id="footer" class="grid_6 clearfix">
 				<?php echo $this->Html->link('about', array(
-					'plugin' => null, 'controller' => 'pages', 'action' => 'display', 'about')); ?> | 
+					'plugin' => null, 'controller' => 'pages', 'action' => 'display', 'about')); ?> &#183; 
 				<?php echo $this->Html->link('blog', array(
-					'plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'index')); ?> | 
-				<?php echo $this->Html->link('twitter', 'http://twitter.com/cakepackages'); ?> | 
+					'plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'index')); ?> &#183; 
+				<?php echo $this->Html->link('twitter', 'http://twitter.com/cakepackages'); ?> &#183; 
 				<?php echo $this->Html->link('github', 'http://github.com/josegonzalez/cakepackages'); ?>
 				<br />
 				<?php echo $this->Html->link(
