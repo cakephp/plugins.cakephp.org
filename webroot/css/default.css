@@ -8,6 +8,7 @@ a:hover{color: #367889;text-decoration:underline;}
 #header{text-align:center;}
 #header h1{color:#fff;margin-bottom:0;}
 #header a{color:#fff;}
+#header a:hover{text-decoration:none;}
 #navigation {color:#fff;font-size:16px;padding-bottom:10px;text-align:center}
 #navigation a{color:#fff;}
 #navigation a:hover{color:#aaa;}
