@@ -11,6 +11,12 @@ class PackagesController extends AppController {
 		}
 	}
 
+	function home() {
+		$latest = $this->Package->find('latest');
+		$random = $this->Package->find('random');
+		$this->set(compact('hot', 'latest', 'random'));
+	}
+
 	function index() {
 		$packages = $this->paginate();
 		$this->set(compact('packages'));
