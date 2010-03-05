@@ -13,11 +13,6 @@
 class AppHelper extends Helper {
 	var $view = null;
 
-	function url($url = null, $full = false) {
-		App::import('Vendor', 'mi_cache');
-		return MiCache::data('Helper', 'url', $url, $full);
-	}
-
 	function h2($contents, $alternate = null) {
 		ob_start();
 		if ((empty($contents) || $contents == '' || $contents == ' ') && isset($alternate)) {
