@@ -27,7 +27,7 @@
 					'plugin' => 'searchable', 'controller' => 'search_indexes', 'action' => 'index', 'type' => 'Package')); ?>
 			</div>
 			<div class="grid_6">
-				<div class="content">
+				<div class="content clearfix">
 					<?php echo $h2_for_layout; ?>
 					<?php echo $this->Session->flash(); ?>
 					<?php echo $content_for_layout; ?>
