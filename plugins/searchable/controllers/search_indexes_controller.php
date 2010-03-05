@@ -23,7 +23,7 @@ class SearchIndexesController extends SearchableAppController {
 			$this->redirect($redirect);
 		}
 
-		$term = (!$term) ? $this->params['term'] : $term;
+		$term = (!$term && isset($this->params['term'])) ? $this->params['term'] : $term;
 		// Add default scope condition
 		$this->paginate['SearchIndex']['conditions'] = array('SearchIndex.active' => 1);
 
