@@ -26,14 +26,20 @@ class AppModel extends Model {
 				return $query;
 			}
 			return $return;
-		} else if (!empty($options['cache'])) {
-			App::import('Vendor', 'mi_cache');
-			unset($options['cache']);
-			return MiCache::data($this->alias, 'find', $type, $options);
-		} else {
-			$args = func_get_args();
-			return call_user_func_array(array('parent', 'find'), $args);
 		}
+		if (!empty($options['cache'])) {
+			unset($options['cache']);
+			App::import('Vendor', 'mi_cache');
+			return MiCache::data($this->alias, 'find', $type, $options);
+		}
+		if (!in_array($type, array_keys($this->_findMethods))) {
+			diebug(array($type, $options));
+			$calledFrom = debug_backtrace();
+			CakeLog::write('error', "Unknown method {$this->alias}->{$method} in " . substr(str_replace(ROOT, '', $calledFrom[0]['file']), 1) . ' on line ' . $calledFrom[0]['line'] );
+			return false;
+		}
+		$args = func_get_args();
+		return call_user_func_array(array('parent', 'find'), $args);
 	}
 
 /**
