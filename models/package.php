@@ -67,6 +67,16 @@ class Package extends AppModel {
 		)
 	);
 
+	function __findEdit($id = null) {
+		if (!$id) return false;
+
+		return $this->find('first', array(
+			'conditions' => array(
+				"{$this->alias}.{$this->primaryKey}" => $id),
+			'contain' => array(
+				'Maintainer', 'Tag')));
+	}
+
 	function __findView($params = array()) {
 		if (!isset($params['maintainer']) || !isset($params['package'])) return false;
 
@@ -78,16 +88,6 @@ class Package extends AppModel {
 			'conditions' => array(
 				"{$this->alias}.{$this->displayField}" => $params['package'],
 				"{$this->alias}.maintainer_id" => $maintainer_id),
-			'contain' => array(
-				'Maintainer', 'Tag')));
-	}
-
-	function __findEdit($id = null) {
-		if (!$id) return false;
-
-		return $this->find('first', array(
-			'conditions' => array(
-				"{$this->alias}.{$this->primaryKey}" => $id),
 			'contain' => array(
 				'Maintainer', 'Tag')));
 	}

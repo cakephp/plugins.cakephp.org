@@ -78,19 +78,19 @@ class Maintainer extends AppModel {
 			'activation_key' => md5(uniqid())));
 	}
 
-	function __findDashboard() {
-		return $this->find('first', array(
-			'conditions' => array(
-				"{$this->alias}.{$this->primaryKey}" => Authsome::get('id')),
-			'contain' => false));
-	}
-
 	function __findByUsername($username = false) {
 		if (!$username) return false;
 
 		return $this->find('first', array(
 			'conditions' => array(
 				"{$this->alias}.username" => $username),
+			'contain' => false));
+	}
+
+	function __findDashboard() {
+		return $this->find('first', array(
+			'conditions' => array(
+				"{$this->alias}.{$this->primaryKey}" => Authsome::get('id')),
 			'contain' => false));
 	}
 
