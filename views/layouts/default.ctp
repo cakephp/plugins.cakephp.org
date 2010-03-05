@@ -15,8 +15,16 @@
 			<div id="header" class="grid_6 clearfix">
 				<h1>
 					<?php echo $this->Html->link(__('CakePackages', true), array(
-						'plugin' => null, 'controller' => 'pages', 'action' => 'display', 'home')); ?>
+						'plugin' => null, 'controller' => 'packages', 'action' => 'home')); ?>
 				</h1>
+			</div>
+			<div id="navigation" class="grid_6 clearfix">
+				<?php echo $this->Html->link('packages', array(
+					'plugin' => null, 'controller' => 'packages', 'action' => 'index')); ?> | 
+				<?php echo $this->Html->link('maintainers', array(
+					'plugin' => null, 'controller' => 'maintainers', 'action' => 'index')); ?> |
+				<?php echo $this->Html->link('search', 	array(
+					'plugin' => 'searchable', 'controller' => 'search_indexes', 'action' => 'index', 'type' => 'Package')); ?>
 			</div>
 			<div class="grid_6">
 				<div class="content">
@@ -27,8 +35,6 @@
 			</div>
 			<div class="clear"></div>
 			<div id="footer" class="grid_6 clearfix">
-				<?php echo $this->Html->link('packages', array(
-					'plugin' => null, 'controller' => 'packages', 'action' => 'index')); ?> | 
 				<?php echo $this->Html->link('about', array(
 					'plugin' => null, 'controller' => 'pages', 'action' => 'display', 'about')); ?> | 
 				<?php echo $this->Html->link('blog', array(
@@ -44,15 +50,6 @@
 				?>
 			</div>
 		</div>
-		<script type="text/javascript">
-			var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-			document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-		</script>
-		<script type="text/javascript">
-			try {
-				var pageTracker = _gat._getTracker("UA-8668344-5");
-				pageTracker._trackPageview();
-			} catch(err) {}
-		</script>
+		<?php echo $this->element('analytics'); ?>
 	</body>
 </html>
