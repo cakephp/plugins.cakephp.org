@@ -77,6 +77,31 @@ class Package extends AppModel {
 				'Maintainer', 'Tag')));
 	}
 
+	function __findLatest() {
+		return $this->find('all', array(
+			'contain' => array('Maintainer.id', 'Maintainer.username'),
+			'fields' => array('id', 'maintainer_id', 'name', 'created'),
+			'limit' => 5,
+			'order' => "{$this->alias}.created DESC"));
+	}
+
+	function __findRandom() {
+		$id = $this->find('random_ids', 5);
+
+		return $this->find('all', array(
+			'contain' => array('Maintainer.id', 'Maintainer.username'),
+			'fields' => array('id', 'maintainer_id', 'name', 'created'),
+			'conditions' => array("{$this->alias}.{$this->primaryKey}" => $id)));
+	}
+
+	function __findRandomIds($limit = 5) {
+		App::import('Vendor', 'mi_cache');
+		return MiCache::data($this->alias, 'find', 'list', array(
+			'fields' => 'id',
+			'order' => 'RAND()',
+			'limit' => $limit));
+	}
+
 	function __findView($params = array()) {
 		if (!isset($params['maintainer']) || !isset($params['package'])) return false;
 
