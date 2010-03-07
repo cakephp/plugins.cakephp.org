@@ -50,6 +50,9 @@ class SearchIndexesController extends SearchableAppController {
 		}
 
 		$results = $this->paginate();
+		if (count($results) == 1) {
+			$this->redirect(json_decode($results['0']['SearchIndex']['url'], true));
+		}
 
 		// Get types for select drop down
 		$types = $this->SearchIndex->getTypes();

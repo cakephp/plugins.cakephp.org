@@ -1,6 +1,7 @@
 <?php
 class PackagesController extends AppController {
 	var $name = 'Packages';
+	var $helpers = array('Ajax');
 	var $paginate = array('contain' => array('Maintainer'), 'limit' => 10);
 
 	function beforeFilter() {
@@ -86,6 +87,11 @@ class PackagesController extends AppController {
 		}
 		$this->Session->setFlash(sprintf(__('%s was not deleted', true), 'Package'));
 		$this->redirect(array('action' => 'index'));
+	}
+
+	function auto_complete() {
+		$this->set('packages', $this->Package->find('autocomplete', $this->data['SearchIndex']['term']));
+		$this->layout = 'ajax';
 	}
 }
 ?>

@@ -5,7 +5,13 @@
 			'controller' => 'search_indexes',
 			'action' => 'index',
 			'type' => 'Package'))); ?>
-	<?php echo $this->Form->input('term', array('label' => 'Search')); ?>
+	<?php echo $this->Ajax->autoComplete('SearchIndex.term', 
+		array(
+			'plugin' => null,
+			'controller' => 'packages',
+			'action' => 'auto_complete',
+			'type' => 'Package'),
+		array('label' => 'Search')); ?>
 <?php echo $this->Form->end('Search Packages'); ?>
 <table cellpadding="0" cellspacing="0">
 	<tr>

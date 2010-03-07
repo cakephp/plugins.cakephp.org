@@ -67,6 +67,17 @@ class Package extends AppModel {
 		)
 	);
 
+	function __findAutocomplete($name = null) {
+		if (!$name) return false;
+
+		return $this->find('all', array(
+			'cache' => true,
+			'conditions' => array('Package.name LIKE' => "%{$name}%"),
+			'contain' => false,
+			'limit' => 10,
+			'fields' => array('name')));
+	}
+
 	function __findEdit($id = null) {
 		if (!$id) return false;
 
