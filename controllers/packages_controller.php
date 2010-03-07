@@ -1,7 +1,6 @@
 <?php
 class PackagesController extends AppController {
 	var $name = 'Packages';
-	var $helpers = array('Ajax');
 	var $paginate = array('contain' => array('Maintainer'), 'limit' => 10);
 
 	function beforeFilter() {

@@ -30,5 +30,3 @@
 	<div><?php echo $this->Resource->package($package['Package']['name'], $package['Maintainer']['username']); ?></div>
 <?php endforeach; ?>
 </div>
-
-<?php echo $this->Html->script(array('prototype', 'scriptaculous'), array('inline' => false)); ?>
