@@ -91,3 +91,7 @@ form div.submit.forgot{display:inline;}
 
 /** Packages **/
 .package_list {text-align:center;}
+.auto_complete {background-color :#fff;border:1px solid #888;margin:0px;padding:0px;position:absolute;width:250px;z-index:10;}
+.auto_complete ul {list-style-type: none;}
+.auto_complete ul li {margin-left: 2px;}
+.auto_complete ul li.selected { background-color: #ffb;}
