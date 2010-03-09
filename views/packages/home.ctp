@@ -2,20 +2,7 @@
 
 <p>Find existing CakePHP code quicker, iterate your code faster, and contribute to the community</p>
 
-<?php echo $this->Form->create('SearchIndex', array(
-		'url' => array(
-			'plugin' => 'searchable',
-			'controller' => 'search_indexes',
-			'action' => 'index',
-			'type' => 'Package'))); ?>
-	<?php echo $this->Ajax->autoComplete('SearchIndex.term', 
-		array(
-			'plugin' => null,
-			'controller' => 'packages',
-			'action' => 'auto_complete',
-			'type' => 'Package'),
-		array('label' => 'Search')); ?>
-<?php echo $this->Form->end('Search For Packages'); ?>
+<?php echo $this->element('search'); ?>
 <br />
 <div class="grid_2 alpha prefix_quarter suffix_quarter package_list">
 <h4><?php __('Latest Packages'); ?></h4>
