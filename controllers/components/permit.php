@@ -26,6 +26,7 @@ class PermitComponent extends Object {
 		foreach ($self->routes as $route) {
 			if (PermitComponent::parse($controller->params, $route['route'])) {
 				PermitComponent::execute($route);
+				break;
 			}
 		}
 	}
@@ -112,9 +113,9 @@ class PermitComponent extends Object {
 			}
 		}
 
-		if ($count == 0) return;
-
-		$self->redirect($route);
+		if ($count != 0) {
+			$self->redirect($route);
+		}
 	}
 
 	function redirect($route) {
