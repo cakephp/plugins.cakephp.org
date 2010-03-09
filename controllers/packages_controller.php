@@ -3,14 +3,6 @@ class PackagesController extends AppController {
 	var $name = 'Packages';
 	var $paginate = array('contain' => array('Maintainer'), 'limit' => 10);
 
-	function beforeFilter() {
-		parent::beforeFilter();
-		if (Configure::read() == 0 && in_array($this->params['action'], array('add', 'edit', 'delete'))) {
-			$this->Session->setFlash(__('Access denied', true));
-			$this->redirect('/');
-		}
-	}
-
 	function home() {
 		$latest = $this->Package->find('latest');
 		$random = $this->Package->find('random');

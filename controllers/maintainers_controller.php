@@ -3,14 +3,6 @@ class MaintainersController extends AppController {
 	var $name = 'Maintainers';
 	var $helpers = array('Maintainer');
 
-	function beforeFilter() {
-		parent::beforeFilter();
-		if (Configure::read() == 0 && in_array($this->params['action'], array('add', 'edit', 'delete'))) {
-			$this->Session->setFlash(__('Access denied', true));
-			$this->redirect('/');
-		}
-	}
-
 	function index() {
 		$this->Maintainer->recursive = 0;
 		$this->set('maintainers', $this->paginate());

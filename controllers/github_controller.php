@@ -4,14 +4,6 @@ class GithubController extends AppController {
 	var $helpers = array('Github');
 	var $uses = array('Github', 'Maintainer');
 
-	function beforeFilter() {
-		parent::beforeFilter();
-		if (Configure::read() == 0) {
-			$this->Session->setFlash(__('Access denied', true));
-			$this->redirect('/');
-		}
-	}
-
 	function index() {
 		$this->set('maintainers', $this->Maintainer->find('all'));
 	}
