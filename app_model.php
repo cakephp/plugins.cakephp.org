@@ -2,6 +2,7 @@
 class AppModel extends Model {
 	var $actsAs = array('Callbackable', 'Containable', 'Lookupable');
 	var $recursive = -1;
+	var $query = null;
 
 /**
  * Custom find types, as per Matt Curry's method
@@ -19,7 +20,7 @@ class AppModel extends Model {
 		}
 		if($method && method_exists($this, $method)) {
 			$return = $this->{$method}($options);
-			if($return === null && !empty($this->query['paginate'])) {
+			if ($this->query != null) {
 				unset($this->query['paginate']);
 				$query = $this->query;
 				$this->query = null;
@@ -50,7 +51,7 @@ class AppModel extends Model {
  * @author Matt Curry
  */
 	public function beforeFind($query) {
-		if (!empty($query['paginate'])) {
+		if (isset($query['paginate'])) {
 			$keys = array('fields', 'order', 'limit', 'page');
 			foreach($keys as $key) {
 				if($query[$key] === null || (is_array($query[$key]) && $query[$key][0] === null) ) {
@@ -60,6 +61,7 @@ class AppModel extends Model {
 			$this->query = $query;
 			return false;
 		}
+		$this->query = null;
 		return true;
 	}
 
