@@ -1,15 +1,4 @@
 <?php
-/*
- * App Helper url caching
- * Copyright (c) 2009 Matt Curry
- * www.PseudoCoder.com
- * http://github.com/mcurry/cakephp/tree/master/snippets/app_helper_url
- * http://www.pseudocoder.com/archives/2009/02/27/how-to-save-half-a-second-on-every-cakephp-requestand-maintain-reverse-routing
- *
- * @author      Matt Curry <matt@pseudocoder.com>
- * @license     MIT
- *
- */
 class AppHelper extends Helper {
 	var $view = null;
 
