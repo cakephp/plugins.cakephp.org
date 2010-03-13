@@ -1,4 +1,4 @@
-<?php if (Configure::read() == 0) : ?>
+<?php if (Configure::read() == 0 && Authsome::get('group') != 'admin' ) : ?>
 	<script type="text/javascript">
 		var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 		document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
