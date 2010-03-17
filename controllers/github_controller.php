@@ -30,7 +30,7 @@ class GithubController extends AppController {
 			$this->redirect(array('action' => 'view', $username));
 		} else {
 			$this->Session->setFlash(sprintf(__('%s not saved!', true), $username));
-			$this->redirect(array('action' => 'new', $username));
+			$this->redirect(array('action' => 'github', $username));
 		}
 	}
 
