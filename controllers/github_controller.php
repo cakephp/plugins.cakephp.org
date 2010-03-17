@@ -8,11 +8,7 @@ class GithubController extends AppController {
 		$this->set('maintainers', $this->Maintainer->find('all'));
 	}
 
-	function existing($username = null) {
-		if (!$username) {
-			$this->Session->setFlash(sprintf(__('Invalid %s', true), 'user'));
-			$this->redirect(array('action' => 'index'));
-		}
+	function view($username = null) {
 		$user = $this->Github->find('user', $username);
 		if (!$user) {
 			$this->Session->setFlash(sprintf(__('Invalid %s', true), 'user'));
@@ -23,22 +19,18 @@ class GithubController extends AppController {
 		$this->set(compact('existing', 'packages', 'user'));
 	}
 
-	function add_maintainer($username = null) {
-		if (!$username) {
-			$this->Session->setFlash(sprintf(__('Invalid %s', true), 'user'));
-			$this->redirect(array('action' => 'user', 'josegonzalez'));
-		}
+	function add($username = null) {
 		$user = $this->Github->find('user', $username);
 		if (!$user) {
 			$this->Session->setFlash(sprintf(__('Invalid %s', true), 'user'));
-			$this->redirect(array('action' => 'user', 'josegonzalez'));
+			$this->redirect(array('action' => 'new', $username));
 		}
 		if ($this->Github->saveUser($username)) {
 			$this->Session->setFlash(sprintf(__('%s saved!', true), $username));
-			$this->redirect(array('action' => 'user', 'josegonzalez'));
+			$this->redirect(array('action' => 'view', $username));
 		} else {
 			$this->Session->setFlash(sprintf(__('%s not saved!', true), $username));
-			$this->redirect(array('action' => 'user', 'josegonzalez'));
+			$this->redirect(array('action' => 'new', $username));
 		}
 	}
 
@@ -49,17 +41,13 @@ class GithubController extends AppController {
 		}
 		if ($this->Github->savePackage($username, $package)) {
 			$this->Session->setFlash(sprintf(__('Code for %s saved!', true), $package));
-			$this->redirect(array('action' => 'existing', $username));
+			$this->redirect(array('action' => 'view', $username));
 		}
 		$this->Session->setFlash(sprintf(__('Code for %s not saved!', true), $package));
-		$this->redirect(array('action' => 'existing', $username));
+		$this->redirect(array('action' => 'view', $username));
 	}
 
-	function user($username = null) {
-		if (!$username) {
-			$this->Session->setFlash(sprintf(__('Invalid %s', true), 'user'));
-			$this->redirect(array('action' => 'index'));
-		}
+	function new($username = null) {
 		$user = $this->Github->find('user', $username);
 		if (!$user) {
 			$this->Session->setFlash(sprintf(__('Invalid %s', true), 'user'));
