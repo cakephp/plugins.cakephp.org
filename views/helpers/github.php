@@ -9,7 +9,7 @@ class GithubHelper extends AppHelper {
 
 		return $this->Html->link("{$username} {$name}", array(
 			'controller' => 'github',
-			'action' => 'existing',
+			'action' => 'view',
 			$username));
 	}
 

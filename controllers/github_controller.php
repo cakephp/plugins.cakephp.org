@@ -47,7 +47,7 @@ class GithubController extends AppController {
 		$this->redirect(array('action' => 'view', $username));
 	}
 
-	function new($username = null) {
+	function github($username = null) {
 		$user = $this->Github->find('user', $username);
 		if (!$user) {
 			$this->Session->setFlash(sprintf(__('Invalid %s', true), 'user'));
@@ -55,6 +55,5 @@ class GithubController extends AppController {
 		}
 		$this->set(compact('user'));
 	}
-
 }
 ?>
