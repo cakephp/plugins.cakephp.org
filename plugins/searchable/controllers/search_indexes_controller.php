@@ -25,13 +25,14 @@ class SearchIndexesController extends SearchableAppController {
 
 		$term = (!$term && isset($this->params['term'])) ? $this->params['term'] : $term;
 		// Add default scope condition
-		$this->paginate['SearchIndex']['conditions'] = array('SearchIndex.active' => 1);
-
 		// Add published condition NULL or < NOW()
-		$this->paginate['SearchIndex']['conditions']['OR'] = array(
-			array('SearchIndex.published' => null),
-			array('SearchIndex.published <= ' => date('Y-m-d H:i:s'))
-		);
+		$this->paginate = array(
+			'SearchIndex' => array(
+				'conditions' => array(
+					'SearchIndex.active' => 1,
+					'OR' => array(
+						array('SearchIndex.published' => null),
+						array('SearchIndex.published <= ' => date('Y-m-d H:i:s'))))));
 
 		// Add type condition if not All
 		if (isset($this->params['type']) && $this->params['type'] != 'All') {
@@ -44,8 +45,11 @@ class SearchIndexesController extends SearchableAppController {
 			$this->data['SearchIndex']['term'] = $term;
 			App::import('Core', 'Sanitize');
 			$term = Sanitize::escape($term);
-			$this->paginate['SearchIndex']['conditions'][] = "MATCH(data) AGAINST('$term' IN BOOLEAN MODE)";
-			$this->paginate['SearchIndex']['fields'] = "*, MATCH(data) AGAINST('$term' IN BOOLEAN MODE) AS score";
+			$this->paginate['SearchIndex']['conditions'][] = array(
+				'OR' => array(
+					"MATCH(SearchIndex.data) AGAINST('$term' IN BOOLEAN MODE)",
+					'SearchIndex.data LIKE' => "%{$term}%"));
+			$this->paginate['SearchIndex']['fields'] = "*, MATCH(SearchIndex.data) AGAINST('$term' IN BOOLEAN MODE) AS score";
 			$this->paginate['SearchIndex']['order'] = "score DESC";
 		}
 
