@@ -4,6 +4,7 @@ class BlogPostsController extends BlogAppController {
 	var $helpers = array('Blog.Textile');
 
 	function index() {
+		$this->paginate = array('order' => 'BlogPost.created DESC');
 		$blogPosts = $this->paginate();
 		$this->set(compact('blogPosts'));
 	}
