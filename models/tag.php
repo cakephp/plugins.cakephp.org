@@ -1,6 +1,7 @@
 <?php
 class Tag extends AppModel {
 	var $name = 'Tag';
+	var $actsAs = array('Tree');
 	var $hasAndBelongsToMany = array('Package');
 
 	function __construct($id = false, $table = null, $ds = null) {
@@ -15,12 +16,13 @@ class Tag extends AppModel {
 		);
 	}
 
-	function __findIndex($name = null) {
+	function __findView($name = null) {
 		if (!$name) return false;
-		return $this->find('first', array(
+
+		return $this->find('threaded', array(
 			'conditions' => array(
 				"{$this->alias}.{$this->displayField}" => $name),
-			'contain' => array('Package.id' => array('Maintainer.username'), 'Package.name', 'Package.description')));
+				'recursive' => 2));
 	}
 }
 ?>

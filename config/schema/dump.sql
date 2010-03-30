@@ -1595,6 +1595,11 @@ CREATE TABLE IF NOT EXISTS `tags` (
   `id` int(11) unsigned NOT NULL auto_increment,
   `name` char(40) NOT NULL,
   `packages_count` int(11) unsigned NOT NULL default '0',
+  `parent_id` int(11) default NULL,
+  `lft` int(11) NOT NULL,
+  `rght` int(11) NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `name` (`name`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=20 ;
