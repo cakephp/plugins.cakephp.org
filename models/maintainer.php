@@ -90,6 +90,15 @@ class Maintainer extends AppModel {
 				'Package')));
 	}
 
+	public function __findForgotPassword($email = null) {
+		if (!$email) return false;
+
+		return $this->find('first', array(
+			'conditions' => array(
+				"{$this->alias}.email" => $email,
+			'contain' => false)));
+	}
+
 	function __findMaintainerId($username = null) {
 		if (!$username) return false;
 
