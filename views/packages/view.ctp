@@ -58,3 +58,7 @@
 	</ul>
 </div>
 <?php endif; ?>
+<div class="related">
+	<h3><?php __('Recent Activity');?></h3>
+	<?php echo $this->element('rss_reader', array('url' => $package['Package']['homepage'] . '/commits/master.atom'))?>
+</div>
