@@ -543,7 +543,7 @@ class MiFileEngine extends FileEngine {
  * @access public
  */
 	function clear($check = null) {
-		if (!$this->__init) {
+		if (!$this->_init) {
 			return false;
 		}
 
