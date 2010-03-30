@@ -12,7 +12,7 @@ class Package extends AppModel {
 		'Taggable'
 	);
 	var $belongsTo = array('Maintainer');
-	var $hasMany = array('PackageTag');
+	var $hasMany = array('PackagesTag');
 	var $hasAndBelongsToMany = array('Tag');
 
 	function __construct($id = false, $table = null, $ds = null) {

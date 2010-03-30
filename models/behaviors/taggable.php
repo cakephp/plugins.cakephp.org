@@ -56,7 +56,7 @@ class TaggableBehavior extends ModelBehavior {
 		if ($created) {
 			$model->data[$model->alias][$model->primaryKey] = $model->id;
 		} else {
-			$model->PackagesTags->deleteAll(array("PackagesTags.package_id" => $model->data[$model->alias][$model->primaryKey]));
+			$model->PackagesTag->deleteAll(array("PackagesTag.package_id" => $model->data[$model->alias][$model->primaryKey]));
 		}
 
 		$records = $this->toSave;
@@ -70,7 +70,7 @@ class TaggableBehavior extends ModelBehavior {
 		if (count($this->tagIdsSubtract) > 0) {
 			$model->Tag->updateAll(array('Tag.packages_count' => 'Tag.packages_count-1'), array('Tag.id' => $this->tagIdsSubtract));
 		}
-		return $model->PackagesTags->saveAll($records);
+		return $model->PackagesTag->saveAll($records);
 	}
 
 	public function afterFind(&$model, $results) {
