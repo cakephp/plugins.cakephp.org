@@ -1,46 +1,32 @@
 <?php
 class Maintainer extends AppModel {
 	var $name = 'Maintainer';
+	var $displayField = 'username';
+	var $hasMany = array('Package');
+
 	function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
-		$this->order = '`Maintainer`.`username` asc';
+		$this->order = "`{$this->alias}`.`username` asc";
 		$this->validate = array(
 			'username' => array(
 				'required' => array(
 					'rule' => array('notempty'),
-					'message' => __('cannot be left empty', true)
+					'message' => __('cannot be left empty', true),
 				),
 				'alphanumeric' => array(
 					'rule' => array('alphanumeric'),
-					'message' => __('must only contain letters and numbers', true)
+					'message' => __('must contain only letters and numbers', true),
 				),
 			),
 			'twitter_username' => array(
 				'alphanumeric' => array(
 					'rule' => array('alphanumeric'),
-					'message' => __('must only contain letters and numbers', true),
+					'message' => __('must contain only letters and numbers', true),
 					'allowEmpty' => true,
 				),
 			),
 		);
 	}
-	//The Associations below have been created with all possible keys, those that are not needed can be removed
-
-	var $hasMany = array(
-		'Package' => array(
-			'className' => 'Package',
-			'foreignKey' => 'maintainer_id',
-			'dependent' => false,
-			'conditions' => '',
-			'fields' => '',
-			'order' => '',
-			'limit' => '',
-			'offset' => '',
-			'exclusive' => '',
-			'finderQuery' => '',
-			'counterQuery' => ''
-		)
-	);
 
 	function __beforeSaveChangePassword($data, $extra) {
 		if (!$data || !isset($data[$this->alias])) return false;
@@ -203,7 +189,14 @@ class Maintainer extends AppModel {
 
 	function changeActivationKey($id) {
 		$activationKey = md5(uniqid());
-		if (!$this->updateAll(array('activation_key', $activationKey), array("{$this->alias}.{$this->primaryKey}" => $id))) return false;
+		$data = array(
+			"{$this->alias}" => array(
+				"{$this->primaryKey}" => $id,
+				'activation_key' => $activationKey,
+			),
+		);
+
+		if (!$this->save($data, array('callbacks' => false))) return false;
 		return $activationKey;
 	}
 }

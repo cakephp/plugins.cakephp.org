@@ -6,66 +6,33 @@ class Package extends AppModel {
 			'summary' => 'description',
 			'url' => array(
 				'Package' => array('package' => 'name'), 
-				'Maintainer' => array('maintainer' => 'username'))),
-		'Taggable');
-	var $order = array('`Package`.`name` asc');
-	var $validate = array(
-		'maintainer_id' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
+				'Maintainer' => array('maintainer' => 'username')
 			),
 		),
-		'name' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
+		'Taggable'
+	);
+	var $belongsTo = array('Maintainer');
+	var $hasMany = array('PackageTag');
+	var $hasAndBelongsToMany = array('Tag');
+
+	function __construct($id = false, $table = null, $ds = null) {
+		parent::__construct($id, $table, $ds);
+		$this->order = "`{$this->alias}`.`{$this->displayField}` asc";
+		$this->validate = array(
+			'maintainer_id' => array(
+				'numeric' => array(
+					'rule' => array('numeric'),
+					'message' => __('must contain only numbers', true),
+				),
 			),
-		),
-	);
-	//The Associations below have been created with all possible keys, those that are not needed can be removed
-
-	var $belongsTo = array(
-		'Maintainer' => array(
-			'className' => 'Maintainer',
-			'foreignKey' => 'maintainer_id',
-			'conditions' => '',
-			'fields' => '',
-			'order' => ''
-		),
-	);
-
-	var $hasMany = array(
-		'PackagesTags' => array(
-			'className' => 'PackagesTags',
-			'foreignKey' => 'package_id',
-			'dependent' => false,
-			'conditions' => '',
-			'fields' => '',
-			'order' => '',
-			'limit' => '',
-			'offset' => '',
-			'exclusive' => '',
-			'finderQuery' => '',
-			'counterQuery' => ''
-		)
-	);
-
-	var $hasAndBelongsToMany = array(
-		'Tag' => array(
-			'className' => 'Tag',
-			'joinTable' => 'packages_tags',
-			'foreignKey' => 'package_id',
-			'associationForeignKey' => 'tag_id',
-			'unique' => true,
-			'conditions' => '',
-			'fields' => '',
-			'order' => '',
-			'limit' => '',
-			'offset' => '',
-			'finderQuery' => '',
-			'deleteQuery' => '',
-			'insertQuery' => ''
-		)
-	);
+			'name' => array(
+				'notempty' => array(
+					'rule' => array('notempty'),
+					'message' => __('cannot be left empty', true),
+				),
+			),
+		);
+	}
 
 	function __findAutocomplete($name = null) {
 		if (!$name) return false;
