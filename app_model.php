@@ -28,7 +28,7 @@ class AppModel extends Model {
 			}
 			return $return;
 		}
-		if (!empty($options['cache'])) {
+		if (is_array($options) && isset($options['cache']) && !empty($options['cache'])) {
 			unset($options['cache']);
 			App::import('Vendor', 'mi_cache');
 			return MiCache::data($this->alias, 'find', $type, $options);
@@ -51,7 +51,7 @@ class AppModel extends Model {
  * @author Matt Curry
  */
 	public function beforeFind($query) {
-		if (isset($query['paginate'])) {
+		if (is_array($query) && isset($query['paginate']) && !empty($query['paginate'])) {
 			$keys = array('fields', 'order', 'limit', 'page');
 			foreach($keys as $key) {
 				if($query[$key] === null || (is_array($query[$key]) && $query[$key][0] === null) ) {
