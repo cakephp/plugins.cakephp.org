@@ -1,5 +1,9 @@
 <?php $this->Html->h2($package['Package']['name']);?>
-<p><?php echo $package['Package']['description']; ?></p>
+<p style="text-align: center"><?php echo $package['Package']['description']; ?></p>
+
+<div class="full" style="float: right; background: white">
+	<?php echo $this->element('icons', array('package' => $package['Package'])); ?>
+</div>
 <dl><?php $i = 0; $class = ' class="altrow"';?>
 	<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Maintainer'); ?></dt>
 	<dd<?php if ($i++ % 2 == 0) echo $class;?>>

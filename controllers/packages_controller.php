@@ -9,7 +9,11 @@ class PackagesController extends AppController {
 		$this->set(compact('hot', 'latest', 'random'));
 	}
 
-	function index() {
+	function index($type = null) {
+		if ($type) {
+			$this->paginate['conditions'] = array("contains_{$type}" => true);
+		}
+
 		$packages = $this->paginate();
 		$this->set(compact('packages'));
 	}
