@@ -52,7 +52,7 @@ class UsersController extends AppController {
 			}
 
 			$activationKey = $this->Maintainer->changeActivationKey($maintainer['Maintainer']['id']);
-			$this->__mailSetup($maintainer['Maintainer']['email'], '[CakePackages] ' . __('Reset Password', true));
+			$this->_mailSetup($maintainer['Maintainer']['email'], '[CakePackages] ' . __('Reset Password', true));
 			$this->set(compact('maintainer', 'activationKey'));
 			try { 
 				if(!$this->SwiftMailer->send('forgot_password', '[CakePackages] ' . __('Reset Password', true))) { 

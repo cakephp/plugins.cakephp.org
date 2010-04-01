@@ -32,7 +32,7 @@ class AppController extends Controller {
 		}
 	}
 
-	function __mailSetup($to, $subject) {
+	function _mailSetup($to, $subject) {
 		$this->SwiftMailer->smtpType = 'tls';
 		$this->SwiftMailer->smtpHost = 'smtp.gmail.com';
 		$this->SwiftMailer->smtpPort = 465;
