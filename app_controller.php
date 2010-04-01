@@ -9,29 +9,6 @@ class AppController extends Controller {
 	);
 	var $helpers = array('Ajax', 'Form', 'Html', 'Resource', 'Session', 'Time');
 
-/**
- * Catches requests for class members that are unset or not visible to
- * the callee. We check to see if they're asking for a known model and,
- * if they are, will load it up for them.
- * @param string $variable
- * @return mixed
- * @access public
- */
-	function __get($variable) {
-		if (!isset($this->models)) {
-			// We don't want to get this array for every request, store it
-			$this->models = Configure::listObjects('model');
-		}
-
-		// Is it a model we're trying to access?
-		if (in_array($variable, $this->models)) {
-
-			// It is! Lets load it up and return the model...
-			$this->loadModel($variable);
-			return $this->$variable;
-		}
-	}
-
 	function _mailSetup($to, $subject) {
 		$this->SwiftMailer->smtpType = 'tls';
 		$this->SwiftMailer->smtpHost = 'smtp.gmail.com';
