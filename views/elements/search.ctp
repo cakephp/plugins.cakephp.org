@@ -1,4 +1,5 @@
 <?php echo $this->Form->create('SearchIndex', array(
+		'class' => 'center',
 		'url' => array(
 			'plugin' => 'searchable',
 			'controller' => 'search_indexes',

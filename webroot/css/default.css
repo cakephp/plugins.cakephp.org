@@ -24,6 +24,7 @@ a:hover{color: #367889;text-decoration:underline;}
 .content-makeup{padding:16px 20px;}
 .content-makeup-horizontal{padding:0 20px;}
 .content-makeup-vertical{padding:16px 0;}
+.center{text-align:center;}
 .disabled{color:#ccc;}
 .highlight{background-color: #FFFF00;}
 /* 960.gs*/

@@ -1,6 +1,6 @@
 <?php $this->Html->h2(__('Welcome to the Cake Package Repo', true)); ?>
 
-<p>Find existing CakePHP code quicker, iterate your code faster, and contribute to the community</p>
+<p class="center">Find existing CakePHP code quicker, iterate your code faster, and contribute to the community</p>
 
 <?php echo $this->element('search'); ?>
 <br />
