@@ -1,13 +1,13 @@
 <?php
 class GithubHelper extends AppHelper {
-	var $helpers = array('Html');
+	var $helpers = array('Clearance');
 
 	function existing($username = null, $name = null) {
 		if (!$username) return null;
 
 		$name = $this->name($name);
 
-		return $this->Html->link("{$username} {$name}", array(
+		return $this->Clearance->link("{$username} {$name}", array(
 			'controller' => 'github',
 			'action' => 'view',
 			$username));
@@ -19,7 +19,7 @@ class GithubHelper extends AppHelper {
 	}
 
 	function package($name, $maintainer) {
-		return $this->Html->link($name, array(
+		return $this->Clearance->link($name, array(
 			'controller' => 'packages',
 			'action' => 'view',
 			'package' => $name,
@@ -29,7 +29,7 @@ class GithubHelper extends AppHelper {
 	function url($url = null) {
 		if (!$url) return null;
 
-		return $this->Html->link(__('Url', true), $url);
+		return $this->Clearance->link(__('Url', true), $url);
 	}
 }
 ?>

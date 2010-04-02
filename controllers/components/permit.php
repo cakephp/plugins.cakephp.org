@@ -30,34 +30,7 @@ class PermitComponent extends Object {
 		}
 	}
 
-	function access($route, $rules = array(), $redirect = array()) {
-		$self =& PermitComponent::getInstance();
-		if (empty($rules)) return $self->routes;
-
-		$redirect = array_merge(array('redirect' => $this->redirect,
-									'message' => __('Access denied', true),
-									'trace' => false,
-									'element' => 'default',
-									'params' => array(),
-									'key' => 'flash'),
-									$redirect);
-
-		$self->routes[] = array(
-			'route' => $route,
-			'rules' => $rules,
-			'redirect' => $redirect['redirect'],
-			'message' => $redirect['message'],
-			'element' => $redirect['element'],
-			'params' => $redirect['params'],
-			'key' => $redirect['key'],
-			'trace' => $redirect['trace']
-		);
-
-		return $self->routes;
-	}
-
 	function parse(&$currentRoute, &$permit) {
-		$self =& PermitComponent::getInstance();
 		$route = $permit['route'];
 
 		$count = count($route);
@@ -173,5 +146,57 @@ class PermitComponent extends Object {
 		return $instance[0];
 	}
 
+}
+
+class Permit extends Object{
+
+	var $redirect = '/';
+	var $clearances = array();
+
+	function access($route, $rules = array(), $redirect = array()) {
+		$permitComponent =& PermitComponent::getInstance();
+		$self =& Permit::getInstance();
+		if (empty($rules)) return $permitComponent->routes;
+
+		$redirect = array_merge(array('redirect' => $this->redirect,
+									'message' => __('Access denied', true),
+									'trace' => false,
+									'element' => 'default',
+									'params' => array(),
+									'key' => 'flash'),
+									$redirect);
+
+		$newRoute = array(
+			'route' => $route,
+			'rules' => $rules,
+			'redirect' => $redirect['redirect'],
+			'message' => $redirect['message'],
+			'element' => $redirect['element'],
+			'params' => $redirect['params'],
+			'key' => $redirect['key'],
+			'trace' => $redirect['trace']
+		);
+
+		$permitComponent->routes[] = $newRoute;
+		$self->clearances[] = $newRoute;
+
+		return $permitComponent->routes;
+	}
+
+/**
+ * Gets a reference to the Permit object instance
+ *
+ * @return Permit Instance of the Permit.
+ * @access public
+ * @static
+ */
+	function &getInstance() {
+		static $instance = array();
+
+		if (!$instance) {
+			$instance[0] =& new Permit();
+		}
+		return $instance[0];
+	}
 }
 ?>

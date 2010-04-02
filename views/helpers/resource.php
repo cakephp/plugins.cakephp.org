@@ -1,9 +1,9 @@
 <?php
 class ResourceHelper extends AppHelper {
-	var $helpers = array('Html', 'Text');
+	var $helpers = array('Clearance', 'Text');
 
 	function package($name, $maintainer) {
-		return $this->Html->link($name, array(
+		return $this->Clearance->link($name, array(
 			'plugin' => null,
 			'controller' => 'packages',
 			'action' => 'view',
@@ -13,7 +13,7 @@ class ResourceHelper extends AppHelper {
 
 	function maintainer($name = null, $username = null) {
 		$name = (!empty($name)) ? $name : $username;
- 		return $this->Html->link($name, array(
+ 		return $this->Clearance->link($name, array(
 			'plugin' => null,
 			'controller' => 'maintainers',
 			'action' => 'view',
@@ -40,18 +40,18 @@ class ResourceHelper extends AppHelper {
 
 	function searchableHomepage($data) {
 		$data = json_decode($data, true);
-		return $this->Html->link(__('Homepage', true), $data['Package.homepage']);
+		return $this->Clearance->link(__('Homepage', true), $data['Package.homepage']);
 	}
 
 	function searchableEdit($data) {
 		$data = json_decode($data, true);
-		return $this->Html->link(__('Edit', true),
+		return $this->Clearance->link(__('Edit', true),
 			array('plugin' => false, 'controller' => 'packages', 'action' => 'edit', $data['Package.id']));
 	}
 
 	function searchableDelete($data) {
 		$data = json_decode($data, true);
-		return $this->Html->link(__('Delete', true),
+		return $this->Clearance->link(__('Delete', true),
 			array('plugin' => false, 'controller' => 'packages', 'action' => 'delete', $data['Package.id']),
 			 null, 
 			sprintf(__('Are you sure you want to delete # %s?', true), $data['Package.id']));
@@ -67,10 +67,10 @@ class ResourceHelper extends AppHelper {
 				$result .= ($i++ % 2 == 0) ? ' class="altrow"' : '';
 				$result .= '>';
 				if (Configure::read() != 0) {
-					$result .= $this->Html->link(__('Edit', true), array('action' => 'edit', $tag['Tag']['id'])) . ' | ';
-					$result .=  $this->Html->link(__('Delete', true), array('action' => 'delete', $tag['Tag']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $tag['Tag']['id'])) . ' | ';
+					$result .= $this->Clearance->link(__('Edit', true), array('action' => 'edit', $tag['Tag']['id'])) . ' | ';
+					$result .=  $this->Clearance->link(__('Delete', true), array('action' => 'delete', $tag['Tag']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $tag['Tag']['id'])) . ' | ';
 				}
-				$result .= $this->Html->link($tag['Tag']['name'], array('controller' => 'tags', 'action' => 'view', $tag['Tag']['name']));
+				$result .= $this->Clearance->link($tag['Tag']['name'], array('controller' => 'tags', 'action' => 'view', $tag['Tag']['name']));
 				if (isset($tag['children'])) {
 					$result .= $this->tagTree($tag['children']);
 				}

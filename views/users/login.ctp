@@ -13,7 +13,7 @@
 				'type' => 'checkbox')); ?>
 	<?php echo $this->Form->submit(__('Login', true),
 			array('div' => 'submit forgot')); ?>
-	<?php echo $this->Html->link(__('Forgot your password?', true),
+	<?php echo $this->Clearance->link(__('Forgot your password?', true),
 		array('plugin' => null, 'controller' => 'users', 'action' => 'forgot_password'),
 		array('class' => 'forgot-action')); ?>
 <?php echo $this->Form->end(); ?>

@@ -21,7 +21,7 @@
 	</dd>
 	<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Homepage'); ?></dt>
 	<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-		<?php echo $this->Html->link($package['Package']['homepage'], $package['Package']['homepage']); ?>
+		<?php echo $this->Clearance->link($package['Package']['homepage'], $package['Package']['homepage']); ?>
 		&nbsp;
 	</dd>
 </dl>
@@ -42,7 +42,7 @@
 			?>
 			<tr<?php echo $class;?>>
 				<td class="actions">
-					<?php echo $this->Html->link($tag['name'], array('controller' => 'tags', 'action' => 'index', $tag['name'])); ?>
+					<?php echo $this->Clearance->link($tag['name'], array('controller' => 'tags', 'action' => 'index', $tag['name'])); ?>
 				</td>
 			</tr>
 		<?php endforeach; ?>
@@ -53,8 +53,8 @@
 <div class="actions">
 	<h3><?php __('Actions'); ?></h3>
 	<ul>
-		<li><?php echo $this->Html->link(sprintf(__('Edit %s', true), __('Package', true)), array('action' => 'edit', $package['Package']['id'])); ?> </li>
-		<li><?php echo $this->Html->link(sprintf(__('Delete %s', true), __('Package', true)), array('action' => 'delete', $package['Package']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $package['Package']['id'])); ?> </li>
+		<li><?php echo $this->Clearance->link(sprintf(__('Edit %s', true), __('Package', true)), array('action' => 'edit', $package['Package']['id'])); ?> </li>
+		<li><?php echo $this->Clearance->link(sprintf(__('Delete %s', true), __('Package', true)), array('action' => 'delete', $package['Package']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $package['Package']['id'])); ?> </li>
 	</ul>
 </div>
 <?php endif; ?>

@@ -23,7 +23,7 @@
 					
 				</td>
 				<td>
-					<?php echo $this->Html->link($result['SearchIndex']['name'],
+					<?php echo $this->Clearance->link($result['SearchIndex']['name'],
 					 			json_decode($result['SearchIndex']['url'], true)); ?> by
 					<?php echo $this->Resource->searchableMaintainer($result['SearchIndex']['data'], array(
 						'primary' => 'Maintainer.name', 'fallback' => 'Maintainer.username')); ?><br />

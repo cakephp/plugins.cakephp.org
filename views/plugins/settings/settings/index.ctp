@@ -14,7 +14,7 @@
 	<?php endforeach; ?>
 	<?php echo $this->Form->submit(__('Change Settings', true),
 		array('div' => 'submit cancel')); ?> or 
-	<?php echo $this->Html->link(__('go to dashboard', true),
+	<?php echo $this->Clearance->link(__('go to dashboard', true),
 		array('controller' => 'users', 'action' => 'dashboard'),
 		array('class' => 'cancel-action')); ?>
 <?php echo $this->Form->end(); ?>

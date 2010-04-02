@@ -15,16 +15,16 @@
 		<div id="container" class="container_6">
 			<div id="header" class="grid_6 clearfix">
 				<h1>
-					<?php echo $this->Html->link(__('CakePackages', true), array(
+					<?php echo $this->Clearance->link(__('CakePackages', true), array(
 						'plugin' => null, 'controller' => 'packages', 'action' => 'home')); ?>
 				</h1>
 			</div>
 			<div id="navigation" class="grid_6 clearfix">
-				<?php echo $this->Html->link('packages', array(
+				<?php echo $this->Clearance->link('packages', array(
 					'plugin' => null, 'controller' => 'packages', 'action' => 'index')); ?> &#183; 
-				<?php echo $this->Html->link('maintainers', array(
+				<?php echo $this->Clearance->link('maintainers', array(
 					'plugin' => null, 'controller' => 'maintainers', 'action' => 'index')); ?> &#183; 
-				<?php echo $this->Html->link('search', 	array(
+				<?php echo $this->Clearance->link('search', 	array(
 					'plugin' => 'searchable', 'controller' => 'search_indexes', 'action' => 'index', 'type' => 'Package')); ?>
 			</div>
 			<div class="grid_6 alternate-content">
@@ -39,14 +39,14 @@
 			</div>
 			<div class="clear"></div>
 			<div id="footer" class="grid_6 clearfix">
-				<?php echo $this->Html->link('about', array(
+				<?php echo $this->Clearance->link('about', array(
 					'plugin' => null, 'controller' => 'pages', 'action' => 'display', 'about')); ?> &#183; 
-				<?php echo $this->Html->link('blog', array(
+				<?php echo $this->Clearance->link('blog', array(
 					'plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'index')); ?> &#183; 
-				<?php echo $this->Html->link('twitter', 'http://twitter.com/cakepackages'); ?> &#183; 
-				<?php echo $this->Html->link('github', 'http://github.com/josegonzalez/cakepackages'); ?>
+				<?php echo $this->Clearance->link('twitter', 'http://twitter.com/cakepackages'); ?> &#183; 
+				<?php echo $this->Clearance->link('github', 'http://github.com/josegonzalez/cakepackages'); ?>
 				<br />
-				<?php echo $this->Html->link(
+				<?php echo $this->Clearance->link(
 						$this->Html->image('cake.power.gif', array('alt'=> __('CakePHP: the rapid development php framework', true), 'border' => '0')),
 						'http://www.cakephp.org/',
 						array('target' => '_blank', 'escape' => false)

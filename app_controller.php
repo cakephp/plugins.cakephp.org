@@ -7,7 +7,7 @@ class AppController extends Controller {
 		'Session',
 		'SwiftMailer'
 	);
-	var $helpers = array('Ajax', 'Form', 'Html', 'Resource', 'Session', 'Time');
+	var $helpers = array('Ajax', 'Clearance', 'Form', 'Html', 'Resource', 'Session', 'Time');
 
 	function _mailSetup($to, $subject) {
 		$this->SwiftMailer->smtpType = 'tls';

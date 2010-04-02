@@ -2,7 +2,7 @@
 <dl><?php $i = 0; $class = ' class="altrow"';?>
 	<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Github Username'); ?></dt>
 	<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-		<?php echo $this->Html->link($maintainer['Maintainer']['username'], "http://github.com/{$maintainer['Maintainer']['username']}"); ?>
+		<?php echo $this->Clearance->link($maintainer['Maintainer']['username'], "http://github.com/{$maintainer['Maintainer']['username']}"); ?>
 		&nbsp;
 	</dd>
 	<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Alias'); ?></dt>
@@ -12,7 +12,7 @@
 	</dd>
 	<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Url'); ?></dt>
 	<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-		<?php echo $this->Html->link($maintainer['Maintainer']['url'], $maintainer['Maintainer']['url']); ?>
+		<?php echo $this->Clearance->link($maintainer['Maintainer']['url'], $maintainer['Maintainer']['url']); ?>
 		&nbsp;
 	</dd>
 	<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Twitter Username'); ?></dt>

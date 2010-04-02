@@ -17,12 +17,10 @@
 				<?php echo $this->Resource->description($package['Package']['description']); ?>&nbsp;
 			</td>
 			<td class="actions">
-				<?php echo $this->Html->link(__('Homepage', true), $package['Package']['homepage']); ?>
-				<?php if (Configure::read() != 0) : ?>
+				<?php echo $this->Clearance->link(__('Homepage', true), $package['Package']['homepage']); ?>
 					<br />
-					<?php echo $this->Html->link(__('Edit', true), array('action' => 'edit', $package['Package']['id'])); ?>
-					<?php echo $this->Html->link(__('Delete', true), array('action' => 'delete', $package['Package']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $package['Package']['id'])); ?>
-				<?php endif; ?>
+					<?php echo $this->Clearance->link(__('Edit', true), array('action' => 'edit', $package['Package']['id'])); ?>
+					<?php echo $this->Clearance->link(__('Delete', true), array('action' => 'delete', $package['Package']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $package['Package']['id'])); ?>
 			</td>
 		</tr>
 	<?php endforeach; ?>

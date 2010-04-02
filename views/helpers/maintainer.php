@@ -1,11 +1,11 @@
 <?php
 class MaintainerHelper extends AppHelper {
-	var $helpers = array('Html');
+	var $helpers = array('Clearance');
 
 	function delete($id, $name = null) {
 		$name = (!$name) ? $id : $name;
 
-		return $this->Html->link(
+		return $this->Clearance->link(
 			sprintf(__('Delete %s', true), __('Maintainer', true)), 
 			array(
 				'action' => 'delete',
@@ -18,7 +18,7 @@ class MaintainerHelper extends AppHelper {
 	function edit($id, $name = null) {
 		$name = (!$name) ? __('Maintainer', true) : $name;
 
-		return $this->Html->link(sprintf(__('Edit %s', true), $name), array(
+		return $this->Clearance->link(sprintf(__('Edit %s', true), $name), array(
 			'action' => 'edit',
 			$id));
 	}
