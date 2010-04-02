@@ -1,5 +1,6 @@
 <?php $this->Html->h2(__('Search Results', true)); ?>
 <?php echo $this->Form->create('SearchIndex', array(
+		'class' => 'center',
 		'url' => array(
 			'plugin' => 'searchable',
 			'controller' => 'search_indexes',
@@ -22,18 +23,18 @@
 					
 				</td>
 				<td>
-					<?php echo $this->Html->link ($result['SearchIndex']['name'],
+					<?php echo $this->Html->link($result['SearchIndex']['name'],
 					 			json_decode($result['SearchIndex']['url'], true)); ?> by
 					<?php echo $this->Resource->searchableMaintainer($result['SearchIndex']['data'], array(
 						'primary' => 'Maintainer.name', 'fallback' => 'Maintainer.username')); ?><br />
 					<?php if (!empty($result['SearchIndex']['summary'])): ?>
-						<?php echo $this->Text->highlight($result['SearchIndex']['summary'], $term); ?>
+						<?php echo $this->Resource->searchableHighlight($result['SearchIndex']['summary'], $term); ?>
 					<?php else : ?>
 						<?php echo $this->Searchable->snippets($result['SearchIndex']['data']); ?>
 					<?php endif; ?>
 					&nbsp;
 				</td>
-				<td>
+				<td class="actions">
 					<?php echo $this->Resource->searchableHomepage($result['SearchIndex']['data']); ?>
 					<?php if (Configure::read() != 0) : ?>
 						<br />

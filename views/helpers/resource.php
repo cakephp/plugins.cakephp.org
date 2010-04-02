@@ -1,6 +1,6 @@
 <?php
 class ResourceHelper extends AppHelper {
-	var $helpers = array('Html');
+	var $helpers = array('Html', 'Text');
 
 	function package($name, $maintainer) {
 		return $this->Html->link($name, array(
@@ -25,8 +25,12 @@ class ResourceHelper extends AppHelper {
 	}
 
 	function description($text) {
-		$text = ereg_replace("[[:alpha:]]+://[^<>[:space:]]+[[:alnum:]/]","<a href=\"\\0\">Link</a>", $text);  
+		$text = ereg_replace("[[:alpha:]]+://[^<>[:space:]]+[[:alnum:]/]","<a href=\"\\0\">link</a>", $text);
 		return $this->truncate($text, 100, array('html' => true));
+	}
+
+	function searchableHighlight($text, $term = null) {
+		return $this->Text->highlight($this->description($text), $term);
 	}
 
 	function searchableMaintainer($data, $options) {
@@ -41,12 +45,16 @@ class ResourceHelper extends AppHelper {
 
 	function searchableEdit($data) {
 		$data = json_decode($data, true);
-		return $this->Html->link(__('Edit', true), array('controller' => 'packages', 'action' => 'edit', $data['Package.id']));
+		return $this->Html->link(__('Edit', true),
+			array('plugin' => false, 'controller' => 'packages', 'action' => 'edit', $data['Package.id']));
 	}
 
 	function searchableDelete($data) {
 		$data = json_decode($data, true);
-		return $this->Html->link(__('Delete', true), array('controller' => 'packages', 'action' => 'delete', $data['Package.id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $data['Package.id']));
+		return $this->Html->link(__('Delete', true),
+			array('plugin' => false, 'controller' => 'packages', 'action' => 'delete', $data['Package.id']),
+			 null, 
+			sprintf(__('Are you sure you want to delete # %s?', true), $data['Package.id']));
 	}
 
 	function tagTree($data)	{
