@@ -1,4 +1,6 @@
-<?php $this->Html->h2($package['Package']['name']);?>
+<?php $this->Html->h2($package['Package']['name']); ?>
+<h4><?php echo $this->Clearance->link(sprintf(__('Edit %s', true), __('Package', true)), array('action' => 'edit', $package['Package']['id'])); ?></h4>
+<h4><?php echo $this->Clearance->link(sprintf(__('Delete %s', true), __('Package', true)), array('action' => 'delete', $package['Package']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $package['Package']['id'])); ?></h4>
 <p style="text-align: center"><?php echo $package['Package']['description']; ?></p>
 
 <div style="margin-left:auto;margin-right:auto">
@@ -49,15 +51,6 @@
 		</table>
 	<?php endif; ?>
 </div>
-<?php if (Configure::read() != 0) : ?>
-<div class="actions">
-	<h3><?php __('Actions'); ?></h3>
-	<ul>
-		<li><?php echo $this->Clearance->link(sprintf(__('Edit %s', true), __('Package', true)), array('action' => 'edit', $package['Package']['id'])); ?> </li>
-		<li><?php echo $this->Clearance->link(sprintf(__('Delete %s', true), __('Package', true)), array('action' => 'delete', $package['Package']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $package['Package']['id'])); ?> </li>
-	</ul>
-</div>
-<?php endif; ?>
 <div class="related">
 	<?php echo $this->element('rss_reader', array('url' => $package['Package']['homepage'] . '/commits/master.atom'))?>
 </div>

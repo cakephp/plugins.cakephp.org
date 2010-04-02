@@ -36,12 +36,8 @@
 				</td>
 				<td class="actions">
 					<?php echo $this->Resource->searchableHomepage($result['SearchIndex']['data']); ?>
-					<?php if (Configure::read() != 0) : ?>
-						<br />
-						<?php echo $this->Resource->searchableEdit($result['SearchIndex']['data']); ?>
-						<?php echo $this->Resource->searchableDelete($result['SearchIndex']['data']); ?>
-					<?php endif; ?>
-					
+					<?php echo $this->Resource->searchableEdit($result['SearchIndex']['data']); ?>
+					<?php echo $this->Resource->searchableDelete($result['SearchIndex']['data']); ?>
 				</td>
 			</tr>
 		<?php endforeach; ?>

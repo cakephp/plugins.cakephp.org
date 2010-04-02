@@ -1,4 +1,5 @@
 <?php $this->Html->h2($maintainer['Maintainer']['name'], $maintainer['Maintainer']['username']);?>
+<h4><?php echo $this->Maintainer->edit($maintainer['Maintainer']['id'], $maintainer['Maintainer']['username']); ?></h4>
 <dl><?php $i = 0; $class = ' class="altrow"';?>
 	<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Github Username'); ?></dt>
 	<dd<?php if ($i++ % 2 == 0) echo $class;?>>
@@ -36,14 +37,6 @@
 	</table>
 <?php endif; ?>
 </div>
-<?php if (Configure::read() != 0) : ?>
-<div class="actions">
-	<h3><?php __('Actions'); ?></h3>
-	<ul>
-		<li><?php echo $this->Maintainer->edit($maintainer['Maintainer']['id'], $maintainer['Maintainer']['username']); ?></li>
-	</ul>
-</div>
-<?php endif; ?>
 <div class="related">
 	<h3><?php __('Recent Activity');?></h3>
 	<?php echo $this->element('rss_reader', array('url' => 'http://github.com/' . $maintainer['Maintainer']['username'] . '.atom'))?>
