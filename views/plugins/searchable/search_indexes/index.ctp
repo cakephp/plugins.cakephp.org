@@ -50,6 +50,8 @@
 	<?php $params = array_map('urlencode', $params); ?>
 	<?php $params = array_map('urlencode', $params); ?>
 	<?php $this->Paginator->options(array('url' => $params)); ?>
+	<p><?php echo $this->Paginator->counter(array(
+		'format' => __('Page %page% of %pages%, showing packages %start% to %end%', true)));?></p>
 	<div class="paging">
 		<?php echo $this->Paginator->prev('<< '.__('previous', true), array(), null,
 				array('class' => 'disabled')); ?>
