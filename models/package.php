@@ -55,6 +55,18 @@ class Package extends AppModel {
 				'Maintainer', 'Tag')));
 	}
 
+	function __findIndex($params = array()) {
+		$options = array_merge(array(
+							'contain' => array('Maintainer'),
+							'limit' => 10,
+							'paginate' => true),
+							$params['paginate']);
+
+		if ($params['type']) $options['conditions'] = array("{$this->alias}.contains_{$type}" => true);
+
+		return $this->find('all', $options);
+	}
+
 	function __findLatest() {
 		return $this->find('all', array(
 			'contain' => array('Maintainer.id', 'Maintainer.username'),

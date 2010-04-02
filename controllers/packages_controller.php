@@ -1,7 +1,6 @@
 <?php
 class PackagesController extends AppController {
 	var $name = 'Packages';
-	var $paginate = array('contain' => array('Maintainer'), 'limit' => 10);
 
 	function home() {
 		$latest = $this->Package->find('latest');
@@ -10,9 +9,10 @@ class PackagesController extends AppController {
 	}
 
 	function index($type = null) {
-		if ($type) {
-			$this->paginate['conditions'] = array("contains_{$type}" => true);
-		}
+		$this->paginate = array_merge(
+			$this->Package->find('index', array(
+				'paginate' => $this->paginate,
+				'type' => $type)));
 
 		$packages = $this->paginate();
 		$this->set(compact('packages'));
