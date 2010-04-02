@@ -3,21 +3,14 @@ class ResourceHelper extends AppHelper {
 	var $helpers = array('Clearance', 'Text');
 
 	function package($name, $maintainer) {
-		return $this->Clearance->link($name, array(
-			'plugin' => null,
-			'controller' => 'packages',
-			'action' => 'view',
-			'package' => $name,
-			'maintainer' => $maintainer));
+		return $this->Clearance->link($name,
+			array('plugin' => null, 'controller' => 'packages', 'action' => 'view', 'package' => $name, 'maintainer' => $maintainer));
 	}
 
 	function maintainer($name = null, $username = null) {
 		$name = (!empty($name)) ? $name : $username;
- 		return $this->Clearance->link($name, array(
-			'plugin' => null,
-			'controller' => 'maintainers',
-			'action' => 'view',
-			$username));
+ 		return $this->Clearance->link($name,
+			array('plugin' => null, 'controller' => 'maintainers', 'action' => 'view', $username));
 	}
 
 	function repository($maintainer, $name) {
