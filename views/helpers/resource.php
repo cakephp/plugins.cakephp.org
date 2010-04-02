@@ -34,6 +34,21 @@ class ResourceHelper extends AppHelper {
 		return $this->maintainer($data[$options['primary']], $data[$options['fallback']]);
 	}
 
+	function searchableHomepage($data) {
+		$data = json_decode($data, true);
+		return $this->Html->link(__('Homepage', true), $data['Package.homepage']);
+	}
+
+	function searchableEdit($data) {
+		$data = json_decode($data, true);
+		return $this->Html->link(__('Edit', true), array('controller' => 'packages', 'action' => 'edit', $data['Package.id']));
+	}
+
+	function searchableDelete($data) {
+		$data = json_decode($data, true);
+		return $this->Html->link(__('Delete', true), array('controller' => 'packages', 'action' => 'delete', $data['Package.id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $data['Package.id']));
+	}
+
 	function tagTree($data)	{
 		$result = '';
 		if (!empty($data)) {

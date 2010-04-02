@@ -1,7 +1,7 @@
 <?php $this->Html->h2($package['Package']['name']);?>
 <p style="text-align: center"><?php echo $package['Package']['description']; ?></p>
 
-<div class="full" style="float: right; background: white">
+<div style="margin-left:auto;margin-right:auto">
 	<?php echo $this->element('icons', array('package' => $package['Package'])); ?>
 </div>
 <dl><?php $i = 0; $class = ' class="altrow"';?>

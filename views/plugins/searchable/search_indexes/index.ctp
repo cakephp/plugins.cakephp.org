@@ -10,11 +10,17 @@
 <?php if (!empty($results)): ?>
 	<table cellpadding="0" cellspacing="0">
 		<tr>
-				<th><?php echo $this->Paginator->sort('name');?></th>
+			<th><?php __('Contents')?></th>
+			<th><?php echo $this->Paginator->sort('name');?></th>
+			<th class="actions"><?php __('Actions');?></th>
 		</tr>
 		<?php $term = (isset($this->data['SearchIndex']['term'])) ? trim($this->data['SearchIndex']['term']) : '';?>
 		<?php $i = 0; foreach ($results as $result): ?>
 			<tr<?php echo ($i++ % 2 == 0) ? ' class="altrow"' : '';?>>
+				<td>
+					<?php echo $this->element('search_icons', array('package' => json_decode($result['SearchIndex']['data'], true)))?>
+					
+				</td>
 				<td>
 					<?php echo $this->Html->link ($result['SearchIndex']['name'],
 					 			json_decode($result['SearchIndex']['url'], true)); ?> by
@@ -26,6 +32,15 @@
 						<?php echo $this->Searchable->snippets($result['SearchIndex']['data']); ?>
 					<?php endif; ?>
 					&nbsp;
+				</td>
+				<td>
+					<?php echo $this->Resource->searchableHomepage($result['SearchIndex']['data']); ?>
+					<?php if (Configure::read() != 0) : ?>
+						<br />
+						<?php echo $this->Resource->searchableEdit($result['SearchIndex']['data']); ?>
+						<?php echo $this->Resource->searchableDelete($result['SearchIndex']['data']); ?>
+					<?php endif; ?>
+					
 				</td>
 			</tr>
 		<?php endforeach; ?>

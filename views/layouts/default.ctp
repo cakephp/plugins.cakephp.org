@@ -7,7 +7,7 @@
 			<?php __('CakePackages | the cakephp package repository'); ?>
 		</title>
 		<?php echo $this->Html->meta('icon'); ?>
-		<?php echo $this->Html->css(array('960', 'default')); ?>
+		<?php echo $this->Html->css(array('960', 'default', 'iconify')); ?>
 		<?php echo $this->Html->script(array('prototype', 'scriptaculous')); ?>
 		<?php echo $scripts_for_layout; ?>
 	</head>
