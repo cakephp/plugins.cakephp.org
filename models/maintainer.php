@@ -95,8 +95,8 @@ class Maintainer extends AppModel {
 
 		return $this->find('first', array(
 			'conditions' => array(
-				"{$this->alias}.email" => $email,
-			'contain' => false)));
+				"{$this->alias}.email" => $email),
+			'contain' => false));
 	}
 
 	function __findMaintainerId($username = null) {
