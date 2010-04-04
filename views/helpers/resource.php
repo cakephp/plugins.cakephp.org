@@ -1,6 +1,6 @@
 <?php
 class ResourceHelper extends AppHelper {
-	var $helpers = array('Clearance', 'Text');
+	var $helpers = array('Clearance', 'Html', 'Text');
 
 	function package($name, $maintainer) {
 		return $this->Html->link($name,
