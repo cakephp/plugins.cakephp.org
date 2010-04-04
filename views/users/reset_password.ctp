@@ -1,7 +1,9 @@
 <?php echo $this->Html->h2(__('Reset Password', true)); ?>
 <?php echo $this->Session->flash(); ?>
-<?php echo $this->Form->create('User');?>
-	<?php echo $this->Form->input('User.password',
+<?php echo $this->Form->create('User', array(
+	'url' => array(
+		'action' => 'reset_password', $this->params['pass']['0'], $this->params['pass']['1'])));?>
+	<?php echo $this->Form->input('Maintainer.password',
 			array('label' => __('New Password', true),
 				'placeholder' => __('your new password', true))); ?>
 	<?php echo $this->Form->submit(__('Change Password', true),

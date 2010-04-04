@@ -83,7 +83,7 @@ class UsersController extends AppController {
 		}
 
 		if (!empty($this->data) && isset($this->data['Maintainer']['password'])) {
-			if ($this->Maintainer->save($data, array('fields' => array('id', 'password', 'activation_key'), 'callback' => 'reset_password', 'user_id' => $maintainer['Maintainer']['id']))) {
+			if ($this->Maintainer->save($this->data, array('fields' => array('id', 'password', 'activation_key'), 'callback' => 'reset_password', 'user_id' => $maintainer['Maintainer']['id']))) {
 				$this->Session->setFlash(__('Your password has been reset successfully', true));
 				$this->redirect(array('controller' => 'users', 'action' => 'login'));
 			} else {
