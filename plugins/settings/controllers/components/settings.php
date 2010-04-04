@@ -8,11 +8,11 @@ class SettingsComponent extends Object {
  * @return void
  * @author Jose Diaz-Gonzalez
  */
-	private function initialize(&$controller) {
+	public function initialize(&$controller) {
 		$_settings = array();
 		if (($_settings = Cache::read('settings')) === false) {
 			$controller->loadModel('Settings.Setting');
-			$_settings = $this->Setting->find('all');
+			$_settings = $controller->Setting->find('all');
 			Cache::write('settings', $_settings);
 		}
 		foreach($_settings as $_setting) {
