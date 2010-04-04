@@ -14,10 +14,10 @@ foreach ($maintainers as $maintainer):
 ?>
 <tr<?php echo $class;?>>
 	<td>
-		<?php echo $this->Clearance->link($maintainer['Maintainer']['username'], array('action' => 'view', $maintainer['Maintainer']['username'])); ?>&nbsp;
+		<?php echo $this->Html->link($maintainer['Maintainer']['username'], array('action' => 'view', $maintainer['Maintainer']['username'])); ?>&nbsp;
 		<?php echo ($maintainer['Maintainer']['name'] != ' ' and $maintainer['Maintainer']['name'] != '') ? "({$maintainer['Maintainer']['name']})" : ''; ?>
 	</td>
-	<td><?php echo (!empty($maintainer['Maintainer']['url'])) ? $this->Clearance->link($maintainer['Maintainer']['url'], $maintainer['Maintainer']['url']) : ''; ?>&nbsp;</td>
+	<td><?php echo (!empty($maintainer['Maintainer']['url'])) ? $this->Html->link($maintainer['Maintainer']['url'], $maintainer['Maintainer']['url']) : ''; ?>&nbsp;</td>
 </tr>
 <?php endforeach; ?>
 </table>

@@ -17,7 +17,7 @@
 				<?php echo $this->Resource->description($package['Package']['description']); ?>&nbsp;
 			</td>
 			<td class="actions">
-				<?php echo $this->Clearance->link(__('Homepage', true), $package['Package']['homepage']); ?>
+				<?php echo $this->Html->link(__('Homepage', true), $package['Package']['homepage']); ?>
 				<?php echo $this->Clearance->link(__('Edit', true), array('action' => 'edit', $package['Package']['id'])); ?>
 				<?php echo $this->Clearance->link(__('Delete', true), array('action' => 'delete', $package['Package']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $package['Package']['id'])); ?>
 			</td>

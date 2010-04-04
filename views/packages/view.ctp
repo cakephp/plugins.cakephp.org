@@ -23,7 +23,7 @@
 	</dd>
 	<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Homepage'); ?></dt>
 	<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-		<?php echo $this->Clearance->link($package['Package']['homepage'], $package['Package']['homepage']); ?>
+		<?php echo $this->Html->link($package['Package']['homepage'], $package['Package']['homepage']); ?>
 		&nbsp;
 	</dd>
 </dl>
@@ -44,7 +44,7 @@
 			?>
 			<tr<?php echo $class;?>>
 				<td class="actions">
-					<?php echo $this->Clearance->link($tag['name'], array('controller' => 'tags', 'action' => 'index', $tag['name'])); ?>
+					<?php echo $this->Html->link($tag['name'], array('controller' => 'tags', 'action' => 'index', $tag['name'])); ?>
 				</td>
 			</tr>
 		<?php endforeach; ?>

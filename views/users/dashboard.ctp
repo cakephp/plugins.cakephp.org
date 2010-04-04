@@ -3,7 +3,7 @@
 <?php if (Authsome::get('group') == 'administrator') : ?>
 <ul class="actions">
 	<li>
-		<?php echo $this->Clearance->link(__('Moderation Index', true),
+		<?php echo $this->Html->link(__('Moderation Index', true),
 				array('controller' => 'administrations', 'action' => 'index')); ?>
 	</li>
 </ul>

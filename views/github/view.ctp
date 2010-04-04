@@ -47,7 +47,7 @@
 		<?php $i = 0; foreach ($packages as $package): ?>
 		<tr<?php echo ($i++ % 2 == 0) ? ' class="altrow"' : '';?>>
 			<td>
-				<?php echo $this->Clearance->link($package['name'], "http://github.com/{$user['User']['login']}/{$package['name']}"); ?>
+				<?php echo $this->Html->link($package['name'], "http://github.com/{$user['User']['login']}/{$package['name']}"); ?>
 			</td>
 			<td class="actions">
 				<?php echo $this->Clearance->link(__('Add', true), array(

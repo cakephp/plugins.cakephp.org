@@ -3,13 +3,13 @@ class ResourceHelper extends AppHelper {
 	var $helpers = array('Clearance', 'Text');
 
 	function package($name, $maintainer) {
-		return $this->Clearance->link($name,
+		return $this->Html->link($name,
 			array('plugin' => null, 'controller' => 'packages', 'action' => 'view', 'package' => $name, 'maintainer' => $maintainer));
 	}
 
 	function maintainer($name = null, $username = null) {
 		$name = (!empty($name)) ? $name : $username;
- 		return $this->Clearance->link($name,
+ 		return $this->Html->link($name,
 			array('plugin' => null, 'controller' => 'maintainers', 'action' => 'view', $username));
 	}
 
@@ -63,7 +63,7 @@ class ResourceHelper extends AppHelper {
 					$result .= $this->Clearance->link(__('Edit', true), array('action' => 'edit', $tag['Tag']['id'])) . ' | ';
 					$result .=  $this->Clearance->link(__('Delete', true), array('action' => 'delete', $tag['Tag']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $tag['Tag']['id'])) . ' | ';
 				}
-				$result .= $this->Clearance->link($tag['Tag']['name'], array('controller' => 'tags', 'action' => 'view', $tag['Tag']['name']));
+				$result .= $this->Html->link($tag['Tag']['name'], array('controller' => 'tags', 'action' => 'view', $tag['Tag']['name']));
 				if (isset($tag['children'])) {
 					$result .= $this->tagTree($tag['children']);
 				}
