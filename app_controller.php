@@ -3,10 +3,10 @@ class AppController extends Controller {
 	var $components = array(
 		'Authsome.Authsome' => array('model' => 'Maintainer'),
 		'Permit',
-		'DebugKit.Toolbar',
 		'Session',
 		'Settings.Settings',
 		'SwiftMailer'
+		'DebugKit.Toolbar',
 	);
 	var $helpers = array('Ajax', 'Clearance', 'Form', 'Html', 'Resource', 'Session', 'Time');
 
