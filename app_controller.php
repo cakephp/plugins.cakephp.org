@@ -5,6 +5,7 @@ class AppController extends Controller {
 		'Permit',
 		'DebugKit.Toolbar',
 		'Session',
+		'Settings.Settings',
 		'SwiftMailer'
 	);
 	var $helpers = array('Ajax', 'Clearance', 'Form', 'Html', 'Resource', 'Session', 'Time');
