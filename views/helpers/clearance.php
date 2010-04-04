@@ -9,8 +9,8 @@ class ClearanceHelper extends AppHelper {
 		if (!is_array($url)) return $this->Html->link($title, $url, $options, $confirmMessage);
 
 		if (!isset($url['plugin']) && !empty($url['plugin'])) $url['plugin'] = $this->params['plugin'];
-		if (!isset($url['controller']) && !empty($url['controller'])) $url['controller'] = $this->params['controller'];
-		if (!isset($url['action']) && !empty($url['action'])) $url['action'] = $this->params['action'];
+		if (!isset($url['controller']) && empty($url['controller'])) $url['controller'] = $this->params['controller'];
+		if (!isset($url['action']) && empty($url['action'])) $url['action'] = $this->params['action'];
 
 		if (empty($this->routes)) {
 			$permit =& Permit::getInstance();
