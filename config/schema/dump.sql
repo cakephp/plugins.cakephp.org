@@ -1589,10 +1589,10 @@ CREATE TABLE IF NOT EXISTS `settings` (
 --
 
 INSERT INTO `settings` (`id`, `key`, `value`, `title`, `description`, `input_type`) VALUES
-(1, 'RegistrationNotificationEmail', 'support@savant.be', 'Registration Notification Email', 'This is the email to which notification of new users is sent', 'text'),
+(1, 'RegistrationNotificationEmail', 'mail@example.com', 'Registration Notification Email', 'This is the email to which notification of new users is sent', 'text'),
 (2, 'ServerEmail', 'mail@example.com', 'Server Email', 'This is the email from which application emails are sent from', 'text'),
-(3, 'SmtpUsername', 'dreamsavant@gmail.com', 'SMTP Username', 'This is the email from which registration emails are sent', 'text'),
-(4, 'SmtpPassword', 'mission13111', 'SMTP Password', 'This is the password for the SMTP Username email', 'text');
+(3, 'SmtpUsername', 'mail@example.com', 'SMTP Username', 'This is the email from which registration emails are sent', 'text'),
+(4, 'SmtpPassword', 'password', 'SMTP Password', 'This is the password for the SMTP Username email', 'text');
 
 -- --------------------------------------------------------
 
