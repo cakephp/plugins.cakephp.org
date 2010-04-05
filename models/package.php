@@ -102,6 +102,7 @@ class Package extends AppModel {
 		if (!$maintainer_id) return false;
 
 		return $this->find('first', array(
+			'cache' => 3600,
 			'conditions' => array(
 				"{$this->alias}.{$this->displayField}" => $params['package'],
 				"{$this->alias}.maintainer_id" => $maintainer_id),

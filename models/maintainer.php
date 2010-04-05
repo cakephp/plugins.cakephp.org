@@ -124,6 +124,7 @@ class Maintainer extends AppModel {
 		if (!$username) return false;
 
 		return $this->find('first', array(
+			'cache' => 3600,
 			'conditions' => array(
 				"{$this->alias}.{$this->displayField}" => $username),
 			'contain' => array(
