@@ -19,6 +19,7 @@ class MailComponent extends Object {
 
 		if ($params['mailer'] == 'php') {
 			$headers  = "MIME-Version: 1.0\r\nContent-type: text/html; charset=iso-8859-1\r\n";
+			$headers .= 'From: ' . Configure::read('Settings.SiteTitle') . ' ' . Configure::read('Settings.ServerEmail') . "\r\n";
 			$viewClass = $this->controller->view;
 
 			if ($viewClass != 'View') {
