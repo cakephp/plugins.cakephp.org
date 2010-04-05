@@ -53,7 +53,7 @@ class MailComponent extends Object {
 			$this->controller->set($params['variables']);
 			return $this->SwiftMailer->send($params['element'], $params['subject']);
 		}
-		if ($params['mailer'] == 'swift') {
+		if ($params['mailer'] == 'email') {
 			$this->Email->reset();
 			$this->Email->delivery = 'smtp';
 			$this->Email->smtpOptions = array(
