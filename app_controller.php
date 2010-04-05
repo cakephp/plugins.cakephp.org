@@ -3,11 +3,11 @@ class AppController extends Controller {
 	var $components = array(
 		'Authsome.Authsome' => array('model' => 'Maintainer'),
 		'Mail',
-		'Permit',
+		'Sanction.Permit',
 		'Session',
 		'Settings.Settings',
 		'DebugKit.Toolbar',
 	);
-	var $helpers = array('Ajax', 'Clearance', 'Form', 'Html', 'Resource', 'Session', 'Time');
+	var $helpers = array('Ajax', 'Sanction.Clearance', 'Form', 'Html', 'Resource', 'Session', 'Time');
 }
 ?>
