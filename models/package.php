@@ -39,10 +39,10 @@ class Package extends AppModel {
 
 		return $this->find('all', array(
 			'cache' => true,
-			'conditions' => array('Package.name LIKE' => "%{$name}%"),
+			'conditions' => array("{$this->alias}.{$this->displayField} LIKE" => "%{$name}%"),
 			'contain' => false,
 			'limit' => 10,
-			'fields' => array('name')));
+			'fields' => array($this->primaryKey, $this->displayField)));
 	}
 
 	function __findEdit($id = null) {
@@ -69,8 +69,9 @@ class Package extends AppModel {
 
 	function __findLatest() {
 		return $this->find('all', array(
+			'cache' => 3600,
 			'contain' => array('Maintainer.id', 'Maintainer.username'),
-			'fields' => array('id', 'maintainer_id', 'name', 'created'),
+			'fields' => array($this->primaryKey, $this->displayField, 'maintainer_id', 'created'),
 			'limit' => 5,
 			'order' => "{$this->alias}.created DESC"));
 	}
@@ -79,15 +80,16 @@ class Package extends AppModel {
 		$id = $this->find('random_ids', 5);
 
 		return $this->find('all', array(
+			'cache' => 600,
 			'contain' => array('Maintainer.id', 'Maintainer.username'),
-			'fields' => array('id', 'maintainer_id', 'name', 'created'),
+			'fields' => array($this->primaryKey, $this->displayField, 'maintainer_id', 'created'),
 			'conditions' => array("{$this->alias}.{$this->primaryKey}" => $id)));
 	}
 
 	function __findRandomIds($limit = 5) {
 		App::import('Vendor', 'mi_cache');
 		return MiCache::data($this->alias, 'find', 'list', array(
-			'fields' => 'id',
+			'fields' => array($this->primaryKey),
 			'order' => 'RAND()',
 			'limit' => $limit));
 	}

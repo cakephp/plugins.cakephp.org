@@ -6,7 +6,7 @@ class Maintainer extends AppModel {
 
 	function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
-		$this->order = "`{$this->alias}`.`username` asc";
+		$this->order = "`{$this->alias}`.`{$this->displayField}` asc";
 		$this->validate = array(
 			'username' => array(
 				'required' => array(
@@ -44,14 +44,14 @@ class Maintainer extends AppModel {
 				return false;
 			}
 		}
-		$data[$this->alias][$this->primaryKey] = Authsome::get('id');
+		$data[$this->alias][$this->primaryKey] = Authsome::get($this->primaryKey);
 
 		$user = $this->find('first', array(
 			'conditions' => array(
-				"{$this->alias}.id" => Authsome::get('id'),
+				"{$this->alias}.{$this->primaryKey}" => Authsome::get($this->primaryKey),
 				"{$this->alias}.password" => $data[$this->alias]['password']),
 			'contain' => false,
-			'fields' => array('id')));
+			'fields' => array($this->primaryKey)));
 
 		if (!$user) return false;
 		return $data;
@@ -69,14 +69,14 @@ class Maintainer extends AppModel {
 
 		return $this->find('first', array(
 			'conditions' => array(
-				"{$this->alias}.username" => $username),
+				"{$this->alias}.{$this->displayField}" => $username),
 			'contain' => false));
 	}
 
 	function __findDashboard() {
 		return $this->find('first', array(
 			'conditions' => array(
-				"{$this->alias}.{$this->primaryKey}" => Authsome::get('id')),
+				"{$this->alias}.{$this->primaryKey}" => Authsome::get($this->primaryKey)),
 			'contain' => false));
 	}
 
@@ -85,7 +85,7 @@ class Maintainer extends AppModel {
 
 		return $this->find('first', array(
 			'conditions' => array(
-				"{$this->alias}.username" => $username),
+				"{$this->alias}.{$this->displayField}" => $username),
 			'contain' => array(
 				'Package')));
 	}
@@ -104,7 +104,7 @@ class Maintainer extends AppModel {
 
 		$maintainer = $this->find('first', array(
 			'conditions' => array(
-				"{$this->alias}.username" => $username),
+				"{$this->alias}.{$this->displayField}" => $username),
 			'contain' => false));
 
 		return ($maintainer) ? $maintainer[$this->alias][$this->primaryKey] : false;
@@ -115,7 +115,7 @@ class Maintainer extends AppModel {
 
 		return $this->find('first', array(
 			'conditions' => array(
-				"{$this->alias}.username" => $options['username'],
+				"{$this->alias}.{$this->displayField}" => $options['username'],
 				"{$this->alias}.activation_key" => $options['key'])));
 	}
 
@@ -125,7 +125,7 @@ class Maintainer extends AppModel {
 
 		return $this->find('first', array(
 			'conditions' => array(
-				"{$this->alias}.username" => $username),
+				"{$this->alias}.{$this->displayField}" => $username),
 			'contain' => array(
 				'Package')));
 	}
