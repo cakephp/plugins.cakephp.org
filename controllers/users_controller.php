@@ -58,14 +58,13 @@ class UsersController extends AppController {
 					'to' => $maintainer['Maintainer']['email'],
 					'subject' => '[CakePackages] ' . __('Reset Password', true),
 					'variables' => compact('maintainer', 'activationKey')))) {
-						$this->Session->setFlash(__('An error occurred', true));
-						$this->log("Error sending email");
+						$this->Session->setFlash(__('An email has been sent with instructions for resetting your password', true));
+						$this->redirect(array('controller' => 'users', 'action' => 'login'));
 				} else {
-					$this->Session->setFlash(__('An email has been sent with instructions for resetting your password', true));
-					$this->redirect(array('controller' => 'users', 'action' => 'login'));
+					$this->Session->setFlash(__('An error occurred', true));
+					$this->log("Error sending email");
 				}
-			}
-			catch(Exception $e) {
+			} catch (Exception $e) {
 				$this->Session->setFlash(__('An error occurred', true));
 				$this->log("Failed to send email: " . $e->getMessage());
 			}
