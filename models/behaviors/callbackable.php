@@ -13,7 +13,7 @@ class CallbackableBehavior extends ModelBehavior {
 	var $settings = array();
 
 /**
- * Initiate Moderatable Behavior
+ * Initiate Callbackable Behavior
  *
  * @param object $model
  * @param array $config
