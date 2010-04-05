@@ -52,12 +52,14 @@ class UsersController extends AppController {
 			}
 
 			$activationKey = $this->Maintainer->changeActivationKey($maintainer['Maintainer']['id']);
-			$this->_mailSetup($maintainer['Maintainer']['email'], '[CakePackages] ' . __('Reset Password', true));
-			$this->set(compact('maintainer', 'activationKey'));
-			try { 
-				if(!$this->SwiftMailer->send('forgot_password', '[CakePackages] ' . __('Reset Password', true))) { 
-					$this->Session->setFlash(__('An error occurred', true));
-					$this->log("Error sending email");
+
+			try {
+				if ($this->Mail->send(array(
+					'to' => $maintainer['Maintainer']['email'],
+					'subject' => '[CakePackages] ' . __('Reset Password', true),
+					'variables' => compact('maintainer', 'activationKey')))) {
+						$this->Session->setFlash(__('An error occurred', true));
+						$this->log("Error sending email");
 				} else {
 					$this->Session->setFlash(__('An email has been sent with instructions for resetting your password', true));
 					$this->redirect(array('controller' => 'users', 'action' => 'login'));
@@ -65,7 +67,7 @@ class UsersController extends AppController {
 			}
 			catch(Exception $e) {
 				$this->Session->setFlash(__('An error occurred', true));
-				$this->log("Failed to send email: ".$e->getMessage());
+				$this->log("Failed to send email: " . $e->getMessage());
 			}
 		}
 	}
