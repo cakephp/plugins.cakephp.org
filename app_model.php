@@ -29,8 +29,9 @@ class AppModel extends Model {
 			return $return;
 		}
 		if (is_array($options) && isset($options['cache']) && !empty($options['cache'])) {
-			unset($options['cache']);
 			App::import('Vendor', 'mi_cache');
+			if (is_int($options['cache'])) MiCache::config(array('duration' => $options['cache']));
+			unset($options['cache']);
 			return MiCache::data($this->alias, 'find', $type, $options);
 		}
 		if (!in_array($type, array_keys($this->_findMethods))) {
