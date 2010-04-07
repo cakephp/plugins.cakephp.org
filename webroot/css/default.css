@@ -91,7 +91,7 @@ form div.submit.forgot{display:inline;}
 .forgot-action a:hover{color:#f00;text-decoration:none;}
 
 /** Packages **/
-.package_list {text-align:center;}
+.package_list {text-align:center;width:180px !important;}
 .auto_complete {background-color :#fff;border:1px solid #888;margin:0px;padding:0px;position:absolute;width:250px;z-index:10;}
 .auto_complete ul {list-style-type: none;}
 .auto_complete ul li {margin-left: 2px;}
