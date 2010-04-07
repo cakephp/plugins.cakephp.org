@@ -1,6 +1,6 @@
 <?php
 class MaintainerHelper extends AppHelper {
-	var $helpers = array('Clearance');
+	var $helpers = array('Sanction.Clearance');
 
 	function delete($id, $name = null) {
 		$name = (!$name) ? $id : $name;

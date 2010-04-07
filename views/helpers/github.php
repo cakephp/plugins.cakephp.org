@@ -1,6 +1,6 @@
 <?php
 class GithubHelper extends AppHelper {
-	var $helpers = array('Clearance', 'Html');
+	var $helpers = array('Sanction.Clearance', 'Html');
 
 	function existing($username = null, $name = null) {
 		if (!$username) return null;
