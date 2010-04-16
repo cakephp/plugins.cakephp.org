@@ -2,6 +2,7 @@
 class AppModel extends Model {
 	var $actsAs = array('Callbackable', 'Containable', 'Lookupable');
 	var $recursive = -1;
+	var $behaviorData = null;
 	var $query = null;
 
 /**
