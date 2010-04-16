@@ -2,7 +2,7 @@
 class PermitComponent extends Object {
 
 	var $controller = null;
-    var $Session = null;
+	var $Session = null;
 
 	var $settings = array(
 		'path' => 'User.User'
@@ -26,7 +26,7 @@ class PermitComponent extends Object {
 
 		$self->controller = $controller;
 
-		$self->settings = array_merge($config, $self->settings);
+		$self->settings = array_merge($self->settings, $config);
 
 		foreach ($self->routes as $route) {
 			if (PermitComponent::parse($controller->params, $route)) {
@@ -73,7 +73,6 @@ class PermitComponent extends Object {
 
 		if (is_bool($route['rules']['auth'])) {
 			$is_authed = $self->Session->read("{$self->settings['path']}.group");
-
 			if ($route['rules']['auth'] == true && !$is_authed) {
 				$self->redirect($route);
 			}
