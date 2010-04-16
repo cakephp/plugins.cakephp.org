@@ -44,7 +44,7 @@
 			?>
 			<tr<?php echo $class;?>>
 				<td class="actions">
-					<?php echo $this->Html->link($tag['name'], array('controller' => 'tags', 'action' => 'index', $tag['name'])); ?>
+					<?php echo $this->Html->link($tag['name'], array('controller' => 'tags', 'action' => 'view', $tag['name'])); ?>
 				</td>
 			</tr>
 		<?php endforeach; ?>
