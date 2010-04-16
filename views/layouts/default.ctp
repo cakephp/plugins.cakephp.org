@@ -22,8 +22,6 @@
 			<div id="navigation" class="grid_6 clearfix">
 				<?php echo $this->Html->link('packages', array(
 					'plugin' => null, 'controller' => 'packages', 'action' => 'index')); ?> &#183; 
-				<?php echo $this->Html->link('tags', array(
-					'plugin' => null, 'controller' => 'tags', 'action' => 'index')); ?> &#183;
 				<?php echo $this->Html->link('maintainers', array(
 					'plugin' => null, 'controller' => 'maintainers', 'action' => 'index')); ?> &#183; 
 				<?php echo $this->Html->link('search', 	array(
