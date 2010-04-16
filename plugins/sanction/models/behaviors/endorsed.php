@@ -56,7 +56,7 @@ class Endorsed extends ModelBehavior {
 			'conditions' => array(
 				"{$model->alias}.{$settings['model_field']}" => $model->id),
 			'contain' => false));
-		return $rec[$model->alias][$settings['model_field']] == Authsome::get('authsome_field')
+		return $rec[$model->alias][$settings['model_field']] == Authsome::get('authsome_field');
 	}
 
 }
