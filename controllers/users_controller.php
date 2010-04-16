@@ -56,6 +56,7 @@ class UsersController extends AppController {
 			try {
 				if ($this->Mail->send(array(
 					'to' => $maintainer['Maintainer']['email'],
+					'mailer' => 'swift',
 					'subject' => '[CakePackages] ' . __('Reset Password', true),
 					'variables' => compact('maintainer', 'activationKey')))) {
 						$this->Session->setFlash(__('An email has been sent with instructions for resetting your password', true));
