@@ -62,7 +62,7 @@ class Package extends AppModel {
 							'paginate' => true),
 							$params['paginate']);
 
-		if ($params['type']) $options['conditions'] = array("{$this->alias}.contains_{$type}" => true);
+		if ($params['type']) $options['conditions'] = array("{$this->alias}.contains_{$params['type']}" => true);
 
 		return $this->find('all', $options);
 	}
