@@ -1,8 +1,12 @@
 <?php
 class PermitComponent extends Object {
 
-	var $sessionString = 'Maintainer.Maintainer';
 	var $controller = null;
+    var $Session = null;
+
+	var $settings = array(
+		'path' => 'User.User'
+	);
 
 /**
  * Array of routes connected with PermitComponent::access()
@@ -14,13 +18,15 @@ class PermitComponent extends Object {
 
 	var $redirect = '/';
 
-	function initialize(&$controller) {
+	function initialize(&$controller, $config = array()) {
 		$self =& PermitComponent::getInstance();
 		if (!include(CONFIGS . DS . 'permit.php')) {
 			trigger_error("File containing permissions not found.  It should be located at " . APP_PATH . DS . 'config' . DS . "permit.php", E_USER_ERROR);
 		}
 
 		$self->controller = $controller;
+
+		$self->settings = array_merge($config, $self->settings);
 
 		foreach ($self->routes as $route) {
 			if (PermitComponent::parse($controller->params, $route)) {
@@ -35,28 +41,22 @@ class PermitComponent extends Object {
 
 		$count = count($route);
 		if ($count == 0) return false;
-		if ($permit['trace'] && Configure::read()) debug($count);
 
 		foreach($route as $key => $value) {
-			if ($permit['trace'] && Configure::read()) debug($key);
 
 			if (isset($currentRoute[$key])) {
-				if ($permit['trace'] && Configure::read()) debug($key);
 				$values = (is_array($value)) ?  $value : array($value);
 				foreach ($values as $k => $v) {
 					if ($currentRoute[$key] == $v) {
-						if ($permit['trace'] && Configure::read()) debug($v);
 						$count--;
 					}
 				}
 			}
 		}
-		if ($permit['trace'] && Configure::read()) debug($count);
 		return ($count == 0);
 	}
 
 	function execute($route) {
-		if ($route['trace'] && Configure::read()) debug($route);
 		$self =& PermitComponent::getInstance();
 		$self = $self->initializeSessionComponent($self);
 
@@ -72,7 +72,7 @@ class PermitComponent extends Object {
 		if (!isset($route['rules']['auth'])) return;
 
 		if (is_bool($route['rules']['auth'])) {
-			$is_authed = $self->Session->read("{$self->sessionString}.group");
+			$is_authed = $self->Session->read("{$self->settings['path']}.group");
 
 			if ($route['rules']['auth'] == true && !$is_authed) {
 				$self->redirect($route);
@@ -86,7 +86,7 @@ class PermitComponent extends Object {
 		$count = count($route['rules']['auth']);
 		if ($count == 0) return;
 
-		if (($user = $self->Session->read("{$self->sessionString}")) == false) {
+		if (($user = $self->Session->read("{$self->settings['path']}")) == false) {
 			$self->redirect($route);
 		}
 
@@ -105,16 +105,17 @@ class PermitComponent extends Object {
 		$self =& PermitComponent::getInstance();
 
 		if ($route['message'] != null) {
-			$session = new CakeSession();
 			$message = $route['message'];
 			$element = $route['element'];
 			$params = $route['params'];
-			$session->write("Message.{$route['key']}", compact('message', 'element', 'params'));
+			$self->Session->write("Message.{$route['key']}", compact('message', 'element', 'params'));
 		}
 		$self->controller->redirect($route['redirect']);
 	}
 
 	function initializeSessionComponent(&$self) {
+		if ($self->Session != null) return $self;
+
 		App::import('Component', 'Session');
 		$componentClass = 'SessionComponent';
 		$self->Session =& new $componentClass(null);
