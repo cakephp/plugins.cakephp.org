@@ -1,8 +1,8 @@
 <?php
 class SettingsController extends SettingsAppController{
-	public $name = 'Settings';
+	var $name = 'Settings';
 
-	public function index() {
+	function index() {
 		if (!empty($this->data)) {
 			if ($this->Setting->saveAll($this->data['Setting'], array('validate' => 'first'))) {
 				$this->Session->setFlash(__('The settings has been saved', true));

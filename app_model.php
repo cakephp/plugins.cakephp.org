@@ -52,7 +52,7 @@ class AppModel extends Model {
  * @return boolean
  * @author Matt Curry
  */
-	public function beforeFind($query) {
+	function beforeFind($query) {
 		if (is_array($query) && isset($query['paginate']) && !empty($query['paginate'])) {
 			$keys = array('fields', 'order', 'limit', 'page');
 			foreach($keys as $key) {
@@ -80,7 +80,7 @@ class AppModel extends Model {
  * @access public
  * @author Jose Diaz-Gonzalez
  **/
-	public function save($data = null, $validate = true, $fieldList = array(), $extra = array()) {
+	function save($data = null, $validate = true, $fieldList = array(), $extra = array()) {
 		$data = (!$data) ? $this->data : $data;
 		if (!$data) return false;
 
@@ -119,7 +119,7 @@ class AppModel extends Model {
  * @return integer
  * @author Jose Diaz-Gonzalez
  */
-	public function paginateCount($conditions = null, $recursive = 0, $extra = array()) {
+	function paginateCount($conditions = null, $recursive = 0, $extra = array()) {
 		$conditions = compact('conditions');
 		if ($recursive != $this->recursive) {
 			$conditions['recursive'] = $recursive;
@@ -134,7 +134,7 @@ class AppModel extends Model {
  * @return boolean True on success, false on Model::id is not set or failure
  * @author Jose Diaz-Gonzalez
  **/
-	public function update($fields, $conditions = array()) {
+	function update($fields, $conditions = array()) {
 		if (!$this->id) return false;
 
 		$conditions = array_merge(array("{$this->alias}.$this->primaryKey" => $this->id), $conditions);
@@ -181,7 +181,7 @@ class AppModel extends Model {
 		}
 	}
 
-	public function __findDistinct($fields = array()) {
+	function __findDistinct($fields = array()) {
 		$fields = (is_array($fields)) ? $fields : array($fields);
 
 		foreach ($fields as &$field) {

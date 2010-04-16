@@ -7,7 +7,7 @@ class SearchableBehavior extends ModelBehavior {
  * @var array
  * @access protected
  */
-	protected $_defaults = array(
+	var $_defaults = array(
 		'fields' => null,
 		'scope' => array(),
 		'name' => null,
@@ -23,7 +23,7 @@ class SearchableBehavior extends ModelBehavior {
  * @var array
  * @access protected
  */
-	protected $_records;
+	var $_records;
 
 /**
  * Initiate SearchableBehavior
@@ -211,7 +211,7 @@ class SearchableBehavior extends ModelBehavior {
 /**
  * Enter description here...
  */
-	protected function _setUrl(&$model, $data) {
+	function _setUrl(&$model, $data) {
 		$url = $this->settings[$model->alias]['url'];
 		$nonStandardUrlComponents = array_diff_key($url, array_flip(array('plugin', 'controller', 'action')));
 
@@ -245,7 +245,7 @@ class SearchableBehavior extends ModelBehavior {
  * @param AppModel $model
  * @param string $field
  */
-	protected function _setExtra(&$model, $field) {
+	function _setExtra(&$model, $field) {
 		// If the current model is configured to have this field, just go back
 		if (!$this->settings[$model->alias][$field]) {
 			return;
@@ -269,7 +269,7 @@ class SearchableBehavior extends ModelBehavior {
  * @param AppModel $model
  * @param boolean $created
  */
-	protected function _setScope(&$model, $created) {
+	function _setScope(&$model, $created) {
 		// If the Searchable model doesn't have scope, just go back.
 		if (empty($this->settings[$model->alias]['scope'])) {
 			return;
@@ -298,7 +298,7 @@ class SearchableBehavior extends ModelBehavior {
  * @param AppModel $model
  * @return array Array of <Model>.<field> => <value>
  */
-	protected function _getSearchableData(&$model) {
+	function _getSearchableData(&$model) {
 		$data = array();
 
 		// Iterate through the fields configured to be used in the Search Index data
@@ -345,7 +345,7 @@ class SearchableBehavior extends ModelBehavior {
  * @param AppModel $model
  * @param boolean $created
  */
-	protected function _initialiseSearchIndexData(&$model, $created) {
+	function _initialiseSearchIndexData(&$model, $created) {
 		$this->SearchIndex->create();
 		if (!$created) {
 			// Try and find an existing Search index record for this model record
@@ -384,7 +384,7 @@ class SearchableBehavior extends ModelBehavior {
  * @param string $value
  * @return string
  */
-	protected function _cleanValue($value) {
+	function _cleanValue($value) {
 		$value = strip_tags($value);
 		$value = trim($value);
 		$value = html_entity_decode($value, ENT_COMPAT, 'UTF-8');

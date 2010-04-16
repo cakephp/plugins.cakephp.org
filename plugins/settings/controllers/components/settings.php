@@ -8,7 +8,7 @@ class SettingsComponent extends Object {
  * @return void
  * @author Jose Diaz-Gonzalez
  */
-	public function initialize(&$controller) {
+	function initialize(&$controller) {
 		$_settings = array();
 		if (($_settings = Cache::read('settings')) === false) {
 			$controller->loadModel('Settings.Setting');

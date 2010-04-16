@@ -1,11 +1,11 @@
 <?php
 class TaggableBehavior extends ModelBehavior {
 
-	private $toSave = array();
-	private $tagIdsAdd = array();
-	private $tagIdsSubtract = array();
+	var $toSave = array();
+	var $tagIdsAdd = array();
+	var $tagIdsSubtract = array();
 
-	public function beforeSave(&$model) {
+	function beforeSave(&$model) {
 		if (isset($model->data[$model->alias]['tags']) and !empty($model->data[$model->alias]['tags'])) {
 			$tags = explode(" ", $model->data[$model->alias]['tags']);
 			$i = 1;
@@ -52,7 +52,7 @@ class TaggableBehavior extends ModelBehavior {
 		return true;
 	}
 
-	public function afterSave(&$model, $created) {
+	function afterSave(&$model, $created) {
 		if ($created) {
 			$model->data[$model->alias][$model->primaryKey] = $model->id;
 		} else {
@@ -73,7 +73,7 @@ class TaggableBehavior extends ModelBehavior {
 		return $model->PackagesTag->saveAll($records);
 	}
 
-	public function afterFind(&$model, $results) {
+	function afterFind(&$model, $results) {
 		foreach ($results as &$result) {
 			if (isset($result['Tag'])) {
 				$count = count($result['Tag']) - 1;

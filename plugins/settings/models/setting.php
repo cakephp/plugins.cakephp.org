@@ -1,6 +1,6 @@
 <?php
 class Setting extends SettingsAppModel {
-	public $name = 'Setting';
+	var $name = 'Setting';
 
 	function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);

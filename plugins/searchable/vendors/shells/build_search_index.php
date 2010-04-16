@@ -21,14 +21,14 @@ class BuildSearchIndexShell extends Shell {
  *
  * @var string
  */
-  protected $_useDbConfig;
+  var $_useDbConfig;
 
 /**
  * Array of available models that have the Searchable Behavior attached
  *
  * @var array
  */
-  protected $_availableModelnames = array();
+  var $_availableModelnames = array();
 
 /**
  * The main function, executed automatically when running the shell
@@ -106,14 +106,14 @@ class BuildSearchIndexShell extends Shell {
 /**
  * Sets only or selected db config
  */
-	protected function _setDbConfig() {
+	function _setDbConfig() {
 		$this->_useDbConfig = (!empty($this->params['connection'])) ? $this->params['connection'] : 'default';
 	}
 
 /**
  * Identifies all models that exist and have Searchable Beahavior attached
  */
-	protected function _setAvailableModels() {
+	function _setAvailableModels() {
 		// Initialise paths array with paths to app/models
 		$paths = array(MODELS);
 
@@ -158,7 +158,7 @@ class BuildSearchIndexShell extends Shell {
  *
  * @return array
  */
-	protected function _interactive() {
+	function _interactive() {
 		$this->out(__('Possible Models based on your current database:', true));
 
 		// List available mode names with numbers for easy selection
@@ -191,7 +191,7 @@ class BuildSearchIndexShell extends Shell {
  * @param string $enteredModel
  * @return array Array of model names
  */
-	protected function _determineModelnames($enteredModel) {
+	function _determineModelnames($enteredModel) {
 		// If they want all available models return them all
 		if (strtolower($enteredModel) == 'a' || strtolower($enteredModel) == 'all') {
 			return $this->_availableModelnames;
@@ -230,7 +230,7 @@ class BuildSearchIndexShell extends Shell {
 /**
  * Displays help contents
  */
-	public function help() {
+	function help() {
 		$this->out('CakePHP Build Search Index Shell:');
 		$this->hr();
 		$this->out('Rebuilds the search index for selected models');

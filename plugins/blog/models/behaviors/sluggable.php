@@ -365,7 +365,7 @@ class SluggableBehavior extends ModelBehavior {
 	 * @param array $settings Settings to use (looks for 'separator' and 'length')
 	 * @return string Slug for given string
 	 */
-	protected function _slug($string, $settings) {
+	function _slug($string, $settings) {
 		if (!empty($settings['ignore'])) {
 			$words = array();
 			foreach((array) $settings['ignore'] as $word) {

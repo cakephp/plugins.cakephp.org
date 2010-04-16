@@ -1,7 +1,7 @@
 <?php
 class AppError extends ErrorHandler {
 
-	public function __construct($method, $messages) {
+	function __construct($method, $messages) {
 		App::import('Core', 'Sanitize');
 		static $__previousError = null;
 
