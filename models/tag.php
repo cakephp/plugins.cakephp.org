@@ -19,7 +19,7 @@ class Tag extends AppModel {
 	function __findView($name = null) {
 		if (!$name) return false;
 
-		return $this->find('threaded', array(
+		return $this->find('first', array(
 			'conditions' => array(
 				"{$this->alias}.{$this->displayField}" => $name),
 				'recursive' => 2));

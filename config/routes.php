@@ -38,7 +38,7 @@
 	Router::connect('/package/:maintainer/:package', array('controller' => 'packages', 'action' => 'view'));
 	Router::connect('/maintainer/edit/*', array('controller' => 'maintainers', 'action' => 'edit'));
 	Router::connect('/maintainer/*', array('controller' => 'maintainers', 'action' => 'view'));
-	Router::connect('/tag/*', array('controller' => 'tags', 'action' => 'index'));
+	Router::connect('/tag/*', array('controller' => 'tags', 'action' => 'view'));
 	Router::connect('/lost/*', array('controller' => 'lost', 'action' => 'index'));
 	Router::connect('/package_search/page::page/*', array('plugin' => 'searchable', 'controller' => 'search_indexes', 'action' => 'index', 'type' => 'Package'));
 	Router::connect('/package_search/:term/*', array('plugin' => 'searchable', 'controller' => 'search_indexes', 'action' => 'index', 'type' => 'Package'));
