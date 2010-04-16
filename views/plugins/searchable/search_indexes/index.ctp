@@ -1,13 +1,5 @@
 <?php $this->Html->h2(__('Search Results', true)); ?>
-<?php echo $this->Form->create('SearchIndex', array(
-		'class' => 'center',
-		'url' => array(
-			'plugin' => 'searchable',
-			'controller' => 'search_indexes',
-			'action' => 'index',
-			'type' => 'Package'))); ?>
-	<?php echo $this->Form->input('term', array('label' => 'Search')); ?>
-<?php echo $this->Form->end('View Search Results'); ?>
+<?php echo $this->element('search'); ?>
 <?php if (!empty($results)): ?>
 	<table cellpadding="0" cellspacing="0">
 		<tr>
