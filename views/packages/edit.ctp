@@ -8,5 +8,13 @@
 		echo $this->Form->input('Package.homepage');
 		echo $this->Form->input('Package.description');
 		echo $this->Form->input('Package.tags');
+		$icons = array(
+			'be' => 'behavior',		'cp' => 'component',	'h' => 'helper',
+			'm' => 'model',			'c' => 'controller',	'v' => 'view',
+			'ds' => 'datasource',	's' => 'shell',			't' => 'theme',
+		);
+		foreach ($icons as $i) {
+			echo $this->Form->input("Package.contains_{$i}");
+		}
 	?>
 <?php echo $this->Form->end(__('Submit', true)); ?>
