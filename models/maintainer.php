@@ -28,6 +28,21 @@ class Maintainer extends AppModel {
 		);
 	}
 
+/**
+ * Ensure the uri is valid if it's been specified
+ *
+ * @return void
+ * @access public
+ */
+	function beforeSave() {
+		if (!empty($this->data[$this->alias]['url'])) {
+			if (!strpos($this->data[$this->alias]['url'], '://')) {
+				$this->data[$this->alias]['url'] = 'http://' . $this->data[$this->alias]['url'];
+			}
+		}
+		return true;
+	}
+
 	function __beforeSaveChangePassword($data, $extra) {
 		if (!$data || !isset($data[$this->alias])) return false;
 
