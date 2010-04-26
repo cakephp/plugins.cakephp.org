@@ -27,7 +27,7 @@ class PackageShell extends Shell {
  */
 	function __run() {
 
-		$validCommands = array('c', 'd', 'f', 'r', 's', 'u', 'q');
+		$validCommands = array('c', 'd', 'f', 'r', 'm', 's', 'u', 'q');
 
 		while (empty($this->command)) {
 			$this->out("Package Shell");
@@ -35,6 +35,7 @@ class PackageShell extends Shell {
 			$this->out("[C]heck Characteristics");
 			$this->out("[D]ownload Repositories");
 			$this->out("[F]ix Repository Urls");
+			$this->out("[M]aintainer Resave");
 			$this->out("[R]eset Characteristics");
 			$this->out("[S]specific User/Repo");
 			$this->out("[U]pdate Repositories");
@@ -56,6 +57,9 @@ class PackageShell extends Shell {
 				break;
 			case 'f' :
 				$this->fix_repository_urls();
+				break;
+			case 'm' :
+				$this->maintainer_resave();
 				break;
 			case 'r' :
 				$this->reset_characteristics();
@@ -99,6 +103,19 @@ class PackageShell extends Shell {
 			$this->out(shell_exec("cd {$repo_dir} ; git clone {$repo_url} {$clone_path}"));
 		}
 		$this->out(sprintf(__('Downloaded %s repositories', true), $p_count));
+	}
+
+	function maintainer_resave() {
+		$p_count = 0;
+		$maintainers = $this->Package->Maintainer->find('all', array(
+			'contain' => false,
+			'order' => array('Maintainer.username ASC')));
+		foreach ($maintainers as $maintainer) {
+			$p_count++;
+			$this->out(sprintf(__('[Maintainer] %s', true), $maintainer['Maintainer']['username']));
+			$this->Package->Maintainer->save($maintainer);
+		}
+		$this->out(sprintf(__('Resaved %s maintainers', true), $p_count));
 	}
 
 	function update_repositories() {
