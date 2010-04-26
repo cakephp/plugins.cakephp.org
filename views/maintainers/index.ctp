@@ -17,7 +17,16 @@ foreach ($maintainers as $maintainer):
 		<?php echo $this->Html->link($maintainer['Maintainer']['username'], array('action' => 'view', $maintainer['Maintainer']['username'])); ?>&nbsp;
 		<?php echo ($maintainer['Maintainer']['name'] != ' ' and $maintainer['Maintainer']['name'] != '') ? "({$maintainer['Maintainer']['name']})" : ''; ?>
 	</td>
-	<td><?php echo (!empty($maintainer['Maintainer']['url'])) ? $this->Html->link($maintainer['Maintainer']['url'], $maintainer['Maintainer']['url']) : ''; ?>&nbsp;</td>
+	<td><?php
+	if (!empty($maintainer['Maintainer']['url'])) {
+		if (!strpos($maintainer['Maintainer']['url'], '://')) {
+			$maintainer['Maintainer']['url'] = 'http://' . $maintainer['Maintainer']['url'];
+		}
+		echo  $this->Html->link($maintainer['Maintainer']['url'], $maintainer['Maintainer']['url']);
+	} else {
+		echo '&nbsp;';
+	}
+	?>
 </tr>
 <?php endforeach; ?>
 </table>
