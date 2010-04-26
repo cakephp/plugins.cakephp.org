@@ -9,7 +9,6 @@ class Package extends AppModel {
 				'Maintainer' => array('maintainer' => 'username')
 			),
 		),
-		'Taggable'
 	);
 	var $belongsTo = array('Maintainer');
 	var $hasMany = array('PackagesTag');

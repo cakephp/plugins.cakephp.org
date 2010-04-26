@@ -202,7 +202,6 @@ class PackageShell extends Shell {
 			$package['Package'][$characteristic] = 1;
 		}
 		unset($package['Package']['tags']);
-		$this->Package->Behaviors->detach('Taggable');
 		return $this->Package->save($package);
 	}
 
