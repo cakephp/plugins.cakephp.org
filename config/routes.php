@@ -26,7 +26,10 @@
  * its action called 'display', and we pass a param to select the view file
  * to use (in this case, /app/views/pages/home.ctp)...
  */
+	Router::parseExtensions('json', 'xml');
+
 	Router::connect('/', array('controller' => 'packages', 'action' => 'home'));
+	Router::connect('/home', array('controller' => 'packages', 'action' => 'home'));
 	Router::connect('/posts/*', array('plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'index'));
 	Router::connect('/post/*', array('plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'view'));
 	Router::connect('/login', array('controller' => 'users', 'action' => 'login'));
