@@ -5,7 +5,7 @@ class PackagesController extends AppController {
 	function home() {
 		$latest = $this->Package->find('latest');
 		$random = $this->Package->find('random');
-		$this->set(compact('hot', 'latest', 'random'));
+		$this->set(compact('latest', 'random'));
 	}
 
 	function index($type = null) {
