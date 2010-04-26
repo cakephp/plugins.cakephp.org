@@ -33,7 +33,7 @@ class ResourceHelper extends AppHelper {
 
 	function searchableHomepage($data) {
 		$data = json_decode($data, true);
-		return $this->Clearance->link(__('Homepage', true), $data['Package.homepage']);
+		return $this->Clearance->link(__('Homepage', true), $data['Package.homepage'], array('target' => '_blank'));
 	}
 
 	function searchableEdit($data) {

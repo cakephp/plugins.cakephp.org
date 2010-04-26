@@ -23,7 +23,9 @@
 	</dd>
 	<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Homepage'); ?></dt>
 	<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-		<?php echo $this->Html->link($package['Package']['homepage'], $package['Package']['homepage']); ?>
+		<?php echo $this->Html->link($package['Package']['homepage'],
+			$package['Package']['homepage'],
+			array('target' => '_blank')); ?>
 		&nbsp;
 	</dd>
 </dl>

@@ -40,8 +40,12 @@
 					'plugin' => null, 'controller' => 'pages', 'action' => 'display', 'about')); ?> &#183; 
 				<?php echo $this->Html->link('blog', array(
 					'plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'index')); ?> &#183; 
-				<?php echo $this->Html->link('twitter', 'http://twitter.com/cakepackages'); ?> &#183; 
-				<?php echo $this->Html->link('github', 'http://github.com/josegonzalez/cakepackages'); ?>
+				<?php echo $this->Html->link('twitter',
+					'http://twitter.com/cakepackages',
+					array('target' => '_blank')); ?> &#183; 
+				<?php echo $this->Html->link('github',
+					'http://github.com/josegonzalez/cakepackages',
+					array('target' => '_blank')); ?>
 				<br />
 				<?php echo $this->Html->link(
 						$this->Html->image('cake.power.gif', array('alt'=> __('CakePHP: the rapid development php framework', true), 'border' => '0')),
