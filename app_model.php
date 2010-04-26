@@ -81,8 +81,8 @@ class AppModel extends Model {
  * @author Jose Diaz-Gonzalez
  **/
 	function save($data = null, $validate = true, $fieldList = array(), $extra = array()) {
-		$data = (!$data) ? $this->data : $data;
-		if (!$data) return false;
+		$this->data = (!$data) ? $this->data : $data;
+		if (!$this->data) return false;
 
 		$options = array('validate' => true, 'fieldList' => array(), 'callbacks' => true);
 		if (is_array($validate)) {
@@ -104,10 +104,10 @@ class AppModel extends Model {
 		}
 
 		if($method && method_exists($this, $method)) {
-			$data = $this->{$method}($data, $extra);
+			$this->data = $this->{$method}($this->data, $extra);
 		}
-		if (!$data) return false;
-		return parent::save($data, $options);
+		if (!$this->data) return false;
+		return parent::save($this->data, $options);
 	}
 
 /**
