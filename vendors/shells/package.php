@@ -3,6 +3,8 @@ class PackageShell extends Shell {
 
 	var $uses = array('Package');
 
+	var $folder = null;
+
 /**
  * Main shell logic.
  *
@@ -72,11 +74,11 @@ class PackageShell extends Shell {
 		$tmp_dir = trim(TMP);
 		$repo_dir = trim(TMP . 'repos');
 
-		$folder = new Folder();
-		$folder->cd($tmp_dir);
-		$existing_files_and_folders = $folder->read();
+		if (!$this->folder) $this->folder = new Folder();
+		$this->folder->cd($tmp_dir);
+		$existing_files_and_folders = $this->folder->read();
 		if (!in_array('repos', $existing_files_and_folders['0'])) {
-			$folder->create($repo_dir);
+			$this->folder->create($repo_dir);
 		}
 
 		$packages = $this->Package->find('all', array(
@@ -98,15 +100,14 @@ class PackageShell extends Shell {
 	function update_repositories() {
 		$p_count = 0;
 		$repo_dir = trim(TMP . 'repos');
-
-		$folder = new Folder();
+		if (!$this->folder) $this->folder = new Folder();
 
 		foreach(range('a', 'z') as $letter) {
-			$folder->cd($repo_dir . DS . $letter);
-			$user_folders = $folder->read();
+			$this->folder->cd($repo_dir . DS . $letter);
+			$user_folders = $this->folder->read();
 			foreach ($user_folders['0'] as $user_folder) {
-				$folder->cd($repo_dir . DS . $letter . DS . $user_folder);
-				$repositories = $folder->read();
+				$this->folder->cd($repo_dir . DS . $letter . DS . $user_folder);
+				$repositories = $this->folder->read();
 				foreach ($repositories['0'] as $repository) {
 					$p_count++;
 					$repository_path = $repo_dir . DS . $letter . DS . $user_folder . DS . $repository;
@@ -162,11 +163,11 @@ class PackageShell extends Shell {
 	function check_characteristics() {
 		$p_count = 0;
 		$repo_dir = trim(TMP . 'repos');
+		if (!$this->folder) $this->folder = new Folder();
 
-		$folder = new Folder();
 		foreach(range('a', 'z') as $letter) {
-			$folder->cd($repo_dir . DS . $letter);
-			$user_folders = $folder->read();
+			$this->folder->cd($repo_dir . DS . $letter);
+			$user_folders = $this->folder->read();
 			foreach ($user_folders['0'] as $user_folder) {
 				$p_count += $this->check_characteristics_for_user($user_folder);
 			}
@@ -178,9 +179,10 @@ class PackageShell extends Shell {
 		$p_count = 0;
 		$repo_dir = trim(TMP . 'repos');
 
-		$folder = new Folder();
-		$folder->cd($repo_dir . DS . strtolower($user_folder[0]) . DS . $user_folder);
-		$repositories = $folder->read();
+		if (!$this->folder) $this->folder = new Folder();
+		$this->folder->cd($repo_dir . DS . strtolower($user_folder[0]) . DS . $user_folder);
+		$repositories = $this->folder->read();
+
 		foreach ($repositories['0'] as $repository) {
 			if ($this->check_characteristics_for_repository($user_folder, $repository)) $p_count++;
 		}
@@ -210,25 +212,37 @@ class PackageShell extends Shell {
 		if (!$repository_path) return false;
 
 		$characteristics = array();
-		$resources = null;
-		$folder = new Folder();
-		$folder->cd($repository_path);
-		$contents = $folder->read();
+		if (!$this->folder) $this->folder = new Folder();
+		$this->folder->cd($repository_path);
+		$contents = $this->folder->read();
 
+		if (in_array('app', $contents[0])) {
+			$characteristics[] = 'contains_app';
+			$this->folder->cd($repository_path . DS . 'app');
+			$contents = $this->folder->read();
+		}
+		$characteristics = array_merge($this->_classify_contents($repository_path, $contents), $characteristics);
+
+		return $characteristics;
+	}
+
+	function _classify_contents($repository_path, $contents = array()) {
+		$characteristics = array();
+		$resources = null;
 		if (in_array('models', $contents[0])) {
 			// We might have some Models
-			$folder->cd($repository_path . DS . 'models');
-			$model_contents = $folder->read();
+			$this->folder->cd($repository_path . DS . 'models');
+			$model_contents = $this->folder->read();
 			if (!empty($model_contents[1])) {
 				// Has Models. Probably
 				$characteristics[] = 'contains_model';
 			}
 			if (in_array('datasources', $model_contents[0])) {
-				$folder->cd($repository_path . DS . 'models' . DS . 'datasources');
-				$datasource_contents = $folder->read();
+				$this->folder->cd($repository_path . DS . 'models' . DS . 'datasources');
+				$datasource_contents = $this->folder->read();
 				if (in_array('dbo', $datasource_contents[0])) {
-					$folder->cd($repository_path . DS . 'models' . DS . 'datasources' . DS . 'dbo');
-					$dbo_contents = $folder->read();
+					$this->folder->cd($repository_path . DS . 'models' . DS . 'datasources' . DS . 'dbo');
+					$dbo_contents = $this->folder->read();
 					if (!empty($dbo_contents[1])) {
 						$characteristics[] = 'contains_datasource';
 					}
@@ -238,41 +252,41 @@ class PackageShell extends Shell {
 				}
 			}
 			if (in_array('behaviors', $model_contents[0])) {
-				$folder->cd($repository_path . DS . 'models' . DS . 'behaviors');
-				$behavior_contents = $folder->read();
+				$this->folder->cd($repository_path . DS . 'models' . DS . 'behaviors');
+				$behavior_contents = $this->folder->read();
 				if (!empty($behavior_contents[1])) {
 					$characteristics[] = 'contains_behavior';
 				}
 			}
 		}
 		if (in_array('controllers', $contents[0])) {
-			$folder->cd($repository_path . DS . 'controllers');
-			$controller_contents = $folder->read();
+			$this->folder->cd($repository_path . DS . 'controllers');
+			$controller_contents = $this->folder->read();
 			if (!empty($controller_contents[1])) {
 				$characteristics[] = 'contains_controller';
 			}
 			if (in_array('components', $controller_contents[0])) {
-				$folder->cd($repository_path . DS . 'controllers' . DS . 'components');
-				$component_contents = $folder->read();
+				$this->folder->cd($repository_path . DS . 'controllers' . DS . 'components');
+				$component_contents = $this->folder->read();
 				if (!empty($component_contents[1])) {
 					$characteristics[] = 'contains_component';
 				}
 			}
 		}
 		if (in_array('views', $contents[0])) {
-			$folder->cd($repository_path . DS . 'views');
-			$view_contents = $folder->read();
+			$this->folder->cd($repository_path . DS . 'views');
+			$view_contents = $this->folder->read();
 			if (in_array('helpers', $view_contents[0])) {
-				$folder->cd($repository_path . DS . 'views' . DS . 'helpers');
-				$helper_contents = $folder->read();
+				$this->folder->cd($repository_path . DS . 'views' . DS . 'helpers');
+				$helper_contents = $this->folder->read();
 				if (!empty($helper_contents[1])) {
 					$characteristics[] = 'contains_helper';
 				}
 				unset($view_contents['helpers']);
 			}
 			if (in_array('themed', $view_contents[0])) {
-				$folder->cd($repository_path . DS . 'views' . DS . 'themed');
-				$theme_contents = $folder->read();
+				$this->folder->cd($repository_path . DS . 'views' . DS . 'themed');
+				$theme_contents = $this->folder->read();
 				if (!empty($theme_contents[0])) {
 					$characteristics[] = 'contains_theme';
 				}
@@ -287,11 +301,11 @@ class PackageShell extends Shell {
 			}
 		}
 		if (in_array('vendors', $contents[0])) {
-			$folder->cd($repository_path . DS . 'vendors');
-			$vendor_contents = $folder->read();
+			$this->folder->cd($repository_path . DS . 'vendors');
+			$vendor_contents = $this->folder->read();
 			if (in_array('shells', $vendor_contents[0])) {
-				$folder->cd($repository_path . DS . 'vendors' . DS . 'shells');
-				$shell_contents = $folder->read();
+				$this->folder->cd($repository_path . DS . 'vendors' . DS . 'shells');
+				$shell_contents = $this->folder->read();
 				if (!empty($shell_contents[1])) {
 					$characteristics[] = 'contains_shell';
 				}
