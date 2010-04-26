@@ -240,7 +240,7 @@ class PackageShell extends Shell {
 			if (in_array('behaviors', $model_contents[0])) {
 				$folder->cd($repository_path . DS . 'models' . DS . 'behaviors');
 				$behavior_contents = $folder->read();
-				if (!empty($behavior_contents[0])) {
+				if (!empty($behavior_contents[1])) {
 					$characteristics[] = 'contains_behavior';
 				}
 			}
@@ -254,7 +254,7 @@ class PackageShell extends Shell {
 			if (in_array('components', $controller_contents[0])) {
 				$folder->cd($repository_path . DS . 'controllers' . DS . 'components');
 				$component_contents = $folder->read();
-				if (!empty($component_contents[0])) {
+				if (!empty($component_contents[1])) {
 					$characteristics[] = 'contains_component';
 				}
 			}
