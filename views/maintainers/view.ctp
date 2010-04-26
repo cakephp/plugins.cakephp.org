@@ -13,7 +13,16 @@
 	</dd>
 	<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Url'); ?></dt>
 	<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-		<?php echo $this->Html->link($maintainer['Maintainer']['url'], $maintainer['Maintainer']['url']); ?>
+		<?php
+		if (!empty($maintainer['Maintainer']['url'])) {
+			if (!strpos($maintainer['Maintainer']['url'], '://')) {
+				$maintainer['Maintainer']['url'] = 'http://' . $maintainer['Maintainer']['url'];
+			}
+			echo  $this->Html->link($maintainer['Maintainer']['url'], $maintainer['Maintainer']['url']);
+		} else {
+			echo '&nbsp;';
+		}
+		?>
 		&nbsp;
 	</dd>
 	<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Twitter Username'); ?></dt>
