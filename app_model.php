@@ -150,7 +150,7 @@ class AppModel extends Model {
  * @return void
  * @author Jose Diaz-Gonzalez
  */
-	function detachAllBehaviors($except = null, $detach = false) {
+	function detachAllBehaviors($except = array(), $detach = false) {
 		if ($except and !is_array($except)) {
 			$except = array($except);
 		}
