@@ -189,6 +189,7 @@ class PackageShell extends Shell {
 	}
 
 	function check_characteristics_for_repository($user_folder = null, $repository = null) {
+		if (!$user_folder || !$repository) return false;
 		$repo_dir = trim(TMP . 'repos');
 		$this->out(sprintf(__('[Repo] %s/%s', true), $user_folder, $repository));
 		$characteristics = $this->_classify_repository(
@@ -288,8 +289,8 @@ class PackageShell extends Shell {
 		if (in_array('vendors', $contents[0])) {
 			$folder->cd($repository_path . DS . 'vendors');
 			$vendor_contents = $folder->read();
-			if (in_array('shell', $vendor_contents[0])) {
-				$folder->cd($repository_path . DS . 'vendors' . DS . 'shell');
+			if (in_array('shells', $vendor_contents[0])) {
+				$folder->cd($repository_path . DS . 'vendors' . DS . 'shells');
 				$shell_contents = $folder->read();
 				if (!empty($shell_contents[1])) {
 					$characteristics[] = 'contains_shell';
