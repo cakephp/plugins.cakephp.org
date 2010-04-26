@@ -132,7 +132,7 @@ class PackageShell extends Shell {
 				$package['Package']['id'],
 				$package['Package']['name']));
 			$p_count++;
-			$package['Package']['repository_url'] = "git://github.com/{$maintainer['Maintainer']['username']}/{$package['Package']['name']}";
+			$package['Package']['repository_url'] = "git://github.com/{$package['Maintainer']['username']}/{$package['Package']['name']}";
 
 			if ($this->Package->save($package)) $update_count++;
 		}
