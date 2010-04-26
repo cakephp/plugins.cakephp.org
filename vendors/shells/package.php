@@ -27,7 +27,7 @@ class PackageShell extends Shell {
  */
 	function __run() {
 
-		$validCommands = array('c', 'd', 'f', 'r', 'u', 'q');
+		$validCommands = array('c', 'd', 'f', 'r', 's', 'u', 'q');
 
 		while (empty($this->command)) {
 			$this->out("Package Shell");
@@ -36,6 +36,7 @@ class PackageShell extends Shell {
 			$this->out("[D]ownload Repositories");
 			$this->out("[F]ix Repository Urls");
 			$this->out("[R]eset Characteristics");
+			$this->out("[S]specific User/Repo");
 			$this->out("[U]pdate Repositories");
 			$this->out("[Q]uit");
 			$temp = $this->in("What command would you like to perform?", $validCommands, 'i');
@@ -58,6 +59,9 @@ class PackageShell extends Shell {
 				break;
 			case 'r' :
 				$this->reset_characteristics();
+				break;
+			case 's' :
+				$this->check_characteristics_for_repository();
 				break;
 			case 'u' :
 				$this->update_repositories();
@@ -165,7 +169,10 @@ class PackageShell extends Shell {
 		$repo_dir = trim(TMP . 'repos');
 		if (!$this->folder) $this->folder = new Folder();
 
-		foreach(range('a', 'z') as $letter) {
+		$this->folder->cd($repo_dir);
+		$folders = $this->folder->read();
+
+		foreach($folders[0] as $letter) {
 			$this->folder->cd($repo_dir . DS . $letter);
 			$user_folders = $this->folder->read();
 			foreach ($user_folders['0'] as $user_folder) {
@@ -192,8 +199,8 @@ class PackageShell extends Shell {
 
 	function check_characteristics_for_repository($user_folder = null, $repository = null) {
 		if (!$user_folder || !$repository) return false;
+
 		$repo_dir = trim(TMP . 'repos');
-		$this->out(sprintf(__('[Repo] %s/%s', true), $user_folder, $repository));
 		$characteristics = $this->_classify_repository(
 			$repo_dir . DS . strtolower($user_folder[0]) . DS . $user_folder . DS . $repository);
 		$package = $this->Package->find('first', array(
