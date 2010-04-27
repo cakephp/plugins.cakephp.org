@@ -1,7 +1,7 @@
 <?php $icons = array(
-	'be' => 'behavior',		'cp' => 'component',	'h' => 'helper',
-	'm' => 'model',			'c' => 'controller',	'v' => 'view',
-	'ds' => 'datasource',	's' => 'shell',			't' => 'theme',
+	'be' => 'behavior',		'h' => 'helper',	'cp' => 'component',
+	'm' => 'model',			'v' => 'view',		'c' => 'controller',
+	'ds' => 'datasource',	't' => 'theme',		's' => 'shell',
 ); ?>
 <div class="icons">
 <?php foreach ($icons as $class => $label): ?>
