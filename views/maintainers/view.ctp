@@ -38,5 +38,7 @@
 <?php endif; ?>
 </div>
 <div class="related">
-	<?php echo $this->element('rss_reader', array('url' => 'http://github.com/' . $maintainer['Maintainer']['username'] . '.atom'))?>
+	<?php echo $this->element('rss_reader', array(
+		'user' => true,
+			'url' => 'http://github.com/' . $maintainer['Maintainer']['username'] . '.atom'))?>
 </div>

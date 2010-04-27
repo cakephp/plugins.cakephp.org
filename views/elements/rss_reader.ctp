@@ -20,11 +20,13 @@ if ($result) :
 		<h3><?php __('Recent Activity');?></h3>
 		<table cellpadding = "0" cellspacing = "0">
 			<tr>
-				<th><?php __('Commit'); ?></th>
-				<?php if (isset($characters)): ?>
-					<th><?php __('Information'); ?></th>
+				<?php if (isset($user)) : ?>
+					<th><?php __('Activity'); ?></th>
+					<th><?php __('Date'); ?></th>
+				<?php else : ?>
+					<th><?php __('Commit'); ?></th>
+					<th><?php __('Updated'); ?></th>
 				<?php endif; ?>
-				<th><?php __('Updated'); ?></th>
 			</tr>
 		<?php $i = 0; foreach ($items as $item): ?>
 			<tr<?php echo ($i++ % 2 == 0) ? ' class="altrow"' : ''; ?>>
@@ -33,9 +35,6 @@ if ($result) :
 						<?php echo $item['title']; ?>
 					</a>
 				</td>
-				<?php if (isset($characters)): ?>
-					<td><?php echo substr($item['content']['value'], 0, $characters).'...'; ?>&nbsp;</td>
-				<?php endif; ?>
 				<td><?php echo $time->timeAgoInWords($item['updated']); ?></td>
 			</tr>
 		<?php endforeach; ?>
