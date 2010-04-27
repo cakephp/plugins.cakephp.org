@@ -14,8 +14,9 @@ class AppModel extends Model {
  * @author Matt Curry
  * @link http://github.com/mcurry/find
  */
-	function find($type, $options = array()) {
+	function find($type, $options = null) {
 		$method = null;
+		$options = array($options);
 		if(is_string($type)) {
 			$method = sprintf('__find%s', Inflector::camelize($type));
 		}
@@ -29,7 +30,7 @@ class AppModel extends Model {
 			}
 			return $return;
 		}
-		if (is_array($options) && isset($options['cache']) && !empty($options['cache'])) {
+		if (!empty($options['cache'])) {
 			App::import('Vendor', 'mi_cache');
 			if (is_int($options['cache'])) MiCache::config(array('duration' => $options['cache']));
 			unset($options['cache']);
@@ -53,10 +54,11 @@ class AppModel extends Model {
  * @author Matt Curry
  */
 	function beforeFind($query) {
-		if (is_array($query) && isset($query['paginate']) && !empty($query['paginate'])) {
+		$query = (array)$query;
+		if (!empty($query['paginate'])) {
 			$keys = array('fields', 'order', 'limit', 'page');
 			foreach($keys as $key) {
-				if($query[$key] === null || (is_array($query[$key]) && $query[$key][0] === null) ) {
+				if(empty($query[$key]) || (!empty($query[$key]) && empty($query[$key][0] === null)) ) {
 					unset($query[$key]);
 				}
 			}
@@ -120,6 +122,7 @@ class AppModel extends Model {
  * @author Jose Diaz-Gonzalez
  */
 	function paginateCount($conditions = null, $recursive = 0, $extra = array()) {
+		$extra = (array)$extra;
 		$conditions = compact('conditions');
 		if ($recursive != $this->recursive) {
 			$conditions['recursive'] = $recursive;
@@ -135,6 +138,7 @@ class AppModel extends Model {
  * @author Jose Diaz-Gonzalez
  **/
 	function update($fields, $conditions = array()) {
+		$conditions = (array)$conditions;
 		if (!$this->id) return false;
 
 		$conditions = array_merge(array("{$this->alias}.$this->primaryKey" => $this->id), $conditions);
@@ -151,9 +155,7 @@ class AppModel extends Model {
  * @author Jose Diaz-Gonzalez
  */
 	function detachAllBehaviors($except = array(), $detach = false) {
-		if ($except and !is_array($except)) {
-			$except = array($except);
-		}
+		$except = (array)$except;
 		$behaviors = $this->Behaviors->attached();
 		foreach ($behaviors as &$behavior) {
 			if (!in_array($behavior, $except)) {
@@ -182,7 +184,7 @@ class AppModel extends Model {
 	}
 
 	function __findDistinct($fields = array()) {
-		$fields = (is_array($fields)) ? $fields : array($fields);
+		$fields = (array)$fields;
 
 		foreach ($fields as &$field) {
 			$field = "DISTINCT {$field}";
