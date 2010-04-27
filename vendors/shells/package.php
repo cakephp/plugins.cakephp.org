@@ -257,8 +257,7 @@ class PackageShell extends Shell {
 			// We might have some Models
 			$this->folder->cd($repository_path . DS . 'models');
 			$model_contents = $this->folder->read();
-			if (!empty($model_contents[1])) {
-				// Has Models. Probably
+			if (!empty($model_contents[1]) && (count($model_contents[1]) != 1 || $model_contents[1][0] != 'empty')) {
 				$characteristics[] = 'contains_model';
 			}
 			if (in_array('datasources', $model_contents[0])) {
@@ -267,18 +266,20 @@ class PackageShell extends Shell {
 				if (in_array('dbo', $datasource_contents[0])) {
 					$this->folder->cd($repository_path . DS . 'models' . DS . 'datasources' . DS . 'dbo');
 					$dbo_contents = $this->folder->read();
-					if (!empty($dbo_contents[1])) {
+					if (!empty($dbo_contents[1]) && (count($dbo_contents[1]) != 1 || $dbo_contents[1][0] != 'empty')) {
 						$characteristics[] = 'contains_datasource';
 					}
 				}
 				if (!empty($datasource_contents[1]) && !in_array('contains_datasource', $characteristics)) {
-					$characteristics[] = 'contains_datasource';
+					if (count($datasource_contents[1]) != 1 || $datasource_contents[1][0] != 'empty') {
+						$characteristics[] = 'contains_datasource';
+					}
 				}
 			}
 			if (in_array('behaviors', $model_contents[0])) {
 				$this->folder->cd($repository_path . DS . 'models' . DS . 'behaviors');
 				$behavior_contents = $this->folder->read();
-				if (!empty($behavior_contents[1])) {
+				if (!empty($behavior_contents[1]) && (count($behavior_contents[1]) != 1 || $behavior_contents[1][0] != 'empty')) {
 					$characteristics[] = 'contains_behavior';
 				}
 			}
@@ -286,13 +287,13 @@ class PackageShell extends Shell {
 		if (in_array('controllers', $contents[0])) {
 			$this->folder->cd($repository_path . DS . 'controllers');
 			$controller_contents = $this->folder->read();
-			if (!empty($controller_contents[1])) {
+			if (!empty($controller_contents[1]) && (count($controller_contents[1]) != 1 || $controller_contents[1][0] != 'empty')) {
 				$characteristics[] = 'contains_controller';
 			}
 			if (in_array('components', $controller_contents[0])) {
 				$this->folder->cd($repository_path . DS . 'controllers' . DS . 'components');
 				$component_contents = $this->folder->read();
-				if (!empty($component_contents[1])) {
+				if (!empty($component_contents[1]) && (count($component_contents[1]) != 1 || $component_contents[1][0] != 'empty')) {
 					$characteristics[] = 'contains_component';
 				}
 			}
@@ -301,12 +302,12 @@ class PackageShell extends Shell {
 			$this->folder->cd($repository_path . DS . 'views');
 			$view_contents = $this->folder->read();
 			if (in_array('helpers', $view_contents[0])) {
+				$view_contents[0] = array_diff($view_contents[0], array('helpers'));
 				$this->folder->cd($repository_path . DS . 'views' . DS . 'helpers');
 				$helper_contents = $this->folder->read();
-				if (!empty($helper_contents[1])) {
+				if (!empty($helper_contents[1]) && (count($helper_contents[1]) != 1 || $helper_contents[1][0] != 'empty')) {
 					$characteristics[] = 'contains_helper';
 				}
-				unset($view_contents['helpers']);
 			}
 			if (in_array('themed', $view_contents[0])) {
 				$this->folder->cd($repository_path . DS . 'views' . DS . 'themed');
@@ -314,10 +315,10 @@ class PackageShell extends Shell {
 				if (!empty($theme_contents[0])) {
 					$characteristics[] = 'contains_theme';
 				}
-				unset($view_contents['themed']);
+				$view_contents[0] = array_diff($view_contents[0], array('themed'));
 			}
 			if (in_array('elements', $view_contents[0])) {
-				unset($view_contents['elements']);
+				$view_contents[0] = array_diff($view_contents[0], array('elements'));
 			}
 
 			if (!empty($view_contents[0])) {
@@ -327,42 +328,93 @@ class PackageShell extends Shell {
 		if (in_array('vendors', $contents[0])) {
 			$this->folder->cd($repository_path . DS . 'vendors');
 			$vendor_contents = $this->folder->read();
+			$vendor_contents[1] = array_diff($vendor_contents[1], array('empty'));
 			if (in_array('shells', $vendor_contents[0])) {
 				$this->folder->cd($repository_path . DS . 'vendors' . DS . 'shells');
 				$shell_contents = $this->folder->read();
-				if (!empty($shell_contents[1])) {
+				if (!empty($shell_contents[1]) && (count($shell_contents[1]) != 1 || $shell_contents[1][0] != 'empty')) {
 					$characteristics[] = 'contains_shell';
 				}
-				unset($vendor_contents['shell']);
+				$vendor_contents[0] = array_diff($vendor_contents[0], array('shells'));
 			}
 			if (in_array('css', $vendor_contents[0])) {
-				$resources = true;
-				unset($vendor_contents['css']);
+				$this->folder->cd($repository_path . DS . 'vendors' . DS . 'css');
+				$resource_contents = $this->folder->read();
+				if (!empty($resource_contents[1]) && (count($resource_contents[1]) != 1 || $resource_contents[1][0] != 'empty')) {
+					$resources = true;
+				}
+				$vendor_contents[0] = array_diff($vendor_contents[0], array('css'));
 			}
 			if (in_array('js', $vendor_contents[0])) {
-				$resources = true;
-				unset($vendor_contents['js']);
+				$this->folder->cd($repository_path . DS . 'vendors' . DS . 'js');
+				$resource_contents = $this->folder->read();
+				if (!empty($resource_contents[1]) && (count($resource_contents[1]) != 1 || $resource_contents[1][0] != 'empty')) {
+					$resources = true;
+				}
+				$vendor_contents[0] = array_diff($vendor_contents[0], array('js'));
 			}
 			if (in_array('img', $vendor_contents[0])) {
-				$resources = true;
-				unset($vendor_contents['img']);
+				$this->folder->cd($repository_path . DS . 'vendors' . DS . 'img');
+				$resource_contents = $this->folder->read();
+				if (!empty($resource_contents[1]) && (count($resource_contents[1]) != 1 || $resource_contents[1][0] != 'empty')) {
+					$resources = true;
+				}
+				$vendor_contents[0] = array_diff($vendor_contents[0], array('img'));
 			}
 			if (!empty($vendor_contents[0]) || !empty($vendor_contents[1])) {
 				$characteristics[] = 'contains_vendor';
 			}
 		}
 		if (in_array('tests', $contents[0])) {
-			$characteristics[] = 'contains_test';
+			$this->folder->cd($repository_path . DS . 'tests');
+			$test_contents = $this->folder->read();
+			if (!empty($test_contents[1]) && (count($test_contents[1]) != 1 || $test_contents[1][0] != 'empty')) {
+				$characteristics[] = 'contains_test';
+			}
 		}
 		if (in_array('libs', $contents[0])) {
-			$characteristics[] = 'contains_lib';
+			$this->folder->cd($repository_path . DS . 'libs');
+			$lib_contents = $this->folder->read();
+			if (!empty($lib_contents[1]) && (count($lib_contents[1]) != 1 || $lib_contents[1][0] != 'empty')) {
+				$characteristics[] = 'contains_lib';
+			}
 		}
 		if (in_array('config', $contents[0])) {
-			$characteristics[] = 'contains_config';
+			$this->folder->cd($repository_path . DS . 'config');
+			$config_contents = $this->folder->read();
+			if (!empty($config_contents[1]) && (count($config_contents[1]) != 1 || $config_contents[1][0] != 'empty')) {
+				$characteristics[] = 'contains_config';
+			}
 		}
-		if (in_array('webroot', $contents[0]) || $resources) {
-			$characteristics[] = 'contains_resources';
+		if (in_array('webroot', $contents[0])) {
+			$this->folder->cd($repository_path . DS . 'webroot');
+			$webroot_contents = $this->folder->read();
+			if (in_array('css', $webroot_contents[0])) {
+				$this->folder->cd($repository_path . DS . 'webroot' . DS . 'css');
+				$resource_contents = $this->folder->read();
+				if (!empty($resource_contents[1]) && (count($resource_contents[1]) != 1 || $resource_contents[1][0] != 'empty')) {
+					$resources = true;
+				}
+				$webroot_contents[0] = array_diff($webroot_contents[0], array('css'));
+			}
+			if (in_array('js', $webroot_contents[0])) {
+				$this->folder->cd($repository_path . DS . 'webroot' . DS . 'js');
+				$resource_contents = $this->folder->read();
+				if (!empty($resource_contents[1]) && (count($resource_contents[1]) != 1 || $resource_contents[1][0] != 'empty')) {
+					$resources = true;
+				}
+				$webroot_contents[0] = array_diff($webroot_contents[0], array('js'));
+			}
+			if (in_array('img', $webroot_contents[0])) {
+				$this->folder->cd($repository_path . DS . 'webroot' . DS . 'img');
+				$resource_contents = $this->folder->read();
+				if (!empty($resource_contents[1]) && (count($resource_contents[1]) != 1 || $resource_contents[1][0] != 'empty')) {
+					$resources = true;
+				}
+				$webroot_contents[0] = array_diff($webroot_contents[0], array('img'));
+			}
 		}
+		if ($resources) $characteristics[] = 'contains_resources';
 		return $characteristics;
 	}
 }
