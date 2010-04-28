@@ -5,7 +5,7 @@ class PermitComponent extends Object {
 	var $Session = null;
 
 	var $settings = array(
-		'path' => 'User.User'
+		'path' => 'Auth.User'
 	);
 
 /**
@@ -29,25 +29,23 @@ class PermitComponent extends Object {
 		$self->settings = array_merge($self->settings, $config);
 
 		foreach ($self->routes as $route) {
-			if (PermitComponent::parse($controller->params, $route)) {
+			if (PermitComponent::parse($route['route'])) {
 				PermitComponent::execute($route);
 				break;
 			}
 		}
 	}
 
-	function parse(&$currentRoute, &$permit) {
-		$route = $permit['route'];
-
+	function parse(&$route) {
+		$self =& PermitComponent::getInstance();
 		$count = count($route);
 		if ($count == 0) return false;
 
 		foreach($route as $key => $value) {
-
-			if (isset($currentRoute[$key])) {
+			if (isset($self->controller->params[$key])) {
 				$values = (is_array($value)) ?  $value : array($value);
 				foreach ($values as $k => $v) {
-					if ($currentRoute[$key] == $v) {
+					if ($self->controller->params[$key] == $v) {
 						$count--;
 					}
 				}
@@ -73,6 +71,7 @@ class PermitComponent extends Object {
 
 		if (is_bool($route['rules']['auth'])) {
 			$is_authed = $self->Session->read("{$self->settings['path']}.group");
+
 			if ($route['rules']['auth'] == true && !$is_authed) {
 				$self->redirect($route);
 			}
