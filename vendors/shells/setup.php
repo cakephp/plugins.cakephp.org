@@ -1,11 +1,11 @@
 <?php
 /**
- * Subway Shell
+ * Setup Shell
  *
  * PHP version 5
  *
  * @category Shell
- * @package  Subway
+ * @package  Setup
  * @version  0.1
  * @author   Jose Diaz-Gonzalez <support@savant.be>
  * @license  http://www.opensource.org/licenses/mit-license.php The MIT License
@@ -73,6 +73,23 @@ class SetupShell extends Shell {
 		}
 	}
 
+/**
+ * Help
+ *
+ * @return void
+ * @access public
+ */
+	function help() {
+		$this->out('Jose Diaz-Gonzalez. Setup Shell - http://josediazgonzalez.com');
+		$this->hr();
+		$this->out('This shell is a helper shell for many different kinds of tasks that might be performed by CakePackages');
+		$this->out('');
+		$this->hr();
+		$this->out("Usage: cake setup");
+		$this->out("       cake setup password YourCustomPassword");
+		$this->out('');
+	}
+
 	function create_cache_dirs() {
 		if (!$this->folder) $this->folder = new Folder();
 		$tmp_dir = trim(TMP);
@@ -111,36 +128,13 @@ class SetupShell extends Shell {
  * @author Jose Diaz-Gonzalez <support@savant.be>
  */
 	function password() {
-		$password = null;
-		if (isset($this->args['0'])) {
-			$password = $this->args['0'];
-		}
+		$password = (isset($this->args['0'])) ? $this->args['0'] : null;
 		while (empty($password)) {
 			$password = $this->in("What password would you like to hash?");
-			if (empty($password)) {
-				$this->out("Try again.");
-			} else {
-				break;
-			}
+			if (!empty($password)) break;
+			$this->out("Try again.");
 		}
 		$this->out(Security::hash($password, null, true));
-	}
-
-/**
- * Help
- *
- * @return void
- * @access public
- */
-	function help() {
-		$this->out('Jose Diaz-Gonzalez. Setup Shell - http://josediazgonzalez.com');
-		$this->hr();
-		$this->out('This shell is a helper shell for many different kinds of tasks that might be performed by CakePackages');
-		$this->out('');
-		$this->hr();
-		$this->out("Usage: cake setup");
-		$this->out("       cake setup password YourCustomPassword");
-		$this->out('');
 	}
 }
 ?>
