@@ -28,6 +28,22 @@ class AppError extends ErrorHandler {
 			$method = 'error';
 		}
 
+		if ($method !== 'error') {
+			if (Configure::read('debug') == 0) {
+				$parentClass = get_parent_class($this);
+				if (strtolower($parentClass) != 'errorhandler') {
+					$method = 'error404';
+				}
+				$parentMethods = array_map('strtolower', get_class_methods($parentClass));
+				if (in_array(strtolower($method), $parentMethods)) {
+					$method = 'error404';
+				}
+				if (isset($code) && $code == 500) {
+					$method = 'error500';
+				}
+			}
+		}
+
 		$this->dispatchMethod($method, $messages);
 		$this->_stop();
 	}
@@ -44,8 +60,15 @@ class AppError extends ErrorHandler {
 		$this->lost();
 	}
 
+	function error404($params) {
+		$this->lost();
+	}
+
 	function lost() {
-		$this->controller->redirect(array('plugin' => null, 'controller' => 'lost', 'action' => 'index', $this->controller->params['url']['url']));
+		echo $this->controller->requestAction(
+			array('plugin' => null, 'controller' => 'lost', 'action' => 'index'), 
+			array('pass' => array($this->controller->params['url']['url']))
+		);
 	}
 }
 ?>

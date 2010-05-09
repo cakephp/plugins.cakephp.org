@@ -1,4 +1,5 @@
 <?php
+App::import('Core', 'Controller');
 class AppController extends Controller {
 	var $components = array(
 		'Authsome.Authsome' => array('model' => 'Maintainer'),
