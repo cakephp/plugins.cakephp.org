@@ -48,7 +48,7 @@
  * Inflector::rules('plural', array('rules' => array(), 'irregular' => array(), 'uninflected' => array()));
  *
  */
-App::import('Vendor', 'assert');
+if (!defined('STDIN')) App::import('Vendor', 'assert');
 
 function diebug($variables = false, $showHtml = true, $showFrom = true, $die = true) {
 	if (Configure::read() > 0) {
