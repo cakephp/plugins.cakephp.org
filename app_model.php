@@ -14,9 +14,9 @@ class AppModel extends Model {
  * @author Matt Curry
  * @link http://github.com/mcurry/find
  */
-	function find($type, $options = null) {
+	function find($type, $options = array()) {
 		$method = null;
-		$options = array($options);
+		$options = (array) $options;
 		if(is_string($type)) {
 			$method = sprintf('__find%s', Inflector::camelize($type));
 		}
@@ -53,12 +53,12 @@ class AppModel extends Model {
  * @return boolean
  * @author Matt Curry
  */
-	function beforeFind($query) {
-		$query = (array)$query;
+	function beforeFind($query = array()) {
+		$query = (array) $query;
 		if (!empty($query['paginate'])) {
 			$keys = array('fields', 'order', 'limit', 'page');
-			foreach($keys as $key) {
-				if(empty($query[$key]) || (!empty($query[$key]) && empty($query[$key][0] === null)) ) {
+			foreach ($keys as $key) {
+				if (empty($query[$key]) || (!empty($query[$key]) && empty($query[$key][0]) === null)) {
 					unset($query[$key]);
 				}
 			}
@@ -122,7 +122,7 @@ class AppModel extends Model {
  * @author Jose Diaz-Gonzalez
  */
 	function paginateCount($conditions = null, $recursive = 0, $extra = array()) {
-		$extra = (array)$extra;
+		$extra = (array) $extra;
 		$conditions = compact('conditions');
 		if ($recursive != $this->recursive) {
 			$conditions['recursive'] = $recursive;
@@ -138,7 +138,7 @@ class AppModel extends Model {
  * @author Jose Diaz-Gonzalez
  **/
 	function update($fields, $conditions = array()) {
-		$conditions = (array)$conditions;
+		$conditions = (array) $conditions;
 		if (!$this->id) return false;
 
 		$conditions = array_merge(array("{$this->alias}.$this->primaryKey" => $this->id), $conditions);
@@ -155,7 +155,7 @@ class AppModel extends Model {
  * @author Jose Diaz-Gonzalez
  */
 	function detachAllBehaviors($except = array(), $detach = false) {
-		$except = (array)$except;
+		$except = (array) $except;
 		$behaviors = $this->Behaviors->attached();
 		foreach ($behaviors as &$behavior) {
 			if (!in_array($behavior, $except)) {
