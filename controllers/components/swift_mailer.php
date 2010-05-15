@@ -310,7 +310,7 @@ class SwiftMailerComponent extends Object {
 		// Add all TO recipients.
 		if (!empty($this->to)) {
 			if (is_array($this->to)) {
-				foreach($this->to as $address => $name) {
+				foreach ($this->to as $address => $name) {
 					$message->addTo($address, $name);
 				}
 			} else {
@@ -321,7 +321,7 @@ class SwiftMailerComponent extends Object {
 		// Add all CC recipients.
 		if (!empty($this->cc)) {
 			if (is_array($this->cc)) {
-				foreach($this->cc as $address => $name) {
+				foreach ($this->cc as $address => $name) {
 					$message->addCc($address, $name);
 			}
 		} else {
@@ -332,7 +332,7 @@ class SwiftMailerComponent extends Object {
 		// Add all BCC recipients.
 		if (!empty($this->bcc)) {
 			if (is_array($this->bcc)) {
-				foreach($this->bcc as $address => $name) {
+				foreach ($this->bcc as $address => $name) {
 					$message->addBcc($address, $name);
 				}
 			} else {
@@ -343,7 +343,7 @@ class SwiftMailerComponent extends Object {
 		// Set REPLY TO addresses
 		if (!empty($this->replyTo)) {
 			if (is_array($this->replyTo)) {
-				foreach($this->replyTo as $address => $name) {
+				foreach ($this->replyTo as $address => $name) {
 					$message->addReplyTo($address, $name);
 				}
 			} else {
@@ -375,14 +375,14 @@ class SwiftMailerComponent extends Object {
 
 		// Load plugins if any
 		if (!empty($this->__plugins)) {
-			foreach($this->__plugins as $name => $args) {
+			foreach ($this->__plugins as $name => $args) {
 				$plugin_class = "Swift_Plugins_{$name}";
 				if (!class_exists($plugin_class)) {
 					throw new Exception("SwiftMailer library does not support this plugin: {$plugin_class}");
 				}
 
 				$plugin = null;
-				switch(count($args)) {
+				switch (count($args)) {
 					case 1:
 						$plugin = new $plugin_class($args[0]);
 						break;
