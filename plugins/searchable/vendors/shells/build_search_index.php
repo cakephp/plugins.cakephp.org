@@ -123,8 +123,8 @@ class BuildSearchIndexShell extends Shell {
 		// For each plugin, add the plugin model path to paths and instantiate the
 		// plugin AppModel in case the plugin contains a model that is Searchable
 		// and we need to instantiate it later
-		if(!empty($plugins)) {
-			foreach($plugins AS $plugin) {
+		if (!empty($plugins)) {
+			foreach ($plugins AS $plugin) {
 				$paths[] = APP . 'plugins' . DS . Inflector::underscore($plugin) . DS . 'models' . DS;
 				App::import('Model', $plugin . '.' . $plugin . 'Model');
 			}

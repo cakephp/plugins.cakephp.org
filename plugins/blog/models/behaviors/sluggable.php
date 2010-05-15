@@ -270,7 +270,7 @@ class SluggableBehavior extends ModelBehavior {
 					$this->translations = Set::merge($this->translations, $configured['translations']);
 					unset($configured['translations']);
 				}
-				foreach($default as $key => $value) {
+				foreach ($default as $key => $value) {
 					if (isset($configured[$key])) {
 						$default[$key] = $configured[$key];
 					}
@@ -294,7 +294,7 @@ class SluggableBehavior extends ModelBehavior {
 		$fields = (array) $settings['label'];
 
 		if ($settings['real']) {
-			foreach($fields as $field) {
+			foreach ($fields as $field) {
 				if (!$model->hasField($field)) {
 					return $return;
 				}
@@ -304,7 +304,7 @@ class SluggableBehavior extends ModelBehavior {
 		if ((!$settings['real'] || $model->hasField($settings['slug'])) && ($settings['overwrite'] || empty($model->id))) {
 			$label = '';
 
-			foreach($fields as $field) {
+			foreach ($fields as $field) {
 				if (!empty($model->data[$model->alias][$field])) {
 					$label .= (!empty($label) ? ' ' : '') . $model->data[$model->alias][$field];
 				}
@@ -339,7 +339,7 @@ class SluggableBehavior extends ModelBehavior {
 						} else {
 							$suffix = 1;
 							$slugLength = strlen($slug) + 1;
-							foreach($sameSlugs as $aSlug) {
+							foreach ($sameSlugs as $aSlug) {
 								$currentSuffix = substr($aSlug, $slugLength);
 								if ($suffix == $currentSuffix) {
 									$suffix++;
@@ -368,7 +368,7 @@ class SluggableBehavior extends ModelBehavior {
 	function _slug($string, $settings) {
 		if (!empty($settings['ignore'])) {
 			$words = array();
-			foreach((array) $settings['ignore'] as $word) {
+			foreach ((array) $settings['ignore'] as $word) {
 				$words[] = preg_quote($word);
 			}
 			$newString = preg_replace('/\b(\s*)(' . implode('|', $words) . ')(\s*)\b/i', '\\1\\3', $string);
@@ -378,7 +378,7 @@ class SluggableBehavior extends ModelBehavior {
 		}
 		if (!empty($settings['translation']) && is_array($settings['translation'])) {
 			if (count($settings['translation']) >= 2 && count($settings['translation']) % 2 == 0) {
-				for($i=0, $limiti=count($settings['translation']); $i < $limiti; $i += 2) {
+				for ($i=0, $limiti=count($settings['translation']); $i < $limiti; $i += 2) {
 					$from = $settings['translation'][$i];
 					$to = $settings['translation'][$i + 1];
 

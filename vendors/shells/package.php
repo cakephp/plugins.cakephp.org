@@ -12,7 +12,7 @@ class PackageShell extends Shell {
  * @author John David Anderson
  */
 	function main() {
-		if(!empty($this->params[0])) {
+		if (!empty($this->params[0])) {
 			$this->command = substr($this->params[0], 0, 1);
 		}
 
@@ -123,7 +123,7 @@ class PackageShell extends Shell {
 		$repo_dir = trim(TMP . 'repos');
 		if (!$this->folder) $this->folder = new Folder();
 
-		foreach(range('a', 'z') as $letter) {
+		foreach (range('a', 'z') as $letter) {
 			$this->folder->cd($repo_dir . DS . $letter);
 			$user_folders = $this->folder->read();
 			foreach ($user_folders['0'] as $user_folder) {
@@ -189,7 +189,7 @@ class PackageShell extends Shell {
 		$this->folder->cd($repo_dir);
 		$folders = $this->folder->read();
 
-		foreach($folders[0] as $letter) {
+		foreach ($folders[0] as $letter) {
 			$this->folder->cd($repo_dir . DS . $letter);
 			$user_folders = $this->folder->read();
 			foreach ($user_folders['0'] as $user_folder) {

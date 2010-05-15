@@ -225,7 +225,7 @@ class SearchableBehavior extends ModelBehavior {
 						$value = $data["{$modelName}.{$value}"];
 					}
 
-					if(!is_numeric($key)) {
+					if (!is_numeric($key)) {
 						$url[$key] = $value;
 					} else {
 						$url[] = $value;

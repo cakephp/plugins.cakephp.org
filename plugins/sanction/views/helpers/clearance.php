@@ -36,7 +36,7 @@ class ClearanceHelper extends AppHelper {
 		$count = count($route);
 		if ($count == 0) return false;
 
-		foreach($route as $key => $value) {
+		foreach ($route as $key => $value) {
 			if (isset($currentRoute[$key])) {
 				$values = (is_array($value)) ?  $value : array($value);
 				foreach ($values as $k => $v) {

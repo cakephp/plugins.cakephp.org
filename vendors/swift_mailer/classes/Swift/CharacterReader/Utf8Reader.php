@@ -114,7 +114,7 @@ class Swift_CharacterReader_Utf8Reader
    	      ++$foundChars;
    	      $invalid=false;
    	  	}
-   	  	if (($i+$size) > $strlen){
+   	  	if (($i+$size) > $strlen) {
    	  		$ignoredChars=substr($string, $i);
    	  		break;
    	  	}
@@ -161,7 +161,7 @@ class Swift_CharacterReader_Utf8Reader
    */
   public function validateByteSequence($bytes, $size)
   {
-    if ($size<1){
+    if ($size<1) {
       return -1;
     }
     $needed = self::$length_map[$bytes[0]] - $size;

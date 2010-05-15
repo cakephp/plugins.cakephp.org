@@ -53,7 +53,7 @@ class Maintainer extends AppModel {
 				'new_password_confirm' => $data[$this->alias]['new_password_confirm']));
 
 		if ($data[$this->alias]['new_password'] != $data[$this->alias]['new_password_confirm']) return false;
-		foreach($data[$this->alias] as $key => &$value) {
+		foreach ($data[$this->alias] as $key => &$value) {
 			$value = Security::hash($value, null, true);
 			if ($value == Security::hash('', null, true)) {
 				return false;

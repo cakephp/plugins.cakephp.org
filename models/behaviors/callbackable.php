@@ -64,7 +64,7 @@ class CallbackableBehavior extends ModelBehavior {
 			$method = sprintf('__beforeValidate%s', Inflector::camelize($model->behaviorData['callback']));
 		}
 
-		if($method && method_exists($model, $method)) {
+		if ($method && method_exists($model, $method)) {
 			return $model->{$method}($model);
 		}
 		return true;
@@ -84,7 +84,7 @@ class CallbackableBehavior extends ModelBehavior {
 			$method = sprintf('__afterSave%s', Inflector::camelize($model->behaviorData['callback']));
 		}
 
-		if($method && method_exists($model, $method)) {
+		if ($method && method_exists($model, $method)) {
 			return $model->{$method}($data);
 		}
 		return true;
@@ -104,7 +104,7 @@ class CallbackableBehavior extends ModelBehavior {
 			$method = sprintf('__beforeDelete%s', Inflector::camelize($model->behaviorData['callback']));
 		}
 
-		if($method && method_exists($model, $method)) {
+		if ($method && method_exists($model, $method)) {
 			return $model->{$method}($model, $cascade);
 		}
 		return true;
@@ -122,7 +122,7 @@ class CallbackableBehavior extends ModelBehavior {
 			$method = sprintf('__afterDelete%s', Inflector::camelize($model->behaviorData['callback']));
 		}
 
-		if($method && method_exists($model, $method)) {
+		if ($method && method_exists($model, $method)) {
 			$model->{$method}($model);
 		}
 	}
@@ -140,7 +140,7 @@ class CallbackableBehavior extends ModelBehavior {
 			$method = sprintf('__onError%s', Inflector::camelize($model->behaviorData['callback']));
 		}
 
-		if($method && method_exists($model, $method)) {
+		if ($method && method_exists($model, $method)) {
 			$model->{$method}($model, $error);
 		}
 	}

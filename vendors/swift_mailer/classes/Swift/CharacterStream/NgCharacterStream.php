@@ -155,7 +155,7 @@ Class Swift_CharacterStream_NgCharacterStream
     $this->flushContents();
     $blocks=512;
     $os->setReadPointer(0);
-    while(false!==($read = $os->read($blocks)))
+    while (false!==($read = $os->read($blocks)))
       $this->write($read);
   }
   
@@ -266,7 +266,7 @@ Class Swift_CharacterStream_NgCharacterStream
    */
   public function setPointer($charOffset)
   {
-  	if ($this->_charCount<$charOffset){
+  	if ($this->_charCount<$charOffset) {
   		$charOffset=$this->_charCount;
   	}
   	$this->_currentPos = $charOffset;

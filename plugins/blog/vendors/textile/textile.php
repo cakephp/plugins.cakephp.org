@@ -287,7 +287,7 @@ class Textile
             return $text;
         } else {
 
-            if(!$strict) {
+            if (!$strict) {
                 $text = $this->cleanWhiteSpace($text);
             }
 
@@ -430,14 +430,14 @@ class Textile
     {
         $tatts = $this->pba($matches[1], 'table');
 
-        foreach(preg_split("/\|$/m", $matches[2], -1, PREG_SPLIT_NO_EMPTY) as $row) {
+        foreach (preg_split("/\|$/m", $matches[2], -1, PREG_SPLIT_NO_EMPTY) as $row) {
             if (preg_match("/^($this->a$this->c\. )(.*)/m", ltrim($row), $rmtch)) {
                 $ratts = $this->pba($rmtch[1], 'tr');
                 $row = $rmtch[2];
             } else $ratts = '';
 
                 $cells = array();
-            foreach(explode("|", $row) as $cell) {
+            foreach (explode("|", $row) as $cell) {
                 $ctyp = "d";
                 if (preg_match("/^_/", $cell)) $ctyp = "h";
                 if (preg_match("/^(_?$this->s$this->a$this->c\. )(.*)/", $cell, $cmtch)) {
@@ -466,7 +466,7 @@ class Textile
     function fList($m)
     {
         $text = explode("\n", $m[0]);
-        foreach($text as $nr => $line) {
+        foreach ($text as $nr => $line) {
             $nextline = isset($text[$nr+1]) ? $text[$nr+1] : false;
             if (preg_match("/^([#*]+)($this->a$this->c) (.*)$/s", $line, $m)) {
                 list(, $tl, $atts, $content) = $m;
@@ -481,11 +481,11 @@ class Textile
                     $line = "\t\t<li>" . $this->graf($content);
                 }
 
-                if(strlen($nl) <= strlen($tl)) $line .= "</li>";
-                foreach(array_reverse($lists) as $k => $v) {
-                    if(strlen($k) > strlen($nl)) {
+                if (strlen($nl) <= strlen($tl)) $line .= "</li>";
+                foreach (array_reverse($lists) as $k => $v) {
+                    if (strlen($k) > strlen($nl)) {
                         $line .= "\n\t</" . $this->lT($k) . "l>";
-                        if(strlen($k) > 1)
+                        if (strlen($k) > 1)
                             $line .= "</li>";
                         unset($lists[$k]);
                     }
@@ -526,7 +526,7 @@ class Textile
         $tag = 'p';
         $atts = $cite = $graf = $ext  = '';
 
-        foreach($text as $line) {
+        foreach ($text as $line) {
             $anon = 0;
             if (preg_match("/^($tre)($this->a$this->c)\.(\.?)(?::(\S+))? (.*)$/s", $line, $m)) {
                 // last block was extended, so close it
@@ -665,7 +665,7 @@ class Textile
         $qtags = array('\*\*','\*','\?\?','-','__','_','%','\+','~','\^');
         $pnct = ".,\"'?!;:";
 
-        foreach($qtags as $f) {
+        foreach ($qtags as $f) {
             $text = preg_replace_callback("/
                 (?:^|(?<=[\s>$pnct])|([{[]))
                 ($f)(?!$f)
@@ -1008,7 +1008,7 @@ class Textile
          );
 
          $text = preg_split("/(<.*>)/U", $text, -1, PREG_SPLIT_DELIM_CAPTURE);
-         foreach($text as $line) {
+         foreach ($text as $line) {
              if (!preg_match("/<.*>/", $line)) {
                  $line = preg_replace($glyph_search, $glyph_replace, $line);
              }

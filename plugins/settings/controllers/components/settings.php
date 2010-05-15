@@ -15,7 +15,7 @@ class SettingsComponent extends Object {
 			$_settings = $controller->Setting->find('all');
 			Cache::write('settings', $_settings);
 		}
-		foreach($_settings as $_setting) {
+		foreach ($_settings as $_setting) {
 			if ($_setting['Setting']['value'] !== null) {
 				Configure::write("Settings." . $_setting['Setting']['key'], $_setting['Setting']['value']);
 			}

@@ -24,7 +24,7 @@ class SetupShell extends Shell {
  * @author John David Anderson
  */
 	function main() {
-		if(!empty($this->params[0])) {
+		if (!empty($this->params[0])) {
 			$this->command = substr($this->params[0], 0, 1);
 		}
 

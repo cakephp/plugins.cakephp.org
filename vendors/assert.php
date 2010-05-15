@@ -39,7 +39,7 @@ class Assert{
 			$info = array('type' => $info);
 		}
 
-		$info = am(array(
+		$info = array_merge(array(
 			'file' => $assertCall['file']
 			, 'line' => $assertCall['line']
 			, 'function' => $triggerCall['class'].'::'.$triggerCall['function']
@@ -106,7 +106,7 @@ class Assert{
  * @access public
  */
 	static function pattern($pattern, $val, $info = array()) {
-		return Assert::test(preg_match($pattern, $val), true, am(array('pattern' => $pattern), $info));
+		return Assert::test(preg_match($pattern, $val), true, array_merge(array('pattern' => $pattern), $info));
 	}
 
 /**
@@ -358,7 +358,7 @@ class AppException extends Exception {
  * @access public
  */
 	function render() {
-		$info = am($this->where(), $this->info);
+		$info = array_merge($this->where(), $this->info);
 
 		$Controller = new Controller();
 		$Controller->viewPath = 'exceptions';
@@ -382,7 +382,7 @@ class AppException extends Exception {
 	}
 
 	function statusCode($type = null) {
-		switch($type) {
+		switch ($type) {
 			case '400' : return "HTTP/1.0 400 Bad Request";break;
 			case '401' : return "HTTP/1.0 401 Unauthorized";break;
 			case '402' : return "HTTP/1.0 402 Payment Required";break;
