@@ -9,13 +9,8 @@ class AppController extends Controller {
 		'Session',
 		'Settings.Settings',
 		'DebugKit.Toolbar',
+		'Webservice.Webservice',
 	);
 	var $helpers = array('Ajax', 'Sanction.Clearance', 'Form', 'Html', 'Resource', 'Session', 'Time');
-
-	function beforeFilter() {
-		if (in_array($this->RequestHandler->ext, array('json', 'xml'))) {
-			$this->view = 'WebService';
-		}
-	}
 }
 ?>

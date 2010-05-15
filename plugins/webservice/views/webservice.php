@@ -1,5 +1,5 @@
 <?php
-class WebServiceView extends View {
+class WebserviceView extends View {
 
 /**
  * Determines whether native JSON extension is used for encoding.  Set by object constructor.
@@ -24,7 +24,6 @@ class WebServiceView extends View {
  * @access private
  */
 	var $xml_version = '1.0';
-
 
 	function render() {
 		Configure::write('debug', 0);
