@@ -106,7 +106,14 @@ class Package extends AppModel {
 				"{$this->alias}.{$this->displayField}" => $params['package'],
 				"{$this->alias}.maintainer_id" => $maintainer_id),
 			'contain' => array(
-				'Maintainer', 'Tag')));
+				'Maintainer' => array(
+					'fields' => array(
+						'username',
+						'name'
+					)
+				)
+			)
+		));
 	}
 
 	function getSearchableData($data) {
