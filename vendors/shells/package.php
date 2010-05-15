@@ -228,7 +228,6 @@ class PackageShell extends Shell {
 		foreach ($characteristics as $characteristic) {
 			$package['Package'][$characteristic] = 1;
 		}
-		unset($package['Package']['tags']);
 		return $this->Package->save($package);
 	}
 

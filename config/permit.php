@@ -8,7 +8,7 @@ Permit::access(
 	array('redirect' => array('controller' => 'packages', 'action' => 'index')));
 
 Permit::access(
-	array('controller' => array('maintainers', 'packages', 'tags'), 'action' => array('add', 'edit', 'delete')),
+	array('controller' => array('maintainers', 'packages'), 'action' => array('add', 'edit', 'delete')),
 	array('auth' => array('group' => 'admin')),
 	array('redirect' => array('action' => 'index')));
 

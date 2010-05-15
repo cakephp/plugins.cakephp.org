@@ -30,29 +30,5 @@
 	</dd>
 </dl>
 <div class="related">
-	<?php if (!empty($package['Tag'])):?>
-		<h3><?php printf(__('Related %s', true), __('Tags', true));?></h3>
-		<table cellpadding = "0" cellspacing = "0">
-		<tr>
-			<th><?php __('Tag'); ?></th>
-		</tr>
-		<?php
-			$i = 0;
-			foreach ($package['Tag'] as $tag):
-				$class = null;
-				if ($i++ % 2 == 0) {
-					$class = ' class="altrow"';
-				}
-			?>
-			<tr<?php echo $class;?>>
-				<td class="actions">
-					<?php echo $this->Html->link($tag['name'], array('controller' => 'tags', 'action' => 'view', $tag['name'])); ?>
-				</td>
-			</tr>
-		<?php endforeach; ?>
-		</table>
-	<?php endif; ?>
-</div>
-<div class="related">
 	<?php echo $this->element('rss_reader', array('url' => $package['Package']['homepage'] . '/commits/master.atom'))?>
 </div>

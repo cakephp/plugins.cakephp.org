@@ -50,30 +50,6 @@ class ResourceHelper extends AppHelper {
 			sprintf(__('Are you sure you want to delete # %s?', true), $data['Package.id']));
 	}
 
-	function tagTree($data)	{
-		$result = '';
-		if (!empty($data)) {
-			$result .= "<ul>\n";
-			 $i = 0; 
-			foreach ($data as $tag) {
-				$result .= '<li';
-				$result .= ($i++ % 2 == 0) ? ' class="altrow"' : '';
-				$result .= '>';
-				if (Configure::read() != 0) {
-					$result .= $this->Clearance->link(__('Edit', true), array('action' => 'edit', $tag['Tag']['id'])) . ' | ';
-					$result .=  $this->Clearance->link(__('Delete', true), array('action' => 'delete', $tag['Tag']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $tag['Tag']['id'])) . ' | ';
-				}
-				$result .= $this->Html->link($tag['Tag']['name'], array('controller' => 'tags', 'action' => 'view', $tag['Tag']['name']));
-				if (isset($tag['children'])) {
-					$result .= $this->tagTree($tag['children']);
-				}
-				$result .= "</li>\n";
-			}
-			$result .= "</ul>\n";
-		}
-		return $result;
-	}
-
 /**
  * Truncates text.
  *

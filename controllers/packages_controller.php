@@ -43,8 +43,7 @@ class PackagesController extends AppController {
 			}
 		}
 		$maintainers = $this->Package->Maintainer->find('list');
-		$tags = $this->Package->Tag->generatetreelist(null, null, null, '- ');
-		$this->set(compact('maintainers', 'tags'));
+		$this->set(compact('maintainers'));
 	}
 
 	function edit($id = null) {
@@ -68,8 +67,7 @@ class PackagesController extends AppController {
 			}
 		}
 		$maintainers = $this->Package->Maintainer->find('list');
-		$tags = $this->Package->Tag->generatetreelist(null, null, null, '- ');
-		$this->set(compact('maintainers', 'tags'));
+		$this->set(compact('maintainers'));
 	}
 
 	function delete($id = null) {

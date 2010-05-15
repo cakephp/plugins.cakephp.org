@@ -11,8 +11,6 @@ class Package extends AppModel {
 		),
 	);
 	var $belongsTo = array('Maintainer');
-	var $hasMany = array('PackagesTag');
-	var $hasAndBelongsToMany = array('Tag');
 
 	function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
@@ -51,7 +49,7 @@ class Package extends AppModel {
 			'conditions' => array(
 				"{$this->alias}.{$this->primaryKey}" => $id),
 			'contain' => array(
-				'Maintainer', 'Tag')));
+				'Maintainer')));
 	}
 
 	function __findIndex($params = array()) {
