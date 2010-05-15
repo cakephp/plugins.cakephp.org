@@ -1,5 +1,5 @@
 <?php
-class WebserviceView extends View {
+class WebserviceView extends Object {
 
 /**
  * Determines whether native JSON extension is used for encoding.  Set by object constructor.
@@ -25,6 +25,54 @@ class WebserviceView extends View {
  */
 	var $xml_version = '1.0';
 
+/**
+ * Array of parameter data
+ *
+ * @var array Parameter data
+ */
+	var $params = array();
+
+/**
+ * Variables for the view
+ *
+ * @var array
+ * @access public
+ */
+	var $viewVars = array();
+
+/**
+ * List of variables to collect from the associated controller
+ *
+ * @var array
+ * @access protected
+ */
+	var $__passedVars = array(
+		'viewVars', 'params'
+	);
+
+/**
+ * Constructor
+ *
+ * @param Controller $controller A controller object to pull View::__passedArgs from.
+ * @param boolean $register Should the View instance be registered in the ClassRegistry
+ * @return View
+ */
+	function __construct(&$controller, $register = true) {
+		if (is_object($controller)) {
+			$count = count($this->__passedVars);
+			for ($j = 0; $j < $count; $j++) {
+				$var = $this->__passedVars[$j];
+				$this->{$var} = $controller->{$var};
+			}
+		}
+		parent::__construct();
+
+		if ($register) {
+			ClassRegistry::addObject('view', $this);
+		}
+	}
+
+
 	function render() {
 		Configure::write('debug', 0);
 		if (isset($this->viewVars['debugToolbarPanels'])) unset($this->viewVars['debugToolbarPanels']);
@@ -41,7 +89,16 @@ class WebserviceView extends View {
 
 			return $this->object($this->viewVars);
 		}
-		return $this->header() . $this->toXml($this->viewVars);
+		header('Content-type: application/xml');
+		return $this->toXml($this->viewVars);
+	}
+
+/**
+ * Dummy method
+ * 
+ * @deprecated deprecated in Webservice view
+ */
+	function renderLayout() {
 	}
 
 /**
@@ -368,37 +425,6 @@ class WebserviceView extends View {
  */
 	public function isAssoc($variable) {
 		return (is_array($variable) && 0 !== count(array_diff_key($variable, array_keys(array_keys($variable)))));
-	}
-
-/**
- * Returns an XML document header
- *
- * @param array $attrib Header tag attributes
- * @return string XML header
- * @access public
- */
-	function header($attrib = array()) {
-		if (Configure::read('App.encoding') !== null) {
-			$this->encoding = Configure::read('App.encoding');
-		}
-
-		if (is_array($attrib)) {
-			$attrib = array_merge(array('encoding' => $this->xml_encoding), $attrib);
-		}
-		if (is_string($attrib) && strpos($attrib, 'xml') !== 0) {
-			$attrib = 'xml ' . $attrib;
-		}
-
-		$header = 'xml';
-		if (is_string($attrib)) {
-			$header = $attrib;
-		} else {
-			$attrib = array_merge(array('version' => $this->xml_version, 'encoding' => $this->xml_encoding), $attrib);
-			foreach ($attrib as $key => $val) {
-				$header .= ' ' . $key . '="' . $val . '"';
-			}
-		}
-		return '<' . '?' . $header . ' ?' . '>';
 	}
 }
 ?>
