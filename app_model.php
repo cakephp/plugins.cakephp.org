@@ -15,7 +15,7 @@ class AppModel extends Model {
  * @author  Matt Curry
  * @link    http://github.com/mcurry/find
  */
-	function find($type, $options = array()) {
+	function find($type, $options = null) {
 		$method = null;
 		$options = (array) $options;
 		if(is_string($type)) {
