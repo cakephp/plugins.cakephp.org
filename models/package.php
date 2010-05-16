@@ -1,6 +1,7 @@
 <?php
 class Package extends AppModel {
 	var $name = 'Package';
+	var $belongsTo = array('Maintainer');
 	var $actsAs = array(
 		'Searchable.Searchable' => array(
 			'summary' => 'description',
@@ -10,7 +11,6 @@ class Package extends AppModel {
 			),
 		),
 	);
-	var $belongsTo = array('Maintainer');
 
 	function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
@@ -78,7 +78,7 @@ class Package extends AppModel {
 
 		return $this->find('all', array(
 			'cache' => 600,
-			'contain' => array('Maintainer.username'),
+			'contain' => array('Maintainer' => array('username')),
 			'fields' => array($this->displayField, 'maintainer_id'),
 			'conditions' => array("{$this->alias}.{$this->primaryKey}" => $id)));
 	}
@@ -103,15 +103,7 @@ class Package extends AppModel {
 			'conditions' => array(
 				"{$this->alias}.{$this->displayField}" => $params['package'],
 				"{$this->alias}.maintainer_id" => $maintainer_id),
-			'contain' => array(
-				'Maintainer' => array(
-					'fields' => array(
-						'username',
-						'name'
-					)
-				)
-			)
-		));
+			'contain' => array('Maintainer' => array($this->displayField, 'username'))));
 	}
 
 	function getSearchableData($data) {
