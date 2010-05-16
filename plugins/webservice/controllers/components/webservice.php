@@ -6,7 +6,6 @@
  *
  * @package webservice
  * @author Jose Diaz-Gonzalez
- * @copyright SeatGeek
  * @version 1.0
  **/
 
