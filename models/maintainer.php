@@ -155,7 +155,7 @@ class Maintainer extends AppModel {
 			'conditions' => array(
 				"{$this->alias}.{$this->displayField}" => $username),
 			'contain' => array(
-				'Package')));
+				'Package' => array('maintainer_id', 'name', 'description'))));
 	}
 
 	function authsomeLogin($type, $credentials = array()) {

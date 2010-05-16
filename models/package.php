@@ -67,8 +67,8 @@ class Package extends AppModel {
 	function __findLatest() {
 		return $this->find('all', array(
 			'cache' => 3600,
-			'contain' => array('Maintainer.id', 'Maintainer.username'),
-			'fields' => array($this->primaryKey, $this->displayField, 'maintainer_id', 'created'),
+			'contain' => array('Maintainer' => array('username')),
+			'fields' => array($this->displayField),
 			'limit' => 5,
 			'order' => "{$this->alias}.created DESC"));
 	}
@@ -78,8 +78,8 @@ class Package extends AppModel {
 
 		return $this->find('all', array(
 			'cache' => 600,
-			'contain' => array('Maintainer.id', 'Maintainer.username'),
-			'fields' => array($this->primaryKey, $this->displayField, 'maintainer_id', 'created'),
+			'contain' => array('Maintainer.username'),
+			'fields' => array($this->displayField, 'maintainer_id'),
 			'conditions' => array("{$this->alias}.{$this->primaryKey}" => $id)));
 	}
 
