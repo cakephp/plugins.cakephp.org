@@ -30,6 +30,11 @@ class AppModel extends Model {
 			}
 			return $return;
 		}
+		if (!empty($options['blacklist'])) {
+			$options['blacklist'] = (array) $options['blacklist'];
+			$options['fields'] = array_diff(array_keys($this->schema()), $options['blacklist']);
+			unset($options['blacklist']);
+		}
 		if (!empty($options['cache'])) {
 			App::import('Vendor', 'mi_cache');
 			if (is_int($options['cache'])) MiCache::config(array('duration' => $options['cache']));
@@ -56,6 +61,11 @@ class AppModel extends Model {
  */
 	function beforeFind($query = array()) {
 		$query = (array) $query;
+		if (!empty($query['blacklist'])) {
+			$query['blacklist'] = (array) $query['blacklist'];
+			$query['fields'] = array_diff(array_keys($this->schema()), $query['blacklist']);
+			unset($query['blacklist']);
+		}
 		if (!empty($query['paginate'])) {
 			$keys = array('fields', 'order', 'limit', 'page');
 			foreach ($keys as $key) {
