@@ -6,8 +6,8 @@
  *
  * @package webservice
  * @author Jose Diaz-Gonzalez
- * @version $1.0
  * @copyright SeatGeek
+ * @version 1.0
  **/
 
 class WebserviceComponent extends Object {
