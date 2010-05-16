@@ -14,7 +14,9 @@ class UsersController extends AppController {
 			return;
 		}
 
-		$maintainer = Authsome::login($this->data['User']);
+		$type = (strstr($this->data['User']['login'], '@')) ? 'credentials' : 'username';
+
+		$maintainer = Authsome::login($type, $this->data['User']);
 
 		if (!$maintainer) {
 			$this->Session->setFlash(__('Unknown user or Wrong Password', true));

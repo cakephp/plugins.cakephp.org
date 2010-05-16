@@ -167,7 +167,13 @@ class Maintainer extends AppModel {
 			case 'credentials':
 				// This is the logic for validating the login
 				$conditions = array(
-					"{$this->alias}.email" => $credentials['email'],
+					"{$this->alias}.email" => $credentials['login'],
+					"{$this->alias}.password" => Authsome::hash($credentials['password']),
+				);
+				break;
+			case 'username':
+				$conditions = array(
+					"{$this->alias}.{$this->displayField}" => $credentials['login'],
 					"{$this->alias}.password" => Authsome::hash($credentials['password']),
 				);
 				break;
