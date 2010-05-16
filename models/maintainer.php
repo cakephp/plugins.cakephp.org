@@ -114,6 +114,17 @@ class Maintainer extends AppModel {
 			'contain' => false));
 	}
 
+	function __findIndex($paginate = array()) {
+		$options = array_merge(array(
+				'blacklist' => array('group', 'email', 'password', 'activation_key', 'created', 'modified'),
+				'paginate' => true
+			),
+			$paginate
+		);
+
+		return $this->find('all', $options);
+	}
+
 	function __findMaintainerId($username = null) {
 		if (!$username) return false;
 

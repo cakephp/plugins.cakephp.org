@@ -4,7 +4,7 @@ class MaintainersController extends AppController {
 	var $helpers = array('Maintainer');
 
 	function index() {
-		$this->Maintainer->recursive = 0;
+		$this->paginate = $this->Maintainer->find('index', $this->paginate);
 		$this->set('maintainers', $this->paginate());
 	}
 
