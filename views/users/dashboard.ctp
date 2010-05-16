@@ -1,10 +1,10 @@
 <?php echo $this->Html->h2(__('Dashboard', true)); ?>
 <?php echo $this->Session->flash(); ?>
-<?php if (Authsome::get('group') == 'administrator') : ?>
+<?php if (Authsome::get('group') == 'admin') : ?>
 <ul class="actions">
 	<li>
-		<?php echo $this->Html->link(__('Moderation Index', true),
-				array('controller' => 'administrations', 'action' => 'index')); ?>
+		<?php echo $this->Html->link(__('Github User Index', true),
+				array('controller' => 'github', 'action' => 'index')); ?>
 	</li>
 </ul>
 <?php endif; ?>
