@@ -5,30 +5,6 @@ class Github extends AppModel {
 	var $useTable = false;
 	var $socket = null;
 
-	function http_socket() {
-		if (!$this->socket) {
-			App::import('Core', 'HttpSocket');
-			$this->socket = new HttpSocket();
-		}
-	}
-
-	function cached_xml_get($request, $var = null, $var_two = null, $var_three = null, $var_four = null) {
-		$md5_request = md5(serialize(array($request, $var, $addendum, $var_two)));
-		$response = array();
-
-		Cache::set(array('duration' => '+2 days'));
-		if (($response = Cache::read("Github.{$md5_request}")) === false) {
-			$this->http_socket();
-			$xml_response = new Xml($this->socket->get($request . $var . $var_two . $var_three . $var_four));
-			$response = Set::reverse($xml_response);
-			if (!empty($response['Html'])) return false;
-			if (!empty($response['Error'])) return $response;
-			Cache::set(array('duration' => '+2 days'));
-			Cache::write("Github.{$md5_request}", $response);
-		}
-		return $response;
-	}
-
 	function __findUserShow($username = null) {
 		if (!$username) return false;
 
@@ -276,6 +252,30 @@ class Github extends AppModel {
 		}
 
 		return $user;
+	}
+
+	function http_socket() {
+		if (!$this->socket) {
+			App::import('Core', 'HttpSocket');
+			$this->socket = new HttpSocket();
+		}
+	}
+
+	function cached_xml_get($request, $var = null, $var_two = null, $var_three = null, $var_four = null) {
+		$md5_request = md5(serialize(array($request, $var, $addendum, $var_two)));
+		$response = array();
+
+		Cache::set(array('duration' => '+2 days'));
+		if (($response = Cache::read("Github.{$md5_request}")) === false) {
+			$this->http_socket();
+			$xml_response = new Xml($this->socket->get($request . $var . $var_two . $var_three . $var_four));
+			$response = Set::reverse($xml_response);
+			if (!empty($response['Html'])) return false;
+			if (!empty($response['Error'])) return $response;
+			Cache::set(array('duration' => '+2 days'));
+			Cache::write("Github.{$md5_request}", $response);
+		}
+		return $response;
 	}
 
 	function savePackage($username, $name) {
