@@ -150,6 +150,7 @@ class Maintainer extends AppModel {
 		if (!$username) return false;
 
 		return $this->find('first', array(
+			'blacklist' => array('group', 'email', 'password', 'activation_key', 'created', 'modified'),
 			'cache' => 3600,
 			'conditions' => array(
 				"{$this->alias}.{$this->displayField}" => $username),
