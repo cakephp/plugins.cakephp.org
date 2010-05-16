@@ -1,23 +1,183 @@
 <?php
+App::import('Core', 'Xml');
 class Github extends AppModel {
 	var $name = 'Github';
 	var $useTable = false;
+	var $socket = null;
 
-	function __findFollowing($username = null) {
-		if (!$username) return false;
-		$following = array();
+	function http_socket() {
+		if (!$this->socket) {
+			App::import('Core', 'HttpSocket');
+			$this->socket = new HttpSocket();
+		}
+	}
+
+	function cached_xml_get($request, $var = null, $var_two = null, $var_three = null, $var_four = null) {
+		$md5_request = md5(serialize(array($request, $var, $addendum, $var_two)));
+		$response = array();
 
 		Cache::set(array('duration' => '+2 days'));
-		if (($repoList = Cache::read("Packages.server.list.{$username}")) === false) {
-			App::import(array('HttpSocket', 'Xml'));
-			$Socket = new HttpSocket();
-			$xmlResponse = new Xml($Socket->get("http://github.com/api/v2/xml/user/show/{$username}/following"));
-			$following = Set::reverse($xmlResponse);
-			Cache::set(array('duration' => '+7 days'));
-			Cache::write("Packages.server.list.{$username}", $following);
+		if (($response = Cache::read("Github.{$md5_request}")) === false) {
+			$this->http_socket();
+			$xml_response = new Xml($this->socket->get($request . $var . $var_two . $var_three . $var_four));
+			$response = Set::reverse($xml_response);
+			if (!empty($response['Html'])) return false;
+			if (!empty($response['Error'])) return $response;
+			Cache::set(array('duration' => '+2 days'));
+			Cache::write("Github.{$md5_request}", $response);
 		}
+		return $response;
+	}
 
-		return $following;
+	function __findUserShow($username = null) {
+		if (!$username) return false;
+
+		return $this->cached_xml_get("http://github.com/api/v2/xml/user/show/", $username);
+	}
+
+	function __findUserShowFollowing($username = null) {
+		if (!$username) return false;
+
+		return $this->cached_xml_get("http://github.com/api/v2/xml/user/show/", $username, "/following");
+	}
+
+	function __findUserWatched($username = null) {
+		if (!$username) return false;
+
+		return $this->cached_xml_get("http://github.com/api/v2/xml/repos/watched/", $username);
+	}
+
+	function __findUserEmail($username = null) {
+		if (!$username) return false;
+
+		return $this->cached_xml_get("http://github.com/api/v2/xml/user/email/", $username);
+	}
+
+	function __findIssuesSearch($params = array()) {
+		$params['state'] = (empty($params['state'])) ? 'open' : $params['state'];
+		if (empty($params['user']) || empty($params['repo']) || empty($params['term'])) return false;
+
+		return $this->cached_xml_get("http://github.com/api/v2/xml/issues/search/", $params['user'], "/{$params['repo']}", "/{$params['state']}", "/{$params['term']}");
+	}
+
+	function __findIssuesList($params = array()) {
+		$params['state'] = (empty($params['state'])) ? 'open' : $params['state'];
+		if (empty($params['user']) || empty($params['repo'])) return false;
+
+		return $this->cached_xml_get("http://github.com/api/v2/xml/issues/list/", $params['user'], "/{$params['repo']}", "/{$params['state']}");
+	}
+
+	function __findIssuesShow($params = array()) {
+		$params['state'] = (empty($params['state'])) ? 'open' : $params['state'];
+		if (empty($params['user']) || empty($params['repo']) || empty($params['number'])) return false;
+
+		return $this->cached_xml_get("http://github.com/api/v2/xml/issues/show/", $params['user'], "/{$params['repo']}", "/{$params['number']}");
+	}
+
+	function __findIssuesComments($params = array()) {
+		$params['state'] = (empty($params['state'])) ? 'open' : $params['state'];
+		if (empty($params['user']) || empty($params['repo']) || empty($params['number'])) return false;
+
+		return $this->cached_xml_get("http://github.com/api/v2/xml/issues/comments/", $params['user'], "/{$params['repo']}", "/{$params['number']}");
+	}
+
+	function __findIssuesLabels($params = array()) {
+		$params['state'] = (empty($params['state'])) ? 'open' : $params['state'];
+		if (empty($params['user']) || empty($params['repo']) || empty($params['number'])) return false;
+
+		return $this->cached_xml_get("http://github.com/api/v2/xml/issues/labels/", $params['user'], "/{$params['repo']}");
+	}
+
+	function __findReposWatched($username = null) {
+		if (!$username) return false;
+
+		return $this->cached_xml_get("http://github.com/api/v2/xml/repos/watched/", $username);
+	}
+
+	function __findReposSearch($query = null) {
+		if (!$query) return false;
+
+		return $this->cached_xml_get("http://github.com/api/v2/xml/repos/search/", str_replace(' ', '+', $query));
+	}
+
+	function __findReposShowSingle($params = array()) {
+		if (empty($params['username']) || empty($params['repo'])) return false;
+
+		return $this->cached_xml_get("http://github.com/api/v2/xml/repos/show/", "/{$params['username']}", "/{$params['repo']}");
+	}
+
+	function __findReposShowAll($username = null) {
+		if (!$username) return false;
+
+		return $this->cached_xml_get("http://github.com/api/v2/xml/repos/show/", $username);
+	}
+
+	function __findReposShowContributors($params = array()) {
+		if (empty($params['username']) || empty($params['repo'])) return false;
+
+		return $this->cached_xml_get("http://github.com/api/v2/xml/repos/show/", "/{$params['username']}", "/{$params['repo']}", '/contributors');
+	}
+
+	function __findReposShowNetwork($params = array()) {
+		if (empty($params['username']) || empty($params['repo'])) return false;
+
+		return $this->cached_xml_get("http://github.com/api/v2/xml/repos/show/", "/{$params['username']}", "/{$params['repo']}", '/network');
+	}
+
+	function __findReposShowLanguages($params = array()) {
+		if (empty($params['username']) || empty($params['repo'])) return false;
+
+		return $this->cached_xml_get("http://github.com/api/v2/xml/repos/show/", "/{$params['username']}", "/{$params['repo']}", '/languages');
+	}
+
+	function __findReposShowTags($params = array()) {
+		if (empty($params['username']) || empty($params['repo'])) return false;
+
+		return $this->cached_xml_get("http://github.com/api/v2/xml/repos/show/", "/{$params['username']}", "/{$params['repo']}", '/tags');
+	}
+
+	function __findCommitsList($params = array()) {
+		if (empty($params['username']) || empty($params['repo'])) return false;
+		$params['branch'] = (empty($params['branch'])) ? 'master' : $params['branch'];
+
+		return $this->cached_xml_get("http://github.com/api/v2/xml/commits/list/", "/{$params['username']}", "/{$params['repo']}", "/{$params['branch']}");
+	}
+
+	function __findCommitsShowPath($params = array()) {
+		if (empty($params['username']) || empty($params['repo']) || empty($params['path'])) return false;
+		$params['branch'] = (empty($params['branch'])) ? 'master' : $params['branch'];
+
+		return $this->cached_xml_get("http://github.com/api/v2/xml/commits/list/", "/{$params['username']}", "/{$params['repo']}", "/{$params['branch']}", "/{$params['path']}");
+	}
+
+	function __findCommitsShowSha($params = array()) {
+		if (empty($params['username']) || empty($params['repo']) || empty($params['sha'])) return false;
+
+		return $this->cached_xml_get("http://github.com/api/v2/xml/commits/show/", "/{$params['username']}", "/{$params['repo']}", "/{$params['sha']}");
+	}
+
+	function __findTreeShow($params = array()) {
+		if (empty($params['username']) || empty($params['repo']) || empty($params['sha'])) return false;
+
+		return $this->cached_xml_get("http://github.com/api/v2/xml/tree/show/", "/{$params['username']}", "/{$params['repo']}", "/{$params['sha']}");
+	}
+
+	function __findBlobShowPath($params = array()) {
+		if (empty($params['username']) || empty($params['repo']) || empty($params['sha']) || empty($params['path'])) return false;
+
+		return $this->cached_xml_get("http://github.com/api/v2/xml/blob/show/", "/{$params['username']}", "/{$params['repo']}", "/{$params['sha']}", "/{$params['path']}");
+	}
+
+	function __findBlobShowAll($params = array()) {
+		if (empty($params['username']) || empty($params['repo']) || empty($params['sha']) || empty($params['path'])) return false;
+
+		return $this->cached_xml_get("http://github.com/api/v2/xml/blob/all/", "/{$params['username']}", "/{$params['repo']}", "/{$params['sha']}");
+	}
+
+	function __findBlobShow($params = array()) {
+		if (empty($params['username']) || empty($params['repo']) || empty($params['sha']) || empty($params['path'])) return false;
+
+		return $this->cached_xml_get("http://github.com/api/v2/xml/blob/show/", "/{$params['username']}", "/{$params['repo']}", "/{$params['sha']}");
 	}
 
 	function __findNewPackages($username = null) {
