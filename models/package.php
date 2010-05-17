@@ -73,6 +73,14 @@ class Package extends AppModel {
 			'order' => "{$this->alias}.created DESC"));
 	}
 
+	function __findListForMaintainer($maintainer_id = null) {
+		if (!$maintainer_id) return false;
+
+		return $this->find('list', array(
+			'conditions' => array("{$this->alias}.maintainer_id" => $maintainer_id),
+			'order' => "{$this->alias}.{$this->displayField} DESC"));
+	}
+
 	function __findRandom() {
 		$id = $this->find('random_ids', 5);
 
