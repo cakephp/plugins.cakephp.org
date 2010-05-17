@@ -6,6 +6,13 @@
 	<?php $i = 0; foreach ($maintainers as $maintainer): ?>
 	<tr<?php echo ($i++ % 2 == 0) ? ' class="altrow"' : '';?>>
 		<td>
+			<?php
+				$repo_count = count($maintainer['Repositories']);
+				if ($repo_count > 0) {
+					if (strlen($repo_count) == 1) $repo_count = "0{$repo_count}";
+					echo "<span class='count'>{$repo_count}</span>";
+				}
+			?>
 			<?php echo $this->Github->existing($maintainer['Maintainer']['username'], $maintainer['Maintainer']['name']); ?>
 		</td>
 	</tr>
