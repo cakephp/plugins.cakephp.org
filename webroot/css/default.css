@@ -96,3 +96,6 @@ form div.submit.forgot{display:inline;}
 .auto_complete ul {list-style-type: none;}
 .auto_complete ul li {margin-left: 2px;}
 .auto_complete ul li.selected { background-color: #ffb;}
+
+/** Github **/
+span.count {background-color: #669;color:#fff;padding:0 2px;;border:1px solid #669;border-radius:10px;-khtml-border-radius:10px;-moz-border-radius:10px;-opera-border-radius:10px;-webkit-border-radius:10px;}
