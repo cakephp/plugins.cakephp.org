@@ -82,7 +82,7 @@ class Github extends AppModel {
 		return $this->cached_xml_get("http://github.com/api/v2/xml/repos/show/", "/{$params['username']}", "/{$params['repo']}");
 	}
 
-	function __findReposShowAll($username = null) {
+	function __findReposShow($username = null) {
 		if (!$username) return false;
 
 		return $this->cached_xml_get("http://github.com/api/v2/xml/repos/show/", $username);
@@ -262,7 +262,7 @@ class Github extends AppModel {
 	}
 
 	function cached_xml_get($request, $var = null, $var_two = null, $var_three = null, $var_four = null) {
-		$md5_request = md5(serialize(array($request, $var, $addendum, $var_two)));
+		$md5_request = md5(serialize(array($request, $var, $var_two, $var_three, $var_four)));
 		$response = array();
 
 		Cache::set(array('duration' => '+2 days'));
