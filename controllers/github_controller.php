@@ -5,7 +5,26 @@ class GithubController extends AppController {
 	var $uses = array('Github', 'Maintainer');
 
 	function index() {
-		$this->set('maintainers', $this->Maintainer->find('all'));
+		$maintainers = $this->Maintainer->find('all');
+		$repos = array();
+		foreach ($maintainers as $i => $maintainer) {
+			$repos = $this->Github->find('repos_show', $maintainer['Maintainer']['username']);
+			if (!empty($repos['Repositories']['Repository'])) {
+				$packages = $this->Maintainer->Package->find('list_for_maintainer', $maintainer['Maintainer']['id']);
+				if (!empty($repos['Repositories']['Repository']['name'])) {
+					$repos['Repositories']['Repository'] = array($repos['Repositories']['Repository']);
+				}
+				foreach ($repos['Repositories']['Repository'] as $j => $repo) {
+					if (in_array($repo['name'], $packages) || $repo['fork']['value'] == 'true') {
+						unset($repos['Repositories']['Repository'][$j]);
+					}
+				}
+				$maintainers[$i]['Repositories'] = $repos['Repositories']['Repository'];
+			} else {
+				$maintainers[$i]['Repositories'] = array();
+			}
+		}
+		$this->set(compact('maintainers'));
 	}
 
 	function view($username = null) {
