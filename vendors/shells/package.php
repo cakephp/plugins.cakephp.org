@@ -27,14 +27,14 @@ class PackageShell extends Shell {
  */
 	function __run() {
 
-		$validCommands = array('c', 'd', 'f', 'r', 'm', 's', 'u', 'q');
+		$validCommands = array('c', 'f', 'g', 'r', 'm', 's', 'u', 'q');
 
 		while (empty($this->command)) {
 			$this->out("Package Shell");
 			$this->hr();
 			$this->out("[C]heck Characteristics");
-			$this->out("[D]ownload Repositories");
 			$this->out("[F]ix Repository Urls");
+			$this->out("[G]it Clone Repositories");
 			$this->out("[M]aintainer Resave");
 			$this->out("[R]eset Characteristics");
 			$this->out("[S]specific User/Repo");
@@ -52,11 +52,11 @@ class PackageShell extends Shell {
 			case 'c' :
 				$this->check_characteristics();
 				break;
-			case 'd' :
-				$this->download_repositories();
-				break;
 			case 'f' :
 				$this->fix_repository_urls();
+				break;
+			case 'g' :
+				$this->git_clone_repositories();
 				break;
 			case 'm' :
 				$this->maintainer_resave();
@@ -77,7 +77,14 @@ class PackageShell extends Shell {
 		}
 	}
 
-	function download_repositories() {
+/**
+ * Git clones all the repositories from their respective remote
+ * locations
+ *
+ * @return void
+ * @author Jose Diaz-Gonzalez
+ */
+	function git_clone_repositories() {
 		$p_count = 0;
 		$tmp_dir = trim(TMP);
 		$repo_dir = trim(TMP . 'repos');
@@ -105,6 +112,13 @@ class PackageShell extends Shell {
 		$this->out(sprintf(__('Downloaded %s repositories', true), $p_count));
 	}
 
+/**
+ * Resave's each and every maintainer. Useful for
+ * resetting their url info to a valid url
+ *
+ * @return void
+ * @author Jose Diaz-Gonzalez
+ */
 	function maintainer_resave() {
 		$p_count = 0;
 		$maintainers = $this->Package->Maintainer->find('all', array(
@@ -118,6 +132,13 @@ class PackageShell extends Shell {
 		$this->out(sprintf(__('Resaved %s maintainers', true), $p_count));
 	}
 
+/**
+ * Recurses through all repositories and updates them
+ * where possible
+ *
+ * @return void
+ * @author Jose Diaz-Gonzalez
+ */
 	function update_repositories() {
 		$p_count = 0;
 		$repo_dir = trim(TMP . 'repos');
@@ -140,6 +161,13 @@ class PackageShell extends Shell {
 		$this->out(sprintf(__('Updated %s repositories', true), $p_count));
 	}
 
+/**
+ * Fixes clone urls (according to github) for all
+ * repositories, regardless of their working status
+ *
+ * @return void
+ * @author Jose Diaz-Gonzalez
+ */
 	function fix_repository_urls() {
 		$p_count = 0;
 		$update_count = 0;
@@ -164,6 +192,12 @@ class PackageShell extends Shell {
 		$this->_stop();
 	}
 
+/**
+ * Resets all 'contains' attributes for all packages
+ *
+ * @return void
+ * @author Jose Diaz-Gonzalez
+ */
 	function reset_characteristics() {
 		$p_count = 0;
 		$update_count = 0;
@@ -182,6 +216,14 @@ class PackageShell extends Shell {
 		$this->_stop();
 	}
 
+/**
+ * Checks and updates attributes on every package by
+ * recursing through all letter folders and checking
+ * each individual user
+ *
+ * @return void
+ * @author Jose Diaz-Gonzalez
+ */
 	function check_characteristics() {
 		$p_count = 0;
 		$repo_dir = trim(TMP . 'repos');
@@ -200,6 +242,14 @@ class PackageShell extends Shell {
 		$this->out(sprintf(__('Checked %s repositories', true), $p_count));
 	}
 
+/**
+ * Recurses through a user's repository directories and
+ * checks each individual repository's attributes
+ *
+ * @param string $user_folder path to a user's folder on disk
+ * @return int number of packages updated
+ * @author Jose Diaz-Gonzalez
+ */
 	function check_characteristics_for_user($user_folder) {
 		$p_count = 0;
 		$repo_dir = trim(TMP . 'repos');
@@ -215,6 +265,15 @@ class PackageShell extends Shell {
 		return $p_count;
 	}
 
+/**
+ * Check's an individual repository of cakephp code
+ * and updates it's attributes
+ *
+ * @param string $user_folder path to a user's folder on disk
+ * @param string $repository repository folder name
+ * @return boolean true if update successful, false otherwise
+ * @author Jose Diaz-Gonzalez
+ */
 	function check_characteristics_for_repository($user_folder = null, $repository = null) {
 		if (!$user_folder || !$repository) return false;
 
@@ -226,12 +285,25 @@ class PackageShell extends Shell {
 			'conditions' => array(
 				'Maintainer.username' => $user_folder,
 				'Package.name' => $repository)));
+		if (!$package) return false;
+
 		foreach ($characteristics as $characteristic) {
 			$package['Package'][$characteristic] = 1;
 		}
 		return $this->Package->save($package);
 	}
 
+/**
+ * Begins classification of a repository by checking for
+ * the existence of an 'app' folder and adjusting accordingly
+ * before classifying it's contents
+ *
+ * @param string $repository_path path to a git repository on disk
+ * @return array an array of characteristics
+ * @access protected
+ * @package default
+ * @author Jose Diaz-Gonzalez
+ */
 	function _classify_repository($repository_path = null) {
 		if (!$repository_path) return false;
 
@@ -250,6 +322,17 @@ class PackageShell extends Shell {
 		return $characteristics;
 	}
 
+/**
+ * Classifies the contents of a repository based upon raw
+ * Folder::cd() and Folder::read() methods
+ *
+ * @param string $repository_path path to a git repository on disk
+ * @param array an array of files and folders in the base repository path
+ * @return array an array of characteristics
+ * @access protected
+ * @package default
+ * @author Jose Diaz-Gonzalez
+ */
 	function _classify_contents($repository_path, $contents = array()) {
 		$characteristics = array();
 		$resources = null;
