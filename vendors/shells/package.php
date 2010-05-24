@@ -106,12 +106,14 @@ class PackageShell extends Shell {
 				$this->out(sprintf(__('* Failed to update %s', true), $package['Package']['name']));
 				continue;
 			}
+			$tmp = $repo['Repository']['homepage'];
 			if (isset($repo['Repository']['homepage']['value'])) {
 				$package['Package']['homepage'] = (is_array($repo['Repository']['homepage'])) ?
 					$repo['Repository']['homepage']['value'] : $repo['Repository']['homepage'];
 			} else {
 				$package['Package']['homepage'] = $repo['Repository']['url'];
 			}
+			if (empty($repo['Repository']['homepage'])) $repo['Repository']['homepage'] = $tmp;
 			if (isset($repo['Repository']['description'])) {
 				$package['Package']['description'] = $repo['Repository']['description'];
 			}
