@@ -27,11 +27,12 @@ class PackageShell extends Shell {
  */
 	function __run() {
 
-		$validCommands = array('c', 'f', 'g', 'r', 'm', 's', 'u', 'q');
+		$validCommands = array('a', 'c', 'f', 'g', 'r', 'm', 's', 'u', 'q');
 
 		while (empty($this->command)) {
 			$this->out("Package Shell");
 			$this->hr();
+			$this->out("[A]dd missing Attributes");
 			$this->out("[C]heck Characteristics");
 			$this->out("[F]ix Repository Urls");
 			$this->out("[G]it Clone Repositories");
@@ -49,6 +50,9 @@ class PackageShell extends Shell {
 		}
 
 		switch ($this->command) {
+			case 'a' :
+				$this->add_missing_attributes();
+				break;
 			case 'c' :
 				$this->check_characteristics();
 				break;
@@ -75,6 +79,48 @@ class PackageShell extends Shell {
 				$this->_stop();
 				break;
 		}
+	}
+
+/**
+ * Goes through each and every package and update's it's attributes
+ *
+ * @return void
+ * @author Jose Diaz-Gonzalez
+ **/
+	function add_missing_attributes() {
+		$packages = $this->Package->find('all', array(
+			'contain' => array('Maintainer' => array('id', 'username')),
+			'fields' => array('id', 'name'),
+			'order' => array('Package.id ASC')));
+
+		$this->Package->Behaviors->detach('Searchable');
+		$Github = ClassRegistry::init('Github');
+		$count = 0;
+		foreach ($packages as $package) {
+			sleep(1);
+			$repo = $Github->find('repos_show_single', array(
+				'username' => $package['Maintainer']['username'],
+				'repo' => $package['Package']['name']
+			));
+			if (!$repo || !isset($repo['Repository'])) {
+				continue;
+			}
+			if (isset($repo['Repository']['homepage']['value'])) {
+				$package['Package']['homepage'] = $repo['Repository']['homepage']['value'];
+			} else {
+				$package['Package']['homepage'] = $repo['Repository']['url'];
+			}
+			if (isset($repo['Repository']['description'])) {
+				$package['Package']['description'] = $repo['Repository']['description'];
+			}
+			if ($this->Package->save($package)) {
+				$this->out(sprintf(__('* Updated %s', true), $package['Package']['name']));
+				$count++;
+				continue;
+			}
+			$this->out(sprintf(__('* Failed to update %s', true), $package['Package']['name']));
+		}
+		$this->out(sprintf(__('* Updated %s of % packages', true), $count, count($packages)));
 	}
 
 /**
