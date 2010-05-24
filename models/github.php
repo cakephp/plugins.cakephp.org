@@ -37,7 +37,7 @@ class Github extends AppModel {
 
 	function __findIssuesSearch($params = array()) {
 		foreach (array('username', 'repo', 'term') as $param) {
-			if (empty($params[$param])) return false
+			if (empty($params[$param])) return false;
 		}
 		$params['state'] = (empty($params['state'])) ? 'open' : $params['state'];
 
@@ -54,7 +54,7 @@ class Github extends AppModel {
 
 	function __findIssuesShow($params = array()) {
 		foreach (array('username', 'repo', 'number') as $param) {
-			if (empty($params[$param])) return false
+			if (empty($params[$param])) return false;
 		}
 		$params['state'] = (empty($params['state'])) ? 'open' : $params['state'];
 
@@ -63,7 +63,7 @@ class Github extends AppModel {
 
 	function __findIssuesComments($params = array()) {
 		foreach (array('username', 'repo', 'number') as $param) {
-			if (empty($params[$param])) return false
+			if (empty($params[$param])) return false;
 		}
 		$params['state'] = (empty($params['state'])) ? 'open' : $params['state'];
 
@@ -134,7 +134,7 @@ class Github extends AppModel {
 
 	function __findCommitsShowPath($params = array()) {
 		foreach (array('username', 'repo', 'path') as $param) {
-			if (empty($params[$param])) return false
+			if (empty($params[$param])) return false;
 		}
 		$params['branch'] = (empty($params['branch'])) ? 'master' : $params['branch'];
 
@@ -144,7 +144,7 @@ class Github extends AppModel {
 
 	function __findCommitsShowSha($params = array()) {
 		foreach (array('username', 'repo', 'sha') as $param) {
-			if (empty($params[$param])) return false
+			if (empty($params[$param])) return false;
 		}
 
 		return $this->cached_xml_get("/commits/show/{$params['username']}/{$params['repo']}/{$params['sha']}");
@@ -152,7 +152,7 @@ class Github extends AppModel {
 
 	function __findTreeShow($params = array()) {
 		foreach (array('username', 'repo', 'sha') as $param) {
-			if (empty($params[$param])) return false
+			if (empty($params[$param])) return false;
 		}
 
 		return $this->cached_xml_get("/tree/show/{$params['username']}/{$params['repo']}/{$params['sha']}");
@@ -160,7 +160,7 @@ class Github extends AppModel {
 
 	function __findBlobShowPath($params = array()) {
 		foreach (array('username', 'repo', 'sha', 'path') as $param) {
-			if (empty($params[$param])) return false
+			if (empty($params[$param])) return false;
 		}
 
 		$request = "/blob/show/{$params['username']}/{$params['repo']}/{$params['sha']}/{$params['path']}";
@@ -169,7 +169,7 @@ class Github extends AppModel {
 
 	function __findBlobShowAll($params = array()) {
 		foreach (array('username', 'repo', 'sha') as $param) {
-			if (empty($params[$param])) return false
+			if (empty($params[$param])) return false;
 		}
 
 		return $this->cached_xml_get("/blob/all/{$params['username']}/{$params['repo']}/{$params['sha']}");
@@ -177,7 +177,7 @@ class Github extends AppModel {
 
 	function __findBlobShow($params = array()) {
 		foreach (array('username', 'repo', 'sha') as $param) {
-			if (empty($params[$param])) return false
+			if (empty($params[$param])) return false;
 		}
 
 		return $this->cached_xml_get("/blob/show/{$params['username']}/{$params['repo']}/{$params['sha']}");
@@ -229,14 +229,14 @@ class Github extends AppModel {
 		}
 	}
 
-	function cached_xml_get($request, $var = null, $var_two = null, $var_three = null, $var_four = null) {
-		$md5_request = md5(serialize(array($base_uri . $request, $var, $var_two, $var_three, $var_four)));
+	function cached_xml_get($request, $var = null) {
+		$md5_request = md5(serialize(array($this->base_uri . $request, $var)));
 		$response = array();
 
 		Cache::set(array('duration' => '+2 days'));
 		if (($response = Cache::read("Github.{$md5_request}")) === false) {
 			$this->http_socket();
-			$xml_response = new Xml($this->socket->get($base_uri . $request . $var . $var_two . $var_three . $var_four));
+			$xml_response = new Xml($this->socket->get($this->base_uri . $request . $var));
 			$response = Set::reverse($xml_response);
 			if (!empty($response['Html'])) return false;
 			if (!empty($response['Error'])) return $response;
@@ -288,7 +288,7 @@ class Github extends AppModel {
 				'name' => (isset($user['User']['name'])) ? $user['User']['name'] : '',
 				'company' => (isset($user['User']['company'])) ? $user['User']['company'] : '',
 				'url' => (isset($user['User']['blog'])) ? $user['User']['blog'] : '',
-				'email' => (isset($user['User']['email'])) ? $user['User']['email'] : ''
+				'email' => (isset($user['User']['email'])) ? $user['User']['email'] : '',
 				'location' => (isset($user['User']['location'])) ? $user['User']['location'] : ''
 			)
 		);
