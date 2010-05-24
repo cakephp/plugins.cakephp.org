@@ -106,10 +106,10 @@ class PackageShell extends Shell {
 			$repo_url = $package['Package']['repository_url'];
 			$clone_path = strtolower($package['Maintainer']['username'][0]) . DS . 
 			$clone_path = $package['Maintainer']['username'] . DS . $package['Package']['name'];
-			$this->out(sprintf(__("Downloading package to %s/%s...", true), $repo_dir, $clone_path));
+			$this->out(sprintf(__("* Downloading package to %s/%s...", true), $repo_dir, $clone_path));
 			$this->out(shell_exec("cd {$repo_dir} ; git clone {$repo_url} {$clone_path}"));
 		}
-		$this->out(sprintf(__('Downloaded %s repositories', true), $p_count));
+		$this->out(sprintf(__('* Downloaded %s repositories', true), $p_count));
 	}
 
 /**
@@ -129,7 +129,7 @@ class PackageShell extends Shell {
 			$this->out(sprintf(__('[Maintainer] %s', true), $maintainer['Maintainer']['username']));
 			$this->Package->Maintainer->save($maintainer);
 		}
-		$this->out(sprintf(__('Resaved %s maintainers', true), $p_count));
+		$this->out(sprintf(__('* Resaved %s maintainers', true), $p_count));
 	}
 
 /**
@@ -158,7 +158,7 @@ class PackageShell extends Shell {
 				}
 			}
 		}
-		$this->out(sprintf(__('Updated %s repositories', true), $p_count));
+		$this->out(sprintf(__('* Updated %s repositories', true), $p_count));
 	}
 
 /**
@@ -188,7 +188,7 @@ class PackageShell extends Shell {
 			if ($this->Package->save($package)) $update_count++;
 		}
 
-		$this->out(sprintf(__('Successfully updated %s out of %s package urls', true), $update_count, $p_count));
+		$this->out(sprintf(__('* Successfully updated %s out of %s package urls', true), $update_count, $p_count));
 		$this->_stop();
 	}
 
@@ -212,7 +212,7 @@ class PackageShell extends Shell {
 			$this->Package->updateAll(array("Package.{$characteristic}" => 0));
 		}
 
-		$this->out(__('Successfully reset all characteristics', true));
+		$this->out(__('* Successfully reset all characteristics', true));
 		$this->_stop();
 	}
 
@@ -239,7 +239,7 @@ class PackageShell extends Shell {
 				$p_count += $this->check_characteristics_for_user($user_folder);
 			}
 		}
-		$this->out(sprintf(__('Checked %s repositories', true), $p_count));
+		$this->out(sprintf(__('* Checked %s repositories', true), $p_count));
 	}
 
 /**
@@ -261,7 +261,7 @@ class PackageShell extends Shell {
 		foreach ($repositories['0'] as $repository) {
 			if ($this->check_characteristics_for_repository($user_folder, $repository)) $p_count++;
 		}
-		$this->out(sprintf(__('[User] %s for %s', true), $p_count, $user_folder));
+		$this->out(sprintf(__('* [User] %s for %s', true), $p_count, $user_folder));
 		return $p_count;
 	}
 
