@@ -145,7 +145,8 @@ class PackageShell extends Shell {
 		$update_count = 0;
 
 		$packages = $this->Package->find('all', array(
-			'contain' => array('Maintainer'),
+			'contain' => array('Maintainer' => array('id', 'username')),
+			'fields' => array('id', 'maintainer_id', 'name'),
 			'order' => array('Package.id ASC')));
 
 		foreach ($packages as $package) {
