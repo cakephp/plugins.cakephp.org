@@ -6,29 +6,12 @@ class GithubController extends AppController {
 
 	function index() {
 		$maintainers = $this->Maintainer->find('all');
-		$repos = array();
-		foreach ($maintainers as $i => $maintainer) {
-			$repos = $this->Github->find('repos_show', $maintainer['Maintainer']['username']);
-			if (!empty($repos['Repositories']['Repository'])) {
-				$packages = $this->Maintainer->Package->find('list_for_maintainer', $maintainer['Maintainer']['id']);
-				if (!empty($repos['Repositories']['Repository']['name'])) {
-					$repos['Repositories']['Repository'] = array($repos['Repositories']['Repository']);
-				}
-				foreach ($repos['Repositories']['Repository'] as $j => $repo) {
-					if (in_array($repo['name'], $packages) || $repo['fork']['value'] == 'true') {
-						unset($repos['Repositories']['Repository'][$j]);
-					}
-				}
-				$maintainers[$i]['Repositories'] = $repos['Repositories']['Repository'];
-			} else {
-				$maintainers[$i]['Repositories'] = array();
-			}
-		}
+		$maintainers = $this->Github->find('related_repositories', $maintainers);
 		$this->set(compact('maintainers'));
 	}
 
 	function view($username = null) {
-		$user = $this->Github->find('user', $username);
+		$user = $this->Github->find('user_show', $username);
 		if (!$user) {
 			$this->Session->setFlash(sprintf(__('Invalid %s', true), 'user'));
 			$this->redirect(array('action' => 'index'));
@@ -43,7 +26,7 @@ class GithubController extends AppController {
 	}
 
 	function add($username = null) {
-		$user = $this->Github->find('user', $username);
+		$user = $this->Github->find('user_show', $username);
 		if (!$user) {
 			$this->Session->setFlash(sprintf(__('Invalid %s', true), 'user'));
 			$this->redirect(array('action' => 'new', $username));
@@ -71,7 +54,7 @@ class GithubController extends AppController {
 	}
 
 	function github($username = null) {
-		$user = $this->Github->find('user', $username);
+		$user = $this->Github->find('user_show', $username);
 		if (!$user) {
 			$this->Session->setFlash(sprintf(__('Invalid %s', true), 'user'));
 			$this->redirect(array('action' => 'index'));
