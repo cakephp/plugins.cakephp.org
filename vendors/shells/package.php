@@ -103,10 +103,12 @@ class PackageShell extends Shell {
 				'repo' => $package['Package']['name']
 			));
 			if (!$repo || !isset($repo['Repository'])) {
+				$this->out(sprintf(__('* Failed to update %s', true), $package['Package']['name']));
 				continue;
 			}
 			if (isset($repo['Repository']['homepage']['value'])) {
-				$package['Package']['homepage'] = $repo['Repository']['homepage']['value'];
+				$package['Package']['homepage'] = (is_array($repo['Repository']['homepage'])) ?
+					$repo['Repository']['homepage']['value'] : $repo['Repository']['homepage'];
 			} else {
 				$package['Package']['homepage'] = $repo['Repository']['url'];
 			}
@@ -121,7 +123,7 @@ class PackageShell extends Shell {
 			$this->out(sprintf(__('* Failed to update %s', true), $package['Package']['name']));
 		}
 		$p_count = count($packages);
-		$this->out(sprintf(__('* Updated %s of % packages', true), $count, $p_count));
+		$this->out(sprintf(__('* Updated %s of %s packages', true), $count, $p_count));
 	}
 
 /**
