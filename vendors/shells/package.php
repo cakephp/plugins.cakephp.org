@@ -120,7 +120,8 @@ class PackageShell extends Shell {
 			}
 			$this->out(sprintf(__('* Failed to update %s', true), $package['Package']['name']));
 		}
-		$this->out(sprintf(__('* Updated %s of % packages', true), $count, count($packages)));
+		$p_count = count($packages);
+		$this->out(sprintf(__('* Updated %s of % packages', true), $count, $p_count));
 	}
 
 /**
