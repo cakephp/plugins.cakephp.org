@@ -1,5 +1,5 @@
 <?php $this->Html->h2(__('Search Results', true)); ?>
-<?php echo $this->element('search'); ?>
+<?php $this->element('search'); ?>
 <?php if (!empty($results)): ?>
 	<table cellpadding="0" cellspacing="0">
 		<tr>

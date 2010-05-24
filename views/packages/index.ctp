@@ -1,5 +1,5 @@
 <?php $this->Html->h2(__('Browse Packages', true));?>
-<?php echo $this->element('search'); ?>
+<?php $this->element('search'); ?>
 <table cellpadding="0" cellspacing="0">
 	<tr>
 		<th><?php __('Contents')?></th>
