@@ -25,3 +25,9 @@
 		<li><?php echo $this->Clearance->link(sprintf(__('New %s', true), __('Package', true)), array('controller' => 'packages', 'action' => 'add')); ?> </li>
 	</ul>
 </div>
+<div class="paging">
+	<?php echo $this->Paginator->prev('<< '.__('previous', true), array(), null, array('class'=>'disabled'));?>
+ | 	<?php echo $this->Paginator->numbers();?>
+|
+	<?php echo $this->Paginator->next(__('next', true).' >>', array(), null, array('class' => 'disabled'));?>
+</div>

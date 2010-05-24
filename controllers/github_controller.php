@@ -5,7 +5,7 @@ class GithubController extends AppController {
 	var $uses = array('Github', 'Maintainer');
 
 	function index() {
-		$maintainers = $this->Maintainer->find('all');
+		$maintainers = $this->paginate('Maintainer');
 		$maintainers = $this->Github->find('related_repositories', $maintainers);
 		$this->set(compact('maintainers'));
 	}
