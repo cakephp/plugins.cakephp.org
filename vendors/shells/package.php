@@ -91,7 +91,7 @@ class PackageShell extends Shell {
 		$packages = $this->Package->find('all', array(
 			'contain' => array('Maintainer' => array('id', 'username')),
 			'fields' => array('id', 'name'),
-			'order' => array('Package.id ASC')));
+			'order' => array('Package.name ASC')));
 
 		$this->Package->Behaviors->detach('Searchable');
 		$Github = ClassRegistry::init('Github');
