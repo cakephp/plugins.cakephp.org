@@ -256,7 +256,7 @@ class Github extends AppModel {
 				'Package.name' => $name)));
 		if ($repo) return false;
 
-		$repo = $this->find('repos_show_single', array('username' => $username, 'name' => $name));
+		$repo = $this->find('repos_show_single', array('username' => $username, 'repo' => $name));
 		if ($repo['Repository']['fork']['value'] == 'true') return false;
 
 		$data = array(
