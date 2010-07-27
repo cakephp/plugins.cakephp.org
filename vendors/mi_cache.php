@@ -9,11 +9,10 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
  * @copyright     Copyright (c) 2009, Andy Dawson
  * @link          www.ad7six.com
- * @package       base
- * @subpackage    base.vendors
+ * @package       mi
+ * @subpackage    mi.vendors
  * @since         v 1.0 (02-Mar-2009)
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -50,8 +49,8 @@
  *	$data = MiCache::rA('/some/string/url/or/array/url', array('some' => 'params'));
  *
  * @uses          Object
- * @package       base
- * @subpackage    base.vendors
+ * @package       mi
+ * @subpackage    mi.vendors
  */
 class MiCache extends Object {
 
@@ -84,9 +83,11 @@ class MiCache extends Object {
  * engine - the engine to use, defaults to MiFile which permits cachekeys to contain folders
  * duration - how long should data be cached for
  * prefix - the prefix for the filename or partial path.
- * serialize - whether to serialize the cached data or not
+ * serialize - defaults to false, otherwise  a cached false is hard to identify
  * dirLevels - how many dir levels to create
  * dirLength - how many characters of the hask-key to be used for each folder name
+ * probability - the garbage collection probability - the default is to effectively disable gc
+ * batchLoadSettings - Enable batch loading of settings by default
  *
  * @var array
  * @access public
@@ -97,10 +98,42 @@ class MiCache extends Object {
 		'duration' => '+1 year',
 		'prefix' => null,
 		'path' => 'data/',
-		'serialize' => true,
+		'serialize' => false,
 		'dirLevels' => 2,
-		'dirLength' => 1
+		'dirLength' => 1,
+		'probability' => 98765432123456789,
+		'batchLoadSettings' => true
 	);
+
+/**
+ * appSettingCache property
+ *
+ * The per-request settings cache. The first time Some.specific.setting is requested the top level
+ * key (Some) will be requested and stored here. This is likely to be faster than handling each
+ * setting request individuallly (less cache engine activity)
+ *
+ * @var array
+ * @access protected
+ */
+	static protected $_appSettingCache = array();
+
+/**
+ * Do we have a database?
+ *
+ * @var mixed null
+ * @access protected
+ */
+	static protected $_hasDb = null;
+
+/**
+ * Do we have a settings table to refer to?
+ *
+ * If not put Configure::write('MiSettings.noDb', true) in your bootstrap so this class doesn't try and load the model
+ *
+ * @var mixed null
+ * @access protected
+ */
+	static protected $_hasSettingsTable = null;
 
 /**
  * config method
@@ -116,14 +149,11 @@ class MiCache extends Object {
 			return array(MiCache::$setting => MiCache::$settings[MiCache::$setting]);
 		}
 		$_defaults = MiCache::$defaultSettings;
-		if (Configure::read()) {
-			$_defaults['duration'] = 100;
-		}
 		$name = isset($config['name'])?$config['name']:'mi_cache';
 		if (!MiCache::$setting) {
 			MiCache::$setting = $name;
 		}
-		MiCache::$settings[$name] = array_merge($_defaults, $config);
+		MiCache::$settings[$name] = am($_defaults, $config);
 		if (MiCache::$settings[$name]['path'][0] != '/') {
 			MiCache::$settings[$name]['path'] = CACHE . MiCache::$settings[$name]['path'];
 		}
@@ -137,17 +167,23 @@ class MiCache extends Object {
 /**
  * clear method
  *
- * Delete everything in the cache
+ * API DIFFERENCE
+ * if a topKey is specified, delete everything under setting-dir/topKey
  *
  * @param bool $check false
  * @return void
  * @access public
  */
-	function clear($check = false) {
+	public function clear($topKey = false) {
 		if (MiCache::$setting === null) {
 			MiCache::config();
 		}
-		Cache::clear($check, MiCache::$setting);
+		if ($topKey) {
+			unset(MiCache::$_appSettingCache['_' . $topKey]);
+		} else {
+			MiCache::$_appSettingCache = array();
+		}
+		Cache::clear($topKey, MiCache::$setting);
 	}
 
 /**
@@ -158,7 +194,7 @@ class MiCache extends Object {
  * @return void
  * @access public
  */
-	function delete() {
+	public function delete() {
 		if (MiCache::$setting === null) {
 			MiCache::config();
 		}
@@ -186,7 +222,7 @@ class MiCache extends Object {
  * @return void
  * @access public
  */
-	function mi($name, $func = null) {
+	public function mi($name, $func = null) {
 		if (MiCache::$setting === null) {
 			MiCache::config();
 		}
@@ -199,6 +235,7 @@ class MiCache extends Object {
 		} else {
 			$params = array();
 		}
+
 		if (MiCache::$setting === null) {
 			MiCache::config();
 		}
@@ -211,7 +248,6 @@ class MiCache extends Object {
 			}
 			$func = $name;
 			$name = 'Mi';
-			include_once(dirname(__FILE__) . DS . 'mi.php');
 			$args = array($name, $func, $params);
 		} else {
 			$args = func_get_args();
@@ -226,10 +262,11 @@ class MiCache extends Object {
 			}
 		}
 		$cacheKey = MiCache::key($args);
-		$return = MiCache::_read($cacheKey, MiCache::$setting);
-		if ($return !== null && !Configure::read('Cache.disable')) {
-			return $return;
+		$return = Cache::read($cacheKey, MiCache::$setting);
+		if ($return) {
+			return unserialize($return);
 		}
+
 		if (is_string($name)) {
 			if (!class_exists($name)) {
 				if (App::import('Vendor', $name)) {
@@ -266,7 +303,7 @@ class MiCache extends Object {
  * @return void
  * @access public
  */
-	function data($name, $func) {
+	public function data($name, $func) {
 		if (MiCache::$setting === null) {
 			MiCache::config();
 		}
@@ -280,9 +317,17 @@ class MiCache extends Object {
 		}
 
 		$cacheKey = MiCache::key(func_get_args());
-		$return = MiCache::_read($cacheKey, MiCache::$setting);
-		if ($return !== null && !Configure::read('Cache.disable')) {
-			return $return;
+		$return = MiCache::read($cacheKey, MiCache::$setting, false);
+		if ($return) {
+			return unserialize($return);
+		}
+
+		if (!MiCache::_hasDb()) {
+			return null;
+		}
+
+		if ($func === 'find') {
+			$params[1]['miCache'] = 'cacheRequest';
 		}
 		$return = call_user_func_array(array(ClassRegistry::init($name), $func), $params);
 		MiCache::write($cacheKey, $return, MiCache::$setting);
@@ -300,17 +345,24 @@ class MiCache extends Object {
 			MiCache::config();
 		}
 
+		$offset = $prefix = null;
+		if (is_string($string)) {
+			$prefix = $string . DS;
+		}
+
 		if (count(func_get_args() > 1 || !is_string($string))) {
+			if (!$prefix && is_string($string[0])) {
+				$prefix = $string[0] . DS;
+			}
 			$string = serialize(func_get_args());
 		}
 		$hash = md5(Configure::read('Config.language') . $string);
 		$config = current(MiCache::config());
-		$offset = $prefix = null;
 		for ($i = 1; $i <= $config['dirLevels']; $i++) {
 			$prefix .= substr($hash, $offset, $config['dirLength']) . DS;
 			$offset = $i * $config['dirLength'];
 		}
-		return $prefix . $hash;
+		return str_replace('.', '_', strtolower($prefix . $hash));
 	}
 
 /**
@@ -318,10 +370,11 @@ class MiCache extends Object {
  *
  * @param mixed $cacheKey
  * @param mixed $setting null
+ * @param bool $unserialize true
  * @return void
  * @access public
  */
-	public static function read($cacheKey, $setting = null) {
+	public static function read($cacheKey, $setting = null, $unserialize = true) {
 		if (MiCache::$setting === null) {
 			MiCache::config();
 		}
@@ -329,7 +382,11 @@ class MiCache extends Object {
 		if (!$setting) {
 			$setting = MiCache::$setting;
 		}
-		return MiCache::_read($cacheKey, $setting);
+		$return = Cache::read($cacheKey, $setting);
+		if ($return && $unserialize) {
+			return unserialize($return);
+		}
+		return $return;
 	}
 
 /**
@@ -343,26 +400,58 @@ class MiCache extends Object {
  * @return void
  * @access public
  */
-	public static function setting($cacheKey = '', $aroId = null) {
+	public static function setting($id = '', $aroId = null) {
 		if (MiCache::$setting === null) {
 			MiCache::config();
 		}
 
-		$aroPrefix = '';
-		if ($aroId) {
-			$aroPrefix = $aroId . '-';
-		}
-		$return = MiCache::_read($aroPrefix . $cacheKey, MiCache::$setting);
-		if ($return !== null) {
-			return $return;
-		}
-		if ($Inst = MiCache::_init('MiSettings.Setting')) {
-			$return = $Inst->data($cacheKey, $aroId);
-			if ($return === null) {
-				$return = Configure::read($cacheKey);
+		if (MiCache::$settings[MiCache::$setting]['batchLoadSettings']) {
+		  	if (strpos($id, '.')) {
+				$keys = explode('.', $id);
+				$mainId = array_shift($keys);
+				if (!array_key_exists($aroId . '_' . $mainId, MiCache::$_appSettingCache)) {
+					MiCache::$_appSettingCache[$aroId . '_' . $mainId] = MiCache::setting($mainId, $aroId);
+				}
+				$array = MiCache::$_appSettingCache[$aroId . '_' . $mainId];
+				$j = count($keys);
+				$return = null;
+				if (is_array($array)) {
+					foreach($keys as $i => $key) {
+						if (!array_key_exists($key, $array)) {
+							$array = null;
+							break;
+						}
+						$array = $array[$key];
+					}
+					if ($i == $j - 1) {
+						$return = $array;
+					}
+				}
+				if ($return !== null) {
+					return $return;
+				}
 			}
-			MiCache::write($aroPrefix . $cacheKey, $return, MiCache::$setting);
+		} else {
+		  	if (strpos($id, '.')) {
+				$keys = explode('.', $id, 1);
+				$mainId = array_shift($keys);
+				if (array_key_exists($aroId . '_' . $mainId, MiCache::$_appSettingCache) &&
+					array_key_exists($id, MiCache::$_appSettingCache[$aroId . '_' . $mainId])) {
+					return MiCache::$_appSettingCache[$aroId . '_' . $mainId][$id];
+				}
+			}
 		}
+
+		if (MiCache::_hasSettingsTable()) {
+			$return = MiCache::data('MiSettings.Setting', 'data', $id, $aroId);
+			if ($return !== null) {
+				return $return;
+			}
+		}
+
+		$return = Configure::read($id);
+		$cacheKey = MiCache::key(array('MiSettings.Setting', 'data', $id, $aroId));
+		MiCache::write($cacheKey, $return, MiCache::$setting);
 		return $return;
 	}
 
@@ -379,25 +468,43 @@ class MiCache extends Object {
 			MiCache::config();
 		}
 
-		if (!$setting) {
+		if (!$setting || !isset(MiCache::$settings[$setting])) {
 			$setting = MiCache::$setting;
 		}
 		$settings = MiCache::$settings[$setting];
 		$path = dirname($settings['path'] . $settings['prefix'] . $cacheKey);
+
 		if (MiCache::_createDir($path)) {
-			return Cache::write($cacheKey, $data, $setting);
+			return Cache::write($cacheKey, serialize($data), $setting);
 		}
 		return false;
 	}
 
 /**
+ * exec method
+ *
+ * @param mixed $cmd
+ * @param mixed $out null
+ * @return void
+ * @access protected
+ */
+	static protected function _exec($cmd, &$out = null) {
+		if (!class_exists('Mi')) {
+			App::import('Vendor', 'Mi.Mi');
+		}
+		return Mi::exec($cmd, $out);
+	}
+
+/**
  * createDir method
+ *
+ * If the dir doesn't exist - create it
  *
  * @param mixed $path
  * @return void
  * @access protected
  */
-	protected static function _createDir($path) {
+	static protected function _createDir($path) {
 		if (!is_dir($path)) {
 			new Folder($path, true);
 		}
@@ -405,71 +512,37 @@ class MiCache extends Object {
 	}
 
 /**
- * Read from the cache. if the read value evaluates to false check if it's false
- * Because there's nothing in the cache for that key, OR if the stored value
- * is actually false
+ * Have we got a database?
  *
- * @param mixed $key
- * @param mixed $cSettings
  * @return void
  * @access protected
  */
-	protected static function _read($key, $cSettings) {
-		$return = Cache::read($key, $cSettings);
-		if ($return) {
-			return $return;
+	static protected function _hasDb() {
+		if (MiCache::$_hasDb === null) {
+			MiCache::$_hasDb = file_exists(CONFIGS . 'database.php');
 		}
-		$_this = Cache::getInstance();
-		$settings = $_this->settings();
-		if (empty($settings['engine']) || empty($_this->_Engine[$settings['engine']])) {
-			return null;
-		}
-
-		if (!$key = $_this->_Engine[$settings['engine']]->key($key)) {
-			return null;
-		}
-		$success = $_this->_Engine[$settings['engine']]->read($settings['prefix'] . $key);
-		if ($success !== false) {
-			return $success;
-		}
-		if (!$_this->_Engine[$settings['engine']]->__setKey($settings['prefix'] . $key)) {
-			return null;
+		if (MiCache::$_hasDb) {
+			return true;
 		}
 		return false;
 	}
 
 /**
- * init method
+ * Do we have a settings table?
  *
- * @param string $alias ''
+ * If not put Configure::write('MiSettings.noDb', true) in your bootstrap
+ *
  * @return void
  * @access protected
  */
-	protected static function _init($alias = '') {
-		if (!Configure::read()) {
-			return ClassRegistry::init($alias);
+	static protected function _hasSettingsTable() {
+		if (MiCache::$_hasSettingsTable === null) {
+			MiCache::$_hasSettingsTable = !Configure::read('MiSettings.noDb');
 		}
-		$plugin = '';
-		if (strpos($alias, '.')) {
-			list($plugin, $alias) = explode('.', $alias);
-			$plugin .= '.';
-		}
-		$table = Inflector::underscore(Inflector::pluralize($alias));
-		$Inst = ClassRegistry::init(array(
-			'alias' => $alias,
-			'class' => $plugin . $alias,
-			'table' => false
-		));
-		$db =& ConnectionManager::getDataSource($Inst->useDbConfig);
-		$sources = $db->listSources();
-		if (in_array($Inst->tablePrefix . $table, $sources)) {
-			$Inst->setSource($table);
-			return $Inst;
-		}
-		trigger_error("MiCache::_init Unable to set the source for the $plugin$alias model check that `$table` exists in the {$Inst->useDbConfig} datasource");
-		return false;
+		return MiCache::$_hasSettingsTable;
 	}
 }
+
 if (!class_exists('FileEngine')) {
 	require LIBS . DS . 'cache' . DS . 'file.php';
 }
@@ -481,37 +554,41 @@ if (!class_exists('FileEngine')) {
  *
  * @uses          FileEngine
  * @package       mi
- * @subpackage    mi.branches.mi_plugin.vendors
+ * @subpackage    mi.vendors
  */
 class MiFileEngine extends FileEngine {
 
 /**
  * init method
  *
+ * Note the serialize param refers to the underlying cache engine. MiCache is always
+ * storing serialized strings
+ *
  * @param array $settings array()
  * @return void
  * @access public
  */
-	function init($settings = array()) {
-		parent::init(array_merge(
-			array(
-				'engine' => 'MiFile', 'path' => CACHE . 'data' . DS, 'prefix'=> '', 'lock'=> false,
-				'serialize'=> true, 'isWindows' => false
-			),
-			$settings
-		));
-		if (!isset($this->__File)) {
+	public function init($settings = array()) {
+		parent::init(array_merge(array(
+			'engine' => 'MiFile',
+			'path' => CACHE . 'data' . DS,
+			'prefix'=> '',
+			'lock'=> false,
+			'serialize'=> false,
+			'isWindows' => false
+		), $settings));
+		if (!isset($this->_File)) {
 			if (!class_exists('File')) {
 				require LIBS . 'file.php';
 			}
-			$this->__File = new File($this->settings['path'] . DS . 'cake');
+			$this->_File = new File($this->settings['path'] . DS . 'cake');
 		}
 
 		if (DIRECTORY_SEPARATOR === '\\') {
 			$this->settings['isWindows'] = true;
 		}
 
-		$this->settings['path'] = $this->__File->Folder->cd($this->settings['path']);
+		$this->settings['path'] = $this->_File->Folder->cd($this->settings['path']);
 
 		if (empty($this->settings['path'])) {
 			return false;
@@ -526,7 +603,7 @@ class MiFileEngine extends FileEngine {
  * @return mixed string $key or false
  * @access public
  */
-	function key($key) {
+	public function key($key) {
 		if (empty($key)) {
 			return false;
 		}
@@ -535,24 +612,30 @@ class MiFileEngine extends FileEngine {
 	}
 
 /**
- * Delete all the files, ignoring any dot files, and any file named 'empty'
- * For the not-windows version, also delete any empty folders when you're done
+ * Delete everything under the requested cache setting.
  *
- * @param boolean $check Optional - only delete expired cache items
+ * API DIFFERENCE
+ * if a topKey is specified, delete everything under setting-dir/topKey
+ *
+ * @param mixed $topKey Optional - the top level cache key to delete
  * @return boolean True if the cache was succesfully cleared, false otherwise
  * @access public
  */
-	function clear($check = null) {
-		if (!$this->_init) {
+	public function clear($topKey = null) {
+		if (empty($this->_init)) {
 			return false;
 		}
 
-		$dir = dirname($this->settings['path']);
+		$dir = $this->settings['path'];
 
-		if (DS !== '/') {
+		if ($topKey && $topKey !== true) {
+			$dir .= DS . str_replace('.', '_', strtolower($topKey));
+		}
+
+		if (DS === '\\') {
 			$Folder = new Folder($dir);
 			$files = $Folder->findRecursive('(?!\\.|empty).*');
-			foreach ($files as $file) {
+			foreach($files as $file) {
 				if (strpos($file, DS . '.')) {
 					continue;
 				}
@@ -560,20 +643,34 @@ class MiFileEngine extends FileEngine {
 			}
 			return;
 		}
+		return MiFileEngine::_exec("rm -rf $dir/*");
+	}
 
-		exec("find $dir -type f ! -iwholename \"*.svn*\" ! -name \"empty\" -exec rm -f {} \; && find $dir -type d -empty -print0 | xargs -0 rmdir", $_, $returnVar);
-		if (!$returnVar) {
-			return;
+/**
+ * exec method
+ *
+ * @param mixed $cmd
+ * @param mixed $out null
+ * @return void
+ * @access protected
+ */
+	static protected function _exec($cmd, &$out = null) {
+		if (!class_exists('Mi')) {
+			App::import('Vendor', 'Mi.Mi');
 		}
+		return Mi::exec($cmd, $out);
 	}
 
 /**
  * destruct method
  *
+ * Prevent potential cache Confusion
+ *
+ * @TODO still necessary?
  * @return void
  * @access private
  */
-	function __destruct() {
+	public function __destruct() {
 		Cache::getInstance()->__name = 'default';
 	}
 }
