@@ -1,0 +1,152 @@
+h1. Sanction Plugin for CakePHP
+
+Tired of defining your permissions in 7 controllers, or bloating your AppController::beforeFilter() with checks on the User's session?
+
+h2. Requirements
+
+* CakeSession-accessible User session
+* CakePHP 1.3.x. Untested with the 1.2.x series, but should work fine
+
+h2. PermitComponent Setup
+
+Install the SanctionPlugin in your @app/plugins/@ folder under the @sanction@ folder.
+
+If you want to use the PermitComponent to block user access to controllers/actions, add the following to your AppController or a specific Controller:
+
+<pre><code><?php
+// Example for default AuthComponent Configuration
+var $components = array('Sanction.Permit' => array('path' => 'Auth.User'));
+
+// Example for default AuthsomeComponent Configuration
+var $components = array('Sanction.Permit' => array('path' => 'User.User'));
+?>
+</code></pre>
+
+Then you will want to setup some permissions...
+
+Create a file called @permit.php@ in your @app/config/@ folder. You'll need to do the following:
+
+# Add @App::import('Component', 'PermitComponent');@
+# Define some rules (these will be outlined below)
+
+You can test those rules by browsing to the url you are protecting.
+
+h2. ClearanceHelper Setup
+
+Install the SanctionPlugin in your @app/plugins/@ folder under the @sanction@ folder.
+
+If you want to use the ClearanceHelper to block user access to controllers/actions, add the following to your AppController or a specific Controller:
+
+<pre><code><?php
+// Example for default AuthComponent Configuration
+var $helpers = array('Sanction.Clearance' => array('path' => 'Auth.User'));
+
+// Example for default AuthsomeComponent Configuration
+var $helpers = array('Sanction.Clearance' => array('path' => 'User.User'));
+?>
+</code></pre>
+
+Then you will want to setup some permissions...
+
+Create a file called @permit.php@ in your @app/config/@ folder. You'll need to do the following:
+
+# Add @App::import('Component', 'PermitComponent');@
+# Define some rules (these will be outlined below)
+
+Then create links in your views using @$this->Clearance->link()@ instead of @$this->Html->link()@. If the currently logged in user (or not logged in user) has access as defined by the @app/config/permit.php@ file, then the link will appear in whatever view the ClearanceHelper was created in.
+
+Note that checking against the @app/config/permit.php@ file is an expensive operation (for now!), so you might want to use this on links that will actually vary when displayed to different users, as opposed to all links in your application.
+
+h2. DebugKit Panel
+
+Included in the Sanction plugin is a debug_kit panel (as of commit fb061e57) which displays not only the currently matched access rule, but also all rules that you have defined for the application. Useful information if only so you can see whether the current request even went through a rule.
+
+To use it, add the following to your AppController:
+
+<pre><code><?php
+// Example for default AuthComponent Configuration
+var $components = array(
+	'DebugKit.Toolbar' => array('panels' => array('Sanction.permit')),
+	'Sanction.Permit' => array('path' => 'Auth.User')
+);
+
+// Example for default AuthsomeComponent Configuration
+var $components = array(
+	'DebugKit.Toolbar' => array('panels' => array('Sanction.permit')),
+	'Sanction.Permit' => array('path' => 'User.User')
+);
+?>
+</code></pre>
+
+In the future, it will also keep a history of past requests, as well as highlighting explicitly which access rule was used.
+
+h2. Rules
+
+Rules are defined by @Permit::access();@ and can contain 3 arrays:
+
+* Array of rules upon which we will control access
+* Array of rules by which the User's session must be defined by
+* Array of extra parameters, such as where to redirect, the flash message, etc.
+
+An example @app/config/permit.php@:
+
+<pre><code><?php
+App::import('Component', 'PermitComponent');
+
+Permit::access(
+	array('controller' => 'posts', 'action' => array('add', 'edit', 'delete')),
+	array('auth' => array('group' => 'admin')),
+	array('redirect' => array('controller' => 'users', 'action' => 'login')));
+?>
+</code></pre>
+
+For the above, the following actions will be affected:
+
+* /posts/add/*
+* /posts/edit/*
+* /posts/delete/*
+
+The user must be in the group @admin@, and if they are not, they will be redirected to @/users/login@.
+
+<pre><code><?php
+App::import('Component', 'PermitComponent');
+
+Permit::access(
+	array('controller' => 'comments', 'action' => array('edit', 'delete')),
+	array('auth' => array('group' => 'admin')),
+	array(
+		'element' => 'comment',
+		'key' => 'flash',
+		'message' => __('You must be logged in to comment', true),
+		'redirect' => array('controller' => 'users', 'action' => 'login')));
+?>
+</code></pre>
+
+For the above, the following actions will be affected:
+
+* /comments/edit/*
+* /comments/delete/*
+
+The user must be in the group @admin@, and if they are not, they will be redirected to @/users/login@. A flash message at the key @flash@ using the @comment@ element will also be displayed, which will contain the message '@You must be logged in to comment@'.
+
+<pre><code><?php
+App::import('Component', 'PermitComponent');
+
+Permit::access(
+	array('controller' => array('comments'), 'action' => array('add')),
+	array('auth' => true),
+	array(
+		'message' => __('You must be logged in to comment', true),
+		'redirect' => array('controller' => 'users', 'action' => 'login')));
+?>
+</code></pre>
+
+For the above, the following actions will be affected:
+
+* /comments/add/*
+
+The user must authenticated, and if they are not, they will be redirected to @/users/login@. A flash message will also be presented to them which will contain the message '@You must be logged in to comment@'.
+
+h2. License
+
+The Sanction Plugin is offered under an MIT license.

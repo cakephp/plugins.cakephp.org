@@ -301,3 +301,4 @@ class PermitTest extends CakeTestCase {
 		$this->assertFalse($this->Controller->Permit->parse($testRoute));
 	}
 }
+?>
