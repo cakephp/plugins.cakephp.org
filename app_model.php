@@ -260,11 +260,8 @@ class AppModel extends Model {
  * @link http://github.com/jamienay/find_random
  */
 	function __findRandom($options = array()) {
-		if (!isset($options['amount'])) {
-			$amount = 1;
-		} else {
-			$amount = $options['amount'];
-		}
+		$amount = 1;
+		if (isset($options['amount'])) $amount = $options['amount'];
 
 		$findOptions = array();
 		if (isset($options['find'])) {
@@ -306,10 +303,9 @@ class AppModel extends Model {
 
 		$findOptions['conditions'][$this->alias.'.'.$this->primaryKey] = $id;
 		if ($amount == 1 && !$originalAmount) {
-			return $this->find('first', $findOptions);
-		} else {
-			return $this->find('all', $findOptions);
+			return $this->find('first' , $findOptions);
 		}
+		return $this->find('all' , $findOptions);
 	}
 
 	function __findLookup($options = array()) {
