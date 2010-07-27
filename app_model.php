@@ -53,7 +53,6 @@ class AppModel extends Model {
  */
 	function find($type, $options = array()) {
 		$method = null;
-		$options = (array) $options;
 		if (is_string($type)) {
 			$method = sprintf('__find%s', Inflector::camelize($type));
 		}
