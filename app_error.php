@@ -1,74 +1,107 @@
 <?php
+/**
+ * Application Error class
+ *
+ * Contains Application Specific cakeErrors
+ *
+ * @package       app
+ */
 class AppError extends ErrorHandler {
 
-	function __construct($method, $messages) {
-		App::import('Core', 'Sanitize');
-		static $__previousError = null;
-
-		if ($__previousError != array($method, $messages)) {
-			$__previousError = array($method, $messages);
-			$this->controller =& new CakeErrorController();
-		} else {
-			$this->controller =& new Controller();
-			$this->controller->viewPath = 'errors';
-		}
-
-		$options = array('escape' => false);
-		$messages = Sanitize::clean($messages, $options);
-
-		if (!isset($messages[0])) {
-			$messages = array($messages);
-		}
-
-		if (method_exists($this->controller, 'apperror')) {
-			return $this->controller->appError($method, $messages);
-		}
-
-		if (!in_array(strtolower($method), array_map('strtolower', get_class_methods($this)))) {
-			$method = 'error';
-		}
-
-		if ($method !== 'error') {
-			if (Configure::read('debug') == 0) {
-				$parentClass = get_parent_class($this);
-				if (strtolower($parentClass) != 'errorhandler') {
-					$method = 'error404';
-				}
-				$parentMethods = array_map('strtolower', get_class_methods($parentClass));
-				if (in_array(strtolower($method), $parentMethods)) {
-					$method = 'error404';
-				}
-				if (isset($code) && $code == 500) {
-					$method = 'error500';
-				}
-			}
-		}
-
-		$this->dispatchMethod($method, $messages);
-		$this->_stop();
+/**
+ * Output message
+ *
+ * Does not output debug info on errors
+ *
+ * @param string $action Action name to render
+ * @access protected
+ * @author Jose Diaz-Gonzalez
+ */
+	function _outputMessage($template) {
+		Configure::write('debug', 0);
+		$this->controller->render($template);
+		$this->controller->afterFilter();
+		echo $this->controller->output;
 	}
 
-	function missingController($params) {
-		$this->lost();
-	}
-	
-	function missingAction($params) {
-		$this->lost();
+/**
+ * Renders the Failed Assertion web page.
+ *
+ * @param array $params Parameters for controller
+ * @access public
+ * @author Jose Diaz-Gonzalez
+ */
+	function assertion($params) {
+		extract($params, EXTR_OVERWRITE);
+		$this->controller->set(array(
+			'code' => '412',
+			'name' => 'Precondition Failed',
+			'message' => 'An assertion was made and the condition failed',
+			'file' => $file,
+			'line' => $line,
+			'function' => $function,
+			'assertType' => $assertType,
+			'val' => $val,
+			'expected' => $expected
+		));
+		$this->_outputMessage('assertion');
 	}
 
-	function missingView($params) {
-		$this->lost();
+/**
+ * Renders the Missing Action web page.
+ *
+ * @param array $params Parameters for controller
+ * @access public
+ * @author Jose Diaz-Gonzalez
+ */
+	function missingMethod($params) {
+		extract($params, EXTR_OVERWRITE);
+
+		$this->controller->set(array(
+			'className' => $className,
+			'methodName' => $methodName,
+			'parameters' => $parameters,
+			'parentClass' => $parentClass,
+			'path' => $path,
+			'title' => __('Missing Method in Class', true)
+		));
+		$this->_outputMessage('missingMethod');
 	}
 
-	function error404($params) {
-		$this->lost();
+/**
+ * Renders the Missing Model Method web page
+ *
+ * @param array $params Parameters for controller
+ * @access public
+ * @author Jose Diaz-Gonzalez
+ */
+	function missingModelMethod($params) {
+		extract($params, EXTR_OVERWRITE);
+
+		$this->missingMethod(array(
+			'className' => $className,
+			'methodName' => $methodName,
+			'parameters' => $parameters,
+			'parentClass' => 'AppModel',
+			'path' => 'models'
+		));
 	}
 
-	function lost() {
-		echo $this->controller->requestAction(
-			array('plugin' => null, 'controller' => 'lost', 'action' => 'index'), 
-			array('pass' => array($this->controller->params['url']['url']))
-		);
+/**
+ * Renders the Uninitialized Class web page.
+ *
+ * @param array $params Parameters for controller
+ * @access public
+ * @author Jose Diaz-Gonzalez
+ */
+	function uninitializedClass($params) {
+		extract($params, EXTR_OVERWRITE);
+
+		$this->controller->set(array(
+			'className' => $className,
+			'title' => __('Failed to initialize Class', true)
+		));
+		$this->_outputMessage('uninitializedClass');
 	}
 }
 ?>
