@@ -92,8 +92,8 @@ class Package extends AppModel {
 	}
 
 	function __findRandomIds($limit = 5) {
-		App::import('Vendor', 'mi_cache');
-		return MiCache::data($this->alias, 'find', 'list', array(
+		return $this->find('list', array(
+			'cache' => true,
 			'fields' => array($this->primaryKey),
 			'order' => 'RAND()',
 			'limit' => $limit));
