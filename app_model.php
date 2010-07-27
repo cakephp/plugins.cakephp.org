@@ -67,7 +67,8 @@ class AppModel extends Model {
 		}
 		if (!empty($options['blacklist'])) {
 			$options['blacklist'] = (array) $options['blacklist'];
-			$options['fields'] = array_diff(array_keys($this->schema()), $options['blacklist']);
+			$options['fields'] = (isset($options['fields'])) ? $options['fields'] : array_keys($this->schema());
+			$options['fields'] = array_diff($options['fields'], $options['blacklist']);
 			unset($options['blacklist']);
 		}
 		if (!empty($options['cache'])) {
@@ -100,7 +101,8 @@ class AppModel extends Model {
 		$query = (array) $query;
 		if (!empty($query['blacklist'])) {
 			$query['blacklist'] = (array) $query['blacklist'];
-			$query['fields'] = array_diff(array_keys($this->schema()), $query['blacklist']);
+			$query['fields'] = (isset($query['fields'])) ? $query['fields'] : array_keys($this->schema());
+			$query['fields'] = array_diff($query['fields'], $query['blacklist']);
 			unset($query['blacklist']);
 		}
 		if (!empty($query['paginate'])) {
