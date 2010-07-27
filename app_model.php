@@ -20,7 +20,6 @@ class AppModel extends Model {
 	var $actsAs = array(
 		'Callbackable',
 		'Containable',
-		'Log.Logable' => array('change' => 'full')
 	);
 
 /**
