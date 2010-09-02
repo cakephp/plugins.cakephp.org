@@ -16,7 +16,7 @@
 		<?php echo $package['Package']['bakery_article']; ?>
 		&nbsp;
 	</dd>
-	<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Clone Url'); ?></dt>
+	<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Repository Url'); ?></dt>
 	<dd<?php if ($i++ % 2 == 0) echo $class;?>>
 		<?php echo $this->Resource->repository($package['Maintainer']['username'], $package['Package']['name']); ?>
 		&nbsp;

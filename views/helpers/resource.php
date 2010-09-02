@@ -13,8 +13,12 @@ class ResourceHelper extends AppHelper {
 			array('plugin' => null, 'controller' => 'maintainers', 'action' => 'view', $username));
 	}
 
-	function repository($maintainer, $name) {
+	function clone_url($maintainer, $name) {
 		return "git://github.com/{$maintainer}/{$name}.git";
+	}
+
+	function repository($maintainer, $name) {
+		return "http://github.com/{$maintainer}/{$name}";
 	}
 
 	function description($text) {
