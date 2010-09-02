@@ -18,7 +18,9 @@ class ResourceHelper extends AppHelper {
 	}
 
 	function repository($maintainer, $name) {
-		return "http://github.com/{$maintainer}/{$name}";
+		return $this->Html->link("http://github.com/{$maintainer}/{$name}",
+			"http://github.com/{$maintainer}/{$name}"
+		);
 	}
 
 	function description($text) {
