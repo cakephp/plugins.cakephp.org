@@ -27,13 +27,14 @@ class PackageShell extends Shell {
  */
 	function __run() {
 
-		$validCommands = array('a', 'c', 'f', 'g', 'r', 'm', 's', 'u', 'q');
+		$validCommands = array('a', 'c', 'e', 'f', 'g', 'r', 'm', 's', 'u', 'q');
 
 		while (empty($this->command)) {
 			$this->out("Package Shell");
 			$this->hr();
 			$this->out("[A]dd missing Attributes");
 			$this->out("[C]heck Characteristics");
+			$this->out("[E]xistence Check");
 			$this->out("[F]ix Repository Urls");
 			$this->out("[G]it Clone Repositories");
 			$this->out("[M]aintainer Resave");
@@ -55,6 +56,9 @@ class PackageShell extends Shell {
 				break;
 			case 'c' :
 				$this->check_characteristics();
+				break;
+			case 'e' :
+				$this->existence_check();
 				break;
 			case 'f' :
 				$this->fix_repository_urls();
@@ -126,6 +130,35 @@ class PackageShell extends Shell {
 		}
 		$p_count = count($packages);
 		$this->out(sprintf(__('* Updated %s of %s packages', true), $count, $p_count));
+	}
+
+	function existence_check() {
+		$this->Package->Behaviors->detach('Searchable');
+		$packages = $this->Package->find('all', array(
+			'contain' => array('Maintainer' => array('id', 'username')),
+			'fields' => array('id', 'name'),
+			'order' => array('Package.name ASC')));
+		$SearchIndex = ClassRegistry::init('Searchable.SearchIndex');
+		foreach ($packages as $package) {
+			sleep(1);
+			$exists = $this->Package->checkExistenceOf($package);
+			if (!$exists) {
+				$this->out(sprintf(__('* Deleting record %s', true), $package['Package']['id']));
+				$result = $this->Package->delete($package['Package']['id']);
+				if ($result) continue;
+
+				$search_index = $SearchIndex->find('first', array(
+					'conditions' => array(
+						'SearchIndex.model' => 'Package',
+						'SearchIndex.foreign_key' => $package['Package']['id']
+				)));
+				$search_index['SearchIndex']['active'] = 0;
+				$SearchIndex->save($search_index);
+				$this->out(sprintf(__('* Record %s deleted', true), $package['Package']['id']));
+				continue;
+			}
+			$this->out(sprintf(__('* Record %s exists', true), $package['Package']['id']));
+		}
 	}
 
 /**
@@ -232,11 +265,10 @@ class PackageShell extends Shell {
 			$this->out(sprintf(
 				__('Updating package id %s named %s', true),
 				$package['Package']['id'],
-				$package['Package']['name']));
-			$p_count++;
-			$package['Package']['repository_url'] = "git://github.com/{$package['Maintainer']['username']}/{$package['Package']['name']}";
+				$package['Package']['name']
+			));
 
-			if ($this->Package->save($package)) $update_count++;
+			if ($this->Package->fixRepositoryUrl($package)) $update_count++;
 		}
 
 		$this->out(sprintf(__('* Successfully updated %s out of %s package urls', true), $update_count, $p_count));

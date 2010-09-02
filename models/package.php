@@ -4,12 +4,14 @@ class Package extends AppModel {
 	var $belongsTo = array('Maintainer');
 	var $actsAs = array(
 		'Searchable.Searchable' => array(
+			'scope' => array('deleted' => 0),
 			'summary' => 'description',
 			'url' => array(
-				'Package' => array('package' => 'name'), 
+				'Package' => array('package' => 'name'),
 				'Maintainer' => array('maintainer' => 'username')
 			),
 		),
+		'Softdeletable'
 	);
 
 	function __construct($id = false, $table = null, $ds = null) {
@@ -122,6 +124,48 @@ class Package extends AppModel {
 			}
 		}
 		return $searchableData;
+	}
+
+	function fixRepositoryUrl($package = null) {
+		if (!$package) return false;
+
+		if (!is_array($package)) {
+			$package = $this->find('first', array(
+				'conditions' => array("{$this->alias}.{$this->primaryKey}" => $package),
+				'contain' => array('Maintainer' => array('fields' => 'username')),
+				'fields' => array('name', 'repository_url')
+			));
+		}
+		if (!$package) return false;
+
+		$package[$this->alias]['repository_url']	= array();
+		$package[$this->alias]['repository_url'][]	= "git://github.com";
+		$package[$this->alias]['repository_url'][]	= $package['Maintainer']['username'];
+		$package[$this->alias]['repository_url'][]	= $package[$this->alias]['name'];
+		$package[$this->alias]['repository_url']	= implode("/", $package[$this->alias]['repository_url']);
+		$package[$this->alias]['repository_url']   .= '.git';
+		return $this->Package->save($package);
+	}
+
+	function checkExistenceOf($package = null) {
+		if (!$package) return false;
+
+		if (!is_array($package)) {
+			$package = $this->find('first', array(
+				'conditions' => array("{$this->alias}.{$this->primaryKey}" => $package),
+				'contain' => array('Maintainer' => array('fields' => 'username')),
+				'fields' => array('name', 'repository_url')
+			));
+		}
+		if (!$package) return false;
+
+		$response = ClassRegistry::init('Github')->find('repos_show_single', array(
+			'username' => $package['Maintainer']['username'],
+			'repo' => $package[$this->alias]['name']
+		));
+
+		if (!empty($response['Error'])) return false;
+		return true;
 	}
 }
 ?>
