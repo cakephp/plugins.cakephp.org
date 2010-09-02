@@ -36,7 +36,7 @@ class CallbackableBehavior extends ModelBehavior {
 	function getCallbackableData(&$model, $key = null, $type = null) {
 		if (!$key) return $this->__data;
 
-		if (empty($this->__data[$key])) {
+		if (!empty($this->__data[$key])) {
 			if (!$type) return $this->__data[$key];
 
 			if (gettype($this->__data[$key]) === $type) return $this->__data[$key];
