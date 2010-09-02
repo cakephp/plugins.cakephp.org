@@ -1,19 +1,43 @@
-<?php $this->Html->h2(__('Welcome to the Cake Package Repo', true)); ?>
-
-<p class="center">Find existing CakePHP code quicker, iterate your code faster, and contribute to the community</p>
-
-<?php echo $this->element('search'); ?>
-<br />
-<div class="grid_2 alpha package_list">
-<h4><?php __('Latest Packages'); ?></h4>
+<?php $this->Html->for_layout('cakephp code for you to download', 'h2'); ?>
+<div class="grid_6 alpha">
+<h3><?php __('Latest Packages'); ?></h3>
 <?php foreach ($latest as $package) : ?>
-	<div><?php echo $this->Resource->package($package['Package']['name'], $package['Maintainer']['username']); ?></div>
+	<div class="list latest">
+		<?php echo $this->Html->link($package['Package']['name'], array(
+				'controller' => 'packages',
+				'action' => 'view',
+				'maintainer' => $package['Maintainer']['username'],
+				'package' => $package['Package']['name']
+			), array('class' => 'package_name'));
+		?>
+		by
+		<?php echo $this->Html->link($package['Maintainer']['username'], array(
+				'controller' => 'maintainers',
+				'action' => 'view',
+				$package['Maintainer']['username'],
+			), array('class' => 'maintainer_name'));
+		?>
+	</div>
 <?php endforeach; ?>
 </div>
-<div class="grid_half"><br /></div>
-<div class="grid_2 omega package_list">
-<h4><?php __('Random Packages'); ?></h4>
+<div class="grid_6 omega">
+<h3><?php __('Random Packages'); ?></h3>
 <?php foreach ($random as $package) : ?>
-	<div><?php echo $this->Resource->package($package['Package']['name'], $package['Maintainer']['username']); ?></div>
+	<div class="list random">
+		<?php echo $this->Html->link($package['Package']['name'], array(
+				'controller' => 'packages',
+				'action' => 'view',
+				'maintainer' => $package['Maintainer']['username'],
+				'package' => $package['Package']['name']
+			), array('class' => 'package_name'));
+		?>
+		by
+		<?php echo $this->Html->link($package['Maintainer']['username'], array(
+				'controller' => 'maintainer',
+				'action' => 'view',
+				$package['Maintainer']['username'],
+			), array('class' => 'maintainer_name'));
+		?>
+	</div>
 <?php endforeach; ?>
 </div>

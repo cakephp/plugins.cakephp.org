@@ -7,35 +7,33 @@
 			<?php __('CakePackages | the cakephp package repository'); ?>
 		</title>
 		<?php echo $this->Html->meta('icon'); ?>
-		<?php echo $this->Html->css(array('960', 'default', 'iconify')); ?>
+		<?php echo $this->Html->css(array('reset', 'text', '960', 'demo', 'iconify')); ?>
 		<?php echo $this->Html->script(array('prototype', 'scriptaculous')); ?>
 		<?php echo $scripts_for_layout; ?>
 	</head>
-	<body>
-		<div id="container" class="container_6">
-			<div id="header" class="grid_6 clearfix">
-				<h1>
-					<?php echo $this->Html->link(__('CakePackages', true), array(
-						'plugin' => null, 'controller' => 'packages', 'action' => 'home')); ?>
-				</h1>
-			</div>
-			<div id="navigation" class="grid_6 clearfix">
-				<?php echo $this->Html->link('packages', array(
-					'plugin' => null, 'controller' => 'packages', 'action' => 'index')); ?> &#183; 
-				<?php echo $this->Html->link('maintainers', array(
-					'plugin' => null, 'controller' => 'maintainers', 'action' => 'index')); ?> &#183; 
-				<?php echo $this->Html->link('search', 	array(
-					'plugin' => 'searchable', 'controller' => 'search_indexes', 'action' => 'index', 'type' => 'Package')); ?>
-			</div>
-			<div class="grid_6">
-				<div class="content clearfix">
-					<?php echo $h2_for_layout; ?>
-					<?php echo $this->Session->flash(); ?>
-					<?php echo $content_for_layout; ?>
+	<body class="<?php echo $this->params['controller']; ?> <?php echo $this->params['action']; ?>">
+		<div class="container_12">
+			<div class="grid_12">
+				<div class="grid_6 alpha">
+					<h1>
+						<?php echo $this->Html->link(__('CakePackages', true), array(
+							'plugin' => null, 'controller' => 'packages', 'action' => 'home')); ?>
+					</h1>
+					<h2><?php echo $h2_for_layout; ?></h2>
+					<h3><?php if (isset($h3_for_layout)) echo $h3_for_layout; ?></h3>
+				</div>
+				<div class="grid_6 omega">
+					<?php echo $this->element('search'); ?>
 				</div>
 			</div>
 			<div class="clear"></div>
-			<div id="footer" class="grid_6 clearfix">
+			<div class="grid_12">
+				<p><?php echo $this->Session->flash(); ?></p>
+				<?php echo $content_for_layout; ?>
+			</div>
+			<!-- end .grid_12 -->
+			<div class="clear"></div>
+			<div id="footer" class="prefix_3 grid_6 suffix_3">
 				<?php echo $this->Html->link('about', array(
 					'plugin' => null, 'controller' => 'pages', 'action' => 'display', 'about')); ?> &#183; 
 				<?php echo $this->Html->link('blog', array(
@@ -54,6 +52,7 @@
 					);
 				?>
 			</div>
+			<div class="clear"></div>
 		</div>
 		<?php echo $this->element('analytics'); ?>
 	</body>

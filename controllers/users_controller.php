@@ -2,7 +2,6 @@
 class UsersController extends AppController {
 	var $name = 'Users';
 	var $uses = array('Maintainer');
-	var $layout = 'alternate';
 
 	function dashboard() {
 		$user = $this->Maintainer->find('dashboard');

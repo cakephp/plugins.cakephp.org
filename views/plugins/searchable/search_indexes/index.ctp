@@ -1,52 +1,46 @@
-<?php $this->Html->h2(__('Search Results', true)); ?>
-<?php echo $this->element('search'); ?>
 <?php if (!empty($results)): ?>
-	<table cellpadding="0" cellspacing="0">
-		<tr>
-			<th><?php __('Contents')?></th>
-			<th><?php echo $this->Paginator->sort('name');?></th>
-			<th class="actions"><?php __('Actions');?></th>
-		</tr>
-		<?php $term = (isset($this->data['SearchIndex']['term'])) ? trim($this->data['SearchIndex']['term']) : '';?>
-		<?php $i = 0; foreach ($results as $result): ?>
-			<tr<?php echo ($i++ % 2 == 0) ? ' class="altrow"' : '';?>>
-				<td>
-					<?php echo $this->element('search_icons', array('package' => json_decode($result['SearchIndex']['data'], true)))?>
-					
-				</td>
-				<td>
-					<?php echo $this->Html->link($result['SearchIndex']['name'],
-					 			json_decode($result['SearchIndex']['url'], true)); ?> by
-					<?php echo $this->Resource->searchableMaintainer($result['SearchIndex']['data'], array(
-						'primary' => 'Maintainer.name', 'fallback' => 'Maintainer.username')); ?><br />
-					<?php if (!empty($result['SearchIndex']['summary'])): ?>
-						<?php echo $this->Resource->searchableHighlight($result['SearchIndex']['summary'], $term); ?>
-					<?php else : ?>
-						<?php echo $this->Searchable->snippets($result['SearchIndex']['data']); ?>
-					<?php endif; ?>
-					&nbsp;
-				</td>
-				<td class="actions">
-					<?php echo $this->Resource->searchableHomepage($result['SearchIndex']['data']); ?>
-					<?php echo $this->Resource->searchableEdit($result['SearchIndex']['data']); ?>
-					<?php echo $this->Resource->searchableDelete($result['SearchIndex']['data']); ?>
-				</td>
-			</tr>
-		<?php endforeach; ?>
-	</table>
+	<?php $term = (isset($this->data['SearchIndex']['term'])) ? trim($this->data['SearchIndex']['term']) : '';?>
+	<?php $this->Html->for_layout(__("Search Results for {$term}", true), 'h2'); ?>
+	<?php $this->Html->for_layout(__("Search Results for {$term} | ", true), 'title'); ?>
+	<?php foreach ($results as $result): ?>
+		<div class="meta_listing">
+			<div class="prefix_2 grid_2 alpha">
+				<?php echo $this->element('search_icons', array(
+					'package' => json_decode($result['SearchIndex']['data'], true))); ?>
+			</div>
+			<div class="suffix_2 grid_6 omega information">
+				<?php echo $this->Html->link($result['SearchIndex']['name'],
+					json_decode($result['SearchIndex']['url'], true)); ?>
+				by
+				<?php echo $this->Resource->searchableMaintainer($result['SearchIndex']['data'], array(
+					'primary' => 'Maintainer.name', 'fallback' => 'Maintainer.username')); ?>
+				<br />
+				<?php if (!empty($result['SearchIndex']['summary'])): ?>
+					<p><?php echo $this->Resource->searchableHighlight($result['SearchIndex']['summary'], $term); ?></p>
+				<?php else : ?>
+					<p><?php echo $this->Searchable->snippets($result['SearchIndex']['data']); ?></p>
+				<?php endif; ?>
+			</div>
+			<div class="clear"></div>
+		</div>
+	<?php endforeach; ?>
 	<?php $params = array_intersect_key($this->params, array_flip(array('type', 'term'))); ?>
 	<?php $params = array_map('urlencode', $params); ?>
 	<?php $params = array_map('urlencode', $params); ?>
 	<?php $this->Paginator->options(array('url' => $params)); ?>
-	<p><?php echo $this->Paginator->counter(array(
-		'format' => __('Page %page% of %pages%, showing packages %start% to %end%', true)));?></p>
 	<div class="paging">
+		<p>
+			<?php echo $this->Paginator->counter(array(
+				'format' => __('Page %page% of %pages%, showing packages %start% to %end%', true))); ?>
+		</p>
 		<?php echo $this->Paginator->prev('<< '.__('previous', true), array(), null,
 				array('class' => 'disabled')); ?>
-	 | 	<?php echo $this->Paginator->numbers(); ?> |
+		<?php echo $this->Paginator->numbers(); ?>
 		<?php echo $this->Paginator->next(__('next', true).' >>', array(), null,
 				array('class' => 'disabled')); ?>
 	</div>
 <?php else: ?>
+	<?php $this->Html->for_layout(__('Search Results', true), 'h2'); ?>
+	<?php $this->Html->for_layout(__('Search Results | ', true), 'title'); ?>
 	<p>Sorry, your search did not return any matches.</p>
 <?php endif; ?>
