@@ -4,7 +4,10 @@ class AppController extends Controller {
 		'Authsome.Authsome' => array('model' => 'Maintainer'),
 		'Mail',
 		'RequestHandler',
-		'Sanction.Permit' => array('path' => 'Maintainer.Maintainer'),
+		'Sanction.Permit' => array(
+			'check' => 'group',
+			'path' => 'Maintainer.Maintainer'
+		),
 		'Session',
 		'Settings.Settings',
 		'DebugKit.Toolbar',
