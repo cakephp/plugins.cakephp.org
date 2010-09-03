@@ -68,18 +68,18 @@ class SoftDeletableBehavior extends ModelBehavior {
 				$data[$model->alias][$attributes['field_date']] = date('Y-m-d H:i:s');
 			}
 
-			foreach(am(array_keys($data[$model->alias]), array('field', 'field_date', 'find', 'delete')) as $field) {
+			foreach (array_merge(array_keys($data[$model->alias]), array('field', 'field_date', 'find', 'delete')) as $field) {
 				unset($attributes[$field]);
 			}
 
 			if (!empty($attributes)) {
-				$data[$model->alias] = am($data[$model->alias], $attributes);
+				$data[$model->alias] = array_merge($data[$model->alias], $attributes);
 			}
 
 			$model->id = $id;
 			$deleted = $model->save($data, false, array_keys($data[$model->alias]));
 
-			if ($deleted && $cascade){
+			if ($deleted && $cascade) {
 				$model->_deleteDependent($id, $cascade);
 				$model->_deleteLinks($id);
 			}
@@ -163,7 +163,7 @@ class SoftDeletableBehavior extends ModelBehavior {
 			}
 
 			if (!empty($attributes)) {
-				$data[$model->alias] = am($data[$model->alias], $attributes);
+				$data[$model->alias] = array_merge($data[$model->alias], $attributes);
 			}
 
 			$onFind = $this->__settings[$model->alias]['find'];
@@ -200,7 +200,7 @@ class SoftDeletableBehavior extends ModelBehavior {
 			$methods = array($methods);
 		}
 
-		foreach($methods as $method) {
+		foreach ($methods as $method) {
 			$this->__settings[$model->alias][$method] = $enable;
 		}
 	}
@@ -228,7 +228,7 @@ class SoftDeletableBehavior extends ModelBehavior {
 					$this->__settings[$model->alias]['field']
 				);
 
-				foreach($fields as $field) {
+				foreach ($fields as $field) {
 					if (preg_match('/^' . preg_quote($field) . '[\s=!]+/i', $queryData['conditions']) || preg_match('/\\x20+' . preg_quote($field) . '[\s=!]+/i', $queryData['conditions']))
 					{
 						$include = false;

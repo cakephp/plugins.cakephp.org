@@ -41,7 +41,7 @@ class Assert extends Object {
 			$info = array('type' => $info);
 		}
 
-		$info = am(array(
+		$info = array_merge(array(
 			'file' => $assertCall['file']
 			, 'line' => $assertCall['line']
 			, 'function' => $triggerCall['class'].'::'.$triggerCall['function']
@@ -108,7 +108,7 @@ class Assert extends Object {
  * @access public
  */
 	static function pattern($pattern, $val, $info = array()) {
-		return Assert::test(preg_match($pattern, $val), true, am(array('pattern' => $pattern), $info));
+		return Assert::test(preg_match($pattern, $val), true, array_merge(array('pattern' => $pattern), $info));
 	}
 
 /**

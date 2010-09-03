@@ -12,4 +12,3 @@ class SearchableHelper extends AppHelper {
 		return $snippets;
 	}
 }
-?>

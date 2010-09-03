@@ -140,7 +140,7 @@ class AppModel extends Model {
 		$options = array('validate' => true, 'fieldList' => array(), 'callbacks' => true);
 		if (is_array($validate)) {
 			$options = array_merge($options, $validate);
-			foreach($options as $key => &$value) {
+			foreach ($options as $key => &$value) {
 				if (!in_array($key, array('validate', 'fieldList', 'callbacks'))) {
 					$extra[$key] = $value;
 				}
@@ -156,7 +156,7 @@ class AppModel extends Model {
 			$method = sprintf('__beforeSave%s', Inflector::camelize($callback));
 		}
 
-		if($method && method_exists($this, $method)) {
+		if ($method && method_exists($this, $method)) {
 			$this->data = $this->{$method}($this->data, $extra);
 		}
 		if (!$this->data) return false;
@@ -213,7 +213,7 @@ class AppModel extends Model {
  */
 	function enableAllBehaviors() {
 		$behaviors = $this->Behaviors->attached();
-		foreach($behaviors as &$behavior) {
+		foreach ($behaviors as &$behavior) {
 			if (!$this->Behaviors->enabled($behavior)) {
 				$this->Behaviors->enable($behavior);
 			}

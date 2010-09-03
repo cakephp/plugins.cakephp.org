@@ -153,7 +153,7 @@ class MiCache extends Object {
 		if (!MiCache::$setting) {
 			MiCache::$setting = $name;
 		}
-		MiCache::$settings[$name] = am($_defaults, $config);
+		MiCache::$settings[$name] = array_merge($_defaults, $config);
 		if (MiCache::$settings[$name]['path'][0] != '/') {
 			MiCache::$settings[$name]['path'] = CACHE . MiCache::$settings[$name]['path'];
 		}
@@ -416,7 +416,7 @@ class MiCache extends Object {
 				$j = count($keys);
 				$return = null;
 				if (is_array($array)) {
-					foreach($keys as $i => $key) {
+					foreach ($keys as $i => $key) {
 						if (!array_key_exists($key, $array)) {
 							$array = null;
 							break;
@@ -635,7 +635,7 @@ class MiFileEngine extends FileEngine {
 		if (DS === '\\') {
 			$Folder = new Folder($dir);
 			$files = $Folder->findRecursive('(?!\\.|empty).*');
-			foreach($files as $file) {
+			foreach ($files as $file) {
 				if (strpos($file, DS . '.')) {
 					continue;
 				}
