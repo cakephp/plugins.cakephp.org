@@ -30,7 +30,9 @@ class PermitComponent extends Object {
 
 		foreach ($self->routes as $route) {
 			if (PermitComponent::parse($route['route'])) {
-				PermitComponent::execute($route);
+				if (PermitComponent::execute($route)) {
+					$self->redirect($route);
+				}
 				break;
 			}
 		}
@@ -59,32 +61,32 @@ class PermitComponent extends Object {
 		$self->executed = $route;
 		$self = $self->initializeSessionComponent($self);
 
-		if (empty($route['rules'])) return;
+		if (empty($route['rules'])) return false;
 
 		if (isset($route['rules']['deny'])) {
-			if ($route['rules']['deny'] == true) $self->redirect($route);
-			return;
+			if ($route['rules']['deny'] == true) return true;
+			return false;
 		}
 
-		if (!isset($route['rules']['auth'])) return;
+		if (!isset($route['rules']['auth'])) return false;
 
 		if (is_bool($route['rules']['auth'])) {
 			$is_authed = $self->session->read("{$self->settings['path']}.{$self->settings['check']}");
 
 			if ($route['rules']['auth'] == true && !$is_authed) {
-				$self->redirect($route);
+				return true;
 			}
 			if ($route['rules']['auth'] == false && $is_authed) {
-				$self->redirect($route);
+				return true;
 			}
-			return;
+			return false;
 		}
 
 		$count = count($route['rules']['auth']);
-		if ($count == 0) return;
+		if ($count == 0) return false;
 
 		if (($user = $self->session->read("{$self->settings['path']}")) == false) {
-			$self->redirect($route);
+			return true;
 		}
 
 		foreach ($route['rules']['auth'] as $field => $value) {
@@ -94,7 +96,7 @@ class PermitComponent extends Object {
 			}
 		}
 
-		if ($count != 0) $self->redirect($route);
+		if ($count != 0) return true;
 	}
 
 	function redirect($route) {
