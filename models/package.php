@@ -41,17 +41,17 @@ class Package extends AppModel {
 			'conditions' => array("{$this->alias}.{$this->displayField} LIKE" => "%{$name}%"),
 			'contain' => false,
 			'limit' => 10,
-			'fields' => array($this->primaryKey, $this->displayField)));
+			'fields' => array($this->primaryKey, $this->displayField)
+		));
 	}
 
 	function __findEdit($id = null) {
 		if (!$id) return false;
 
 		return $this->find('first', array(
-			'conditions' => array(
-				"{$this->alias}.{$this->primaryKey}" => $id),
-			'contain' => array(
-				'Maintainer')));
+			'conditions' => array("{$this->alias}.{$this->primaryKey}" => $id),
+			'contain' => array('Maintainer')
+		));
 	}
 
 	function __findIndex($params = array()) {
@@ -72,7 +72,8 @@ class Package extends AppModel {
 			'contain' => array('Maintainer' => array('username')),
 			'fields' => array($this->displayField),
 			'limit' => 5,
-			'order' => "{$this->alias}.created DESC"));
+			'order' => "{$this->alias}.created DESC"
+		));
 	}
 
 	function __findListForMaintainer($maintainer_id = null) {
@@ -80,7 +81,8 @@ class Package extends AppModel {
 
 		return $this->find('list', array(
 			'conditions' => array("{$this->alias}.maintainer_id" => $maintainer_id),
-			'order' => "{$this->alias}.{$this->displayField} DESC"));
+			'order' => "{$this->alias}.{$this->displayField} DESC"
+		));
 	}
 
 	function __findRandom() {
@@ -90,7 +92,8 @@ class Package extends AppModel {
 			'cache' => 600,
 			'contain' => array('Maintainer' => array('username')),
 			'fields' => array($this->displayField, 'maintainer_id'),
-			'conditions' => array("{$this->alias}.{$this->primaryKey}" => $id)));
+			'conditions' => array("{$this->alias}.{$this->primaryKey}" => $id)
+		));
 	}
 
 	function __findRandomIds($limit = 5) {
@@ -98,7 +101,19 @@ class Package extends AppModel {
 			'cache' => true,
 			'fields' => array($this->primaryKey),
 			'order' => 'RAND()',
-			'limit' => $limit));
+			'limit' => $limit
+		));
+	}
+
+	function __findRepoClone($id = null) {
+		if (!$id) return false;
+
+		return $this->find('first', array(
+			'conditions' => array("{$this->alias}.{$this->primaryKey}" => $id),
+			'contain' => array('Maintainer' => array('fields' => array('id', 'username'))),
+			'fields' => array($this->primaryKey, $this->displayField, 'repository_url'),
+			'order' => array("{$this->alias}.{$this->primaryKey} ASC")
+		));
 	}
 
 	function __findView($params = array()) {
@@ -113,7 +128,39 @@ class Package extends AppModel {
 			'conditions' => array(
 				"{$this->alias}.{$this->displayField}" => $params['package'],
 				"{$this->alias}.maintainer_id" => $maintainer_id),
-			'contain' => array('Maintainer' => array($this->displayField, 'username'))));
+			'contain' => array('Maintainer' => array($this->displayField, 'username')
+		)));
+	}
+
+
+
+	function _setupRepoDirectory($id = null) {
+		if (!$id) return false;
+
+		$package = $this->find('repo_clone', $id);
+		if (!$package) return false;
+
+		$tmp_dir = trim(TMP);
+		$repo_dir = trim(TMP . 'repos');
+
+		if (!$this->folder) $this->folder = new Folder();
+		$this->folder->cd($tmp_dir);
+		$existing_files_and_folders = $this->folder->read();
+		if (!in_array('repos', $existing_files_and_folders['0'])) {
+			$this->folder->create($repo_dir);
+		}
+
+		$repo_url = $package['Package']['repository_url'];
+		$clone_path = strtolower($package['Maintainer']['username'][0]) . DS;
+		$clone_path .= $package['Maintainer']['username'] . DS . $package['Package']['name'];
+		shell_exec("cd {$repo_dir} ; git clone {$repo_url} {$clone_path}");
+		return true;
+	}
+
+	function afterSave($created = true) {
+		if ($created) {
+			$this->_setupRepoDirectory($this->getLastInsertID());
+		}
 	}
 
 	function getSearchableData($data) {
