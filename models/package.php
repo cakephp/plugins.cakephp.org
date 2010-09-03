@@ -410,6 +410,15 @@ class Package extends AppModel {
 		return $searchableData;
 	}
 
+	function getAllSearchableData() {
+		return $this->find('all', array(
+			'conditions' => array('deleted' => 0),
+			'contain' => array('Maintainer' => array(
+				'fields' => array('name', 'username', 'twitter_username')
+			))
+		));
+	}
+
 	function fixRepositoryUrl($package = null) {
 		if (!$package) return false;
 

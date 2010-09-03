@@ -34,26 +34,26 @@ class ResourceHelper extends AppHelper {
 
 	function searchableMaintainer($data, $options) {
 		$data = json_decode($data, true);
-		return $this->maintainer($data[$options['primary']], $data[$options['fallback']]);
+		return $this->maintainer($data[sha1($options['primary'])], $data[sha1($options['fallback'])]);
 	}
 
 	function searchableHomepage($data) {
 		$data = json_decode($data, true);
-		return $this->Clearance->link(__('Homepage', true), $data['Package.homepage'], array('target' => '_blank'));
+		return $this->Clearance->link(__('Homepage', true), $data[sha1('Package.homepage')], array('target' => '_blank'));
 	}
 
 	function searchableEdit($data) {
 		$data = json_decode($data, true);
 		return $this->Clearance->link(__('Edit', true),
-			array('plugin' => false, 'controller' => 'packages', 'action' => 'edit', $data['Package.id']));
+			array('plugin' => false, 'controller' => 'packages', 'action' => 'edit', $data[sha1('Package.id')]));
 	}
 
 	function searchableDelete($data) {
 		$data = json_decode($data, true);
 		return $this->Clearance->link(__('Delete', true),
-			array('plugin' => false, 'controller' => 'packages', 'action' => 'delete', $data['Package.id']),
+			array('plugin' => false, 'controller' => 'packages', 'action' => 'delete', $data[sha1('Package.id')]),
 			 null, 
-			sprintf(__('Are you sure you want to delete # %s?', true), $data['Package.id']));
+			sprintf(__('Are you sure you want to delete # %s?', true), $data[sha1('Package.id')]));
 	}
 
 /**
