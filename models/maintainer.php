@@ -140,7 +140,10 @@ class Maintainer extends AppModel {
 			'conditions' => array(
 				"{$this->alias}.{$this->displayField}" => $username),
 			'contain' => array(
-				'Package' => array('maintainer_id', 'name', 'description'))));
+				'Package' => array(
+					'fields' => array('maintainer_id', 'name', 'description'),
+					'conditions' => array('Package.deleted' => 0)
+		))));
 	}
 
 /**
