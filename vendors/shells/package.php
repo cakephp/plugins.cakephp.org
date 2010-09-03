@@ -66,9 +66,6 @@ class PackageShell extends Shell {
 			case 'g' :
 				$this->git_clone_repositories();
 				break;
-			case 'm' :
-				$this->maintainer_resave();
-				break;
 			case 'r' :
 				$this->reset_characteristics();
 				break;
@@ -195,26 +192,6 @@ class PackageShell extends Shell {
 			$this->out(shell_exec("cd {$repo_dir} ; git clone {$repo_url} {$clone_path}"));
 		}
 		$this->out(sprintf(__('* Downloaded %s repositories', true), $p_count));
-	}
-
-/**
- * Resave's each and every maintainer. Useful for
- * resetting their url info to a valid url
- *
- * @return void
- * @author Jose Diaz-Gonzalez
- */
-	function maintainer_resave() {
-		$p_count = 0;
-		$maintainers = $this->Package->Maintainer->find('all', array(
-			'contain' => false,
-			'order' => array('Maintainer.username ASC')));
-		foreach ($maintainers as $maintainer) {
-			$p_count++;
-			$this->out(sprintf(__('[Maintainer] %s', true), $maintainer['Maintainer']['username']));
-			$this->Package->Maintainer->save($maintainer);
-		}
-		$this->out(sprintf(__('* Resaved %s maintainers', true), $p_count));
 	}
 
 /**
