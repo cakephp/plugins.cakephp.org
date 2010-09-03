@@ -18,8 +18,8 @@ if (($items = Cache::read('rss.' . md5($url))) == false) {
 				$items[0] = $rss['Feed']['Entry'];
 			}
 		}
-		Cache::write('rss.' . md5($url), $items);
 	}
+	Cache::write('rss.' . md5($url), $items);
 }
 ?>
 <?php if (!empty($items)) : ?>
