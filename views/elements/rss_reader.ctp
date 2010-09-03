@@ -22,6 +22,7 @@ if (($items = Cache::read('rss.' . md5($url))) == false) {
 	}
 }
 ?>
+<?php if (!empty($items)) : ?>
 <h4><?php __('Recent Activity');?></h4>
 <table cellpadding="0" cellspacing="0" class="rss_feed">
 	<tr>
@@ -45,3 +46,4 @@ if (($items = Cache::read('rss.' . md5($url))) == false) {
 	</tr>
 <?php endforeach; ?>
 </table>
+<?php endif; ?>
