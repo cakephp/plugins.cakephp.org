@@ -37,6 +37,11 @@ p {
 	margin-bottom: 20px;
 }
 
+.navigation {
+	color: #ff7b17;
+	font-size: 20px;
+}
+
 #footer {
 	margin-top: 20px;
 	text-align: center;
