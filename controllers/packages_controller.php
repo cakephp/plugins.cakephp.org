@@ -10,8 +10,9 @@ class PackagesController extends AppController {
 
 	function index($type = null) {
 		$this->paginate = $this->Package->find('index', array(
-				'paginate' => $this->paginate,
-				'type' => $type));
+			'paginate' => $this->paginate,
+			'type' => $type
+		));
 
 		$packages = $this->paginate();
 		$this->set(compact('packages'));

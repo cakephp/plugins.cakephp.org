@@ -183,13 +183,14 @@ class PackageShell extends Shell {
 		$packages = $this->Package->find('all', array(
 			'contain' => array('Maintainer' => array('id', 'username')),
 			'fields' => array('id', 'name', 'repository_url'),
-			'order' => array('Package.id ASC')));
+			'order' => array('Package.id ASC')
+		));
 
 		foreach ($packages as $package) {
 			$p_count++;
 			$repo_url = $package['Package']['repository_url'];
-			$clone_path = strtolower($package['Maintainer']['username'][0]) . DS . 
-			$clone_path = $package['Maintainer']['username'] . DS . $package['Package']['name'];
+			$clone_path = strtolower($package['Maintainer']['username'][0]) . DS;
+			$clone_path .= $package['Maintainer']['username'] . DS . $package['Package']['name'];
 			$this->out(sprintf(__("* Downloading package to %s/%s...", true), $repo_dir, $clone_path));
 			$this->out(shell_exec("cd {$repo_dir} ; git clone {$repo_url} {$clone_path}"));
 		}
