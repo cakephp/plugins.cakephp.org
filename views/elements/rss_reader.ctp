@@ -1,28 +1,33 @@
 <?php
 if (!isset($limit) || $limit < 2) $limit = 3;
 
-$items = array();
-if (($items = Cache::read('rss.' . md5($url))) == false) {
+$key = MiCache::key(md5($url));
+$items =  MiCache::read('rss' . DS . $key);
+if (!$items) {
 	App::import('Core', 'HttpSocket');
 	$HttpSocket = new HttpSocket();
 	$result = $HttpSocket->request(array('uri' => $url));
 	if ($result) {
 		App::import('Xml');
-		$xml = new Xml($result);
-		$rss = $xml->toArray();
+		$result = new Xml($result);
+		$result = $result->toArray();
 
-		if (isset($rss['Feed']['Entry']) && !empty($rss['Feed']['Entry'])) {
-			if (isset($rss['Feed']['Entry'][0])) {
-				$items = array_slice($rss['Feed']['Entry'], 0, $limit, true);
+		if (isset($result['Feed']['Entry']) && !empty($result['Feed']['Entry'])) {
+			if (isset($result['Feed']['Entry'][0])) {
+				$items = array_slice($result['Feed']['Entry'], 0, $limit, true);
 			} else {
-				$items[0] = $rss['Feed']['Entry'];
+				$items[0] = $result['Feed']['Entry'];
 			}
 		}
 	}
-	Cache::write('rss.' . md5($url), $items);
+	if (is_array($result) && isset($result['Html'])) {
+		MiCache::write('rss' . DS . $key, 'error');
+	} else {
+		MiCache::write('rss' . DS . $key, $items);
+	}
 }
 ?>
-<?php if (!empty($items)) : ?>
+<?php if (!empty($items) && is_array($items)) : ?>
 <h4><?php __('Recent Activity');?></h4>
 <table cellpadding="0" cellspacing="0" class="rss_feed">
 	<tr>

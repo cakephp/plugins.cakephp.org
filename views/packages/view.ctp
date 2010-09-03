@@ -16,7 +16,8 @@
 </h4>
 <div class="grid_6 alpha">
 	<p class="description"><?php echo $package['Package']['description']; ?></p>
-	<?php echo $this->element('rss_reader', array('url' => $package['Package']['homepage'] . '/commits/master.atom'))?>
+	<?php echo $this->element('rss_reader', array(
+		'url' =>  "http://github.com/{$package['Maintainer']['username']}/{$package['Package']['name']}/commits/master.atom"))?>
 </div>
 <div class="grid_6 omega">
 	<div class="meta_package border_radius">
