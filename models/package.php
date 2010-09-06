@@ -72,7 +72,7 @@ class Package extends AppModel {
 			'cache' => 600,
 			'contain' => array('Maintainer' => array('username')),
 			'fields' => array($this->displayField),
-			'group' => array('maintainer_id'),
+			'group' => array('Package.maintainer_id'),
 			'limit' => 5,
 			'order' => "{$this->alias}.created DESC"
 		));
@@ -101,7 +101,7 @@ class Package extends AppModel {
 	function __findRandomIds($limit = 5) {
 		return $this->find('list', array(
 			'fields' => array($this->primaryKey),
-			'group' => array('maintainer_id'),
+			'group' => array('Package.maintainer_id'),
 			'order' => 'RAND()',
 			'limit' => $limit
 		));
