@@ -69,9 +69,10 @@ class Package extends AppModel {
 
 	function __findLatest() {
 		return $this->find('all', array(
-			'cache' => 3600,
+			'cache' => 600,
 			'contain' => array('Maintainer' => array('username')),
 			'fields' => array($this->displayField),
+			'group' => array('maintainer_id'),
 			'limit' => 5,
 			'order' => "{$this->alias}.created DESC"
 		));
@@ -99,8 +100,8 @@ class Package extends AppModel {
 
 	function __findRandomIds($limit = 5) {
 		return $this->find('list', array(
-			'cache' => true,
 			'fields' => array($this->primaryKey),
+			'group' => array('maintainer_id'),
 			'order' => 'RAND()',
 			'limit' => $limit
 		));
