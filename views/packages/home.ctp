@@ -46,7 +46,7 @@ $types = array(
 		?>
 		by
 		<?php echo $this->Html->link($package['Maintainer']['username'], array(
-				'controller' => 'maintainer',
+				'controller' => 'maintainers',
 				'action' => 'view',
 				$package['Maintainer']['username'],
 			), array('class' => 'maintainer_name'));
