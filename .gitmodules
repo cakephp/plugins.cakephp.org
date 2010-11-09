@@ -1,0 +1,12 @@
+[submodule "plugins/authsome"]
+	path = plugins/authsome
+	url = git://github.com/felixge/cakephp-authsome.git
+[submodule "plugins/sanction"]
+	path = plugins/sanction
+	url = git://github.com/josegonzalez/sanction.git
+[submodule "plugins/debug_kit"]
+	path = plugins/debug_kit
+	url = git://github.com/cakephp/debug_kit.git
+[submodule "plugins/webservice"]
+	path = plugins/webservice
+	url = git@github.com:josegonzalez/webservice_plugin.git
