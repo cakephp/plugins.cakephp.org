@@ -10,7 +10,7 @@
  * @category Components
  */
 
-App::import('Vendor', 'Swift', array('file' => 'swift_mailer'.DS.'swift_required.php')); 
+App::import('Vendor', 'Swift', array('file' => VENDORS . 'swift_mailer' . DS . 'swift_required.php'));
 
 class SwiftMailerComponent extends Object { 
 /**
