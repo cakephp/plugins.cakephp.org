@@ -10,3 +10,6 @@
 [submodule "plugins/webservice"]
 	path = plugins/webservice
 	url = git@github.com:josegonzalez/webservice_plugin.git
+[submodule "plugins/migrations"]
+	path = plugins/migrations
+	url = git://github.com/CakeDC/migrations.git
