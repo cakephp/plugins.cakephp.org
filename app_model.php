@@ -51,39 +51,42 @@ class AppModel extends Model {
  * @link http://github.com/mcurry/find
  */
 	function find($type, $options = array()) {
-		$method = null;
-		if (is_string($type)) $method = sprintf('__find%s', Inflector::camelize($type));
-
-		if ($method && method_exists($this, $method)) {
-			$return = $this->{$method}($options);
-			if ($this->query != null) {
-				unset($this->query['paginate']);
-				$query = $this->query;
-				$this->query = null;
-				return $query;
+		if (is_array($options)) {
+			if (!empty($options['blacklist'])) {
+				$options['blacklist'] = (array) $options['blacklist'];
+				$options['fields'] = (isset($options['fields'])) ? $options['fields'] : array_keys($this->schema());
+				$options['fields'] = array_diff($options['fields'], $options['blacklist']);
+				unset($options['blacklist']);
 			}
-			return $return;
+			if (!empty($options['cache'])) {
+				if (!class_exists('MiCache')) App::import('Vendor', 'mi_cache');
+				if (is_int($options['cache'])) MiCache::config(array('duration' => $options['cache']));
+				unset($options['cache']);
+				return MiCache::data($this->alias, 'find', $type, $options);
+			}
 		}
-		if (!empty($options['blacklist'])) {
-			$options['blacklist'] = (array) $options['blacklist'];
-			$options['fields'] = (isset($options['fields'])) ? $options['fields'] : array_keys($this->schema());
-			$options['fields'] = array_diff($options['fields'], $options['blacklist']);
-			unset($options['blacklist']);
+
+		if (in_array($type, array_keys($this->_findMethods))) {
+			$args = func_get_args();
+			return call_user_func_array(array('parent', 'find'), $args);
+		} else {
+		 	$method = (is_string($type)) ? sprintf('__find%s', Inflector::camelize($type)) : null;
+			if ($method && method_exists($this, $method)) {
+				$return = $this->{$method}($options);
+				if ($this->query != null) {
+					unset($this->query['paginate']);
+					$query = $this->query;
+					$this->query = null;
+					return $query;
+				}
+				return $return;
+			}
 		}
-		if (!empty($options['cache'])) {
-			if (!class_exists('MiCache')) App::import('Vendor', 'mi_cache');
-			if (is_int($options['cache'])) MiCache::config(array('duration' => $options['cache']));
-			unset($options['cache']);
-			return MiCache::data($this->alias, 'find', $type, $options);
-		}
-		if (!in_array($type, array_keys($this->_findMethods))) {
-			diebug(array($type, $options));
-			$calledFrom = debug_backtrace();
-			CakeLog::write('error', "Unknown method {$this->alias}->{$method} in " . substr(str_replace(ROOT, '', $calledFrom[0]['file']), 1) . ' on line ' . $calledFrom[0]['line'] );
-			return false;
-		}
-		$args = func_get_args();
-		return call_user_func_array(array('parent', 'find'), $args);
+
+		diebug(array($type, $options));
+		$calledFrom = debug_backtrace();
+		CakeLog::write('error', "Unknown method {$this->alias}->{$method} in " . substr(str_replace(ROOT, '', $calledFrom[0]['file']), 1) . ' on line ' . $calledFrom[0]['line'] );
+		return false;
 	}
 
 /**
