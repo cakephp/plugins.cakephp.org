@@ -14,6 +14,13 @@ class Package extends AppModel {
 		),
 		'Softdeletable'
 	);
+	var $validTypes = array(
+		'model', 'controller', 'view',
+		'behavior', 'component', 'helper',
+		'shell', 'theme', 'datasource',
+		'lib', 'test', 'vendor',
+		'app', 'config', 'resource',
+	);
 	var $folder = null;
 
 	function __construct($id = false, $table = null, $ds = null) {
@@ -33,113 +40,180 @@ class Package extends AppModel {
 				),
 			),
 		);
+		$this->_findMethods['autocomplete'] = true;
+		$this->_findMethods['edit'] = true;
+		$this->_findMethods['index'] = true;
+		$this->_findMethods['latest'] = true;
+		$this->_findMethods['listformaintainer'] = true;
+		$this->_findMethods['random'] = true;
+		$this->_findMethods['randomids'] = true;
+		$this->_findMethods['repoclone'] = true;
+		$this->_findMethods['view'] = true;
 	}
 
-	function __findAutocomplete($name = null) {
-		if (!$name) return false;
+	function _findAutocomplete($state, $query, $results = array()) {
+		if ($state == 'before') {
+			if (empty($query[0])) {
+				throw new InvalidArgumentException(__('Invalid query', true));
+			}
 
-		return $this->find('all', array(
-			'cache' => true,
-			'conditions' => array("{$this->alias}.{$this->displayField} LIKE" => "%{$name}%"),
-			'contain' => false,
-			'limit' => 10,
-			'fields' => array($this->primaryKey, $this->displayField)
-		));
+			$query['cache'] = true;
+			$query['conditions'] = array("{$this->alias}.{$this->displayField} LIKE" => "%{$query[0]}%");
+			$query['contain'] = false;
+			$query['fields'] = array($this->primaryKey, $this->displayField);
+			$query['limit'] = 10;
+			return $query;
+		} elseif ($state == 'after') {
+			return $results;
+		}
 	}
 
-	function __findEdit($id = null) {
-		if (!$id) return false;
+	function _findEdit($state, $query, $results = array()) {
+		if ($state == 'before') {
+			if (empty($query[0])) {
+				throw new OutOfBoundsException(__('Invalid package', true));
+			}
 
-		return $this->find('first', array(
-			'conditions' => array("{$this->alias}.{$this->primaryKey}" => $id),
-			'contain' => array('Maintainer')
-		));
+			$query['contain'] = array('Maintainer');
+			$query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $query[0]);
+			$query['limit'] = 1;
+			return $query;
+		} elseif ($state == 'after') {
+			if (empty($results[0])) {
+				throw new OutOfBoundsException(__('Invalid package', true));
+			}
+			return $results[0];
+		}
 	}
 
-	function __findIndex($params = array()) {
-		$options = array_merge(array(
-							'contain' => array('Maintainer'),
-							'limit' => 10,
-							'paginate' => true),
-							$params['paginate']);
+	function _findIndex($state, $query, $results = array()) {
+		if ($state == 'before') {
+			if (!empty($query['paginate_type']) && in_array($query['paginate_type'], $this->validTypes)) {
+				$query['conditions'] = array("{$this->alias}.contains_{$query['paginate_type']}" => true);
+			}
 
-		if ($params['type']) $options['conditions'] = array("{$this->alias}.contains_{$params['type']}" => true);
-
-		return $this->find('all', $options);
+			$query['contain'] = array('Maintainer');
+			$query['limit'] = 10;
+			return $query;
+		} elseif ($state == 'after') {
+			return $results;
+		}
 	}
 
-	function __findLatest() {
-		return $this->find('all', array(
-			'cache' => 600,
-			'contain' => array('Maintainer' => array('username')),
-			'fields' => array($this->displayField),
-			'group' => array('Package.maintainer_id'),
-			'limit' => 5,
-			'order' => "{$this->alias}.created DESC"
-		));
+	function _findLatest($state, $query, $results = array()) {
+		if ($state == 'before') {
+			$query['cache'] = 600;
+			$query['contain'] = array('Maintainer' => array('username'));
+			$query['fields'] = array($this->displayField);
+			$query['group'] = array("{$this->alias}.maintainer_id");
+			$query['limit'] = 5;
+			$query['order'] = array("{$this->alias}.created DESC");
+			return $query;
+		} elseif ($state == 'after') {
+			return $results;
+		}
 	}
 
-	function __findListForMaintainer($maintainer_id = null) {
-		if (!$maintainer_id) return false;
+	function _findListformaintainer($state, $query, $results = array()) {
+		if ($state == 'before') {
+			if (empty($query[0])) {
+				throw new OutOfBoundsException(__('Invalid package', true));
+			}
 
-		return $this->find('list', array(
-			'conditions' => array("{$this->alias}.maintainer_id" => $maintainer_id),
-			'order' => "{$this->alias}.{$this->displayField} DESC"
-		));
+			$query['conditions'] = array("{$this->alias}.maintainer_id" => $query[0]);
+			$query['fields'] = array("{$this->alias}.{$this->primaryKey}", "{$this->alias}.{$this->displayField}");
+			$query['order'] = array("{$this->alias}.{$this->displayField} DESC");
+			$query['recursive'] = -1;
+			return $query;
+		} elseif ($state == 'after') {
+			if (empty($results)) {
+				return array();
+			}
+			return Set::combine(
+				$results,
+				"{n}.{$this->alias}.{$this->primaryKey}",
+				"{n}.{$this->alias}.{$this->displayField}"
+			);
+		}
 	}
 
-	function __findRandom() {
-		$id = $this->find('random_ids', 5);
-
-		return $this->find('all', array(
-			'cache' => 600,
-			'contain' => array('Maintainer' => array('username')),
-			'fields' => array($this->displayField, 'maintainer_id'),
-			'conditions' => array("{$this->alias}.{$this->primaryKey}" => $id)
-		));
+	function _findRandom($state, $query, $results = array()) {
+		if ($state == 'before') {
+			$query['cache'] = 600;
+			$query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $this->find('randomids'));
+			$query['contain'] = array('Maintainer' => array('username'));
+			$query['fields'] = array("{$this->alias}.$this->displayField", "{$this->alias}.maintainer_id");
+			return $query;
+		} elseif ($state == 'after') {
+			return $results;
+		}
 	}
 
-	function __findRandomIds($limit = 5) {
-		return $this->find('list', array(
-			'fields' => array($this->primaryKey),
-			'group' => array('Package.maintainer_id'),
-			'order' => 'RAND()',
-			'limit' => $limit
-		));
+	function _findRandomids($state, $query, $results = array()) {
+		if ($state == 'before') {
+			$query['fields'] = array("{$this->alias}.{$this->primaryKey}", "{$this->alias}.{$this->primaryKey}");
+			$query['group'] = array("{$this->alias}.maintainer_id");
+			$query['limit'] = (empty($query[0])) ? 5 : $query[0];
+			$query['order'] = array('RAND()');
+			$query['recursive'] = -1;
+			return $query;
+		} elseif ($state == 'after') {
+			if (empty($results)) {
+				return array();
+			}
+			return Set::combine(
+				$results,
+				"{n}.{$this->alias}.{$this->primaryKey}",
+				"{n}.{$this->alias}.{$this->primaryKey}"
+			);
+		}
 	}
 
-	function __findRepoClone($id = null) {
-		if (!$id) return false;
+	function _findRepoclone($state, $query, $results = array()) {
+		if ($state == 'before') {
+			if (empty($query[0])) {
+				throw new OutOfBoundsException(__('Invalid package', true));
+			}
 
-		return $this->find('first', array(
-			'conditions' => array("{$this->alias}.{$this->primaryKey}" => $id),
-			'contain' => array('Maintainer'),
-			'order' => array("{$this->alias}.{$this->primaryKey} ASC")
-		));
+			$query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $query[0]);
+			$query['contain'] = array('Maintainer');
+			$query['limit'] = 1;
+			$query['order'] = array("{$this->alias}.{$this->primaryKey} ASC");
+			return $query;
+		} elseif ($state == 'after') {
+			if (empty($results[0])) {
+				throw new OutOfBoundsException(__('Invalid package', true));
+			}
+			return $results[0];
+		}
 	}
 
-	function __findView($params = array()) {
-		if (!isset($params['maintainer']) || !isset($params['package'])) return false;
+	function _findView($state, $query, $results = array()) {
+		if ($state == 'before') {
+			if (empty($query['maintainer']) || empty($query['package'])) {
+				throw new OutOfBoundsException(__('Invalid package', true));
+			}
 
-		$maintainer_id = $this->Maintainer->find('maintainer_id', $params['maintainer']);
-
-		if (!$maintainer_id) return false;
-
-		return $this->find('first', array(
-			'cache' => 3600,
-			'conditions' => array(
-				"{$this->alias}.{$this->displayField}" => $params['package'],
-				"{$this->alias}.maintainer_id" => $maintainer_id),
-			'contain' => array('Maintainer' => array($this->displayField, 'username')
-		)));
+			$query['cache'] = 3600;
+			$query['conditions'] = array(
+				"{$this->alias}.{$this->displayField}" => $query['package'],
+				'Maintainer.username' => $query['maintainer'],
+			);
+			$query['contain'] = array('Maintainer' => array($this->displayField, 'username'));
+			$query['limit'] = 1;
+			return $query;
+		} elseif ($state == 'after') {
+			if (empty($results[0])) {
+				throw new OutOfBoundsException(__('Invalid package', true));
+			}
+			return $results[0];
+		}
 	}
-
-
 
 	function setupRepoDirectory($id = null) {
 		if (!$id) return false;
 
-		$package = $this->find('repo_clone', $id);
+		$package = $this->find('repoclone', $id);
 		if (!$package) return false;
 
 		$tmp_dir = trim(TMP);
@@ -170,7 +244,7 @@ class Package extends AppModel {
 	function classifyRepository($id) {
 		if (!$id)  return false;
 
-		$package = $this->find('repo_clone', $id);
+		$package = $this->find('repoclone', $id);
 
 		$repo_dir = trim(TMP . 'repos');
 		$letter = $package['Maintainer']['username'][0];
