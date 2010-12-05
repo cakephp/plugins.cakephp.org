@@ -25,5 +25,18 @@ class AppController extends Controller {
 		'Session',
 		'Time'
 	);
+	var $redirectTo = array('action' => 'index');
+
+	function flashAndRedirect($message, $redirectTo = array()) {
+		$this->Session->setFlash($message);
+		$this->redirect(array_merge($this->redirectTo, $redirectTo));
+	}
+
+	function redirectUnless($data = null) {
+		if (empty($data)) {
+			$this->Session->setFlash($message);
+			$this->redirect(array_merge($this->redirectTo, $redirectTo));
+		}
+	}
 }
 ?>
