@@ -48,6 +48,7 @@
  * Inflector::rules('plural', array('rules' => array(), 'irregular' => array(), 'uninflected' => array()));
  *
  */
+if (!class_exists('MiCache')) App::import('Vendor', 'mi_cache');
 
 function diebug($variables = false, $showHtml = true, $showFrom = true, $die = true) {
 	if (Configure::read() > 0) {
