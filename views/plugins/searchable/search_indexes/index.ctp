@@ -1,4 +1,10 @@
-<?php if (!empty($results)): ?>
+<?php if (empty($results)): ?>
+	<?php $this->Html->for_layout(__('Search Results', true), 'h2'); ?>
+	<?php $this->Html->for_layout(__('Search Results | ', true), 'title'); ?>
+	<div class="meta_listing information">
+		Sorry, your search did not return any matches.
+	</div>
+<?php else : ?>
 	<?php $term = (isset($this->data['SearchIndex']['term'])) ? trim($this->data['SearchIndex']['term']) : '';?>
 	<?php $this->Html->for_layout(__("Search Results for {$term}", true), 'h2'); ?>
 	<?php $this->Html->for_layout(__("Search Results for {$term} | ", true), 'title'); ?>
@@ -39,8 +45,4 @@
 		<?php echo $this->Paginator->next(__('next', true).' >>', array(), null,
 				array('class' => 'disabled')); ?>
 	</div>
-<?php else: ?>
-	<?php $this->Html->for_layout(__('Search Results', true), 'h2'); ?>
-	<?php $this->Html->for_layout(__('Search Results | ', true), 'title'); ?>
-	<p>Sorry, your search did not return any matches.</p>
 <?php endif; ?>
