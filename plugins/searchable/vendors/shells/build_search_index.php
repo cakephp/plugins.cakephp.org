@@ -31,6 +31,13 @@ class BuildSearchIndexShell extends Shell {
   var $_availableModelnames = array();
 
 /**
+ * undocumented class variable
+ *
+ * @var string
+ **/
+	var $interactive = true;
+
+/**
  * The main function, executed automatically when running the shell
  *
  */
@@ -53,20 +60,27 @@ class BuildSearchIndexShell extends Shell {
 			$modelNames = $this->_determineModelnames(implode(' ', $this->args));
 		}
 
+		// Turn off interactivity where necessary
+		if (isset($this->params['interactive']) && $this->params['interactive'] !== "true") {
+			$this->interactive = false;
+		}
+
 		foreach ($modelNames as $modelName) {
-			// Confirm rebuild index for this model
-			$skip = $this->in(__("Are you sure you want to rebuild the search index for $modelName, 'y' or 'n' or 'q' to exit", true), null, 'n');
+			if ($this->interactive) {
+				// Confirm rebuild index for this model
+				$skip = $this->in(__("Are you sure you want to rebuild the search index for $modelName, 'y' or 'n' or 'q' to exit", true), null, 'n');
 
-			// Quit if they want to
-			if (strtolower($skip) === 'q') {
-				$this->out(__("Exit", true));
-				$this->_stop();
-			}
+				// Quit if they want to
+				if (strtolower($skip) === 'q') {
+					$this->out(__("Exit", true));
+					$this->_stop();
+				}
 
-			// Skip if they want to
-			if (strtolower($skip) !== 'y') {
-				$this->out(__("Skipping " . $modelName, true));
-				continue;
+				// Skip if they want to
+				if (strtolower($skip) !== 'y') {
+					$this->out(__("Skipping " . $modelName, true));
+					continue;
+				}
 			}
 
 			// Instantiate the model object
