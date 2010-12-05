@@ -13,6 +13,17 @@ class AppController extends Controller {
 		'DebugKit.Toolbar',
 		'Webservice.Webservice',
 	);
-	var $helpers = array('Ajax', 'Sanction.Clearance', 'Form', 'Html', 'Resource', 'Session', 'Time');
+	var $helpers = array(
+		'Ajax',
+		'Sanction.Clearance' => array(
+			'check' => 'group',
+			'path' => 'Maintainer.Maintainer'
+		),
+		'Form',
+		'Html',
+		'Resource',
+		'Session',
+		'Time'
+	);
 }
 ?>
