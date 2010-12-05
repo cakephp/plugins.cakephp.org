@@ -10,20 +10,21 @@ class GithubHelper extends AppHelper {
 		return $this->Html->link("{$username} {$name}", array(
 			'controller' => 'github',
 			'action' => 'view',
-			$username));
+			$username
+		));
 	}
 
 	function name($name = null) {
-		if (!$name) return false;
- 		return ($name != ' ' and $name != '') ? "({$name})" : false;
+ 		return (!empty($name) && $name != ' ' and $name != '') ? "({$name})" : false;
 	}
 
 	function package($name, $maintainer) {
 		return $this->Html->link($name, array(
 			'controller' => 'packages',
 			'action' => 'view',
-			'package' => $name,
-			'maintainer' => $maintainer));
+			$maintainer,
+			$name,
+		));
 	}
 
 	function url($url = null) {

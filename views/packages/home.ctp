@@ -19,8 +19,8 @@ $types = array(
 		<?php echo $this->Html->link($package['Package']['name'], array(
 				'controller' => 'packages',
 				'action' => 'view',
-				'maintainer' => $package['Maintainer']['username'],
-				'package' => $package['Package']['name']
+				$package['Maintainer']['username'],
+				$package['Package']['name']
 			), array('class' => 'package_name'));
 		?>
 		by
@@ -40,8 +40,8 @@ $types = array(
 		<?php echo $this->Html->link($package['Package']['name'], array(
 				'controller' => 'packages',
 				'action' => 'view',
-				'maintainer' => $package['Maintainer']['username'],
-				'package' => $package['Package']['name']
+				$package['Maintainer']['username'],
+				$package['Package']['name']
 			), array('class' => 'package_name'));
 		?>
 		by
