@@ -9,78 +9,72 @@ class PackagesController extends AppController {
 	}
 
 	function index($type = null) {
-		$this->paginate = $this->Package->find('index', array(
-			'paginate' => $this->paginate,
-			'type' => $type
-		));
+		$this->paginate = array(
+			'index',
+			'paginate_type' => $type
+		);
 
 		$packages = $this->paginate();
 		$this->set(compact('packages'));
 	}
 
-	function view() {
-		if (!isset($this->params['maintainer']) || !isset($this->params['package'])) {
-			$this->Session->setFlash(sprintf(__('Invalid %s', true), 'package'));
-			$this->redirect(array('action' => 'index'));
+	function view($maintainer = null, $package = null) {
+		try {
+			$this->set('package', $this->Package->find('view', array(
+				'maintainer' => $maintainer,
+				'package' => $package,
+			)));
+		} catch (Exception $e) {
+			$this->flashAndRedirect($e->getMessage());
 		}
-		$package = $this->Package->find('view', array(
-			'package' => $this->params['package'],
-			'maintainer' => $this->params['maintainer']));
-		if (!$package) {
-			$this->Session->setFlash(sprintf(__('Invalid %s', true), 'package'));
-			$this->redirect(array('action' => 'index'));
-		}
-		$this->set(compact('package'));
 	}
 
 	function add() {
 		if (!empty($this->data)) {
 			$this->Package->create();
 			if ($this->Package->save($this->data)) {
-				$this->Session->setFlash(sprintf(__('The %s has been saved', true), 'package'));
-				$this->redirect(array('action' => 'index'));
+				$this->flashAndRedirect(__('The package has been added', true));
 			} else {
-				$this->Session->setFlash(sprintf(__('The %s could not be saved. Please, try again.', true), 'package'));
+				$this->Session->setFlash(__('The package could not be saved. Please, try again.', true));
 			}
 		}
-		$maintainers = $this->Package->Maintainer->find('list');
-		$this->set(compact('maintainers'));
+
+		$this->set('maintainers', $this->Package->Maintainer->find('list'));
 	}
 
 	function edit($id = null) {
 		if (!$id && empty($this->data)) {
-			$this->Session->setFlash(sprintf(__('Invalid %s', true), 'package'));
-			$this->redirect(array('action' => 'index'));
+			$this->flashAndRedirect(__('Invalid package', true));
 		}
 		if (!empty($this->data)) {
 			if ($this->Package->save($this->data)) {
-				$this->Session->setFlash(sprintf(__('The %s has been saved', true), 'package'));
-				$this->redirect(array('action' => 'index'));
+				$this->flashAndRedirect(__('The package has been saved', true));
 			} else {
-				$this->Session->setFlash(sprintf(__('The %s could not be saved. Please, try again.', true), 'package'));
+				$this->Session->setFlash(__('The package could not be saved. Please, try again.', true));
 			}
 		}
+
 		if (empty($this->data)) {
-			$this->data = $this->Package->find('edit', $id);
-			if (!$this->data) {
-				$this->Session->setFlash(sprintf(__('Invalid %s', true), 'package'));
-				$this->redirect(array('action' => 'index'));
+			try {
+				$this->data = $this->Package->find('edit', $id);
+			} catch (Exception $e) {
+				$this->flashAndRedirect($e->getMessage());
 			}
+			$this->redirectUnless($this->data);
 		}
-		$maintainers = $this->Package->Maintainer->find('list');
-		$this->set(compact('maintainers'));
+
+		$this->set('maintainers', $this->Package->Maintainer->find('list'));
 	}
 
 	function delete($id = null) {
-		if (!$id) {
-			$this->Session->setFlash(sprintf(__('Invalid id for %s', true), 'package'));
-			$this->redirect(array('action'=>'index'));
-		}
+		$this->redirectUnless($id);
+
 		if ($this->Package->delete($id)) {
 			$this->Session->setFlash(sprintf(__('%s deleted', true), 'Package'));
-			$this->redirect(array('action'=>'index'));
+		} else {
+			$this->Session->setFlash(sprintf(__('%s was not deleted', true), 'Package'));
 		}
-		$this->Session->setFlash(sprintf(__('%s was not deleted', true), 'Package'));
+
 		$this->redirect(array('action' => 'index'));
 	}
 
@@ -89,4 +83,3 @@ class PackagesController extends AppController {
 		$this->layout = 'ajax';
 	}
 }
-?>

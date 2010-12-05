@@ -304,7 +304,7 @@ class Github extends AppModel {
 		foreach ($maintainers as $i => $maintainer) {
 			$repos = $this->find('repos_show', $maintainer['Maintainer']['username']);
 			if (!empty($repos['Repositories']['Repository'])) {
-				$packages = $Package->find('list_for_maintainer', $maintainer['Maintainer']['id']);
+				$packages = $Package->find('listformaintainer', $maintainer['Maintainer']['id']);
 				if (!empty($repos['Repositories']['Repository']['name'])) {
 					$repos['Repositories']['Repository'] = array($repos['Repositories']['Repository']);
 				}

@@ -4,7 +4,8 @@ class ResourceHelper extends AppHelper {
 
 	function package($name, $maintainer) {
 		return $this->Html->link($name,
-			array('plugin' => null, 'controller' => 'packages', 'action' => 'view', 'package' => $name, 'maintainer' => $maintainer));
+			array('plugin' => null, 'controller' => 'packages', 'action' => 'view', $maintainer, $name)
+		);
 	}
 
 	function maintainer($name = null, $username = null) {
