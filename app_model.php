@@ -182,7 +182,7 @@ class AppModel extends Model {
 		$conditions = (array) $conditions;
 		if (!$this->id) return false;
 
-		$conditions = array_merge(array("{$this->alias}.$this->primaryKey" => $this->id), $conditions);
+		$conditions = array_merge(array("{$this->alias}.{$this->primaryKey}" => $this->id), $conditions);
 
 		return $this->updateAll($fields, $conditions);
 	}
