@@ -1,3 +1,8 @@
+<?php $this->Clearance->settings = array(
+	'check' => 'group',
+	'path' => 'Maintainer.Maintainer'
+); ?>
+
 <?php $this->Html->h2(__('Maintainer', true));?>
 <div class="grid_6 alpha">
 	<dl class="description"><?php $i = 0; $class = ' class="altrow"';?>
