@@ -6,9 +6,10 @@ class Package extends AppModel {
 		'Searchable.Searchable' => array(
 			'scope' => array('deleted' => 0),
 			'summary' => 'description',
+			'allowNumericKeys' => true,
 			'url' => array(
-				'Package' => array('package' => 'name'),
-				'Maintainer' => array('maintainer' => 'username')
+				'Package' => array(1 => 'name'),
+				'Maintainer' => array(0 => 'username')
 			),
 		),
 		'Softdeletable'
