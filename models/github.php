@@ -275,11 +275,11 @@ class Github extends AppModel {
 
 		ClassRegistry::init('Maintainer');
 		$maintainer = &new Maintainer;
-		$existingUser = $maintainer->find('by_username', $user['User']['login']);
-		if ($existingUser) {
+		try {
+			$existingUser = $maintainer->find('username', $user['User']['login']);
 			CakeLog::write('error', 'dang');
 			return false;
-		}
+		} catch (Exception $e) {}
 
 		$data = array(
 			'Maintainer' => array(

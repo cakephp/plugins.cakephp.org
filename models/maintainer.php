@@ -26,6 +26,14 @@ class Maintainer extends AppModel {
 				),
 			),
 		);
+		$this->_findMethods['dashboard'] = true;
+		$this->_findMethods['edit'] = true;
+		$this->_findMethods['existing'] = true;
+		$this->_findMethods['forgotpassword'] = true;
+		$this->_findMethods['index'] = true;
+		$this->_findMethods['resetpassword'] = true;
+		$this->_findMethods['username'] = true;
+		$this->_findMethods['view'] = true;
 	}
 
 	function __beforeSaveChangePassword($data, $extra) {
@@ -64,86 +72,149 @@ class Maintainer extends AppModel {
 			'activation_key' => md5(uniqid())));
 	}
 
-	function __findByUsername($username = false) {
-		if (!$username) return false;
+	function _findDashboard($state, $query, $results = array()) {
+		if ($state == 'before') {
+		    $user_id = Authsome::get($this->primaryKey);
+			if (empty($user_id)) {
+				throw new OutOfBoundsException(__('Invalid user', true));
+			}
 
-		return $this->find('first', array(
-			'conditions' => array(
-				"{$this->alias}.{$this->displayField}" => $username),
-			'contain' => false));
+			$query['contain'] = false;
+			$query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $user_id);
+			$query['limit'] = 1;
+			return $query;
+		} elseif ($state == 'after') {
+			if (empty($results[0])) {
+				throw new OutOfBoundsException(__('Invalid user', true));
+			}
+			return $results[0];
+		}
 	}
 
-	function __findDashboard() {
-		return $this->find('first', array(
-			'conditions' => array(
-				"{$this->alias}.{$this->primaryKey}" => Authsome::get($this->primaryKey)),
-			'contain' => false));
+	function _findEdit($state, $query, $results = array()) {
+		if ($state == 'before') {
+			if (empty($query[0])) {
+				throw new InvalidArgumentException(__('Invalid maintainer', true));
+			}
+
+			$query['contain'] = false;
+			$query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $query[0]);
+			$query['limit'] = 1;
+			return $query;
+		} elseif ($state == 'after') {
+			if (empty($results[0])) {
+				throw new OutOfBoundsException(__('Invalid maintainer', true));
+			}
+			return $results[0];
+		}
 	}
 
-	function __findExisting($username = false) {
-		if (!$username) return false;
+	function _findExisting($state, $query, $results = array()) {
+		if ($state == 'before') {
+			if (empty($query[0])) {
+				throw new InvalidArgumentException(__('Nonexistent maintainer', true));
+			}
 
-		return $this->find('first', array(
-			'conditions' => array(
-				"{$this->alias}.{$this->displayField}" => $username),
-			'contain' => array(
-				'Package')));
+			$query['contain'] = array('Package');
+			$query['conditions'] = array("{$this->alias}.{$this->displayField}" => $query[0]);
+			$query['limit'] = 1;
+			return $query;
+		} elseif ($state == 'after') {
+			if (empty($results[0])) {
+				throw new OutOfBoundsException(__('Nonexistent maintainer', true));
+			}
+			return $results[0];
+		}
 	}
 
-	function __findForgotPassword($email = null) {
-		if (!$email) return false;
+	function _findForgotpassword($state, $query, $results = array()) {
+		if ($state == 'before') {
+			if (empty($query[0])) {
+				throw new InvalidArgumentException(__('Invalid email address', true));
+			}
 
-		return $this->find('first', array(
-			'conditions' => array(
-				"{$this->alias}.email" => $email),
-			'contain' => false));
+			$query['contain'] = false;
+			$query['conditions'] = array("{$this->alias}.email" => $query[0]);
+			$query['limit'] = 1;
+			return $query;
+		} elseif ($state == 'after') {
+			if (empty($results[0])) {
+				throw new OutOfBoundsException(__('No user found for this email address', true));
+			}
+			return $results[0];
+		}
 	}
 
-	function __findIndex($paginate = array()) {
-		$options = array_merge(array(
-				'blacklist' => array('group', 'email', 'password', 'activation_key', 'created', 'modified'),
-				'paginate' => true
-			),
-			$paginate
-		);
-
-		return $this->find('all', $options);
+	function _findIndex($state, $query, $results = array()) {
+		if ($state == 'before') {
+			$query['fields'] = array('id', 'username', 'name', 'alias', 'url', 'twitter_username', 'company', 'location', 'gravatar_id');
+			$query['contain'] = false;
+			return $query;
+		} elseif ($state == 'after') {
+			return $results;
+		}
 	}
 
-	function __findMaintainerId($username = null) {
-		if (!$username) return false;
+	function _findResetpassword($state, $query, $results = array()) {
+		if ($state == 'before') {
+			if (empty($query['username']) || empty($query['key'])) {
+				throw new InvalidArgumentException(__('An error occurred', true));
+			}
 
-		$maintainer = $this->find('first', array(
-			'conditions' => array(
-				"{$this->alias}.{$this->displayField}" => $username),
-			'contain' => false));
-
-		return ($maintainer) ? $maintainer[$this->alias][$this->primaryKey] : false;
+			$query['contain'] = false;
+			$query['conditions'] = array(
+				"{$this->alias}.{$this->displayField}" => $query['username'],
+				"{$this->alias}.activation_key" => $query['key'],
+			);
+			$query['limit'] = 1;
+			return $query;
+		} elseif ($state == 'after') {
+			if (empty($results[0])) {
+				throw new OutOfBoundsException(__('An error occurred', true));
+			}
+			return $results[0];
+		}
 	}
 
-	function __findResetPassword($options = array()) {
-		if (!isset($options['username']) || !isset($options['key'])) return false;
+	function _findUsername($state, $query, $results = array()) {
+		if ($state == 'before') {
+			if (empty($query[0])) {
+				throw new InvalidArgumentException(__('Invalid maintainer', true));
+			}
 
-		return $this->find('first', array(
-			'conditions' => array(
-				"{$this->alias}.{$this->displayField}" => $options['username'],
-				"{$this->alias}.activation_key" => $options['key'])));
+			$query['contain'] = false;
+			$query['conditions'] = array("{$this->alias}.{$this->displayField}" => $query[0]);
+			$query['limit'] = 1;
+			return $query;
+		} elseif ($state == 'after') {
+			if (empty($results[0])) {
+				throw new OutOfBoundsException(__('Invalid maintainer', true));
+			}
+			return $results[0];
+		}
 	}
 
+	function _findView($state, $query, $results = array()) {
+		if ($state == 'before') {
+			if (empty($query[0])) {
+				throw new InvalidArgumentException(__('Invalid maintainer', true));
+			}
 
-	function __findView($username = null) {
-		if (!$username) return false;
-
-		return $this->find('first', array(
-			'blacklist' => array('group', 'email', 'password', 'activation_key', 'created', 'modified'),
-			'cache' => 3600,
-			'conditions' => array(
-				"{$this->alias}.{$this->displayField}" => $username),
-			'contain' => array(
-				'Package' => array(
-					'fields' => array('maintainer_id', 'name', 'description'),
-					'conditions' => array('Package.deleted' => 0)
-		))));
+			$query['fields'] = array('id', 'username', 'name', 'alias', 'url', 'twitter_username', 'company', 'location', 'gravatar_id');
+			$query['cache'] = 3600;
+			$query['contain'] = array('Package' => array(
+				'fields' => array('maintainer_id', 'name', 'description'),
+				'conditions' => array('Package.deleted' => 0)
+			));
+			$query['conditions'] = array("{$this->alias}.{$this->displayField}" => $query[0]);
+			$query['limit'] = 1;
+			return $query;
+		} elseif ($state == 'after') {
+			if (empty($results[0])) {
+				throw new OutOfBoundsException(__('Invalid maintainer', true));
+			}
+			return $results[0];
+		}
 	}
 
 /**
@@ -245,5 +316,5 @@ class Maintainer extends AppModel {
 		if (!$this->save($data, array('callbacks' => false))) return false;
 		return $activationKey;
 	}
+
 }
-?>

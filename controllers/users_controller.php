@@ -41,15 +41,10 @@ class UsersController extends AppController {
 
 	function forgot_password() {
 		if (!empty($this->data) && isset($this->data['Maintainer']['email'])) {
-			if ($this->data['Maintainer']['email'] == '') {
-				$this->Session->setFlash(__('Invalid email address', true));
-				$this->redirect(array('controller' => 'users', 'action' => 'forgot_password'));
-			}
-
-			$maintainer = $this->Maintainer->find('forgot_password', $this->data['Maintainer']['email']);
-			if (!$maintainer) {
-				$this->Session->setFlash(__('No user found for this email address', true));
-				$this->redirect(array('controller' => 'users', 'action' => 'forgot_password'));
+			try {
+				$maintainer = $this->Maintainer->find('forgotpassword', $this->data['Maintainer']['email']);
+			} catch (Exception $e) {
+				$this->flashAndRedirect($e->getMessage(), array('controller' => 'users', 'action' => 'forgot_password'));
 			}
 
 			$activationKey = $this->Maintainer->changeActivationKey($maintainer['Maintainer']['id']);
@@ -79,7 +74,7 @@ class UsersController extends AppController {
 			$this->redirect(array('action' => 'login'));
 		}
 
-		$maintainer = $this->Maintainer->find('reset_password', array('username' => $username, 'key' => $key));
+		$maintainer = $this->Maintainer->find('resetpassword', array('username' => $username, 'key' => $key));
 		if (!isset($maintainer)) {
 			$this->Session->setFlash(__('An error occurred', true));
 			$this->redirect(array('controller' => 'users', 'action' => 'login'));

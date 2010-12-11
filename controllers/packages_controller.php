@@ -82,4 +82,5 @@ class PackagesController extends AppController {
 		$this->set('packages', $this->Package->find('autocomplete', $this->data['SearchIndex']['term']));
 		$this->layout = 'ajax';
 	}
+
 }

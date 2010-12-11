@@ -16,11 +16,13 @@ class GithubController extends AppController {
 			$this->Session->setFlash(sprintf(__('Invalid %s', true), 'user'));
 			$this->redirect(array('action' => 'index'));
 		}
-		$existing = $this->Maintainer->find('existing', $username);
-		if (!$existing) {
-			$this->Session->setFlash(sprintf(__('Invalid %s', true), 'user'));
-			$this->redirect(array('action' => 'index'));
+
+		try {
+			$existing = $this->Maintainer->find('existing', $username);
+		} catch (Exception $e) {
+			$this->flashAndRedirect($e->getMessage());
 		}
+
 		$packages = $this->Github->find('new_packages', $username);
 		$this->set(compact('existing', 'packages', 'user'));
 	}

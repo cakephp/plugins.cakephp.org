@@ -4,17 +4,18 @@ class MaintainersController extends AppController {
 	var $helpers = array('Maintainer');
 
 	function index() {
-		$this->paginate = $this->Maintainer->find('index', $this->paginate);
-		$this->set('maintainers', $this->paginate());
+		$this->paginate = array('index');
+
+		$maintainers = $this->paginate();
+		$this->set(compact('maintainers'));
 	}
 
 	function view($username = null) {
-		$maintainer = $this->Maintainer->find('view', $username);
-		if (!$maintainer) {
-			$this->Session->setFlash(sprintf(__('Invalid %s', true), 'maintainer'));
-			$this->redirect(array('action' => 'index'));
+		try {
+			$this->set('maintainer', $maintainer = $this->Maintainer->find('view', $username));
+		} catch (Exception $e) {
+			$this->flashAndRedirect($e->getMessage());
 		}
-		$this->set(compact('maintainer'));
 	}
 
 	function add() {
@@ -31,33 +32,35 @@ class MaintainersController extends AppController {
 
 	function edit($id = null) {
 		if (!$id && empty($this->data)) {
-			$this->Session->setFlash(sprintf(__('Invalid %s', true), 'maintainer'));
-			$this->redirect(array('action' => 'index'));
+			$this->flashAndRedirect(__('Invalid maintainer', true));
 		}
 		if (!empty($this->data)) {
 			if ($this->Maintainer->save($this->data)) {
-				$this->Session->setFlash(sprintf(__('The %s has been saved', true), 'maintainer'));
-				$this->redirect(array('action' => 'index'));
+				$this->flashAndRedirect(__('The maintainer has been saved', true));
 			} else {
 				$this->Session->setFlash(sprintf(__('The %s could not be saved. Please, try again.', true), 'maintainer'));
 			}
 		}
 		if (empty($this->data)) {
-			$this->data = $this->Maintainer->read(null, $id);
+			try {
+				$this->data = $this->Maintainer->find('edit', $id);
+			} catch (Exception $e) {
+				$this->flashAndRedirect($e->getMessage());
+			}
+			$this->redirectUnless($this->data);
 		}
 	}
 
 	function delete($id = null) {
-		if (!$id) {
-			$this->Session->setFlash(sprintf(__('Invalid id for %s', true), 'maintainer'));
-			$this->redirect(array('action'=>'index'));
-		}
+		$this->redirectUnless($id);
+
 		if ($this->Maintainer->delete($id)) {
 			$this->Session->setFlash(sprintf(__('%s deleted', true), 'Maintainer'));
-			$this->redirect(array('action'=>'index'));
+		} else {
+			$this->Session->setFlash(sprintf(__('%s was not deleted', true), 'Maintainer'));
 		}
-		$this->Session->setFlash(sprintf(__('%s was not deleted', true), 'Maintainer'));
+
 		$this->redirect(array('action' => 'index'));
 	}
+
 }
-?>

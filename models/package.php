@@ -71,7 +71,7 @@ class Package extends AppModel {
 	function _findEdit($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query[0])) {
-				throw new OutOfBoundsException(__('Invalid package', true));
+				throw new InvalidArgumentException(__('Invalid package', true));
 			}
 
 			$query['contain'] = array('Maintainer');
@@ -92,7 +92,11 @@ class Package extends AppModel {
 				$query['conditions'] = array("{$this->alias}.contains_{$query['paginate_type']}" => true);
 			}
 
-			$query['contain'] = array('Maintainer');
+			$query['contain'] = array('Maintainer' => array('id','username', 'name'));
+			$query['fields'] = array_diff(
+				array_keys($this->schema()),
+				array('deleted', 'created', 'modified', 'repository_url', 'homepage', 'tags', 'bakery_article')
+			);
 			$query['limit'] = 10;
 			return $query;
 		} elseif ($state == 'after') {
@@ -117,7 +121,7 @@ class Package extends AppModel {
 	function _findListformaintainer($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query[0])) {
-				throw new OutOfBoundsException(__('Invalid package', true));
+				throw new InvalidArgumentException(__('Invalid package', true));
 			}
 
 			$query['conditions'] = array("{$this->alias}.maintainer_id" => $query[0]);
@@ -172,7 +176,7 @@ class Package extends AppModel {
 	function _findRepoclone($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query[0])) {
-				throw new OutOfBoundsException(__('Invalid package', true));
+				throw new InvalidArgumentException(__('Invalid package', true));
 			}
 
 			$query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $query[0]);
@@ -191,7 +195,7 @@ class Package extends AppModel {
 	function _findView($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query['maintainer']) || empty($query['package'])) {
-				throw new OutOfBoundsException(__('Invalid package', true));
+				throw new InvalidArgumentException(__('Invalid package', true));
 			}
 
 			$query['cache'] = 3600;
