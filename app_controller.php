@@ -27,16 +27,22 @@ class AppController extends Controller {
 	);
 	var $redirectTo = array('action' => 'index');
 
-	function flashAndRedirect($message, $redirectTo = array()) {
+	function flashAndRedirect($message = null, $redirectTo = array()) {
+		if (empty($message)) $message = __('Access Error', true);
 		$this->Session->setFlash($message);
 		$this->redirect(array_merge($this->redirectTo, $redirectTo));
 	}
 
-	function redirectUnless($data = null) {
+	function redirectUnless($data = null, $message = null) {
 		if (empty($data)) {
+			if (empty($message)) $message = __('Access Error', true);
 			$this->Session->setFlash($message);
 			$this->redirect(array_merge($this->redirectTo, $redirectTo));
 		}
 	}
+
+	function beforeRender() {
+		$this->params['useJsonNative'] = true;
+	}
+
 }
-?>
