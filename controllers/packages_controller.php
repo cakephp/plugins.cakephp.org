@@ -8,14 +8,19 @@ class PackagesController extends AppController {
 		$this->set(compact('latest', 'random'));
 	}
 
+	function latest() {
+		$this->paginate = array('latest', 'limit' => 10);
+		$this->set('packages', $this->paginate());
+		$this->render('index');
+	}
+
 	function index($type = null) {
 		$this->paginate = array(
 			'index',
 			'paginate_type' => $type
 		);
 
-		$packages = $this->paginate();
-		$this->set(compact('packages'));
+		$this->set('packages', $this->paginate());
 	}
 
 	function view($maintainer = null, $package = null) {

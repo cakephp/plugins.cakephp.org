@@ -13,7 +13,7 @@ $types = array(
 <?php endforeach; ?>
 </div>
 <div class="grid_5">
-<h3><?php __('Latest Packages'); ?></h3>
+<h3><?php echo $this->Html->link(__('Latest Packages', true), array('controller' => 'packages', 'action' => 'latest')); ?></h3>
 <?php foreach ($latest as $package) : ?>
 	<div class="list latest">
 		<?php echo $this->Html->link($package['Package']['name'], array(
