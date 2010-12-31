@@ -219,7 +219,9 @@ class AppModel extends Model {
 	function _findCount($state, $query, $results = array()) {
 		if ($state == 'before' && isset($query['operation'])) {
 			if (!empty($query['fields']) && is_array($query['fields'])) {
-				unset($query['fields']);
+				if (!preg_match('/^count/i', $query['fields'][0])) {
+					unset($query['fields']);
+				}
 			}
 		}
 		return parent::_findCount($state, $query, $results);
