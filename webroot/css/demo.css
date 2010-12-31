@@ -120,6 +120,16 @@ p {
 	padding: 20px;
 }
 
+.meta_maintainer .gravatar {
+	float: left;
+	padding-right: 10px;
+}
+
+.meta_maintainer dl {
+	float: left;
+	margin-bottom: 4px;
+}
+
 .meta_maintainer dd {
 	font-weight: bold;
 }

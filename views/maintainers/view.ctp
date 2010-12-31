@@ -2,6 +2,7 @@
 <?php $this->Html->for_layout($maintainer['Maintainer']['name'], 'h3'); ?>
 <div class="grid_6 alpha">
 	<div class="meta_maintainer border_radius">
+		<?php echo $this->Html->image('https://secure.gravatar.com/avatar/8185c9ddb4f67c42a558bfe5557b9eea', array('alt' => sprintf('Gravatar for %s', $maintainer['Maintainer']['username']), 'class' => 'gravatar')); ?>
 		<dl><?php $i = 0; $class = ' class="altrow"';?>
 			<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Github Username'); ?></dt>
 			<dd<?php if ($i++ % 2 == 0) echo $class;?>>
@@ -35,6 +36,7 @@
 				</dd>
 			<?php endif; ?>
 		</dl>
+		<div class="clear"></div>
 	</div>
 </div>
 <div class="grid_6 omega">
