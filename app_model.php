@@ -197,6 +197,12 @@ class AppModel extends Model {
  */
 	function paginateCount($conditions = array(), $recursive = 0, $extra = array()) {
 		$parameters = compact('conditions');
+
+		if ($recursive != $this->recursive) {
+			$parameters['recursive'] = $recursive;
+		}
+
+
 		if (isset($extra['type'])) {
 			$extra['operation'] = 'count';
 			return $this->find($extra['type'], array_merge($parameters, $extra));
