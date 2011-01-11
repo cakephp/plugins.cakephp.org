@@ -35,9 +35,29 @@ class AppController extends Controller {
 
 	function redirectUnless($data = null, $message = null) {
 		if (empty($data)) {
-			if (empty($message)) $message = __('Access Error', true);
-			$this->Session->setFlash($message);
-			$this->redirect(array_merge($this->redirectTo, $redirectTo));
+			$redirectTo = array();
+			$status = null;
+			$exit = true;
+
+			if (is_array($message)) {
+				if (isset($message['redirectTo'])) $redirectTo = $message['redirectTo'];
+				if (isset($message['status'])) $status = $message['status'];
+
+				if (isset($message['exit'])) $exit = $message['exit'];
+				if (isset($message['message'])) $message = $message['message'];
+			}
+
+			if ($message) {
+				$this->Session->setFlash($message, 'flash/error');
+			} else if ($message === null) {
+				$this->Session->setFlash(__('Access Error', true), 'flash/error');
+			}
+
+			if (is_array($redirectTo)) {
+				$redirectTo = array_merge($this->redirectTo, $redirectTo);
+			}
+
+			$this->redirect($redirectTo, $status, $exit);
 		}
 	}
 
