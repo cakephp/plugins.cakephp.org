@@ -149,8 +149,14 @@ class Maintainer extends AppModel {
 		if ($state == 'before') {
 			$query['fields'] = array('id', 'username', 'name', 'alias', 'url', 'twitter_username', 'company', 'location', 'gravatar_id');
 			$query['contain'] = false;
+			if (!empty($query['operation'])) {
+				return $this->_findCount($state, $query, $results);
+			}
 			return $query;
 		} elseif ($state == 'after') {
+		    if (!empty($query['operation'])) {
+				return $this->_findCount($state, $query, $results);
+			}
 			return $results;
 		}
 	}
