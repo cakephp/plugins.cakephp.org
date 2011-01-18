@@ -30,6 +30,7 @@ class Package extends AppModel {
 		'listformaintainer' => true,
 		'random'            => true,
 		'randomids'         => true,
+		'repoclone'         => true,
 		'view'              => true,
 	);
 
