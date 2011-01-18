@@ -217,7 +217,6 @@ class PackageShell extends Shell {
  * @author Jose Diaz-Gonzalez
  */
 	function fix_repository_urls() {
-		$p_count = 0;
 		$update_count = 0;
 
 		$this->Package->Behaviors->detach('Searchable');
@@ -237,7 +236,7 @@ class PackageShell extends Shell {
 			if ($this->Package->fixRepositoryUrl($package)) $update_count++;
 		}
 
-		$this->out(sprintf(__('* Successfully updated %s out of %s package urls', true), $update_count, $p_count));
+		$this->out(sprintf(__('* Successfully updated %s out of %s package urls', true), $update_count, count($packages)));
 		$this->_stop();
 	}
 
