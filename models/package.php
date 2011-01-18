@@ -513,6 +513,26 @@ class Package extends AppModel {
 		));
 	}
 
+	function updateAttributes($package, $attrs = array()) {
+		if (empty($attrs) || !isset($attrs['Repository'])) return false;
+
+		if (!empty($repo['Repository']['homepage'])) {
+			if (is_array($repo['Repository']['homepage'])) {
+				$package['Package']['homepage'] = $repo['Repository']['homepage']['value'];
+			} else {
+				$package['Package']['homepage'] = $repo['Repository']['homepage'];
+			}
+		} else if (!empty($repo['Repository']['url'])) {
+			$package['Package']['homepage'] = $repo['Repository']['url'];
+		}
+
+		if (isset($attrs['Repository']['description'])) {
+			$package['Package']['description'] = $attrs['Repository']['description'];
+		}
+		$this->create();
+		return $this->save($package);
+	}
+
 	function fixRepositoryUrl($package = null) {
 		if (!$package) return false;
 
