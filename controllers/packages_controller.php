@@ -9,7 +9,7 @@ class PackagesController extends AppController {
 	}
 
 	function latest() {
-		$this->paginate = array('latest', 'limit' => 10);
+		$this->paginate = array('latest');
 		$this->set('packages', $this->paginate());
 		$this->render('index');
 	}

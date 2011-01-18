@@ -99,7 +99,6 @@ class Package extends AppModel {
 				array_keys($this->schema()),
 				array('deleted', 'created', 'modified', 'repository_url', 'homepage', 'tags', 'bakery_article')
 			);
-			$query['limit'] = 10;
 			if (!empty($query['operation'])) {
 				return $this->_findCount($state, $query, $results);
 			}
