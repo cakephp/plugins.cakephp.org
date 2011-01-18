@@ -37,7 +37,6 @@ class PackageShell extends Shell {
 			$this->out("[E]xistence Check");
 			$this->out("[F]ix Repository Urls");
 			$this->out("[G]it Clone Repositories");
-			$this->out("[M]aintainer Resave");
 			$this->out("[R]eset Characteristics");
 			$this->out("[S]specific User/Repo");
 			$this->out("[U]pdate Repositories");
@@ -115,6 +114,13 @@ class PackageShell extends Shell {
 		$this->out(sprintf(__('* Updated %s of %s packages', true), $count, $p_count));
 	}
 
+/**
+ * Disables packages when their existence cannot be verified on github
+ *
+ * @return void
+ * @todo send summary email so packages can be manually verified/removed
+ * @author Jose Diaz-Gonzalez
+ */
 	function existence_check() {
 		$this->Package->Behaviors->detach('Searchable');
 		$packages = $this->Package->find('all', array(
@@ -255,6 +261,7 @@ class PackageShell extends Shell {
 			'contains_shell', 'contains_test', 'contains_lib', 'contains_resource', 'contains_config'
 		);
 
+		$this->Package->Behaviors->detach('Searchable');
 		foreach ($characteristics as $characteristic) {
 			$this->out(sprintf(__('Resetting %s', true), $characteristic));
 			$this->Package->updateAll(array("Package.{$characteristic}" => 0));
@@ -273,6 +280,8 @@ class PackageShell extends Shell {
  * @author Jose Diaz-Gonzalez
  */
 	function check_characteristics() {
+		$this->Package->Behaviors->detach('Searchable');
+
 		$packages = $this->Package->find('list', array(
 			'order' => array('Package.id ASC')
 		));
