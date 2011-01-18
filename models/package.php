@@ -22,6 +22,16 @@ class Package extends AppModel {
 		'app', 'config', 'resource',
 	);
 	var $folder = null;
+	var $_findMethods = array(
+		'autocomplete'      => true,
+		'edit'              => true,
+		'index'             => true,
+		'latest'            => true,
+		'listformaintainer' => true,
+		'random'            => true,
+		'randomids'         => true,
+		'view'              => true,
+	);
 
 	function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
@@ -40,15 +50,6 @@ class Package extends AppModel {
 				),
 			),
 		);
-		$this->_findMethods['autocomplete'] = true;
-		$this->_findMethods['edit'] = true;
-		$this->_findMethods['index'] = true;
-		$this->_findMethods['latest'] = true;
-		$this->_findMethods['listformaintainer'] = true;
-		$this->_findMethods['random'] = true;
-		$this->_findMethods['randomids'] = true;
-		$this->_findMethods['repoclone'] = true;
-		$this->_findMethods['view'] = true;
 	}
 
 	function _findAutocomplete($state, $query, $results = array()) {
