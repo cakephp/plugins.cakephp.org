@@ -220,6 +220,7 @@ class PackageShell extends Shell {
 		$p_count = 0;
 		$update_count = 0;
 
+		$this->Package->Behaviors->detach('Searchable');
 		$packages = $this->Package->find('all', array(
 			'contain' => array('Maintainer' => array('id', 'username')),
 			'fields' => array('id', 'maintainer_id', 'name'),
