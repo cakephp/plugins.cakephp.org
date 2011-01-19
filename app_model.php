@@ -202,7 +202,6 @@ class AppModel extends Model {
 			$parameters['recursive'] = $recursive;
 		}
 
-
 		if (isset($extra['type'])) {
 			$extra['operation'] = 'count';
 			return $this->find($extra['type'], array_merge($parameters, $extra));
