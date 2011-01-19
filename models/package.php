@@ -234,21 +234,39 @@ class Package extends AppModel {
 		$package = $this->find('repoclone', $id);
 		if (!$package) return false;
 
-		$tmp_dir = trim(TMP);
-		$repo_dir = trim(TMP . 'repos');
-
 		if (!$this->folder) $this->folder = new Folder();
-		$this->folder->cd($tmp_dir);
-		$existing_files_and_folders = $this->folder->read();
-		if (!in_array('repos', $existing_files_and_folders['0'])) {
-			$this->folder->create($repo_dir);
+
+		$path = rtrim(trim(TMP), DS);
+		$appends = array(
+			'repos',
+			strtolower($package['Maintainer']['username'][0]),
+			$package['Maintainer']['username'],
+		);
+
+		foreach ($appends as $append) {
+			$this->folder->cd($path);
+			$read = $this->folder->read();
+
+			if (!in_array($append, $read['0'])) {
+				$this->folder->create($path . DS . $append);
+			}
+			$path = $path . DS . $append;
 		}
 
-		$repo_url = $package['Package']['repository_url'];
-		$clone_path = strtolower($package['Maintainer']['username'][0]) . DS;
-		$clone_path .= $package['Maintainer']['username'] . DS . $package['Package']['name'];
-		shell_exec("cd {$repo_dir} ; git clone {$repo_url} {$clone_path}");
-		return true;
+		$this->folder->cd($path);
+		$read = $this->folder->read();
+
+		if (!in_array($package['Package']['name'], $read['0'])) {
+			$var = shell_exec(sprintf("cd %s ; git clone %s %s%s%s 2>&1 1> /dev/null",
+				$path,
+				$package['Package']['repository_url'],
+				$path,
+				DS,
+				$package['Package']['name']
+			));
+			if (stristr($var, 'fatal')) return false;
+		}
+		return $package;
 	}
 
 /**
@@ -259,11 +277,7 @@ class Package extends AppModel {
  * @return boolean true if update successful, false otherwise
  * @author Jose Diaz-Gonzalez
  */
-	function classifyRepository($id) {
-		if (!$id)  return false;
-
-		$package = $this->find('repoclone', $id);
-
+	function classifyRepository($package) {
 		$repo_dir = trim(TMP . 'repos');
 		$letter = $package['Maintainer']['username'][0];
 		$username = $package['Maintainer']['username'];
@@ -489,8 +503,11 @@ class Package extends AppModel {
 
 	function afterSave($created = true) {
 		if ($created) {
-			$this->setupRepoDirectory($this->getLastInsertID());
-			$this->classifyRepository($this->getLastInsertID());
+			$id = $this->getLastInsertID();
+			$package = $this->setupRepoDirectory($id);
+			if ($package) {
+				$this->classifyRepository($package);
+			}
 		}
 	}
 

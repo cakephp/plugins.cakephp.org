@@ -158,32 +158,16 @@ class PackageShell extends Shell {
  * @author Jose Diaz-Gonzalez
  */
 	function git_clone_repositories() {
-		$p_count = 0;
-		$tmp_dir = trim(TMP);
-		$repo_dir = trim(TMP . 'repos');
+		$count = 0;
 
-		if (!$this->folder) $this->folder = new Folder();
-		$this->folder->cd($tmp_dir);
-		$existing_files_and_folders = $this->folder->read();
-		if (!in_array('repos', $existing_files_and_folders['0'])) {
-			$this->folder->create($repo_dir);
+		$packages = $this->Package->find('list');
+		foreach ($packages as $id => $name) {
+			$this->out(sprintf(__("* Downloading package %s", true), $name));
+			if ($this->Package->setupRepoDirectory($id)); {
+				$count++;
+			}
 		}
-
-		$packages = $this->Package->find('all', array(
-			'contain' => array('Maintainer' => array('id', 'username')),
-			'fields' => array('id', 'name', 'repository_url'),
-			'order' => array('Package.id ASC')
-		));
-
-		foreach ($packages as $package) {
-			$p_count++;
-			$repo_url = $package['Package']['repository_url'];
-			$clone_path = strtolower($package['Maintainer']['username'][0]) . DS;
-			$clone_path .= $package['Maintainer']['username'] . DS . $package['Package']['name'];
-			$this->out(sprintf(__("* Downloading package to %s/%s...", true), $repo_dir, $clone_path));
-			$this->out(shell_exec("cd {$repo_dir} ; git clone {$repo_url} {$clone_path}"));
-		}
-		$this->out(sprintf(__('* Downloaded %s repositories', true), $p_count));
+		$this->out(sprintf(__('* Downloaded %s of %s repositories', true), $count, count($packages)));
 	}
 
 /**
@@ -253,19 +237,14 @@ class PackageShell extends Shell {
  * @author Jose Diaz-Gonzalez
  */
 	function reset_characteristics() {
-		$p_count = 0;
-		$update_count = 0;
-		$characteristics = array(
+		$characteristics = array_combine(array(
 			'contains_model', 'contains_datasource', 'contains_behavior', 'contains_controller',
 			'contains_component', 'contains_view', 'contains_helper', 'contains_theme', 'contains_vendor',
 			'contains_shell', 'contains_test', 'contains_lib', 'contains_resource', 'contains_config'
-		);
+		), array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
 
-		$this->Package->Behaviors->detach('Searchable');
-		foreach ($characteristics as $characteristic) {
-			$this->out(sprintf(__('Resetting %s', true), $characteristic));
-			$this->Package->updateAll(array("Package.{$characteristic}" => 0));
-		}
+		$this->out(__('Resetting all characteristics', true));
+		$this->Package->updateAll($characteristics);
 
 		$this->out(__('* Successfully reset all characteristics', true));
 		$this->_stop();
@@ -280,28 +259,22 @@ class PackageShell extends Shell {
  * @author Jose Diaz-Gonzalez
  */
 	function check_characteristics() {
-		$this->Package->Behaviors->detach('Searchable');
-
-		$packages = $this->Package->find('list', array(
-			'order' => array('Package.id ASC')
-		));
-
 		$count = 0;
-		foreach ($packages as $i => $package) {
-			$this->out(sprintf(__('* Setting up repository for %s', true), $package));
-			$this->Package->setupRepoDirectory($i);
+
+		$packages = $this->Package->find('list');
+		$this->Package->Behaviors->detach('Searchable');
+		foreach ($packages as $id => $name) {
+			$this->out(sprintf(__('* Setting up repository for %s', true), $name));
+			$package = $this->Package->setupRepoDirectory($id);
+			if (!$package) continue;
+
 			$this->out(__('* Classifying repository', true));
-			$characteristics = $this->Package->classifyRepository($i);
-			if (!$characteristics) {
-				$this->out(__('* Classification failed!', true));
-				continue;
-			}
-			foreach ($characteristics as $characteristic) {
-				$this->out(sprintf(__('** %s', true), Inflector::humanize($characteristic)));
-			}
+			$characteristics = $this->Package->classifyRepository($package);
+			if (!$characteristics) continue;
+
 			$count++;
 		}
-		$this->out(sprintf(__('* Checked %s repositories', true), $count));
+		$this->out(sprintf(__('* Checked %s of %s repositories', true), $count, count($packages)));
 	}
 
 }
