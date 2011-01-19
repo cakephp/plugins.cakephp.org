@@ -1,6 +1,8 @@
 <?php
 class PackagesController extends AppController {
 	var $name = 'Packages';
+	var $components = array('Searchable.Search');
+	var $helpers = array('Searchable.Searchable');
 
 	function home() {
 		$latest = $this->Package->find('latest');
@@ -21,6 +23,21 @@ class PackagesController extends AppController {
 		);
 
 		$this->set('packages', $this->paginate());
+	}
+
+	function search($term = null) {
+		// Redirect with search data in the URL in pretty format
+		$this->Search->redirectUnlessGet();
+
+		// Get Pagination results
+		$this->loadModel('Searchable.SearchIndex');
+		$results = $this->Search->paginate($term);
+
+		// Get types for select drop down
+		$types = $this->SearchIndex->getTypes();
+
+		$this->set(compact('results', 'term', 'types'));
+		$this->pageTitle = 'Search';
 	}
 
 	function view($maintainer = null, $package = null) {
