@@ -501,8 +501,8 @@ class Package extends AppModel {
 		return $characteristics;
 	}
 
-	function afterSave($created = true) {
-		if ($created) {
+	function afterSave($created) {
+		if ($created === true) {
 			$id = $this->getLastInsertID();
 			$package = $this->setupRepoDirectory($id);
 			if ($package) {
