@@ -263,7 +263,7 @@ class Github extends AppModel {
 			'Package' => array(
 				'maintainer_id' => $existingUser['Maintainer']['id'],
 				'name' => $name,
-				'repository_url' => $repo['Repository']['url'],
+				'repository_url' => "git://github.com/{$repo['Repository']['owner']}/{$repo['Repository']['name']}.git",
 				'homepage' => $repo['Repository']['url'],
 				'description' => $repo['Repository']['description']));
 		return $maintainer->Package->save($data);
