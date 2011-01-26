@@ -257,6 +257,9 @@ class Package extends AppModel {
 		$read = $this->folder->read();
 
 		if (!in_array($package['Package']['name'], $read['0'])) {
+			if (($paths = Configure::read('paths')) !== false) {
+				putenv('PATH=' . implode(':', $paths) . ':' . getenv('PATH'));
+			}
 			$var = shell_exec(sprintf("cd %s ; git clone %s %s%s%s 2>&1 1> /dev/null",
 				$path,
 				$package['Package']['repository_url'],
