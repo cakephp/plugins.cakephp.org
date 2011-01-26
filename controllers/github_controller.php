@@ -4,6 +4,10 @@ class GithubController extends AppController {
 	var $helpers = array('Github');
 	var $uses = array('Github', 'Maintainer');
 
+	function beforeFilter() {
+		$this->Maintainer->Package->Behaviors->detach('Softdeletable');
+	}
+
 	function index() {
 		$maintainers = $this->paginate('Maintainer');
 		$maintainers = $this->Github->find('related_repositories', $maintainers);
