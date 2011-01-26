@@ -66,7 +66,7 @@ class AppSchema extends CakeSchema {
 		'contains_config' => array('type' => 'boolean', 'null' => false, 'default' => NULL),
 		'contains_app' => array('type' => 'boolean', 'null' => false, 'default' => NULL),
 		'deleted' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
-		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'package_record' => array('column' => array('name', 'maintainer_id', 'deleted'), 'unique' => 1), 'name' => array('column' => 'name', 'unique' => 0), 'maintainer_id' => array('column' => 'maintainer_id', 'unique' => 0), 'created' => array('column' => 'created', 'unique' => 0)),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'package_record' => array('column' => array('name', 'maintainer_id'), 'unique' => 1), 'name' => array('column' => 'name', 'unique' => 0), 'maintainer_id' => array('column' => 'maintainer_id', 'unique' => 0), 'created' => array('column' => 'created', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
 	var $packages_tags = array(
