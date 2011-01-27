@@ -22,6 +22,7 @@ class Package extends AppModel {
 		'app', 'config', 'resource',
 	);
 	var $folder = null;
+	var $Github = null;
 	var $_findMethods = array(
 		'autocomplete'      => true,
 		'edit'              => true,
@@ -533,22 +534,79 @@ class Package extends AppModel {
 		));
 	}
 
-	function updateAttributes($package, $attrs = array()) {
-		if (empty($attrs) || !isset($attrs['Repository'])) return false;
+	function updateAttributes($package) {
+		if (!$this->Github) $this->Github = ClassRegistry::init('Github');
+		$repo = $this->Github->find('repos_show_single', array(
+			'username' => $package['Maintainer']['username'],
+			'repo' => $package['Package']['name']
+		));
+		if (empty($repo) || !isset($repo['Repository'])) return false;
 
-		if (!empty($repo['Repository']['homepage'])) {
+		// Detect homepage
+		$homepage = (string) $repo['Repository']['url'];
+		if (!empty($repo['Repository']['homepage']['value'])) {
 			if (is_array($repo['Repository']['homepage'])) {
-				$package['Package']['homepage'] = $repo['Repository']['homepage']['value'];
+				$homepage = $repo['Repository']['homepage']['value'];
 			} else {
-				$package['Package']['homepage'] = $repo['Repository']['homepage'];
+				$homepage = $repo['Repository']['homepage'];
 			}
-		} else if (!empty($repo['Repository']['url'])) {
-			$package['Package']['homepage'] = $repo['Repository']['url'];
+		} else if (!empty($repo['Repsitory']['homepage'])) {
+			$homepage = $repo['Repository']['homepage'];
 		}
 
-		if (isset($attrs['Repository']['description'])) {
-			$package['Package']['description'] = $attrs['Repository']['description'];
+		// Detect issues
+		$issues = null;
+		if ($repo['Repository']['has-issues']['value'] == 'true') {
+			$issues = $repo['Repository']['open-issues']['value'];
 		}
+
+		// Detect total contributors
+		$contribs = null;
+		$contributors = $this->Github->find('repos_show_contributors', array(
+			'username' => $package['Maintainer']['username'], 'repo' => $package['Package']['name']
+		));
+		if (!empty($contributors)) {
+			if (!empty($contributors['Contributors']['Contributor'][0])) {
+				$contribs = count($contributors['Contributors']['Contributor']);
+			} else {
+				$contribs = 1;
+			}
+		}
+
+		$collabs = null;
+		$collaborators = $this->Github->find('repos_show_collaborators', array(
+			'username' => $package['Maintainer']['username'], 'repo' => $package['Package']['name']
+		));
+		if (!empty($collaborators)) {
+			if (!empty($collaborators['Collaborators']['Collaborator']) && is_array($collaborators['Collaborators']['Collaborator'])) {
+				$collabs = count($collaborators['Collaborators']['Collaborator']);
+			} else {
+				$collabs = 1;
+			}
+		}
+
+		if (isset($repo['Repository']['description'])) {
+			$package['Package']['description'] = $repo['Repository']['description'];
+		}
+
+		if (!empty($homepage)) {
+			$package['Package']['homepage'] = $homepage;
+		}
+		if ($collabs !== null) {
+			$package['Package']['collaborators'] = $collabs;
+		}
+		if ($contribs !== null) {
+			$package['Package']['contributors'] = $contribs;
+		}
+		if ($issues !== null) {
+			$package['Package']['open_issues'] = $issues;
+		}
+
+		$package['Package']['forks'] = $repo['Repository']['forks']['value'];
+		$package['Package']['watchers'] = $repo['Repository']['watchers']['value'];
+		$package['Package']['created_at'] = substr(str_replace('T', ' ', $repo['Repository']['created-at']['value']), 0, 20);
+		$package['Package']['last_pushed_at'] = substr(str_replace('T', ' ', $repo['Repository']['pushed-at']['value']), 0, 20);
+
 		$this->create();
 		return $this->save($package);
 	}

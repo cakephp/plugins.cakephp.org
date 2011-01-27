@@ -68,9 +68,6 @@ class PackageShell extends Shell {
 			case 'r' :
 				$this->reset_characteristics();
 				break;
-			case 's' :
-				$this->check_characteristics_for_repository();
-				break;
 			case 'u' :
 				$this->update_repositories();
 				break;
@@ -91,18 +88,15 @@ class PackageShell extends Shell {
 		$packages = $this->Package->find('all', array(
 			'contain' => array('Maintainer' => array('id', 'username')),
 			'fields' => array('id', 'name'),
-			'order' => array('Package.name ASC')));
+			'order' => array('Package.name ASC')
+		));
 
 		$this->Package->Behaviors->detach('Searchable');
-		$Github = ClassRegistry::init('Github');
+		$this->Package->Github = ClassRegistry::init('Github');
 		$count = 0;
 		foreach ($packages as $package) {
 			sleep(1);
-			$repo = $Github->find('repos_show_single', array(
-				'username' => $package['Maintainer']['username'],
-				'repo' => $package['Package']['name']
-			));
-			if ($this->Package->updateAttributes($package, $repo)) {
+			if ($this->Package->updateAttributes($package)) {
 				$this->out(sprintf(__('* Updated %s', true), $package['Package']['name']));
 				$count++;
 			} else {

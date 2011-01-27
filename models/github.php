@@ -101,6 +101,13 @@ class Github extends AppModel {
 		return $this->cached_xml_get("/repos/show/{$username}");
 	}
 
+	function __findReposShowCollaborators($params = array()) {
+		if (empty($params['username']) || empty($params['repo'])) return false;
+
+		return $this->cached_xml_get("/repos/show/{$params['username']}/{$params['repo']}/collaborators");
+	}
+
+
 	function __findReposShowContributors($params = array()) {
 		if (empty($params['username']) || empty($params['repo'])) return false;
 
@@ -259,14 +266,55 @@ class Github extends AppModel {
 		$repo = $this->find('repos_show_single', array('username' => $username, 'repo' => $name));
 		if ($repo['Repository']['fork']['value'] == 'true') return false;
 
-		$data = array(
-			'Package' => array(
-				'maintainer_id' => $existingUser['Maintainer']['id'],
-				'name' => $name,
-				'repository_url' => "git://github.com/{$repo['Repository']['owner']}/{$repo['Repository']['name']}.git",
-				'homepage' => $repo['Repository']['url'],
-				'description' => $repo['Repository']['description']));
-		return $maintainer->Package->save($data);
+		// Detect homepage
+		$homepage = (string) $repo['Repository']['url'];
+		if (!empty($repo['Repository']['homepage']['value'])) {
+			if (is_array($repo['Repository']['homepage'])) {
+				$homepage = $repo['Repository']['homepage']['value'];
+			} else {
+				$homepage = $repo['Repository']['homepage'];
+			}
+		} else if (!empty($repo['Repsitory']['homepage'])) {
+			$homepage = $repo['Repository']['homepage'];
+		}
+
+		// Detect issues
+		$issues = 0;
+		if ($repo['Repository']['has-issues']['value'] == 'true') {
+			$issues = $repo['Repository']['open-issues']['value'];
+		}
+
+		// Detect total contributors
+		$contribs = 1;
+		$contributors = $this->find('repos_show_contributors', array('username' => $username, 'repo' => $name));
+		if (!empty($contributors)) {
+			if (!empty($contributors['Contributors']['Contributor'][0])) {
+				$contribs = count($contributors['Contributors']['Contributor']);
+			}
+		}
+
+		$collabs = 1;
+		$collaborators = $this->find('repos_show_collaborators', array('username' => $username, 'repo' => $name));
+		if (!empty($collaborators)) {
+			if (!empty($collaborators['Collaborators']['Collaborator']) && is_array($collaborators['Collaborators']['Collaborator'])) {
+				$collabs = count($collaborators['Collaborators']['Collaborator']);
+			}
+		}
+
+		return $maintainer->Package->save(array('Package' => array(
+			'maintainer_id' => $existingUser['Maintainer']['id'],
+			'name' => $name,
+			'repository_url' => "git://github.com/{$repo['Repository']['owner']}/{$repo['Repository']['name']}.git",
+			'homepage' => $homepage,
+			'description' => $repo['Repository']['description'],
+			'contributors' => $contribs,
+			'collaborators' => $collabs,
+			'forks' => $repo['Repository']['forks']['value'],
+			'watchers' => $repo['Repository']['watchers']['value'],
+			'open_issues' => $issues,
+			'created_at' => substr(str_replace('T', ' ', $repo['Repository']['created-at']['value']), 0, 19),
+			'last_pushed_at' => substr(str_replace('T', ' ', $repo['Repository']['pushed-at']['value']), 0, 19),
+		)));
 	}
 
 	function saveUser($username = null) {
