@@ -36,6 +36,8 @@
 			<div class="footer prefix_3 grid_6 suffix_3">
 				<?php echo $this->Html->link('about', array(
 					'plugin' => null, 'controller' => 'pages', 'action' => 'display', 'about')); ?> &#183; 
+				<?php echo $this->Html->link('opensource', array(
+					'plugin' => null, 'controller' => 'pages', 'action' => 'display', 'opensource')); ?> &#183; 
 				<?php echo $this->Html->link('blog', array(
 					'plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'index')); ?> &#183; 
 				<?php echo $this->Html->link('twitter',
