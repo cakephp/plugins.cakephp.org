@@ -7,7 +7,7 @@
 			<?php __('CakePackages | the cakephp package repository'); ?>
 		</title>
 		<?php echo $this->Html->meta('icon'); ?>
-		<?php echo $this->Html->css(array('reset', 'text', '960', 'demo', 'iconify')); ?>
+		<?php echo $this->Html->css(array('style', '960')); ?>
 		<?php echo $this->Html->script(array('prototype', 'scriptaculous')); ?>
 		<?php echo $scripts_for_layout; ?>
 	</head>
@@ -33,7 +33,7 @@
 			</div>
 			<!-- end .grid_12 -->
 			<div class="clear"></div>
-			<div id="footer" class="prefix_3 grid_6 suffix_3">
+			<div class="footer prefix_3 grid_6 suffix_3">
 				<?php echo $this->Html->link('about', array(
 					'plugin' => null, 'controller' => 'pages', 'action' => 'display', 'about')); ?> &#183; 
 				<?php echo $this->Html->link('blog', array(
