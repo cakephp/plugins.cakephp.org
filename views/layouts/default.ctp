@@ -27,7 +27,7 @@
 				</div>
 			</div>
 			<div class="clear"></div>
-			<div class="grid_12">
+			<div class="grid_12 content">
 				<p><?php echo $this->Session->flash(); ?></p>
 				<?php echo $content_for_layout; ?>
 			</div>
