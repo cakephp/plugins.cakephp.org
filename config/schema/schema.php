@@ -1,6 +1,6 @@
 <?php 
 /* SVN FILE: $Id$ */
-/* App schema generated on: 2010-11-10 02:11:42 : 1289355942*/
+/* App schema generated on: 2011-01-27 06:01:42 : 1296108642*/
 class AppSchema extends CakeSchema {
 	var $name = 'App';
 
@@ -19,6 +19,19 @@ class AppSchema extends CakeSchema {
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'slug' => array('column' => 'slug', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
+	);
+	var $commits = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'package_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'key' => 'index'),
+		'commit_hash' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 40, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'author_details' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'commit_msg' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'commit_details' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'commit_date' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'package_id' => array('column' => 'package_id', 'unique' => 0)),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 	var $maintainers = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
@@ -48,6 +61,13 @@ class AppSchema extends CakeSchema {
 		'homepage' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'description' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'tags' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'open_issues' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'forks' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'watchers' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'contributors' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'collaborators' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'created_at' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'last_pushed_at' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL, 'key' => 'index'),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'contains_model' => array('type' => 'boolean', 'null' => false, 'default' => NULL),
@@ -96,7 +116,7 @@ class AppSchema extends CakeSchema {
 		'published' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
-		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'model' => array('column' => array('model', 'foreign_key'), 'unique' => 1), 'active' => array('column' => 'active', 'unique' => 0), 'data' => array('column' => 'data', 'unique' => 0)),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'model' => array('column' => array('model', 'foreign_key'), 'unique' => 1), 'active' => array('column' => 'active', 'unique' => 0), 'data' => array('column' => 'data', 'unique' => 0, 'type' => 'fulltext')),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
 	var $settings = array(
