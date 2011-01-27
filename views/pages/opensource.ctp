@@ -17,7 +17,7 @@
     </div>
     <div class="suffix_2 grid_6 omega information">
         <a href="/package/josegonzalez/sanction">sanction</a><br>
-        <p>give to your users when they intend to navigate to certain portions of your website</p>
+        <p>give sanction to your users when they intend to navigate to certain portions of your website</p>
     </div>
     <div class="clear"></div>
 </div>
@@ -57,7 +57,7 @@
     </div>
     <div class="suffix_2 grid_6 omega information">
         <a href="/package/josegonzalez/settings">settings</a><br>
-        <p>a simple plugin to track application</p>
+        <p>a simple plugin to track application settings</p>
     </div>
     <div class="clear"></div>
 </div>
