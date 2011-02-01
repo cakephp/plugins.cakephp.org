@@ -1,6 +1,6 @@
 <?php 
 /* SVN FILE: $Id$ */
-/* App schema generated on: 2011-01-27 06:01:42 : 1296108642*/
+/* App schema generated on: 2011-02-01 03:02:32 : 1296529532*/
 class AppSchema extends CakeSchema {
 	var $name = 'App';
 
@@ -31,6 +31,14 @@ class AppSchema extends CakeSchema {
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'package_id' => array('column' => 'package_id', 'unique' => 0)),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
+	);
+	var $logs = array(
+		'id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 36, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'message' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'type' => array('column' => 'type', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 	var $maintainers = array(
