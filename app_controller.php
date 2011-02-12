@@ -2,6 +2,8 @@
 class AppController extends Controller {
 	var $components = array(
 		'Authsome.Authsome' => array('model' => 'Maintainer'),
+		'CakeDjjob.CakeDjjob',
+		'DebugKit.Toolbar',
 		'Mail',
 		'RequestHandler',
 		'Sanction.Permit' => array(
@@ -10,7 +12,6 @@ class AppController extends Controller {
 		),
 		'Session',
 		'Settings.Settings',
-		'DebugKit.Toolbar',
 		'Webservice.Webservice',
 	);
 	var $helpers = array(
