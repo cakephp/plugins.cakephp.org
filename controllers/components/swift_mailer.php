@@ -3,194 +3,217 @@
  * SwiftMailer Component based on 4.05 version,
  * this component is inspired by Matt Hugins the developer of
  * SwiftMailer v.3 component based on 3.xx version.
- * 
+ *
  * @author Gediminas Morkevicius
  * @version 2.30
  * @license MIT
  * @category Components
  */
 
-App::import('Vendor', 'Swift', array('file' => VENDORS . 'swift_mailer' . DS . 'swift_required.php'));
+App::import('Vendor', 'Swift', array('file' => 'swift_mailer' . DS . 'swift_required.php'));
 
-class SwiftMailerComponent extends Object { 
+class SwiftMailerComponent extends Object {
 /**
  * Reference to controller
- * 
+ *
  * @var Object
  * @access Private
  */
 	var $__controller = null;
+
 /**
  * List of plugins to load then sending email
- * 
+ *
  * @var Array - list of plugins in pairs $pluginName/array($arg[0], $arg[...)
  * @access Private
  */
-    var $__plugins = array(); 
+    var $__plugins = array();
+
 /**
  * Email layout
- * 
+ *
  * @var String
  * @access Public
  */
 	var $layout = 'default';
+
 /**
  * Path to the email template
- * 
+ *
  * @var String
  * @access Public
  */
 	var $viewPath = 'email';
+
 /**
  * Send message as type:
  *         "html" - content type "html/text"
  *         "text" - content type "text/plain"
- *         "both" - both content types are included 
- * 
+ *         "both" - both content types are included
+ *
  * @var String
  * @access Public
  */
 	var $sendAs = 'both';
+
 /**
  * Charset for message body
- * 
+ *
  * @var String
  * @access Public
  */
 	var $bodyCharset = 'utf-8';
+
 /**
  * Charset for message subject
- * 
+ *
  * @var String
  * @access Public
  */
 	var $subjectCharset = 'utf-8';
+
 /**
  * SMTP Security type:
  *         "ssl" - security type
  *         "tls" - security type
- * 
+ *
  * @var String
  * @access Public
  */
 	var $smtpType = null;
+
 /**
  * SMTP Username for connection
- * 
+ *
  * @var String
  * @access Public
  */
 	var $smtpUsername = '';
+
 /**
  * SMTP Password for connection
- * 
+ *
  * @var String
  * @access Public
  */
 	var $smtpPassword = '';
+
 /**
  * SMTP Host name connection
- * 
+ *
  * @var String
  * @access Public
  */
 	var $smtpHost = '';
+
 /**
  * SMTP port (e.g.: 25 for open, 465 for ssl, etc.)
- * 
+ *
  * @var Integer
  * @access Public
  */
 	var $smtpPort = 25;
+
 /**
  * Seconds before timeout occurs
- * 
+ *
  * @var Integer
  * @access Public
  */
 	var $smtpTimeout = 10;
+
 /**
  * Sendmail command (e.g.: '/usr/sbin/sendmail -bs')
- * 
+ *
  * @var String
  * @access Public
  */
 	var $sendmailCmd = null;
+
 /**
  * Email from address
- * 
+ *
  * @var String
  * @access Public
  */
 	var $from = null;
+
 /**
- * Email from name 
- *  
- * @var String 
- * @access Public 
+ * Email from name
+ *
+ * @var String
+ * @access Public
  */
-	var $fromName = null; 
+	var $fromName = null;
+
 /**
  * Recipients
- * 
+ *
  * @var Mixed
  *         Array - address/name pairs (e.g.: array(example@address.com => name, ...)
  *         String - address to send email to
  * @access Public
  */
 	var $to = null;
+
 /**
  * CC recipients
- * 
+ *
  * @var Mixed
  *         Array - address/name pairs (e.g.: array(example@address.com => name, ...)
  *         String - address to send email to
  * @access Public
  */
     var $cc = null;
+
 /**
  * BCC recipients
- * 
+ *
  * @var Mixed
  *         Array - address/name pairs (e.g.: array(example@address.com => name, ...)
  *         String - address to send email to
  * @access Public
  */
 	var $bcc = null;
+
 /**
  * List of files that should be attached to the email.
- * 
+ *
  * @var array - list of file paths
  * @access Public
  */
 	var $attachments = array();
+
 /**
  * When the email is opened, if the mail client supports it
  * a notification will be sent to this address
- * 
+ *
  * @var String - email address for notification
  * @access Public
  */
 	var $readNotifyReceipt = null;
+
 /**
  * Reply to address
- * 
+ *
  * @var Mixed
  *         Array - address/name pairs (e.g.: array(example@address.com => name, ...)
  *         String - address to send reply to
  * @access Public
  */
 	var $replyTo = null;
+
 /**
  * Max length of email line
- * 
+ *
  * @var Integer - length of line
  * @access Public
  */
 	var $maxLineLength = 78;
+
 /**
  * Array of errors refreshed after send function is executed
- * 
+ *
  * @var Array - Error container
  * @access Public
  */
@@ -198,18 +221,19 @@ class SwiftMailerComponent extends Object {
 
 /**
  * Initialize component
- * 
+ *
  * @param Object $controller reference to controller
  * @access Public
  */
-	function initialize(&$controller) {
-		$this->__controller = $controller;
+	function initialize(&$controller, $settings = array()) {
+		$this->__controller =& $controller;
+		$this->_set($settings);
 	}
 
 /**
  * Retrieves html/text or plain/text content from /app/views/elements/$this->viewPath/$type/$template.ctp
  * and wraps it in layout /app/views/layouts/$this->viewPath/$type/$this->layout.ctp
- * 
+ *
  * @param String $template - name of the template for content
  * @param String $type - content type:
  *         html - html/text
@@ -230,8 +254,8 @@ class SwiftMailerComponent extends Object {
 		$View = new $viewClass($this->__controller, false);
 		$View->layout = $this->layout;
 
-		$content = $View->element($this->viewPath.DS.$type.DS.$template, array('content' => ""), true);
-		$View->layoutPath = $this->viewPath.DS.$type;
+		$content = $View->element($this->viewPath. DS . $type . DS . $template, array('content' => ""), true);
+		$View->layoutPath = $this->viewPath . DS . $type;
 		$content = $View->renderLayout($content);
 
 		// Run content check callback
@@ -243,7 +267,7 @@ class SwiftMailerComponent extends Object {
 /**
  * Sends Email depending on parameters specified, using method $method,
  * mail template $view and subject $subject
- * 
+ *
  * @param String $view - template for mail content
  * @param String $subject - email message subject
  * @param String $method - email message sending method, possible values are:
@@ -269,7 +293,7 @@ class SwiftMailerComponent extends Object {
 		// Create message
 		$message = Swift_Message::newInstance($subject);
 
-		// Run Init Callback 
+		// Run Init Callback
 		$this->__runCallback($message, 'initializeMessage');
 
 		$message->setCharset($this->subjectCharset);
@@ -285,8 +309,8 @@ class SwiftMailerComponent extends Object {
 		if ($this->sendAs == 'both' || $this->sendAs == 'text') {
 			$text_part = $this->_emailBodyPart($view, 'text');
 			$message->addPart($text_part, 'text/plain', $this->bodyCharset);
-			unset($text_part); 
-		} 
+			unset($text_part);
+		}
 
 		// Add attachments if any
 		if (!empty($this->attachments)) {
@@ -323,9 +347,9 @@ class SwiftMailerComponent extends Object {
 			if (is_array($this->cc)) {
 				foreach ($this->cc as $address => $name) {
 					$message->addCc($address, $name);
-			}
-		} else {
-			$message->addCc($this->cc);
+				}
+			} else {
+				$message->addCc($this->cc);
 			}
 		}
 
@@ -414,7 +438,7 @@ class SwiftMailerComponent extends Object {
  * first argument is plugin name (e.g.: if SwiftMailer plugin class is named "Swift_Plugins_AntiFloodPlugin",
  * so you should pass name like "AntiFloodPlugin")
  * All other Mixed arguments included in plugin creation call
- * 
+ *
  * @return Integer 1 on success 0 on failure
  */
 	function registerPlugin() {
@@ -431,16 +455,18 @@ class SwiftMailerComponent extends Object {
  * who`s action is being executed. This functionality
  * is used to perform additional specific methods
  * if any is required
- * 
+ *
  * @param mixed $object - object callback being executed on
  * @param string $type - type of callback to run
  * @return void
  */
 	function __runCallback(&$object, $type) {
+		if (empty($this->__controller->action)) return;
+
 		$call = '__'.$type.'On'.Inflector::camelize($this->__controller->action);
 		if (method_exists($this->__controller, $call)) {
 			$this->__controller->{$call}($object);
 		}
 	}
-} 
+}
 ?>
