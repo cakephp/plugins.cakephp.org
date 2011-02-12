@@ -6,8 +6,8 @@ class MailComponent extends Object {
 
 	var $mailer = 'php';
 
-	function initialize(&$controller) {
-		$this->controller = $controller;
+	function initialize(&$controller, $settings = array()) {
+		$this->controller =& $controller;
 	}
 
 	function send($params = array()) {
