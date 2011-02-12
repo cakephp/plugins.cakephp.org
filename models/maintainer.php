@@ -324,4 +324,12 @@ class Maintainer extends AppModel {
 		return $activationKey;
 	}
 
+	function forgotPassword($data) {
+		if (empty($data['Maintainer']['email'])) return false;
+		$maintainer = $this->find('forgotpassword', $data['Maintainer']['email']);
+
+		App::import('Lib', 'ForgotPasswordJob');
+		return $this->enqueue(new ForgotPasswordJob($maintainer['Maintainer'], $_SERVER['REMOTE_ADDR']));
+	}
+
 }

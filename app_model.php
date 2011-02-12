@@ -19,6 +19,7 @@ class AppModel extends Model {
  */
 	var $actsAs = array(
 		'Callbackable',
+		'CakeDjjob.CakeDjjob',
 		'Containable',
 	);
 

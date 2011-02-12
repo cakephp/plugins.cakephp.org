@@ -40,20 +40,18 @@ class UsersController extends AppController {
 	}
 
 	function forgot_password() {
-		if (!empty($this->data) && isset($this->data['Maintainer']['email'])) {
+		if (!empty($this->data)) {
 			try {
-				$maintainer = $this->Maintainer->find('forgotpassword', $this->data['Maintainer']['email']);
+				if ($this->Maintainer->forgotPassword($this->data)) {
+					$this->Session->setFlash(__('An email has been sent with instructions for resetting your password', true));
+					$this->redirect(array('controller' => 'users', 'action' => 'login'));
+				} else {
+					$this->Session->setFlash(__('An error occurred', true));
+					$this->log("Error sending email");
+				}
+
 			} catch (Exception $e) {
 				$this->flashAndRedirect($e->getMessage(), array('controller' => 'users', 'action' => 'forgot_password'));
-			}
-
-			App::import('Lib', 'ForgotPasswordJob');
-			if ($this->CakeDjjob->enqueue(new ForgotPasswordJob($maintainer['Maintainer'], $_SERVER['REMOTE_ADDR']))) {
-				$this->Session->setFlash(__('An email has been sent with instructions for resetting your password', true));
-				$this->redirect(array('controller' => 'users', 'action' => 'login'));
-			} else {
-				$this->Session->setFlash(__('An error occurred', true));
-				$this->log("Error sending email");
 			}
 		}
 	}
