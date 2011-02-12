@@ -135,6 +135,7 @@ class Maintainer extends AppModel {
 
 			$query['contain'] = false;
 			$query['conditions'] = array("{$this->alias}.email" => $query[0]);
+			$query['fields'] = array('id', 'email', 'username');
 			$query['limit'] = 1;
 			return $query;
 		} elseif ($state == 'after') {

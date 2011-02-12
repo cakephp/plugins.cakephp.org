@@ -47,23 +47,13 @@ class UsersController extends AppController {
 				$this->flashAndRedirect($e->getMessage(), array('controller' => 'users', 'action' => 'forgot_password'));
 			}
 
-			$activationKey = $this->Maintainer->changeActivationKey($maintainer['Maintainer']['id']);
-
-			try {
-				if ($this->Mail->send(array(
-					'to' => $maintainer['Maintainer']['email'],
-					'mailer' => 'swift',
-					'subject' => '[CakePackages] ' . __('Reset Password', true),
-					'variables' => compact('maintainer', 'activationKey')))) {
-						$this->Session->setFlash(__('An email has been sent with instructions for resetting your password', true));
-						$this->redirect(array('controller' => 'users', 'action' => 'login'));
-				} else {
-					$this->Session->setFlash(__('An error occurred', true));
-					$this->log("Error sending email");
-				}
-			} catch (Exception $e) {
+			App::import('Lib', 'ForgotPasswordJob');
+			if ($this->CakeDjjob->enqueue(new ForgotPasswordJob($maintainer['Maintainer'], $_SERVER['REMOTE_ADDR']))) {
+				$this->Session->setFlash(__('An email has been sent with instructions for resetting your password', true));
+				$this->redirect(array('controller' => 'users', 'action' => 'login'));
+			} else {
 				$this->Session->setFlash(__('An error occurred', true));
-				$this->log("Failed to send email: " . $e->getMessage());
+				$this->log("Error sending email");
 			}
 		}
 	}
