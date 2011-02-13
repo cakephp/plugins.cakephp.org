@@ -48,8 +48,8 @@ class GithubController extends AppController {
 
 	function add_package($username = null, $package = null) {
 		if (!$username || !$package) {
-				$this->Session->setFlash(sprintf(__('Invalid %s', true), 'parameters'));
-				$this->redirect(array('action' => 'existing', '1Marc'));
+			$this->Session->setFlash(sprintf(__('Invalid %s', true), 'parameters'));
+			$this->redirect(array('action' => 'existing', '1Marc'));
 		}
 		if ($this->Github->savePackage($username, $package)) {
 			$this->Session->setFlash(sprintf(__('Code for %s saved!', true), $package));
