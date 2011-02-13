@@ -242,6 +242,7 @@ class Github extends AppModel {
 
 		Cache::set(array('duration' => '+2 days'));
 		if (($response = Cache::read("Github.{$md5_request}")) === false) {
+			sleep(1);
 			$this->http_socket();
 			$xml_response = new Xml($this->socket->get($this->base_uri . $request . $var));
 			$response = Set::reverse($xml_response);
@@ -254,94 +255,15 @@ class Github extends AppModel {
 	}
 
 	function savePackage($username, $name) {
-		ClassRegistry::init('Maintainer');
-		$maintainer = &new Maintainer;
-		$existingUser = $maintainer->find('view', $username);
-		$repo = $maintainer->Package->find('list', array(
-			'conditions' => array(
-				'Package.maintainer_id' => $existingUser['Maintainer']['id'],
-				'Package.name' => $name)));
-		if ($repo) return false;
-
-		$repo = $this->find('repos_show_single', array('username' => $username, 'repo' => $name));
-		if ($repo['Repository']['fork']['value'] == 'true') return false;
-
-		// Detect homepage
-		$homepage = (string) $repo['Repository']['url'];
-		if (!empty($repo['Repository']['homepage']['value'])) {
-			if (is_array($repo['Repository']['homepage'])) {
-				$homepage = $repo['Repository']['homepage']['value'];
-			} else {
-				$homepage = $repo['Repository']['homepage'];
-			}
-		} else if (!empty($repo['Repsitory']['homepage'])) {
-			$homepage = $repo['Repository']['homepage'];
-		}
-
-		// Detect issues
-		$issues = 0;
-		if ($repo['Repository']['has-issues']['value'] == 'true') {
-			$issues = $repo['Repository']['open-issues']['value'];
-		}
-
-		// Detect total contributors
-		$contribs = 1;
-		$contributors = $this->find('repos_show_contributors', array('username' => $username, 'repo' => $name));
-		if (!empty($contributors)) {
-			if (!empty($contributors['Contributors']['Contributor'][0])) {
-				$contribs = count($contributors['Contributors']['Contributor']);
-			}
-		}
-
-		$collabs = 1;
-		$collaborators = $this->find('repos_show_collaborators', array('username' => $username, 'repo' => $name));
-		if (!empty($collaborators)) {
-			if (!empty($collaborators['Collaborators']['Collaborator']) && is_array($collaborators['Collaborators']['Collaborator'])) {
-				$collabs = count($collaborators['Collaborators']['Collaborator']);
-			}
-		}
-
-		return $maintainer->Package->save(array('Package' => array(
-			'maintainer_id' => $existingUser['Maintainer']['id'],
-			'name' => $name,
-			'repository_url' => "git://github.com/{$repo['Repository']['owner']}/{$repo['Repository']['name']}.git",
-			'homepage' => $homepage,
-			'description' => $repo['Repository']['description'],
-			'contributors' => $contribs,
-			'collaborators' => $collabs,
-			'forks' => $repo['Repository']['forks']['value'],
-			'watchers' => $repo['Repository']['watchers']['value'],
-			'open_issues' => $issues,
-			'created_at' => substr(str_replace('T', ' ', $repo['Repository']['created-at']['value']), 0, 19),
-			'last_pushed_at' => substr(str_replace('T', ' ', $repo['Repository']['pushed-at']['value']), 0, 19),
-		)));
+		App::import('Lib', 'NewPackageJob');
+		return $this->enqueue(new NewPackageJob($username, $name));
 	}
 
 	function saveUser($username = null) {
 		if (!$username) return false;
-		$user = $this->find('user_show', $username);
 
-		ClassRegistry::init('Maintainer');
-		$maintainer = &new Maintainer;
-		try {
-			$existingUser = $maintainer->find('username', $user['User']['login']);
-			CakeLog::write('error', 'dang');
-			return false;
-		} catch (Exception $e) {}
-
-		$data = array(
-			'Maintainer' => array(
-				'username' => $user['User']['login'],
-				'gravatar_id' => $user['User']['gravatar-id'],
-				'name' => (isset($user['User']['name'])) ? $user['User']['name'] : '',
-				'company' => (isset($user['User']['company'])) ? $user['User']['company'] : '',
-				'url' => (isset($user['User']['blog'])) ? $user['User']['blog'] : '',
-				'email' => (isset($user['User']['email'])) ? $user['User']['email'] : '',
-				'location' => (isset($user['User']['location'])) ? $user['User']['location'] : ''
-			)
-		);
-
-		return $maintainer->save($data);
+		App::import('Lib', 'NewMaintainerJob');
+		return $this->enqueue(new NewMaintainerJob($username, $name));
 	}
 
 	function __findRelatedRepositories($maintainers = array()) {
