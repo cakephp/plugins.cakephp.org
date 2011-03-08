@@ -3,7 +3,7 @@
 <?php foreach ($packages as $package) : ?>
 	<div class="meta_listing">
 		<div class="prefix_2 grid_2 alpha">
-			<?php echo $this->element('icons', array('package' => $package['Package'])); ?>
+			<?php echo $this->element('icons', array('package' => $package['Package'], 'search' => false)); ?>
 		</div>
 		<div class="suffix_2 grid_6 omega information">
 			<?php echo $this->Resource->package($package['Package']['name'], $package['Maintainer']['username']); ?>

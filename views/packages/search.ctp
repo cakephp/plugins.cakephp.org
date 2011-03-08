@@ -11,8 +11,8 @@
 	<?php foreach ($results as $result): ?>
 		<div class="meta_listing">
 			<div class="prefix_2 grid_2 alpha">
-				<?php echo $this->element('search_icons', array(
-					'package' => json_decode($result['SearchIndex']['data'], true))); ?>
+				<?php echo $this->element('icons', array(
+					'package' => json_decode($result['SearchIndex']['data'], true), 'search' => true)); ?>
 			</div>
 			<div class="suffix_2 grid_6 omega information">
 				<?php echo $this->Html->link($result['SearchIndex']['name'],
