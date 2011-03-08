@@ -8,7 +8,7 @@ $types = array(
 ); ?>
 <?php foreach ($types as $type) : ?>
 	<div>
-		<?php echo $this->Html->link(ucfirst($type), array('controller' => 'packages', 'action' => 'index', $type)); ?>
+		<?php echo $this->Html->link(ucfirst($type) . 's', array('controller' => 'packages', 'action' => 'index', $type), array('class' => 'tooltip_w', 'title' => 'Includes ' . ucfirst($type))); ?>
 	</div>
 <?php endforeach; ?>
 </div>

@@ -8,10 +8,17 @@
 		</title>
 		<?php echo $this->Html->meta('icon'); ?>
 		<?php echo $this->Html->css(array('style', '960')); ?>
-		<?php echo $this->Html->script(array('prototype', 'scriptaculous')); ?>
+		<?php echo $this->Html->script(array(
+			'jquery-1.5.1.min',
+			'jquery-ui-1.8.10.custom.min',
+			'autocomplete',
+			'tipsy-1.0.0a',
+			'custom',
+		)); ?>
+		<script type="text/javascript">jQuery.noConflict();</script>
 		<?php echo $scripts_for_layout; ?>
 	</head>
-	<body class="<?php echo $this->params['controller']; ?> <?php echo $this->params['action']; ?>">
+	<body id="wrapper" class="<?php echo $this->params['controller']; ?> <?php echo $this->params['action']; ?>">
 		<div class="container_12">
 			<div class="grid_12">
 				<div class="grid_6 alpha">

@@ -15,7 +15,6 @@ class AppController extends Controller {
 		'Webservice.Webservice',
 	);
 	var $helpers = array(
-		'Ajax',
 		'Sanction.Clearance' => array(
 			'check' => 'group',
 			'path' => 'Maintainer.Maintainer'

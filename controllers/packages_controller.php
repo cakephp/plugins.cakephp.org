@@ -100,9 +100,11 @@ class PackagesController extends AppController {
 		$this->redirect(array('action' => 'index'));
 	}
 
-	function auto_complete() {
-		$this->set('packages', $this->Package->find('autocomplete', $this->data['SearchIndex']['term']));
+	function autocomplete() {
+		$term = (isset($this->params['url']['term'])) ? $this->params['url']['term'] : '';
+		$this->set('results', $this->Package->find('autocomplete', array('term' => $term)));
 		$this->layout = 'ajax';
+		Configure::write('debug', 0);
 	}
 
 }

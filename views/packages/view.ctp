@@ -22,7 +22,8 @@
 <div class="grid_6 omega">
 	<div class="meta_package border_radius">
 		<div style="margin-left:auto;margin-right:auto">
-			<?php echo $this->element('icons', array('package' => $package['Package'], 'search' => false)); ?>
+			<?php echo $this->element('icons', array(
+			    'package' => $package['Package'], 'search' => false, 'meta' => false)); ?>
 		</div>
 		<dl><?php $i = 0; $class = ' class="altrow"';?>
 			<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Maintainer'); ?></dt>

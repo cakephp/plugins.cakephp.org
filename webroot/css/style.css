@@ -100,10 +100,10 @@ form div.submit.forgot { display: inline; }
 
 /** Packages **/
 .package_list { font-size: 2em; text-align: center; width: 180px !important; }
-.auto_complete { background-color : #fff; border: 1px solid #888; font-size: 2em; margin: 0px; padding: 0px; position: absolute; width: 250px; z-index: 10; }
-.auto_complete ul { list-style-type: none; }
-.auto_complete ul li { margin-left: 2px; }
-.auto_complete ul li.selected { background-color: #ffb; }
+.ui-autocomplete { background-color : #fff; border: 1px solid #888; font-size: 1.8em; list-style-type: none; margin: 0px; padding: 0px; position: absolute; width: 250px; z-index: 10; }
+.ui-autocomplete li { margin-left: 2px; }
+.ui-autocomplete li a { display:block; }
+.ui-autocomplete .ui-state-hover, .ui-autocomplete .ui-state-active { background-color: #ffb; }
 
 /** Creates the icon peices **/
 .icons { width: 70px; height: 70px; font-family: arial; font-size: 11px; /*border: 2px solid #000; */ margin: 0 auto; padding: 0 1px 1px 0; }
@@ -120,7 +120,14 @@ dd .icons { margin: 20px auto 0 auto; }
 .icons .t { background: #FEFB6D; border-color: #FEFB6D; color: #00AA00; text-shadow: #fff 0 0 3px; }
 .icons .v { background: #00AA00; border-color: #00AA00; color: #00FF00; text-shadow: #000 0 0 3px; }
 .icons .h { background: #00FF00; border-color: #00FF00; color: #00AA00; text-shadow: #fff 0 0 3px; }
-.icons .has { text-indent: -5000px; background: none; }
+.icons .hasno { text-indent: -5000px; background: none; }
+
+/** Index pages **/
+.packages .index .maintainer_link, .packages .search .maintainer_link { font-size: 1.3em; }
+
+/** Styles metadata **/
+.meta_listing .meta_data { width: 70px; height: 30px; font-family: arial; font-size: 11px; /*border: 2px solid #000; */ margin: 0 auto; padding: 0 1px 1px 0; }
+.meta_listing .meta_data span { width: 22px; line-height: 20px; display: block; float: left; margin: 1px 0 0 1px; text-align: center; font-weight: bold; text-transform: capitalize; }
 
 /** Other **/
 .border_radius { border-radius: 15px; -khtml-border-radius: 15px; -moz-border-radius: 15px; -o-border-radius: 15px; -webkit-border-radius: 15px; }
@@ -155,3 +162,17 @@ dd .icons { margin: 20px auto 0 auto; }
 .pages.display p.para, .blog_posts p, .blog_posts li { font-size: 1.4em; }
 .blog_posts .content a { color: #1a78b8; }
 .blog_posts .content h3 a { color: #ff7b17;}
+
+/** Tipsy **/
+.tipsy { padding: 5px; font-size: 10px; position: absolute; z-index: 100000; }
+.tipsy-inner { padding: 5px 8px 4px 8px; background-color: black; color: white; max-width: 200px; text-align: center; }
+.tipsy-inner { border-radius: 3px; -moz-border-radius:3px; -webkit-border-radius:3px; }
+.tipsy-arrow { position: absolute; background: url('../img/tipsy.gif') no-repeat top left; width: 9px; height: 5px; }
+.tipsy-n .tipsy-arrow { top: 0; left: 50%; margin-left: -4px; }
+.tipsy-nw .tipsy-arrow { top: 0; left: 10px; }
+.tipsy-ne .tipsy-arrow { top: 0; right: 10px; }
+.tipsy-s .tipsy-arrow { bottom: 0; left: 50%; margin-left: -4px; background-position: bottom left; }
+.tipsy-sw .tipsy-arrow { bottom: 0; left: 10px; background-position: bottom left; }
+.tipsy-se .tipsy-arrow { bottom: 0; right: 10px; background-position: bottom left; }
+.tipsy-e .tipsy-arrow { top: 50%; margin-top: -4px; right: 0; width: 5px; height: 9px; background-position: top right; }
+.tipsy-w .tipsy-arrow { top: 50%; margin-top: -4px; left: 0; width: 5px; height: 9px; }

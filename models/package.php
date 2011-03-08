@@ -56,18 +56,27 @@ class Package extends AppModel {
 
 	function _findAutocomplete($state, $query, $results = array()) {
 		if ($state == 'before') {
-			if (empty($query[0])) {
+			if (empty($query['term'])) {
 				throw new InvalidArgumentException(__('Invalid query', true));
 			}
-
+			$query['term'] = Sanitize::clean($query['term']);
 			$query['cache'] = true;
-			$query['conditions'] = array("{$this->alias}.{$this->displayField} LIKE" => "%{$query[0]}%");
-			$query['contain'] = false;
+			$query['conditions'] = array("{$this->alias}.{$this->displayField} LIKE" => "%{$query['term']}%");
+			$query['contain'] = array('Maintainer' => array('username'));
 			$query['fields'] = array($this->primaryKey, $this->displayField);
 			$query['limit'] = 10;
 			return $query;
 		} elseif ($state == 'after') {
-			return $results;
+			$searchResults = array();
+			foreach ($results as $package) {
+				$searchResults[] = array(
+					'id'    => $package['Package']['id'],
+					'slug'  => sprintf("%s/%s", $package['Maintainer']['username'], $package['Package']['name']),
+					'value' => $package['Package']['name'],
+					"label" => preg_replace("/".$query['term']."/i", "<strong>$0</strong>", $package['Package']['name'])
+				);
+			}
+			return json_encode($searchResults);
 		}
 	}
 
