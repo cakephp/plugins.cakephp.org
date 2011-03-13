@@ -8,7 +8,7 @@ class Github extends AppModel {
 
 	function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
-		$this->base_uri = "http://github.com/api/v2/xml";
+		$this->base_uri = "https://github.com/api/v2/xml";
 	}
 
 	function __findUserShow($username = null) {
