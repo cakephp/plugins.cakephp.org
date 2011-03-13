@@ -1,56 +1,37 @@
+<?php $this->Html->for_layout('cakephp code for you to download', 'title'); ?>
 <?php $this->Html->for_layout('cakephp code for you to download', 'h2'); ?>
-<div class="grid_2 alpha navigation">
-<?php
-$types = array(
-	'model', 'view', 'controller',
-	'behavior', 'helper', 'component',
-	'datasource', 'theme', 'shell',
-); ?>
-<?php foreach ($types as $type) : ?>
-	<div>
-		<?php echo $this->Html->link(ucfirst($type) . 's', array('controller' => 'packages', 'action' => 'index', $type), array('class' => 'tooltip_w', 'title' => 'Includes ' . ucfirst($type))); ?>
-	</div>
-<?php endforeach; ?>
-</div>
-<div class="grid_5">
-<h3><?php echo $this->Html->link(__('Latest Packages', true), array('controller' => 'packages', 'action' => 'latest')); ?></h3>
-<?php foreach ($latest as $package) : ?>
+<?php $types = array(
+		'latest' => array(__('Latest Packages', true), true),
+		'random' => array(__('Random Packages', true), false),
+	);
+?>
+<?php foreach ($types as $type => $header): ?>
 	<div class="list latest">
-		<?php echo $this->Html->link($package['Package']['name'], array(
-				'controller' => 'packages',
-				'action' => 'view',
-				$package['Maintainer']['username'],
-				$package['Package']['name']
-			), array('class' => 'package_name'));
-		?>
-		by
-		<?php echo $this->Html->link($package['Maintainer']['username'], array(
-				'controller' => 'maintainers',
-				'action' => 'view',
-				$package['Maintainer']['username'],
-			), array('class' => 'maintainer_name'));
-		?>
+		<h3>
+			<?php if ($header[1]) : ?>
+				<?php echo $this->Html->link($header[0], array('controller' => 'packages', 'action' => $type)); ?>
+			<?php else : ?>
+				<?php echo $header[0]?>
+			<?php endif; ?>
+		</h3>
+		<ul>
+		<?php foreach ($$type as $package) : ?>
+			<li>
+				<?php echo $this->Html->link($package['Package']['name'], array(
+						'controller' => 'packages',
+						'action' => 'view',
+						$package['Maintainer']['username'],
+						$package['Package']['name']
+					), array('class' => 'package_name'));
+				?>
+				<span>
+				by
+				<?php echo $this->Resource->maintainer($package['Maintainer']['name'], $package['Maintainer']['username']);
+				?>
+				</span>
+			</li>
+		<?php endforeach; ?>
+		</ul>
 	</div>
 <?php endforeach; ?>
-</div>
-<div class="grid_5 omega">
-<h3><?php __('Random Packages'); ?></h3>
-<?php foreach ($random as $package) : ?>
-	<div class="list random">
-		<?php echo $this->Html->link($package['Package']['name'], array(
-				'controller' => 'packages',
-				'action' => 'view',
-				$package['Maintainer']['username'],
-				$package['Package']['name']
-			), array('class' => 'package_name'));
-		?>
-		by
-		<?php echo $this->Html->link($package['Maintainer']['username'], array(
-				'controller' => 'maintainers',
-				'action' => 'view',
-				$package['Maintainer']['username'],
-			), array('class' => 'maintainer_name'));
-		?>
-	</div>
-<?php endforeach; ?>
-</div>
+<div class="clear"></div>

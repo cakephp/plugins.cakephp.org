@@ -29,7 +29,7 @@ if (!$items) {
 ?>
 <?php if (!empty($items) && is_array($items)) : ?>
 <h4><?php __('Recent Activity');?></h4>
-<table cellpadding="0" cellspacing="0" class="rss_feed">
+<table cellpadding="0" cellspacing="0" class="rss-feed">
 	<tr>
 		<?php if (isset($user)) : ?>
 			<th><?php __('Activity'); ?></th>
@@ -42,10 +42,10 @@ if (!$items) {
 <?php $i = 0; foreach ($items as $item): ?>
 	<?php $hash = explode("Commit/", $item['id']); ?>
 	<tr<?php echo ($i++ % 2 == 0) ? ' class="altrow"' : ''; ?>>
-		<td class="commit_msg" rel="<?php echo end($hash) ;?>">
+		<td class="commit-msg" rel="<?php echo end($hash) ;?>">
 			<?php echo $this->Html->link($item['title'], $item['Link']['href'], array('target' => '_blank')); ?>
 		</td>
-		<td class="commit_date">
+		<td class="commit-date">
 			<?php echo $time->timeAgoInWords($item['updated']); ?>
 		</td>
 	</tr>

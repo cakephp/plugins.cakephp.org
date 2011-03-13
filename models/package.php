@@ -100,8 +100,8 @@ class Package extends AppModel {
 
 	function _findIndex($state, $query, $results = array()) {
 		if ($state == 'before') {
-			if (!empty($query['paginate_type']) && in_array($query['paginate_type'], $this->validTypes)) {
-				$query['conditions'] = array("{$this->alias}.contains_{$query['paginate_type']}" => true);
+			if (!empty($query['paginateType']) && in_array($query['paginateType'], $this->validTypes)) {
+				$query['conditions'] = array("{$this->alias}.contains_{$query['paginateType']}" => true);
 			}
 
 			$query['contain'] = array('Maintainer' => array('id','username', 'name'));
@@ -123,7 +123,7 @@ class Package extends AppModel {
 
 	function _findLatest($state, $query, $results = array()) {
 		if ($state == 'before') {
-			$query['contain'] = array('Maintainer' => array('id','username', 'name'));
+			$query['contain'] = array('Maintainer' => array('id', 'username', 'name'));
 			$query['fields'] = array_diff(
 				array_keys($this->schema()),
 				array('deleted', 'created', 'modified', 'repository_url', 'homepage', 'tags', 'bakery_article')
@@ -169,7 +169,7 @@ class Package extends AppModel {
 		if ($state == 'before') {
 			$query['cache'] = 600;
 			$query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $this->find('randomids'));
-			$query['contain'] = array('Maintainer' => array('username'));
+			$query['contain'] = array('Maintainer' => array('id', 'username', 'name'));
 			$query['fields'] = array("{$this->alias}.$this->displayField", "{$this->alias}.maintainer_id");
 			return $query;
 		} elseif ($state == 'after') {

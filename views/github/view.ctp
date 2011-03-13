@@ -45,7 +45,7 @@
 </div>
 <br />
 <div class="grid_6 omega">
-	<div class="meta_package border_radius">
+	<div class="meta-package border-radius">
 		<h3><?php  __('New Packages');?></h3>
 		<?php if (!empty($packages)) : ?>
 			<table cellpadding="0" cellspacing="0">
@@ -73,7 +73,7 @@
 	</div>
 	<br />
 
-	<div class="meta_package border_radius">
+	<div class="meta-package border-radius">
 		<h3><?php  __('Existing Packages');?></h3>
 		<?php if (!empty($existing['Package'])) : ?>
 			<table cellpadding="0" cellspacing="0">

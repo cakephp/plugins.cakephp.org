@@ -15,6 +15,7 @@ class AppController extends Controller {
 		'Webservice.Webservice',
 	);
 	var $helpers = array(
+        'AssetCompress.AssetCompress',
 		'Sanction.Clearance' => array(
 			'check' => 'group',
 			'path' => 'Maintainer.Maintainer'

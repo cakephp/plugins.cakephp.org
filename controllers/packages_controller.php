@@ -16,28 +16,43 @@ class PackagesController extends AppController {
 		$this->render('index');
 	}
 
-	function index($type = null) {
+	function index($search = null) {
 		$this->paginate = array(
 			'index',
-			'paginate_type' => $type
+			'paginateType' => $search
 		);
 
-		$this->set('packages', $this->paginate());
+		$packages = $this->paginate();
+
+		$this->set(compact('packages', 'search'));
+		$this->_seoForAction('index');
 	}
 
-	function search($term = null) {
+	function filter() {
+		$search = Inflector::singularize($this->params['by']);
+		$this->paginate = array(
+			'index',
+			'paginateType' => $search,
+		);
+
+		$packages = $this->paginate();
+
+		$this->set(compact('packages', 'search'));
+		$this->_seoForAction('filter', $search);
+		$this->render('index');
+	}
+
+	function search($search = null) {
 		// Redirect with search data in the URL in pretty format
 		$this->Search->redirectUnlessGet();
 
 		// Get Pagination results
 		$this->loadModel('Searchable.SearchIndex');
-		$results = $this->Search->paginate($term);
+		$packages = $this->Search->paginate($search);
 
-		// Get types for select drop down
-		$types = $this->SearchIndex->getTypes();
-
-		$this->set(compact('results', 'term', 'types'));
-		$this->pageTitle = 'Search';
+		$this->set(compact('packages', 'search'));
+		$this->_seoForAction('search', $search);
+		$this->render('index');
 	}
 
 	function view($maintainer = null, $package = null) {
@@ -105,6 +120,21 @@ class PackagesController extends AppController {
 		$this->set('results', $this->Package->find('autocomplete', array('term' => $term)));
 		$this->layout = 'ajax';
 		Configure::write('debug', 0);
+	}
+
+	function _seoForAction($type = 'index', $extra = null) {
+		if ($type == 'index') {
+			$h2_for_layout = $title_for_layout = 'Browse Packages';
+		}
+		else if ($type == 'filter') {
+			$h2_for_layout = sprintf('Browse Packages containing %ss', $extra);
+			$title_for_layout = $h2_for_layout;
+		}
+		else if ($type == 'search') {
+			$h2_for_layout = sprintf('Search Results for %s', $extra);
+			$title_for_layout = $h2_for_layout;
+		}
+		$this->set(compact('h2_for_layout', 'title_for_layout'));
 	}
 
 }

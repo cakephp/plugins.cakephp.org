@@ -74,23 +74,25 @@
 class DATABASE_CONFIG {
 
 	var $default = array(
-		'driver' => 'mysql',
-		'persistent' => false,
-		'host' => 'localhost',
-		'login' => 'user',
-		'password' => 'password',
-		'database' => 'cakepackages',
-		'prefix' => '',
+		'driver'        => 'mysql_log',
+		'persistent'    => false,
+		'host'          => 'localhost',
+		'login'         => 'user',
+		'password'      => 'password',
+		'database'      => 'cakepackages',
+		'prefix'        => '',
+		'encoding'      => 'utf8',
 	);
 
 	var $test = array(
-		'driver' => 'mysql',
-		'persistent' => false,
-		'host' => 'localhost',
-		'login' => 'user',
-		'password' => 'password',
-		'database' => 'test',
-		'prefix' => '',
+		'driver'        => 'mysql',
+		'persistent'    => false,
+		'host'          => 'localhost',
+		'login'         => 'user',
+		'password'      => 'password',
+		'database'      => 'test',
+		'prefix'        => '',
+		'encoding'      => 'utf8',
 	);
+
 }
-?>

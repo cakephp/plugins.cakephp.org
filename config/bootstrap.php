@@ -50,6 +50,9 @@
  */
 if (!class_exists('MiCache')) App::import('Vendor', 'mi_cache');
 Configure::write('logQueries', true);
+Configure::write('paths', array(
+	'/usr/local/bin'
+));
 function diebug($variables = false, $showHtml = true, $showFrom = true, $die = true) {
 	if (Configure::read() > 0) {
 		if (is_array($showHtml)) {

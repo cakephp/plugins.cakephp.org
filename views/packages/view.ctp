@@ -1,6 +1,9 @@
-<?php $this->Html->for_layout($package['Package']['name'], 'h2'); ?>
+<?php $this->Html->for_layout('<span class="package_name">' . $package['Package']['name'] . '</span>', 'h2'); ?>
 <?php $this->Html->for_layout("by " . $this->Resource->maintainer($package['Maintainer']['username'], $package['Maintainer']['username']), 'h3'); ?>
-<?php $this->Html->for_layout("{$package['Package']['name']} | ", 'title'); ?>
+<?php $this->Html->for_layout(sprintf("%s by %s", 
+    $package['Package']['name'],
+    ($package['Maintainer']['username']) ? $package['Maintainer']['username'] : $package['Maintainer']['username']),    
+    'title'); ?>
 <h4>
 	<?php
 		echo $this->Clearance->link(sprintf(__('Edit %s', true), __('Package', true)), array(
@@ -14,22 +17,18 @@
 			sprintf(__('Are you sure you want to delete # %s?', true), $package['Package']['id']
 	)); ?>
 </h4>
-<div class="grid_6 alpha">
-	<p class="description"><?php echo $package['Package']['description']; ?></p>
+<div class="description">
+	<p><?php echo $package['Package']['description']; ?></p>
 	<?php echo $this->element('rss_reader', array(
-		'url' =>  "http://github.com/{$package['Maintainer']['username']}/{$package['Package']['name']}/commits/master.atom"))?>
+		'url' =>  "https://github.com/{$package['Maintainer']['username']}/{$package['Package']['name']}/commits/master.atom"))?>
 </div>
-<div class="grid_6 omega">
-	<div class="meta_package border_radius">
-		<div style="margin-left:auto;margin-right:auto">
+<div class="meta-data">
+	<div class="meta-package border-radius">
+		<div style="icons-container">
 			<?php echo $this->element('icons', array(
 			    'package' => $package['Package'], 'search' => false, 'meta' => false)); ?>
 		</div>
 		<dl><?php $i = 0; $class = ' class="altrow"';?>
-			<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Maintainer'); ?></dt>
-			<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-				<?php echo $this->Resource->maintainer($package['Maintainer']['name'], $package['Maintainer']['username']); ?>
-			</dd>
 			<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Github Url'); ?></dt>
 			<dd<?php if ($i++ % 2 == 0) echo $class;?>>
 				<?php echo $this->Resource->repository($package['Maintainer']['username'], $package['Package']['name']); ?>

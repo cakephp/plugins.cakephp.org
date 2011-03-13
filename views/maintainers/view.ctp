@@ -1,7 +1,7 @@
 <?php $this->Html->for_layout($maintainer['Maintainer']['username'], 'h2'); ?>
 <?php $this->Html->for_layout($maintainer['Maintainer']['name'], 'h3'); ?>
-<div class="grid_6 alpha">
-	<div class="meta_maintainer border_radius">
+<div class="meta-data">
+	<div class="meta-maintainer border-radius">
 		<?php echo $this->Html->image('https://secure.gravatar.com/avatar/' . $maintainer['Maintainer']['gravatar_id'], array('alt' => sprintf('Gravatar for %s', $maintainer['Maintainer']['username']), 'class' => 'gravatar')); ?>
 		<dl><?php $i = 0; $class = ' class="altrow"';?>
 			<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Github Username'); ?></dt>
@@ -39,17 +39,15 @@
 		<div class="clear"></div>
 	</div>
 </div>
-<div class="grid_6 omega">
-	<div class="related">
-		<h3><?php __('Packages');?></h3>
-		<?php if (!empty($maintainer['Package'])):?>
-		<?php $i = 0; foreach ($maintainer['Package'] as $package): ?>
-			<div class="meta_listing">
-				<?php echo $this->Resource->package($package['name'], $maintainer['Maintainer']['username']); ?><br />
-				<p><?php echo $package['description'];?></p>
-			</div>
-		<?php endforeach; ?>
-	<?php endif; ?>
-	</div>
+<div class="related">
+	<h3><?php __('Packages');?></h3>
+	<?php if (!empty($maintainer['Package'])):?>
+	<?php $i = 0; foreach ($maintainer['Package'] as $package): ?>
+		<div class="meta-listing">
+			<?php echo $this->Resource->package($package['name'], $maintainer['Maintainer']['username']); ?><br />
+			<p><?php echo $package['description'];?></p>
+		</div>
+	<?php endforeach; ?>
+<?php endif; ?>
 </div>
 <div class="clear"></div>

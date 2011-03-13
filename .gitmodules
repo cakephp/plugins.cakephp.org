@@ -24,4 +24,4 @@
 	url = git://github.com/josegonzalez/cake_djjob.git
 [submodule "plugins/asset_compress"]
 	path = plugins/asset_compress
-	url = git://github.com/markstory/asset_compress.git
+	url = git://github.com/josegonzalez/asset_compress.git

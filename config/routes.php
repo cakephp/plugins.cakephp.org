@@ -31,8 +31,6 @@
 	Router::connect('/', array('controller' => 'packages', 'action' => 'home'));
 	Router::connect('/home', array('controller' => 'packages', 'action' => 'home'));
 	Router::connect('/opensource', array('controller' => 'pages', 'action' => 'display', 'opensource'));
-	Router::connect('/posts/*', array('plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'index'));
-	Router::connect('/post/*', array('plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'view'));
 	Router::connect('/login', array('controller' => 'users', 'action' => 'login'));
 	Router::connect('/logout', array('controller' => 'users', 'action' => 'logout'));
 	Router::connect('/dashboard', array('controller' => 'users', 'action' => 'dashboard'));
@@ -40,12 +38,24 @@
 	Router::connect('/reset_password', array('controller' => 'users', 'action' => 'reset_password'));
 	Router::connect('/change_password', array('controller' => 'users', 'action' => 'change_password'));
 	Router::connect('/package/*', array('controller' => 'packages', 'action' => 'view'));
-	Router::connect('/maintainer/edit/*', array('controller' => 'maintainers', 'action' => 'edit'));
 	Router::connect('/maintainer/*', array('controller' => 'maintainers', 'action' => 'view'));
+	Router::connect('/posts/*', array('plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'index'));
+	Router::connect('/post/*', array('plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'view'));
 	Router::connect('/lost/*', array('controller' => 'lost', 'action' => 'index'));
-	Router::connect('/package_search/page::page/*', array('controller' => 'packages', 'action' => 'search', 'type' => 'Package'));
-	Router::connect('/package_search/:term/*', array('controller' => 'packages', 'action' => 'search', 'type' => 'Package'));
-	Router::connect('/package_search/*', array('controller' => 'packages', 'action' => 'search', 'type' => 'Package'));
+
+	Router::connect('/:by/*', array('controller' => 'packages', 'action' => 'filter'),
+		array('by' => 'models|views|controllers|behaviors|helpers|components|datasources|themes|shells', 'pass' => array('by'))
+	);
+
+	Router::connect("/search/page::page/*", array(
+		'controller' => 'packages', 'action' => 'search', 'type' => 'Package'
+	));
+	Router::connect("/search/:term/*", array(
+		'controller' => 'packages', 'action' => 'search', 'type' => 'Package'
+	));
+	Router::connect("/search/*", array(
+		'controller' => 'packages', 'action' => 'search', 'type' => 'Package'
+	));
 
 /**
  * ...and connect the rest of 'Pages' controller's urls.
