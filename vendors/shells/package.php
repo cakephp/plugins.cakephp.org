@@ -1,9 +1,18 @@
 <?php
+/**
+ * Package Shell
+ *
+ * PHP version 5
+ *
+ * @category Package
+ * @package  cakepackages
+ * @version  0.1
+ * @author   Jose Diaz-Gonzalez <support@savant.be>
+ * @license  http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @link     http://www.josediazgonzalez.com
+ */
+
 class PackageShell extends Shell {
-
-	var $uses = array('Package');
-
-	var $folder = null;
 
 /**
  * Main shell logic.
@@ -11,264 +20,175 @@ class PackageShell extends Shell {
  * @return void
  * @author John David Anderson
  */
-	function main() {
-		if (!empty($this->params[0])) {
-			$this->command = substr($this->params[0], 0, 1);
-		}
+    function main() {
+        if (!empty($this->params[0])) {
+            $this->command = $this->params[0];
+        }
 
-		$this->__run();
-	}
+        $this->api = 'http://api.cakepackages.com';
+        $this->{$this->command}();
+    }
 
 /**
- * Main application flow control.
+ * Help
  *
  * @return void
- * @author Jose Diaz-Gonzalez <support@savant.be>
+ * @access public
  */
-	function __run() {
+    function help() {
+        $this->out('Package Shell - http://cakepackages.com');
+        $this->hr();
+        $this->out('This shell is a helper shell for many different kinds of tasks that might be performed by CakePackages');
+        $this->out('');
+        $this->hr();
+        $this->out("Usage: cake package");
+        $this->out("       cake package installed");
+        $this->out("       cake package verify");
+        $this->out("       cake package search");
+        $this->out("       cake package install package_name");
+        $this->out("       cake package install maintainer_name/package_name");
+        $this->out("       cake package install maintainer_name/package_name -version 1.0");
+        $this->out("       cake package install maintainer_name/package_name -folder package_alias");
+        $this->out("       cake package install maintainer_name/package_name -plugin_dir global");
+        $this->out("       cake package remove package_name");
+        $this->out("       cake package remove package_name -alias true");
+        $this->out("       cake package remove maintainer_name/package_name");
+        $this->out("       cake package show package_name");
+        $this->out('');
+    }
 
-		$validCommands = array('a', 'c', 'e', 'f', 'g', 'r', 'm', 's', 'u', 'q');
+    function installed() {
+        $this->out("Installed packages");
+        if (Configure::load('package') === false) {
+            $this->out("No packages installed");
+            return;
+        }
 
-		while (empty($this->command)) {
-			$this->out("Package Shell");
-			$this->hr();
-			$this->out("[A]dd missing Attributes");
-			$this->out("[C]heck Characteristics");
-			$this->out("[E]xistence Check");
-			$this->out("[F]ix Repository Urls");
-			$this->out("[G]it Clone Repositories");
-			$this->out("[R]eset Characteristics");
-			$this->out("[S]specific User/Repo");
-			$this->out("[U]pdate Repositories");
-			$this->out("[Q]uit");
-			$temp = $this->in("What command would you like to perform?", $validCommands, 'i');
-			if (in_array(strtolower($temp), $validCommands)) {
-				$this->command = $temp;
-			} else {
-				$this->out("Try again.");
-			}
-		}
+        $this->nl();
+        foreach (Configure::read('packages') as $package_alias => $config) {
+            $this->out(sprintf("%s: Version %s", $config['name'], $config['version']));
+        }
+    }
 
-		switch ($this->command) {
-			case 'a' :
-				$this->add_missing_attributes();
-				break;
-			case 'c' :
-				$this->check_characteristics();
-				break;
-			case 'e' :
-				$this->existence_check();
-				break;
-			case 'f' :
-				$this->fix_repository_urls();
-				break;
-			case 'g' :
-				$this->git_clone_repositories();
-				break;
-			case 'r' :
-				$this->reset_characteristics();
-				break;
-			case 'u' :
-				$this->update_repositories();
-				break;
-			case 'q' :
-				$this->out(__("Exit", true));
-				$this->_stop();
-				break;
-		}
-	}
+    function verify() {
+        $this->out("Installed packages");
+        if (Configure::load('package') === false) {
+            $this->out("No packages installed");
+            return;
+        }
+
+        $this->nl();
+        foreach (Configure::read('packages') as $package_alias => $config) {
+            if (!$this->__verify($package_alias, $config)) {
+                $this->out(sprintf("Error validating package %s: Version %s", $config['name'], $config['version']));
+            } else {
+                $this->out(sprintf("Verified %s: Version %s", $config['name'], $config['version']));
+            }
+        }
+    }
+
+    function __verify($package_alias, $config) {
+        if (($packageConfig = $this->_load(sprintf("%s.config", $package_alias))) === false) {
+            return false;
+        }
+
+        if ($config['version'] != $packageConfig['version']) {
+            return false;
+        }
+        return true;
+    }
+
+    function search() {
+        $this->_socket();
+
+        $query = $this->in(__("Enter a search term or 'q' or nothing to exit", true), null, 'q');
+        $this->out("Searching all plugins for query...");
+        $plugins = $this->_search($query);
+
+        if (empty($plugins)) {
+            $this->out("No results found. Sorry.");
+        } else {
+            foreach ($plugins as $key => $result) {
+                $name = str_replace('-', '_', $result['name']);
+                $name = Inflector::humanize($name);
+                if (substr_count($name, 'Plugin') > 0) {
+                    $name = substr_replace($name, '', strrpos($name, ' Plugin'), strlen(' Plugin'));
+                }
+                $this->out(sprintf("%d. %s Plugin", $key + 1, $name));
+            }
+        }
+    }
+
+    function _search($query) {
+        $results = array();
+
+        Cache::set(array('duration' => '+7 days'));
+        if (($results = Cache::read('Plugins.server.query.' . $query)) === false) {
+            $results = json_decode($this->Socket->get(sprintf("%s/search/%s", $this->api, $query)));
+            Cache::set(array('duration' => '+7 days'));
+            Cache::write('Plugins.server.query.' . $query, $results);
+        }
+
+        return $results;
+    }
+
+    function _socket() {
+        if (empty($this->Socket)) {
+            $this->Socket = new HttpSocket();
+        }
+    }
 
 /**
- * Goes through each and every package and update's it's attributes
+ * Loads a file from app/config/configure_file.php.
+ * Config file variables should be formated like:
+ *  `$config['name'] = 'value';`
  *
- * @return void
- * @author Jose Diaz-Gonzalez
- **/
-	function add_missing_attributes() {
-		$packages = $this->Package->find('all', array(
-			'contain' => array('Maintainer' => array('id', 'username')),
-			'fields' => array('id', 'name'),
-			'order' => array('Package.name ASC')
-		));
-
-		$this->Package->Behaviors->detach('Searchable');
-		$this->Package->Github = ClassRegistry::init('Github');
-		$count = 0;
-		foreach ($packages as $package) {
-			sleep(1);
-			if ($this->Package->updateAttributes($package)) {
-				$this->out(sprintf(__('* Updated %s', true), $package['Package']['name']));
-				$count++;
-			} else {
-				$this->out(sprintf(__('* Failed to update %s', true), $package['Package']['name']));
-				continue;
-			}
-		}
-		$p_count = count($packages);
-		$this->out(sprintf(__('* Updated %s of %s packages', true), $count, $p_count));
-	}
-
-/**
- * Disables packages when their existence cannot be verified on github
+ * - To load config files from app/config use `this->load('configure_file');`.
+ * - To load config files from a plugin `this->load('plugin.configure_file');`.
  *
- * @return void
- * @todo send summary email so packages can be manually verified/removed
- * @author Jose Diaz-Gonzalez
+ * @link http://book.cakephp.org/view/929/load
+ * @param string $fileName name of file to load, extension must be .php and only the name
+ *     should be used, not the extenstion
+ * @return mixed false if file not found, array of config
+ * @access private
  */
-	function existence_check() {
-		$this->Package->Behaviors->detach('Searchable');
-		$packages = $this->Package->find('all', array(
-			'contain' => array('Maintainer' => array('id', 'username')),
-			'fields' => array('id', 'name'),
-			'order' => array('Package.name ASC')));
-		$SearchIndex = ClassRegistry::init('Searchable.SearchIndex');
-		foreach ($packages as $package) {
-			sleep(1);
-			$exists = $this->Package->checkExistenceOf($package);
-			if (!$exists) {
-				$this->out(sprintf(__('* Deleting record %s', true), $package['Package']['id']));
-				$result = $this->Package->delete($package['Package']['id']);
-				if ($result) continue;
+    function _load($fileName) {
+        $found = $plugin = $pluginPath = false;
+        list($plugin, $fileName) = pluginSplit($fileName);
+        if ($plugin) {
+            $pluginPath = App::pluginPath($plugin);
+        }
+        $pos = strpos($fileName, '..');
 
-				$search_index = $SearchIndex->find('first', array(
-					'conditions' => array(
-						'SearchIndex.model' => 'Package',
-						'SearchIndex.foreign_key' => $package['Package']['id']
-				)));
-				$search_index['SearchIndex']['active'] = 0;
-				$SearchIndex->save($search_index);
-				$this->out(sprintf(__('* Record %s deleted', true), $package['Package']['id']));
-				continue;
-			}
-			$this->out(sprintf(__('* Record %s exists', true), $package['Package']['id']));
-		}
-	}
+        if ($pos === false) {
+            if ($pluginPath && file_exists($pluginPath . 'config' . DS . $fileName . '.php')) {
+                include($pluginPath . 'config' . DS . $fileName . '.php');
+                $found = true;
+            } elseif (file_exists(CONFIGS . $fileName . '.php')) {
+                include(CONFIGS . $fileName . '.php');
+                $found = true;
+            } elseif (file_exists(CACHE . 'persistent' . DS . $fileName . '.php')) {
+                include(CACHE . 'persistent' . DS . $fileName . '.php');
+                $found = true;
+            } else {
+                foreach (App::core('cake') as $key => $path) {
+                    if (file_exists($path . DS . 'config' . DS . $fileName . '.php')) {
+                        include($path . DS . 'config' . DS . $fileName . '.php');
+                        $found = true;
+                        break;
+                    }
+                }
+            }
+        }
 
-/**
- * Git clones all the repositories from their respective remote
- * locations
- *
- * @return void
- * @author Jose Diaz-Gonzalez
- */
-	function git_clone_repositories() {
-		$count = 0;
+        if (!$found) {
+            return false;
+        }
 
-		$packages = $this->Package->find('list');
-		foreach ($packages as $id => $name) {
-			$this->out(sprintf(__("* Downloading package %s", true), $name));
-			if ($this->Package->setupRepoDirectory($id)); {
-				$count++;
-			}
-		}
-		$this->out(sprintf(__('* Downloaded %s of %s repositories', true), $count, count($packages)));
-	}
-
-/**
- * Recurses through all repositories and updates them
- * where possible
- *
- * @return void
- * @author Jose Diaz-Gonzalez
- */
-	function update_repositories() {
-		$p_count = 0;
-		$repo_dir = trim(TMP . 'repos');
-		if (!$this->folder) $this->folder = new Folder();
-
-		foreach (range('a', 'z') as $letter) {
-			$this->folder->cd($repo_dir . DS . $letter);
-			$user_folders = $this->folder->read();
-			foreach ($user_folders['0'] as $user_folder) {
-				$this->folder->cd($repo_dir . DS . $letter . DS . $user_folder);
-				$repositories = $this->folder->read();
-				foreach ($repositories['0'] as $repository) {
-					$p_count++;
-					$repository_path = $repo_dir . DS . $letter . DS . $user_folder . DS . $repository;
-					$this->out(sprintf(__("Updating repository %s...", true), $repository));
-					$this->out(shell_exec("cd {$repository_path} ; git pull"));
-				}
-			}
-		}
-		$this->out(sprintf(__('* Updated %s repositories', true), $p_count));
-	}
-
-/**
- * Fixes clone urls (according to github) for all
- * repositories, regardless of their working status
- *
- * @return void
- * @author Jose Diaz-Gonzalez
- */
-	function fix_repository_urls() {
-		$update_count = 0;
-
-		$this->Package->Behaviors->detach('Searchable');
-		$packages = $this->Package->find('all', array(
-			'contain' => array('Maintainer' => array('id', 'username')),
-			'fields' => array('id', 'maintainer_id', 'name'),
-			'order' => array('Package.id ASC')
-		));
-
-		foreach ($packages as $package) {
-			$this->out(sprintf(
-				__('Updating package id %s named %s', true),
-				$package['Package']['id'],
-				$package['Package']['name']
-			));
-
-			if ($this->Package->fixRepositoryUrl($package)) $update_count++;
-		}
-
-		$this->out(sprintf(__('* Successfully updated %s out of %s package urls', true), $update_count, count($packages)));
-		$this->_stop();
-	}
-
-/**
- * Resets all 'contains' attributes for all packages
- *
- * @return void
- * @author Jose Diaz-Gonzalez
- */
-	function reset_characteristics() {
-		$characteristics = array_combine(array(
-			'contains_model', 'contains_datasource', 'contains_behavior', 'contains_controller',
-			'contains_component', 'contains_view', 'contains_helper', 'contains_theme', 'contains_vendor',
-			'contains_shell', 'contains_test', 'contains_lib', 'contains_resource', 'contains_config'
-		), array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
-
-		$this->out(__('Resetting all characteristics', true));
-		$this->Package->updateAll($characteristics);
-
-		$this->out(__('* Successfully reset all characteristics', true));
-		$this->_stop();
-	}
-
-/**
- * Checks and updates attributes on every package by
- * recursing through all letter folders and checking
- * each individual user
- *
- * @return void
- * @author Jose Diaz-Gonzalez
- */
-	function check_characteristics() {
-		$count = 0;
-
-		$packages = $this->Package->find('list');
-		$this->Package->Behaviors->detach('Searchable');
-		foreach ($packages as $id => $name) {
-			$this->out(sprintf(__('* Setting up repository for %s', true), $name));
-			$package = $this->Package->setupRepoDirectory($id);
-			if (!$package) continue;
-
-			$this->out(__('* Classifying repository', true));
-			$characteristics = $this->Package->classifyRepository($package);
-			if (!$characteristics) continue;
-
-			$count++;
-		}
-		$this->out(sprintf(__('* Checked %s of %s repositories', true), $count, count($packages)));
-	}
-
+        if (!isset($config)) {
+            trigger_error(sprintf(__('Configure::load() - no variable $config found in %s.php', true), $fileName), E_USER_WARNING);
+            return false;
+        }
+        return $config;
+    }
 }
