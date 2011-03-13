@@ -1,3 +1,6 @@
+require 'rubygems'
+require 'god'
+
 ROOT = "/apps/production/cakepackages.com/default"
 require File.expand_path(File.dirname(__FILE__) + '/cakepackages_god.rb')
 God.pid_file_directory = "/apps/pids"
