@@ -55,8 +55,9 @@ p,dl,hr,h1,h2,h3,h4,h5,h6,ol,ul,pre,table,address,fieldset { margin-bottom: 20px
 p { overflow: hidden; }
 
 /* Positioning */
-.container_12 { background: #fff; font-size: 11px; margin-bottom: 20px; }
-.navigation { color: #ff7b17; font-size: 20px; }
+.container_12 { background: #fff; margin-bottom: 20px; }
+.navigation { color: #ff7b17; }
+.navigation .item { height: 30px;}
 .footer { margin-top: 20px; text-align: center; }
 
 /** Notices and Errors **/
@@ -99,18 +100,19 @@ form div.submit.forgot { display: inline; }
 .forgot-action a: hover { color: #f00; text-decoration: none; }
 
 /** Packages **/
-.package_list { font-size: 2em; text-align: center; width: 180px !important; }
-.ui-autocomplete { background-color : #fff; border: 1px solid #888; font-size: 1.8em; list-style-type: none; margin: 0px; padding: 0px; position: absolute; width: 250px; z-index: 10; }
+.package_list { text-align: center; width: 180px !important; }
+.ui-autocomplete { background-color : #fff; border: 1px solid #888; list-style-type: none; margin: 0px; padding: 0px; position: absolute; width: 250px; z-index: 10; }
 .ui-autocomplete li { margin-left: 2px; }
-.ui-autocomplete li a { display:block; }
+.ui-autocomplete li a { display:block; font-size: 1.5em; }
 .ui-autocomplete .ui-state-hover, .ui-autocomplete .ui-state-active { background-color: #ffb; }
 
 /** Creates the icon peices **/
-.icons { width: 70px; height: 70px; font-family: arial; font-size: 11px; /*border: 2px solid #000; */ margin: 0 auto; padding: 0 1px 1px 0; }
 .full .icons { width: 108px; height: 108px; margin: 0 auto; padding: 0 2px 2px 0; }
-dd .icons { margin: 20px auto 0 auto; }
-.icons a { width: 20px; line-height: 20px; display: block; float: left; margin: 1px 0 0 1px; text-align: center; font-weight: bold; border-width: 1px; border-style: solid; text-transform: capitalize; }
 .full .icons a { border-width: 2px; line-height: 30px; width: 30px; margin: 2px 0 0 2px; }
+dd .icons { margin: 20px auto 0 auto; }
+span.icons a { margin-right: 4px; }
+.icons { width: 70px; height: 70px; font-family: arial; /*border: 2px solid #000; */ margin: 0 auto; padding: 0 1px 1px 0; }
+.icons a { font-size: .7em; width: 20px; line-height: 20px; display: block; float: left; margin: 1px 0 0 1px; text-align: center; font-weight: bold; border-width: 1px; border-style: solid; text-transform: capitalize; }
 .icons .ds { background: #760083; border-color: #760083; color: #FFA59C; text-shadow: #000 0 0 3px; }
 .icons .m { background: #C20000; border-color: #C20000; color: #FFA59C; text-shadow: #000 0 0 3px; }
 .icons .be { background: #FFA59C; border-color: #FFA59C; color: #C20000; text-shadow: #fff 0 0 3px; }
@@ -123,10 +125,10 @@ dd .icons { margin: 20px auto 0 auto; }
 .icons .hasno { text-indent: -5000px; background: none; }
 
 /** Index pages **/
-.packages .index .maintainer_link, .packages .search .maintainer_link { font-size: 1.3em; }
+.packages .index .maintainer_link, .packages .search .maintainer_link { }
 
 /** Styles metadata **/
-.meta_listing .meta_data { width: 70px; height: 30px; font-family: arial; font-size: 11px; /*border: 2px solid #000; */ margin: 0 auto; padding: 0 1px 1px 0; }
+.meta_listing .meta_data { width: 70px; height: 30px; font-family: arial; font-size: .7em; /*border: 2px solid #000; */ margin: 0 auto; padding: 0 1px 1px 0; }
 .meta_listing .meta_data span { width: 22px; line-height: 20px; display: block; float: left; margin: 1px 0 0 1px; text-align: center; font-weight: bold; text-transform: capitalize; }
 
 /** Other **/
@@ -134,37 +136,37 @@ dd .icons { margin: 20px auto 0 auto; }
 .packages.view h2 { color: #ff7b17; margin-bottom: 0; }
 .packages.view h3 { margin-bottom: 0; }
 .packages.view h3 a { color: #6e1717; }
-.home .list { font-size: 2em; }
+.home .list { }
 .package_name { color: #ff7b17; }
 .maintainer_name { color: #6e1717; }
-.description { color: #1a78b8; font-size: 1.5em; text-align: center; }
-.rss_feed { font-size: 1.2em; width: 100%; }
+.description { color: #1a78b8; text-align: center; }
+.rss_feed { width: 100%; }
 .rss_feed { border-collapse: separate; border-spacing: 0 20px; }
 .rss_feed td { border-bottom: 1px solid #000; }
 .rss_feed .commit_msg { width: 80%; }
 .rss_feed .commit_date { text-align: center; width: 20%; }
-.meta_package { background-color: #d9e4e5; font-size: 1.4em; padding: 20px; }
+.meta_package { background-color: #d9e4e5; padding: 20px; }
 .meta_package dd { font-weight: bold; }
-.meta_maintainer { background-color: #e3a130; font-size: 1.4em; padding: 20px; }
+.meta_maintainer { background-color: #e3a130; padding: 20px; }
 .meta_maintainer .gravatar { float: left; padding-right: 10px; }
 .meta_maintainer dl { float: left; margin-bottom: 4px; }
 .meta_maintainer dd { font-weight: bold; }
-.maintainers .meta_listing { font-size: 1.5em; margin-bottom: 5px; padding: 0; }
-.maintainers .meta_listing p { font-size: .8em; margin-bottom: 5px; }
+.maintainers .meta_listing { margin-bottom: 5px; padding: 0; }
+.maintainers .meta_listing p { margin-bottom: 5px; }
 .meta_listing { border-bottom: 1px solid #999; padding: 10px 0 10px 0; margin-bottom: 20px; }
-.information, .information a { font-size: 1.5em; }
-.meta_listing p { font-size: 1em; margin: 0; padding: 0; }
+.information, .information a { }
+.meta_listing p { margin: 0; padding: 0; }
 .meta_listing .highlight { background-color: #eff77c; }
-.paging { font-size: 1.3em; text-align: center; }
+.paging { text-align: center; }
 .paging .disabled { display: none; }
 
 /* Pages and Blog */
-.pages.display p.para, .blog_posts p, .blog_posts li { font-size: 1.4em; }
+.pages.display p.para, .blog_posts p, .blog_posts li { }
 .blog_posts .content a { color: #1a78b8; }
 .blog_posts .content h3 a { color: #ff7b17;}
 
 /** Tipsy **/
-.tipsy { padding: 5px; font-size: 10px; position: absolute; z-index: 100000; }
+.tipsy { padding: 5px; font-size: .7em; position: absolute; z-index: 100000; }
 .tipsy-inner { padding: 5px 8px 4px 8px; background-color: black; color: white; max-width: 200px; text-align: center; }
 .tipsy-inner { border-radius: 3px; -moz-border-radius:3px; -webkit-border-radius:3px; }
 .tipsy-arrow { position: absolute; background: url('../img/tipsy.gif') no-repeat top left; width: 9px; height: 5px; }

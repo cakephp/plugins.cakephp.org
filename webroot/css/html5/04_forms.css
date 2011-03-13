@@ -1,0 +1,24 @@
+/** Forms **/
+form { margin-right: 20px; padding: 0; width: 95%; }
+fieldset { border: 1px solid #ccc; margin-bottom: 1em; padding: 16px 20px; }
+fieldset legend { background: #fff; color: #e32; font-size: 160%; font-weight: bold; }
+fieldset fieldset { margin-top: 0px; margin-bottom: 20px; padding: 16px 10px; }
+fieldset fieldset legend { font-size: 120%; font-weight: normal; }
+fieldset fieldset div { clear: left; margin: 0 20px; }
+form div { clear: both; margin-bottom: 1em; padding: .5em; vertical-align: text-top; }
+form .input { color: #444; }
+form .required { font-weight: bold; }
+form .required label: after { color: #e32; content: '*'; display: inline; }
+form div.submit { border: 0; clear: both; margin-top: 10px; }
+label { display: block; font-size: 110%; margin-bottom: 3px; }
+input,textarea { clear: both; font-size: 140%; font-family: "frutiger linotype", "lucida grande", "verdana", sans-serif; padding: 1%; width: 98%; }
+select { clear: both; font-size: 120%; vertical-align: text-bottom; }
+select[multiple=multiple] { width: 100%; }
+option { font-size: 120%; padding: 0 3px; }
+input[type=checkbox] { clear: left; float: left; margin: 0px 6px 7px 2px; width: auto; }
+div.checkbox label { display: inline; }
+input[type=radio] { float: left; width: auto; margin: 0 3px 7px 0; }
+div.radio label { margin: 0 0 6px 20px; }
+input[type=submit] { display: inline; font-size: 110%; }
+form .submit input[type=submit] { background: #62af56; background: -webkit-gradient(linear,left top,left bottom,from(#a8ea9c),to(#62af56)); background-image: -moz-linear-gradient(top,#a8ea9c,#62af56); border-color: #2d6324; color: #000; text-shadow: #8cee7c 0px 1px 0px; }
+form .submit input[type=submit]: hover { background: #4ca83d; background: -webkit-gradient(linear,left top,left bottom,from(#85e573),to(#4ca83d)); background-image: -moz-linear-gradient(top,#85e573,#4ca83d); }

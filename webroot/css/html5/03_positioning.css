@@ -1,0 +1,6 @@
+body { margin: 0 auto; width: 960px; }
+header { display: inline; float: left; margin: 10px; width: 940px; }
+header .header { display: inline; float: left; margin: 0 10px 0 0; width: 460px; }
+header .search-form { display: inline; float: left; margin: 0 0 0 10px; width: 460px; }
+#main { margin-bottom: 10px; }
+footer { margin: 0 0 10px 10px; }

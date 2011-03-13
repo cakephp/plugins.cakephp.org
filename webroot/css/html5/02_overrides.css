@@ -1,0 +1,24 @@
+/** Reset Overrides **/
+body { background: #fff; font: 13px/1.5 'Helvetica Neue', Arial, 'Liberation Sans', FreeSans, sans-serif; padding: 10px 0 0 0; }
+a { color: #000; text-decoration: none; }
+a:hover { text-decoration: underline; }
+a:focus { outline: 1px dotted }
+hr { border: 0 #ccc solid; border-top-width: 1px; clear: both; height: 0 }
+h1 { font-family: Georgia,serif; font-size: 25px; font-weight: normal; text-align: center; }
+h2 { font-size: 23px }
+h3 { font-size: 21px }
+h4 { font-size: 19px }
+h5 { font-size: 17px }
+h6 { font-size: 15px }
+h2, h3, h4 { padding: 0; margin: 0; text-align: center; }
+ol { list-style: decimal }
+ul { list-style: disc }
+li { margin-left: 30px }
+p,dl,hr,h1,h2,h3,h4,h5,h6,ol,ul,pre,table,address,fieldset { margin-bottom: 20px }
+p { overflow: hidden; }
+
+/** Common **/
+.border-radius { border-radius: 15px; -khtml-border-radius: 15px; -moz-border-radius: 15px; -o-border-radius: 15px; -webkit-border-radius: 15px; }
+.clear { clear: both; display: block; height: 0; overflow: hidden; visibility: hidden; width: 0; }
+.paging { text-align: center; }
+.paging .disabled { display: none; }

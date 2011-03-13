@@ -1,0 +1,6 @@
+.packages_home .list { display: inline; float:left; margin-left: 0; margin-right: 10px; width: 390px; }
+.packages_home .list h3 { margin-bottom: 10px; }
+.packages_home ul { display:block; list-style-type: none; margin-left: 0; margin-right: 0; width: 390px; }
+.packages_home .package_name { display: block; color: #ff7b17; font-size: 17px; }
+.packages_home span { margin-left: 20px; }
+.packages_home .maintainer_name { color: #6e1717; font-size: 15px; }

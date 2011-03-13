@@ -1,0 +1,7 @@
+.package_listing { border-bottom: 1px solid #999; padding: 10px 0 10px 0; margin-bottom: 20px; }
+.package_listing .icons-container { display: inline; float: left; margin-left: 0; margin-right: 10px; padding-left: 160px; width: 140px;}
+.package_listing .icons { width: 70px; height: 70px; font-family: arial; /*border: 2px solid #000; */ margin: 0 auto; padding: 0 1px 1px 0; }
+.package_listing .meta-data { width: 70px; height: 30px; font-family: arial; font-size: .7em; /*border: 2px solid #000; */ margin: 0 auto; padding: 0 1px 1px 0; }
+.package_listing .meta-data span { width: 22px; line-height: 20px; display: block; float: left; margin: 1px 0 0 1px; text-align: center; font-weight: bold; text-transform: capitalize; }
+.package_listing .information a { font-size: 22px; }
+.package_listing .information { color: #333; font-size: 17px; padding-right: 160px;}

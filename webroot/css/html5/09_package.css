@@ -1,0 +1,15 @@
+#packages_view h2, #packages_view h3, #packages_view h4 { margin-bottom: 0;}
+#packages_view header .package_name { color: #ff7b17; }
+#packages_view header .maintainer_name { color: #6e1717; }
+.packages_view .description { color: #1a78b8; display: inline; float:left; font-size: 19px; margin: 0 10px 0 1px; text-align: center; width: 470px; }
+.packages_view .rss-feed { font-size: 14px; width: 100%; }
+.packages_view .rss-feed { border-collapse: separate; border-spacing: 0 20px; }
+.packages_view .rss-feed td { border-bottom: 1px solid #000; }
+.packages_view .rss-feed .commit-msg { width: 80%; }
+.packages_view .rss-feed .commit-date { text-align: center; width: 20%; }
+.packages_view .meta-data { display: inline; float:left; margin-left: 0; margin-right: 10px; width: 460px; }
+.packages_view .meta-package { background-color: #d9e4e5; padding: 20px; }
+.packages_view .meta-package dt { font-size: 17px; }
+.packages_view .meta-package dd { font-weight: bold; font-size: 16px; padding-left: 20px; }
+.packages_view .icons-container { margin-left:auto; margin-right:auto;}
+.packages_view .icons { width: 70px; height: 70px; font-family: arial; /*border: 2px solid #000; */ margin: 0 auto; padding: 0 1px 1px 0; }

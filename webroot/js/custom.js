@@ -26,4 +26,5 @@ jQuery(function () {
   });
   jQuery('.tooltip').tipsy({fade: true});
   jQuery('.tooltip_w').tipsy({fade: true, gravity: 'w'});
+  jQuery('.tooltip_w a').tipsy({fade: true, gravity: 'w'});
 });

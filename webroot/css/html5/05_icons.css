@@ -1,0 +1,14 @@
+nav { display:inline; float: left; margin: 50px 10px 0 10px; width: 140px; }
+nav .item { height: 25px; }
+nav .item a.text { font-size: 1.2em; padding-left: 4px;}
+.icons a { font-size: .7em; width: 20px; line-height: 20px; display: block; float: left; margin: 1px 0 0 1px; text-align: center; font-weight: bold; border-width: 1px; border-style: solid; text-transform: capitalize; }
+.icons .ds { background: #760083; border-color: #760083; color: #FFA59C; text-shadow: #000 0 0 3px; }
+.icons .m { background: #C20000; border-color: #C20000; color: #FFA59C; text-shadow: #000 0 0 3px; }
+.icons .be { background: #FFA59C; border-color: #FFA59C; color: #C20000; text-shadow: #fff 0 0 3px; }
+.icons .s { background: #A6A6A6; border-color: #A6A6A6; color: #005BB0; text-shadow: #fff 0 0 3px; }
+.icons .c { border-color: #005BB0; background: #005BB0; color: #82CFFF; text-shadow: #000 0 0 3px; }
+.icons .cp { background: #82CFFF; border-color: #82CFFF; color: #005BB0; text-shadow: #fff 0 0 3px; }
+.icons .t { background: #FEFB6D; border-color: #FEFB6D; color: #00AA00; text-shadow: #fff 0 0 3px; }
+.icons .v { background: #00AA00; border-color: #00AA00; color: #00FF00; text-shadow: #000 0 0 3px; }
+.icons .h { background: #00FF00; border-color: #00FF00; color: #00AA00; text-shadow: #fff 0 0 3px; }
+.icons .hasno { text-indent: -5000px; background: none; }
