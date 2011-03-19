@@ -53,30 +53,20 @@ Configure::write('logQueries', true);
 Configure::write('paths', array(
 	'/usr/local/bin'
 ));
-function diebug($variables = false, $showHtml = true, $showFrom = true, $die = true) {
+function diebug($var = false, $showHtml = true, $showFrom = true, $die = true) {
 	if (Configure::read() > 0) {
-		if (is_array($showHtml)) {
-			$showHtml = array_merge(array('showHtml' => true, 'showFrom' => true, 'die' => true), $showHtml);
-			extract($showHtml);
-		}
 		if ($showFrom) {
 			$calledFrom = debug_backtrace();
 			echo '<strong>' . substr(str_replace(ROOT, '', $calledFrom[0]['file']), 1) . '</strong>';
-			echo ' (line <strong>' . $calledFrom[0]['line'] . '</strong>)<br /><br />';
+			echo ' (line <strong>' . $calledFrom[0]['line'] . '</strong>)';
 		}
-		if (!is_array($variables)) $variables = array($variables);
+		echo "\n<pre class=\"cake-debug\">\n";
+
+		$var = print_r($var, true);
 		if ($showHtml) {
-			App::import('Vendor', 'dBug', array('file' => 'dBug.php'));
-			foreach ($variables as $key => $variable) {
-				new dBug($variable);
-				echo '<br />';
-			}
-		} else {
-			foreach ($variables as $variable) {
-				debug($var, $showHtml, $showFrom);
-				echo '<br />';
-			}
+			$var = str_replace('<', '&lt;', str_replace('>', '&gt;', $var));
 		}
+		echo $var . "\n</pre>\n";
 		if ($die) die;
 	}
 }
