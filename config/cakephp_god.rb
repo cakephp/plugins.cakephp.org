@@ -1,4 +1,4 @@
-class CakepackagesGod
+class CakePHPGod
   def self.queue_workers(queue, number_of_workers, uid = 'deploy', gid = 'deploy')
     number_of_workers.times do |i|
       God.watch do |w|
