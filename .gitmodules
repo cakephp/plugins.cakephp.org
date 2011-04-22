@@ -25,3 +25,12 @@
 [submodule "plugins/asset_compress"]
 	path = plugins/asset_compress
 	url = git://github.com/josegonzalez/asset_compress.git
+[submodule "plugins/api_generator"]
+	path = plugins/api_generator
+	url = git://github.com/cakephp/api_generator.git
+[submodule "plugins/lazy_model"]
+	path = plugins/lazy_model
+	url = git://github.com/Phally/lazy_model.git
+[submodule "plugins/url_cache"]
+	path = plugins/url_cache
+	url = git://github.com/lorenzo/url_cache.git
