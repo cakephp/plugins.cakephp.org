@@ -55,19 +55,39 @@ Configure::write('paths', array(
 ));
 function diebug($var = false, $showHtml = true, $showFrom = true, $die = true) {
 	if (Configure::read() > 0) {
+		$file = '';
+		$line = '';
 		if ($showFrom) {
 			$calledFrom = debug_backtrace();
-			echo '<strong>' . substr(str_replace(ROOT, '', $calledFrom[0]['file']), 1) . '</strong>';
-			echo ' (line <strong>' . $calledFrom[0]['line'] . '</strong>)';
+			$file = substr(str_replace(ROOT, '', $calledFrom[0]['file']), 1);
+			$line = $calledFrom[0]['line'];
 		}
-		echo "\n<pre class=\"cake-debug\">\n";
+		$html = <<<HTML
+<strong>%s</strong> (line <strong>%s</strong>)
+<pre class="cake-debug">
+%s
+</pre>
+HTML;
+		$text = <<<TEXT
 
-		$var = print_r($var, true);
-		if ($showHtml) {
-			$var = str_replace('<', '&lt;', str_replace('>', '&gt;', $var));
+%s (line %s)
+########## DEBUG ##########
+%s
+###########################
+
+TEXT;
+		$template = $html;
+		if (php_sapi_name() == 'cli') {
+			$template = $text;
 		}
-		echo $var . "\n</pre>\n";
+		if ($showHtml === null && $template !== $text) {
+			$showHtml = true;
+		}
+		$var = print_r($var, true);
+		if ($showHtml && php_sapi_name() != 'cli') {
+			$var = str_replace(array('<', '>'), array('&lt;', '&gt;'), $var);
+		}
+		printf($template, $file, $line, $var);
 		if ($die) die;
 	}
 }
-?>
