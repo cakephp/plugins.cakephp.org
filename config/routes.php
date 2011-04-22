@@ -28,6 +28,8 @@
  */
 	Router::parseExtensions('json', 'xml');
 
+	Router::connect('/1/:action/*', array('controller' => 'api', 'one' => true));
+
 	Router::connect('/', array('controller' => 'packages', 'action' => 'home'));
 	Router::connect('/home', array('controller' => 'packages', 'action' => 'home'));
 	Router::connect('/opensource', array('controller' => 'pages', 'action' => 'display', 'opensource'));

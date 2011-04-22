@@ -12,5 +12,7 @@ $map = array(
 		'005_api_classes' => 'M4da1ff2bd4544ee4b4295953cbdd56cb'),
 	6 => array(
 		'006_innodb' => 'M4da202c0fc984da39bdb59a0cbdd56cb'),
+	7 => array(
+		'007_sources' => 'M4db126f0bbe4472f9d762e7ecbdd56cb'),
 );
 ?>
