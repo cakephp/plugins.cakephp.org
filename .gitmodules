@@ -37,3 +37,6 @@
 [submodule "plugins/settings"]
 	path = plugins/settings
 	url = git://github.com/josegonzalez/settings.git
+[submodule "plugins/package_installer"]
+	path = plugins/package_installer
+	url = git://github.com/josegonzalez/package_installer.git
