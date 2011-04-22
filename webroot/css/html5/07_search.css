@@ -1,2 +1,9 @@
+/** Search Form and Autocomplete **/
 .search-form div.text { margin-bottom: 0em; }
 .search-form div.submit { margin-bottom: 0em; margin-top: 0em; }
+
+.package_list { text-align: center; width: 180px !important; }
+.ui-autocomplete { background-color : #fff; border: 1px solid #888; list-style-type: none; margin: 0px; padding: 0px; position: absolute; width: 250px; z-index: 10; }
+.ui-autocomplete li { margin-left: 2px; }
+.ui-autocomplete li a { display:block; font-size: 1.5em; }
+.ui-autocomplete .ui-state-hover, .ui-autocomplete .ui-state-active { background-color: #ffb; }

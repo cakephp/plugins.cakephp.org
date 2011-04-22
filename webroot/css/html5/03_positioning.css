@@ -1,3 +1,4 @@
+/** Positioning **/
 body { margin: 0 auto; width: 960px; }
 header { display: inline; float: left; margin: 10px; width: 940px; }
 header .header { display: inline; float: left; margin: 0 10px 0 0; width: 460px; }
