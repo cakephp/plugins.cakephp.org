@@ -2,8 +2,7 @@
 class AppController extends Controller {
 	var $components = array(
 		'Authsome.Authsome' => array('model' => 'Maintainer'),
-		'CakeDjjob.CakeDjjob',
-		'DebugKit.Toolbar',
+		'DebugKit.Toolbar' => array('panels' => array('Sanction.permit')),
 		'Mail',
 		'RequestHandler',
 		'Sanction.Permit' => array(
