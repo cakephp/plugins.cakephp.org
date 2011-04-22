@@ -34,3 +34,6 @@
 [submodule "plugins/url_cache"]
 	path = plugins/url_cache
 	url = git://github.com/lorenzo/url_cache.git
+[submodule "plugins/settings"]
+	path = plugins/settings
+	url = git://github.com/josegonzalez/settings.git
