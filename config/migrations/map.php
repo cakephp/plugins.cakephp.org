@@ -6,5 +6,11 @@ $map = array(
 		'002_package_metadata' => 'M4d4100e680cc4348a7422ac5cbdd56cb'),
 	3 => array(
 		'003_log_table' => 'M4d4776d3c53c4d62b361664bcbdd56cb'),
+	4 => array(
+		'004_jobs_table' => 'M4da1fef6a99441fbb7fa593ecbdd56cb'),
+	5 => array(
+		'005_api_classes' => 'M4da1ff2bd4544ee4b4295953cbdd56cb'),
+	6 => array(
+		'006_innodb' => 'M4da202c0fc984da39bdb59a0cbdd56cb'),
 );
 ?>
