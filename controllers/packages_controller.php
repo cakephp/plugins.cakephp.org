@@ -5,13 +5,14 @@ class PackagesController extends AppController {
     var $helpers = array('Searchable.Searchable');
 
     function home() {
-        $latest = $this->Package->find('latest');
-        $random = $this->Package->find('random');
-        $this->set(compact('latest', 'random'));
+        $this->set(array(
+            'latest' => $this->Package->find('latest'),
+            'random' => $this->Package->find('random'),
+        ));
     }
 
     function latest() {
-        $this->paginate = array('latest');
+        $this->paginate = array('latest', 'is_paginate' => true);
         $this->set('packages', $this->paginate());
         $this->render('index');
     }

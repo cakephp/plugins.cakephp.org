@@ -1,6 +1,7 @@
 <?php
 class PackagesShell extends Shell {
 
+	var $tasks = array('CakeDjjob');
 	var $uses = array('Package');
 
 	var $folder = null;
@@ -27,18 +28,17 @@ class PackagesShell extends Shell {
  */
 	function __run() {
 
-		$validCommands = array('a', 'c', 'e', 'f', 'g', 'r', 'm', 's', 'u', 'q');
+		$validCommands = array('a', 'c', 'e', 'f', 'g', 'r', 't', 'u', 'q');
 
 		while (empty($this->command)) {
 			$this->out("Packages Shell");
 			$this->hr();
 			$this->out("[A]dd missing Attributes");
-			$this->out("[C]heck Characteristics");
+			$this->out("[C]haracterize Packages");
 			$this->out("[E]xistence Check");
 			$this->out("[F]ix Repository Urls");
 			$this->out("[G]it Clone Repositories");
 			$this->out("[R]eset Characteristics");
-			$this->out("[S]specific User/Repo");
 			$this->out("[U]pdate Repositories");
 			$this->out("[Q]uit");
 			$temp = $this->in("What command would you like to perform?", $validCommands, 'i');
@@ -54,7 +54,7 @@ class PackagesShell extends Shell {
 				$this->addMissingAttributes();
 				break;
 			case 'c' :
-				$this->checkCharacteristics();
+				$this->characterize();
 				break;
 			case 'e' :
 				$this->existenceCheck();
@@ -252,21 +252,49 @@ class PackagesShell extends Shell {
  * @return void
  * @author Jose Diaz-Gonzalez
  */
-	function checkCharacteristics() {
+	function characterize() {
+		if (! function_exists('pcntl_fork')) die("PCNTL functions not available on this PHP installation\n");
+
 		$count = 0;
 
-		$packages = $this->Package->find('list');
 		$this->Package->Behaviors->detach('Searchable');
+		$this->Package->enableSoftDeletable('find', false);
+		$packages = $this->Package->find('list', array(
+			// 'conditions' => array('id' => 8),
+			'order' => 'id'
+		));
 		foreach ($packages as $id => $name) {
-			$this->out(sprintf(__('* Setting up repository for %s', true), $name));
-			$package = $this->Package->setupRepoDirectory($id);
-			if (!$package) continue;
+			$pid = pcntl_fork();
+			if ($pid == -1) {
+				die("PCNTL Unable to fork\n");
+			}
+			else if ( $pid == 0 ) {
+				$status = SIG_ERR;
 
-			$this->out(__('* Classifying repository', true));
-			$characteristics = $this->Package->classifyRepository($package);
-			if (!$characteristics) continue;
+				// This is the child process.  Do something here.
+				// Instead of calling exit(), we use posix_kill()
+				$this->out(sprintf(__('* Processing %s', true), $name));
+				$this->Package->getDatasource()->disconnect();
+				$this->Package->getDatasource()->connect();
 
-			$count++;
+				if ($this->Package->characterize($id)) {
+					$status = SIGKILL;
+				}
+
+				$this->Package->getDatasource()->disconnect();
+				posix_kill(getmypid(), $status);
+				return;
+			}
+			else {
+				pcntl_wait($status);
+				if ($status === SIGKILL) {
+					$count++;
+					continue;
+				}
+				$this->Package->getDatasource()->connect();
+				$this->Package->broken($id);
+				$this->Package->getDatasource()->disconnect();
+			}
 		}
 		$this->out(sprintf(__('* Checked %s of %s repositories', true), $count, count($packages)));
 	}
