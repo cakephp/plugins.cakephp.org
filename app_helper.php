@@ -18,7 +18,7 @@ class AppHelper extends UrlCacheAppHelper {
 			$contents = $alternate;
 		}
 
-		$this->for_layout("<h2>{$contents}</h2> |", 'title');
+		$this->for_layout($contents, 'title');
 		$this->for_layout("<h2>{$contents}</h2>", 'h2');
 	}
 }
