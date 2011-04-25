@@ -15,6 +15,7 @@
       $this->AssetCompress->css('html5/09_package.css');
       $this->AssetCompress->css('html5/10_maintainer.css');
       $this->AssetCompress->css('html5/11_indexes.css');
+      $this->AssetCompress->css('html5/12_pages.css');
       echo $this->AssetCompress->includeAssets();
     ?>
     <!--[if lt IE 9]>
