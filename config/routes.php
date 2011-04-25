@@ -32,6 +32,7 @@
 
 	Router::connect('/', array('controller' => 'packages', 'action' => 'home'));
 	Router::connect('/home', array('controller' => 'packages', 'action' => 'home'));
+	Router::connect('/about', array('controller' => 'pages', 'action' => 'display', 'opensource'));
 	Router::connect('/opensource', array('controller' => 'pages', 'action' => 'display', 'opensource'));
 	Router::connect('/login', array('controller' => 'users', 'action' => 'login'));
 	Router::connect('/logout', array('controller' => 'users', 'action' => 'logout'));
