@@ -110,6 +110,12 @@ namespace :link do
 
       "rm -rf #{current_release}/config/bootstrap.php",
       "ln -s #{shared_path}/config/bootstrap.php #{current_release}/config/bootstrap.php",
+
+      "rm -rf #{current_release}/webroot/cache_css",
+      "ln -s #{shared_path}/webroot/cache_css #{current_release}/webroot/cache_css",
+
+      "rm -rf #{current_release}/webroot/cache_js",
+      "ln -s #{shared_path}/webroot/cache_js #{current_release}/webroot/cache_js",
     ]
 
     run cmd.join(' && ')
@@ -143,10 +149,13 @@ namespace :misc do
     after "misc:startup", "link:core", "link:plugins"
 
     # Setup shared folders
-    run "mkdir -p #{shared_path}/{tmp/{cache/{data,models,persistent,views},sessions,logs,tests}};"
+    run "mkdir -p #{shared_path}/tmp/{cache/{data,models,persistent,views},sessions,logs,tests};"
     run "mkdir -p #{shared_path}/webroot/uploads"
+    run "mkdir -p #{shared_path}/webroot/cache_css"
+    run "mkdir -p #{shared_path}/webroot/cache_js"
 
     # Make the TMP and Uploads folder writeable
+    run "chmod -R 644 #{shared_path}/webroot/cache_css #{shared_path}/webroot/cache_js"
     run "chmod -R 755 #{shared_path}/tmp #{shared_path}/webroot/uploads"
   end
 
