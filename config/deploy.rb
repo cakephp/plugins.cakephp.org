@@ -160,11 +160,20 @@ namespace :misc do
     run "tail -f #{deploy_to}/logs/*.log"
   end
 
+  task :god_stop, :roles => :god do
+    run "#{sudo} service god stop"
+  end
+
+  task :god_start, :roles => :god do
+    run "#{sudo} service god start"
+  end
+
   task :god_restart, :roles => :god do
+    run "#{sudo} service god stop"
     run "#{sudo} rm /etc/god/conf.d/workers.god"
-    run "#{sudo} rm /etc/god/conf.d/cakepackages_god.rb"
+    run "#{sudo} rm /etc/god/conf.d/cakephp_god.rb"
     run "#{sudo} ln -s #{current_release}/config/workers.god /etc/god/conf.d/workers.god"
-    run "#{sudo} ln -s #{current_release}/config/cakepackages_god.rb /etc/god/conf.d/cakepackages_god.rb"
-    run "#{sudo} service god restart"
+    run "#{sudo} ln -s #{current_release}/config/cakephp_god.rb /etc/god/conf.d/cakephp_god.rb"
+    run "#{sudo} service god start"
   end
 end
