@@ -31,6 +31,16 @@
 	Router::connect('/1/:action/*', array('controller' => 'api', 'one' => true));
 
 	Router::connect('/', array('controller' => 'packages', 'action' => 'home'));
+	
+	Router::connect('/:id-:slug',
+		array('controller' => 'packages', 'action' => 'show'),
+		array('id' => '[0-9]+', 'slug' => '[\w_-]+')
+	);
+
+	// Route cached files
+	Router::connect('/cache_css/*', array('plugin' => 'asset_compress', 'controller' => 'css_files', 'action' => 'get'));
+	Router::connect('/cache_js/*', array('plugin' => 'asset_compress', 'controller' => 'js_files', 'action' => 'get'));
+
 	Router::connect('/home', array('controller' => 'packages', 'action' => 'home'));
 	Router::connect('/about', array('controller' => 'pages', 'action' => 'display', 'opensource'));
 	Router::connect('/opensource', array('controller' => 'pages', 'action' => 'display', 'opensource'));
