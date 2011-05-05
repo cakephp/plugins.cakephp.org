@@ -49,10 +49,12 @@
  *
  */
 if (!class_exists('MiCache')) App::import('Vendor', 'mi_cache');
+ini_set('apc.slam_defense', 50);
 Configure::write('logQueries', true);
 Configure::write('paths', array(
 	'/usr/local/bin'
 ));
+
 function diebug($var = false, $showHtml = true, $showFrom = true, $die = true) {
 	if (Configure::read() > 0) {
 		$file = '';
