@@ -57,7 +57,7 @@ class ApiSearchIndex extends AppModel {
 
             if (empty($query['fields'])) {
                 $query['fields'] = array(
-                    'foreign_key as id',
+                    '`foreign_key` as `id`',
                     'name',
                     'summary',
                     "MATCH(data) AGAINST('{$query['term']}' IN BOOLEAN MODE) AS score"
@@ -144,7 +144,7 @@ class ApiSearchIndex extends AppModel {
             'like'      => true,
             'reindex'   => true,
             'fields'    => array(
-                'foreign_key as id',
+                '`foreign_key` as `id`',
                 'name',
                 'summary',
                 'data'
