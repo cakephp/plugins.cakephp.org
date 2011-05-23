@@ -2,20 +2,6 @@
 class ApiController extends AppController {
 
 /**
- * Use no layout by default for any requests
- *
- * @var boolean
- */
-    var $layout = false;
-
-/**
- * Array containing the names of components this controller uses.
- *
- * @var array
- */
-	var $components = array('Security');
-
-/**
  * Use no models by default
  *
  * @var string
@@ -33,16 +19,16 @@ class ApiController extends AppController {
         404 => array('status' => 404, 'error' => 'not found'),
     );
 
-/**
- * Blackhole all requests by default
- *
- * @var boolean
- */
-    var $blackHole = true;
+    function beforeRender() {
+        parent::beforeFilter();
+        Configure::write('debug', 0);
+        $this->action = 'response';
+        $this->layout = false;
+    }
 
     function one_search($query = null) {
         if (!$query) {
-            return $this->setAction('response', $this->status[400]);
+            return $this->set('results', $this->status[400]);
         }
 
         $this->loadModel('ApiSearchIndex');
@@ -54,12 +40,12 @@ class ApiController extends AppController {
             'results' => $results
         ), $this->status[200]);
 
-        return $this->setAction('response', $results);
+        return $this->set(compact('results'));
     }
 
-    function one_install($query = null) {
+    function one_install() {
         if (empty($this->params['url']['package'])) {
-            return $this->setAction('response', $this->status[400]);
+            return $this->set('results', $this->status[400]);
         }
 
         $this->loadModel('ApiPackage');
@@ -73,23 +59,7 @@ class ApiController extends AppController {
             'count'   => count($results),
             'results' => $results
         ));
-
-        return $this->setAction('response', $results);
-    }
-
-    function response($results = array()) {
-        if ($this->blackHole) {
-            $this->Security->blackHole($this, $this->status[400]['error']);
-        }
-
-        Configure::write('debug', 0);
-        $this->set('results', $results);
-    }
-
-    function setAction($action) {
-        $this->blackHole = false;
-
-        return call_user_func_array('parent::setAction', func_get_args());
+        return $this->set(compact('results'));
     }
 
 }
