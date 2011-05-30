@@ -294,11 +294,14 @@
  *	));
  *
  */
-    // Cache::config('default', array('engine' => 'File'));
-Cache::config('default', array(
-    'engine' => 'Apc', //[required]
-    'duration'=> 3600, //[optional]
-    'probability'=> 100, //[optional]
-    'prefix' =>  'packages_', //[optional]  prefix every cache file with this string
-));
-?>
+
+if (function_exists('apc_fetch')) {
+    Cache::config('default', array(
+        'engine' => 'Apc', //[required]
+        'duration'=> 3600, //[optional]
+        'probability'=> 100, //[optional]
+        'prefix' =>  'packages_', //[optional]  prefix every cache file with this string
+    ));
+} else {
+    Cache::config('default', array('engine' => 'File'));
+}
