@@ -3,191 +3,429 @@ App::import('Core', 'Xml');
 class Github extends AppModel {
 	var $name = 'Github';
 	var $useTable = false;
+	var $useDbConfig = 'github';
 	var $socket = null;
 	var $base_uri = null;
 
 	function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
 		$this->base_uri = "https://github.com/api/v2/xml";
+
+		$this->_findMethods['blobShow'] = true;
+		$this->_findMethods['blobShowAll'] = true;
+		$this->_findMethods['blobShowPath'] = true;
+
+		$this->_findMethods['commitsList'] = true;
+		$this->_findMethods['commitsShowPath'] = true;
+		$this->_findMethods['commitsShowSha'] = true;
+
+		$this->_findMethods['issuesComments'] = true;
+		$this->_findMethods['issuesLabels'] = true;
+		$this->_findMethods['issuesList'] = true;
+		$this->_findMethods['issuesSearch'] = true;
+		$this->_findMethods['issuesShow'] = true;
+
+		$this->_findMethods['reposSearch'] = true;
+		$this->_findMethods['reposShow'] = true;
+		$this->_findMethods['reposShowSingle'] = true;
+		$this->_findMethods['reposShowCollaborators'] = true;
+		$this->_findMethods['reposShowContributors'] = true;
+		$this->_findMethods['reposShowLanguages'] = true;
+		$this->_findMethods['reposShowNetwork'] = true;
+		$this->_findMethods['reposShowTags'] = true;
+		$this->_findMethods['reposWatched'] = true;
+
+		$this->_findMethods['treeShow'] = true;
+
+		$this->_findMethods['userShow'] = true;
+		$this->_findMethods['userShowFollowing'] = true;
+		$this->_findMethods['userWatched'] = true;
+		$this->_findMethods['userEmail'] = true;
 	}
 
-	function _getUserShow($username = null) {
-		if (!$username) return false;
+	function _findIssuesSearch($state, $query, $results = array()) {
+		if ($state == 'before') {
+			foreach (array('username', 'repo', 'term') as $param) {
+				if (empty($query[$param])) {
+					throw new InvalidArgumentException(sprintf("Missing %s param", $param));
+				}
+			}
 
-		return $this->cached_xml_get("/user/show/{$username}");
-	}
-
-	function _getUserShowFollowing($username = null) {
-		if (!$username) return false;
-
-		return $this->cached_xml_get("/user/show/{$username}/following");
-	}
-
-	function _getUserWatched($username = null) {
-		if (!$username) return false;
-
-		return $this->cached_xml_get("/repos/watched/{$username}");
-	}
-
-	function _getUserEmail($username = null) {
-		if (!$username) return false;
-
-		return $this->cached_xml_get("/user/email/{$username}");
-	}
-
-	function _getIssuesSearch($params = array()) {
-		foreach (array('username', 'repo', 'term') as $param) {
-			if (empty($params[$param])) return false;
+			$query['state'] = (empty($query['state'])) ? 'open' : $query['state'];
+			$query['request'] = implode('/', array(
+				$query['username'],
+				$query['repo'],
+				$query['state'],
+				$query['term'],
+			));
+			unset($query['username'], $query['repo'], $query['state'], $query['term']);
+			return $query;
+		} elseif ($state == 'after') {
+			return $results;
 		}
-		$params['state'] = (empty($params['state'])) ? 'open' : $params['state'];
-
-		$request = "/issues/search/{$params['username']}/{$params['repo']}/{$params['state']}/{$params['term']}";
-		return $this->cached_xml_get($request);
 	}
 
-	function _getIssuesList($params = array()) {
-		if (empty($params['username']) || empty($params['repo'])) return false;
-		$params['state'] = (empty($params['state'])) ? 'open' : $params['state'];
+	function _findIssuesComments($state, $query, $results = array()) {
+		if ($state == 'before') {
+			foreach (array('username', 'repo', 'number') as $param) {
+				if (empty($query[$param])) {
+					throw new InvalidArgumentException(sprintf("Missing %s param", $param));
+				}
+			}
 
-		return $this->cached_xml_get("/issues/list/{$params['username']}/{$params['repo']}/{$params['state']}");
-	}
-
-	function _getIssuesShow($params = array()) {
-		foreach (array('username', 'repo', 'number') as $param) {
-			if (empty($params[$param])) return false;
+			$query['request'] = implode('/', array(
+				$query['username'],
+				$query['repo'],
+				$query['number'],
+			));
+			unset($query['username'], $query['repo'], $query['number']);
+			return $query;
+		} elseif ($state == 'after') {
+			return $results;
 		}
-		$params['state'] = (empty($params['state'])) ? 'open' : $params['state'];
-
-		return $this->cached_xml_get("/issues/show/{$params['username']}/{$params['repo']}/{$params['number']}");
 	}
 
-	function _getIssuesComments($params = array()) {
-		foreach (array('username', 'repo', 'number') as $param) {
-			if (empty($params[$param])) return false;
+	function _findIssuesLabels($state, $query, $results = array()) {
+		if ($state == 'before') {
+			foreach (array('username', 'repo') as $param) {
+				if (empty($query[$param])) {
+					throw new InvalidArgumentException(sprintf("Missing %s param", $param));
+				}
+			}
+
+			$query['request'] = implode('/', array(
+				$query['username'],
+				$query['repo'],
+			));
+			unset($query['username'], $query['repo']);
+			return $query;
+		} elseif ($state == 'after') {
+			return $results;
 		}
-		$params['state'] = (empty($params['state'])) ? 'open' : $params['state'];
-
-		return $this->cached_xml_get("/issues/comments/{$params['username']}/{$params['repo']}/{$params['number']}");
 	}
 
-	function _getIssuesLabels($params = array()) {
-		if (empty($params['username']) || empty($params['repo'])) return false;
-		$params['state'] = (empty($params['state'])) ? 'open' : $params['state'];
+	function _findIssuesList($state, $query, $results = array()) {
+		if ($state == 'before') {
+			foreach (array('username', 'repo') as $param) {
+				if (empty($query[$param])) {
+					throw new InvalidArgumentException(sprintf("Missing %s param", $param));
+				}
+			}
 
-		return $this->cached_xml_get("/issues/labels/{$params['username']}/{$params['repo']}");
-	}
-
-	function _getReposWatched($username = null) {
-		if (!$username) return false;
-
-		return $this->cached_xml_get("/repos/watched/{$username}");
-	}
-
-	function _getReposSearch($query = null) {
-		if (!$query) return false;
-
-		return $this->cached_xml_get("/repos/search/", str_replace(' ', '+', $query));
-	}
-
-	function _getReposShowSingle($params = array()) {
-		if (empty($params['username']) || empty($params['repo'])) return false;
-
-		return $this->cached_xml_get("/repos/show/{$params['username']}/{$params['repo']}");
-	}
-
-	function _getReposShow($username = null) {
-		if (!$username) return false;
-
-		return $this->cached_xml_get("/repos/show/{$username}");
-	}
-
-	function _getReposShowCollaborators($params = array()) {
-		if (empty($params['username']) || empty($params['repo'])) return false;
-
-		return $this->cached_xml_get("/repos/show/{$params['username']}/{$params['repo']}/collaborators");
-	}
-
-
-	function _getReposShowContributors($params = array()) {
-		if (empty($params['username']) || empty($params['repo'])) return false;
-
-		return $this->cached_xml_get("/repos/show/{$params['username']}/{$params['repo']}/contributors");
-	}
-
-	function _getReposShowNetwork($params = array()) {
-		if (empty($params['username']) || empty($params['repo'])) return false;
-
-		return $this->cached_xml_get("/repos/show/{$params['username']}/{$params['repo']}/network");
-	}
-
-	function _getReposShowLanguages($params = array()) {
-		if (empty($params['username']) || empty($params['repo'])) return false;
-
-		return $this->cached_xml_get("/repos/show/{$params['username']}/{$params['repo']}/languages");
-	}
-
-	function _getReposShowTags($params = array()) {
-		if (empty($params['username']) || empty($params['repo'])) return false;
-
-		return $this->cached_xml_get("/repos/show/{$params['username']}/{$params['repo']}/tags");
-	}
-
-	function _getCommitsList($params = array()) {
-		if (empty($params['username']) || empty($params['repo'])) return false;
-		$params['branch'] = (empty($params['branch'])) ? 'master' : $params['branch'];
-
-		return $this->cached_xml_get("/commits/list/{$params['username']}/{$params['repo']}/{$params['branch']}");
-	}
-
-	function _getCommitsShowPath($params = array()) {
-		foreach (array('username', 'repo', 'path') as $param) {
-			if (empty($params[$param])) return false;
+			$query['state'] = (empty($query['state'])) ? 'open' : $query['state'];
+			$query['request'] = implode('/', array(
+				$query['username'],
+				$query['repo'],
+				$query['state'],
+			));
+			unset($query['username'], $query['repo'], $query['state']);
+			return $query;
+		} elseif ($state == 'after') {
+			return $results;
 		}
-		$params['branch'] = (empty($params['branch'])) ? 'master' : $params['branch'];
-
-		$request = "/commits/list/{$params['username']}/{$params['repo']}/{$params['branch']}/{$params['path']}";
-		return $this->cached_xml_get($request);
 	}
 
-	function _getCommitsShowSha($params = array()) {
-		foreach (array('username', 'repo', 'sha') as $param) {
-			if (empty($params[$param])) return false;
-		}
+	function _findIssuesShow($state, $query, $results = array()) {
+		if ($state == 'before') {
+			foreach (array('username', 'repo', 'number') as $param) {
+				if (empty($query[$param])) {
+					throw new InvalidArgumentException(sprintf("Missing %s param", $param));
+				}
+			}
 
-		return $this->cached_xml_get("/commits/show/{$params['username']}/{$params['repo']}/{$params['sha']}");
+			$query['request'] = implode('/', array(
+				$query['username'],
+				$query['repo'],
+				$query['number'],
+			));
+			unset($query['username'], $query['repo'], $query['number']);
+			return $query;
+		} elseif ($state == 'after') {
+			return $results;
+		}
 	}
 
-	function _getTreeShow($params = array()) {
-		foreach (array('username', 'repo', 'sha') as $param) {
-			if (empty($params[$param])) return false;
+	function _findReposShow($state, $query, $results = array()) {
+		if ($state == 'before') {
+			return $query;
+		} elseif ($state == 'after') {
+			if (isset($results['Repository'])) {
+				if (empty($results['Repository'])) {
+					$results = array();
+				} else {
+					$results = array($results);
+				}
+			}
+			return $results;
 		}
-
-		return $this->cached_xml_get("/tree/show/{$params['username']}/{$params['repo']}/{$params['sha']}");
 	}
 
-	function _getBlobShowPath($params = array()) {
-		foreach (array('username', 'repo', 'sha', 'path') as $param) {
-			if (empty($params[$param])) return false;
-		}
+	function _findReposShowSingle($state, $query, $results = array()) {
+		if ($state == 'before') {
+			foreach (array('username', 'repo') as $param) {
+				if (empty($query[$param])) {
+					throw new InvalidArgumentException(sprintf("Missing %s param", $param));
+				}
+			}
 
-		$request = "/blob/show/{$params['username']}/{$params['repo']}/{$params['sha']}/{$params['path']}";
-		return $this->cached_xml_get($request);
+			$query['request'] = implode('/', array(
+				$query['username'],
+				$query['repo'],
+			));
+			unset($query['username'], $query['repo']);
+			return $query;
+		} elseif ($state == 'after') {
+			return $results;
+		}
 	}
 
-	function _getBlobShowAll($params = array()) {
-		foreach (array('username', 'repo', 'sha') as $param) {
-			if (empty($params[$param])) return false;
-		}
+	function _findReposShowCollaborators($state, $query, $results = array()) {
+		if ($state == 'before') {
+			foreach (array('username', 'repo') as $param) {
+				if (empty($query[$param])) {
+					throw new InvalidArgumentException(sprintf("Missing %s param", $param));
+				}
+			}
 
-		return $this->cached_xml_get("/blob/all/{$params['username']}/{$params['repo']}/{$params['sha']}");
+			$query['request'] = implode('/', array(
+				$query['username'],
+				$query['repo'],
+			));
+			unset($query['username'], $query['repo']);
+			return $query;
+		} elseif ($state == 'after') {
+			return $results;
+		}
 	}
 
-	function _getBlobShow($params = array()) {
-		foreach (array('username', 'repo', 'sha') as $param) {
-			if (empty($params[$param])) return false;
-		}
+	function _findReposShowContributors($state, $query, $results = array()) {
+		if ($state == 'before') {
+			foreach (array('username', 'repo') as $param) {
+				if (empty($query[$param])) {
+					throw new InvalidArgumentException(sprintf("Missing %s param", $param));
+				}
+			}
 
-		return $this->cached_xml_get("/blob/show/{$params['username']}/{$params['repo']}/{$params['sha']}");
+			$query['request'] = implode('/', array(
+				$query['username'],
+				$query['repo'],
+			));
+			unset($query['username'], $query['repo']);
+			return $query;
+		} elseif ($state == 'after') {
+			return $results;
+		}
+	}
+
+	function _findReposShowNetwork($state, $query, $results = array()) {
+		if ($state == 'before') {
+			foreach (array('username', 'repo') as $param) {
+				if (empty($query[$param])) {
+					throw new InvalidArgumentException(sprintf("Missing %s param", $param));
+				}
+			}
+
+			$query['request'] = implode('/', array(
+				$query['username'],
+				$query['repo'],
+			));
+			unset($query['username'], $query['repo']);
+			return $query;
+		} elseif ($state == 'after') {
+			return $results;
+		}
+	}
+
+	function _findReposShowLanguages($state, $query, $results = array()) {
+		if ($state == 'before') {
+			foreach (array('username', 'repo') as $param) {
+				if (empty($query[$param])) {
+					throw new InvalidArgumentException(sprintf("Missing %s param", $param));
+				}
+			}
+
+			$query['request'] = implode('/', array(
+				$query['username'],
+				$query['repo'],
+			));
+			unset($query['username'], $query['repo']);
+			return $query;
+		} elseif ($state == 'after') {
+			return $results;
+		}
+	}
+
+	function _findReposShowTags($state, $query, $results = array()) {
+		if ($state == 'before') {
+			foreach (array('username', 'repo') as $param) {
+				if (empty($query[$param])) {
+					throw new InvalidArgumentException(sprintf("Missing %s param", $param));
+				}
+			}
+
+			$query['request'] = implode('/', array(
+				$query['username'],
+				$query['repo'],
+			));
+			unset($query['username'], $query['repo']);
+			return $query;
+		} elseif ($state == 'after') {
+			return $results;
+		}
+	}
+
+	function _findCommitsList($state, $query, $results = array()) {
+		if ($state == 'before') {
+			foreach (array('username', 'repo') as $param) {
+				if (empty($query[$param])) {
+					throw new InvalidArgumentException(sprintf("Missing %s param", $param));
+				}
+			}
+
+			$params['branch'] = (empty($params['branch'])) ? 'master' : $params['branch'];
+
+			$query['request'] = implode('/', array(
+				$query['username'],
+				$query['repo'],
+				$query['branch'],
+			));
+			unset($query['username'], $query['repo'], $query['branch']);
+			return $query;
+		} elseif ($state == 'after') {
+			return $results;
+		}
+	}
+
+	function _findCommitsShowPath($state, $query, $results = array()) {
+		if ($state == 'before') {
+			foreach (array('username', 'repo', 'path') as $param) {
+				if (empty($query[$param])) {
+					throw new InvalidArgumentException(sprintf("Missing %s param", $param));
+				}
+			}
+
+			$params['branch'] = (empty($params['branch'])) ? 'master' : $params['branch'];
+
+			$query['request'] = implode('/', array(
+				$query['username'],
+				$query['repo'],
+				$query['branch'],
+				$query['path'],
+			));
+			unset($query['username'], $query['repo'], $query['branch'], $query['path']);
+			return $query;
+		} elseif ($state == 'after') {
+			return $results;
+		}
+	}
+
+	function _findCommitsShowSha($state, $query, $results = array()) {
+		if ($state == 'before') {
+			foreach (array('username', 'repo', 'sha') as $param) {
+				if (empty($query[$param])) {
+					throw new InvalidArgumentException(sprintf("Missing %s param", $param));
+				}
+			}
+
+			$query['request'] = implode('/', array(
+				$query['username'],
+				$query['repo'],
+				$query['sha'],
+			));
+			unset($query['username'], $query['repo'], $query['sha']);
+			return $query;
+		} elseif ($state == 'after') {
+			return $results;
+		}
+	}
+
+	function _findTreeShow($state, $query, $results = array()) {
+		if ($state == 'before') {
+			foreach (array('username', 'repo', 'sha') as $param) {
+				if (empty($query[$param])) {
+					throw new InvalidArgumentException(sprintf("Missing %s param", $param));
+				}
+			}
+
+			$query['request'] = implode('/', array(
+				$query['username'],
+				$query['repo'],
+				$query['sha'],
+			));
+			unset($query['username'], $query['repo'], $query['sha']);
+			return $query;
+		} elseif ($state == 'after') {
+			return $results;
+		}
+	}
+
+	function _findBlobShow($state, $query, $results = array()) {
+		if ($state == 'before') {
+			foreach (array('username', 'repo', 'sha') as $param) {
+				if (empty($query[$param])) {
+					throw new InvalidArgumentException(sprintf("Missing %s param", $param));
+				}
+			}
+
+			$query['request'] = implode('/', array(
+				$query['username'],
+				$query['repo'],
+				$query['sha'],
+			));
+			unset($query['username'], $query['repo'], $query['sha']);
+			return $query;
+		} elseif ($state == 'after') {
+			return $results;
+		}
+	}
+
+	function _findBlobShowAll($state, $query, $results = array()) {
+		if ($state == 'before') {
+			foreach (array('username', 'repo', 'sha', 'path') as $param) {
+				if (empty($query[$param])) {
+					throw new InvalidArgumentException(sprintf("Missing %s param", $param));
+				}
+			}
+
+			$query['request'] = implode('/', array(
+				$query['username'],
+				$query['repo'],
+				$query['sha'],
+				$query['path'],
+			));
+			unset($query['username'], $query['repo'], $query['sha'], $query['path']);
+			return $query;
+		} elseif ($state == 'after') {
+			return $results;
+		}
+	}
+
+	function _findBlobShowPath($state, $query, $results = array()) {
+		if ($state == 'before') {
+			foreach (array('username', 'repo', 'sha', 'path') as $param) {
+				if (empty($query[$param])) {
+					throw new InvalidArgumentException(sprintf("Missing %s param", $param));
+				}
+			}
+
+			$query['request'] = implode('/', array(
+				$query['username'],
+				$query['repo'],
+				$query['sha'],
+				$query['path'],
+			));
+			unset($query['username'], $query['repo'], $query['sha'], $query['path']);
+			return $query;
+		} elseif ($state == 'after') {
+			return $results;
+		}
+	}
+
+	function get($method) {
+		$params = func_get_args();
+		array_shift($params);
+		$method ='_get' . ucfirst($method);
+		return call_user_func_array(array(&$this, $method), $params);
 	}
 
 	function _getNewPackages($username = null) {
@@ -195,7 +433,7 @@ class Github extends AppModel {
 		ClassRegistry::init('Maintainer');
 		$Maintainer = &new Maintainer;
 		$existingUser = $Maintainer->find('view', $username);
-		$repoList = $this->get('repos_show', $username);
+		$repoList = $this->find('reposShow', $username);
 
 		$repos = $Maintainer->Package->find('list', array(
 			'conditions' => array(
@@ -216,7 +454,7 @@ class Github extends AppModel {
 	}
 
 	function _getUnlisted($username = 'josegonzalez') {
-		$following = $this->get('users_show_following', 'josegonzalez');
+		$following = $this->find('usersShowFollowing', 'josegonzalez');
 		ClassRegistry::init('Maintainer');
 		$maintainer = &new Maintainer;
 		$maintainers = $maintainer->find('list', array('fields' => array('username')));
@@ -270,22 +508,17 @@ class Github extends AppModel {
 		if (!$maintainers) return false;
 
 		$Package = ClassRegistry::init('Package');
-
 		foreach ($maintainers as $i => $maintainer) {
-			$repos = $this->get('repos_show', $maintainer['Maintainer']['username']);
-			if (!empty($repos['Repositories']['Repository'])) {
+			$repos = $this->find('reposShow', $maintainer['Maintainer']['username']);
+			$maintainers[$i]['Repository'] = array();
+			if (!empty($repos)) {
 				$packages = $Package->find('listformaintainer', $maintainer['Maintainer']['id']);
-				if (!empty($repos['Repositories']['Repository']['name'])) {
-					$repos['Repositories']['Repository'] = array($repos['Repositories']['Repository']);
-				}
-				foreach ($repos['Repositories']['Repository'] as $j => $repo) {
-					if (in_array($repo['name'], $packages) || $repo['fork']['value'] == 'true') {
-						unset($repos['Repositories']['Repository'][$j]);
+
+				foreach ($repos as $j => $repo) {
+					if (!in_array($repo['Repository']['name'], $packages) && $repo['Repository']['fork'] != true) {
+						$maintainers[$i]['Repository'][] = $repo['Repository'];
 					}
 				}
-				$maintainers[$i]['Repositories'] = $repos['Repositories']['Repository'];
-			} else {
-				$maintainers[$i]['Repositories'] = array();
 			}
 		}
 

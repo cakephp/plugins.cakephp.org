@@ -10,12 +10,12 @@ class GithubController extends AppController {
 
 	function index() {
 		$maintainers = $this->paginate('Maintainer');
-		$maintainers = $this->Github->find('related_repositories', $maintainers);
+		$maintainers = $this->Github->get('relatedRepositories', $maintainers);
 		$this->set(compact('maintainers'));
 	}
 
 	function view($username = null) {
-		$user = $this->Github->find('user_show', $username);
+		$user = $this->Github->find('userShow', $username);
 		if (!$user) {
 			$this->Session->setFlash(sprintf(__('Invalid %s', true), 'user'));
 			$this->redirect(array('action' => 'index'));
@@ -27,12 +27,12 @@ class GithubController extends AppController {
 			$this->flashAndRedirect($e->getMessage());
 		}
 
-		$packages = $this->Github->find('new_packages', $username);
+		$packages = $this->Github->get('newPackages', $username);
 		$this->set(compact('existing', 'packages', 'user'));
 	}
 
 	function add($username = null) {
-		$user = $this->Github->find('user_show', $username);
+		$user = $this->Github->find('userShow', $username);
 		if (!$user) {
 			$this->Session->setFlash(sprintf(__('Invalid %s', true), 'user'));
 			$this->redirect(array('action' => 'new', $username));
@@ -60,7 +60,7 @@ class GithubController extends AppController {
 	}
 
 	function github($username = null) {
-		$user = $this->Github->find('user_show', $username);
+		$user = $this->Github->find('userShow', $username);
 		if (!$user) {
 			$this->Session->setFlash(sprintf(__('Invalid %s', true), 'user'));
 			$this->redirect(array('action' => 'index'));

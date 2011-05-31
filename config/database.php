@@ -84,6 +84,14 @@ class DATABASE_CONFIG {
 		'encoding'      => 'utf8',
 	);
 
+	var $github = array(
+		'datasource'    => 'github',
+		'host'          => 'github.com',
+		'login'         => null,
+		'password'      => null,
+		'database'      => 'api/v2/json',
+	);
+
 	var $test = array(
 		'driver'        => 'mysql',
 		'persistent'    => false,

@@ -2,7 +2,7 @@
 <dl><?php $i = 0; $class = ' class="altrow"';?>
 	<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Gravatar ID'); ?></dt>
 	<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-		<?php echo $user['User']['gravatar-id']; ?>
+		<?php echo $user['User']['gravatar_id']; ?>
 		&nbsp;
 	</dd>
 	<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Login'); ?></dt>

@@ -9,7 +9,7 @@ class NewMaintainerJob {
 
 	function perform() {
 		$this->loadModel('Github');
-		$user = $this->Github->find('user_show', $this->username);
+		$user = $this->Github->find('userShow', $this->username);
 
 		$this->loadModel('Maintainer');
 		try {
@@ -19,7 +19,7 @@ class NewMaintainerJob {
 
 		return $this->Maintainer->save(array('Maintainer' => array(
 				'username' => $user['User']['login'],
-				'gravatar_id' => $user['User']['gravatar-id'],
+				'gravatar_id' => $user['User']['gravatar_id'],
 				'name' => (isset($user['User']['name'])) ? $user['User']['name'] : '',
 				'company' => (isset($user['User']['company'])) ? $user['User']['company'] : '',
 				'url' => (isset($user['User']['blog'])) ? $user['User']['blog'] : '',
