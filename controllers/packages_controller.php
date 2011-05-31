@@ -13,7 +13,10 @@ class PackagesController extends AppController {
 
     function latest() {
         $this->paginate = array('latest', 'is_paginate' => true);
-        $this->set('packages', $this->paginate());
+        $this->set(array(
+            'h2_for_layout' => 'Latest Packages',
+            'packages' => $this->paginate()
+        ));
         $this->render('index');
     }
 
