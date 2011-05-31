@@ -47,20 +47,20 @@
 <div class="grid_6 omega">
 	<div class="meta-package border-radius">
 		<h3><?php  __('New Packages');?></h3>
-		<?php if (!empty($packages)) : ?>
+		<?php if (!empty($repositories)) : ?>
 			<table cellpadding="0" cellspacing="0">
 			<tr>
 					<th><?php __('Title'); ?></th>
 					<th class="actions"><?php __('Actions');?></th>
 			</tr>
-				<?php $i = 0; foreach ($packages as $package): ?>
+				<?php $i = 0; foreach ($repositories as $repository): ?>
 				<tr<?php echo ($i++ % 2 == 0) ? ' class="altrow"' : '';?>>
 					<td>
-						<?php echo $this->Html->link($package['name'], "http://github.com/{$user['User']['login']}/{$package['name']}"); ?>
+						<?php echo $this->Html->link($repository['Repository']['name'], "http://github.com/{$user['User']['login']}/{$repository['Repository']['name']}"); ?>
 					</td>
 					<td class="actions">
 						<?php echo $this->Clearance->link(__('Add', true), array(
-							'action' => 'add_package', $user['User']['login'], $package['name'])); ?>
+							'action' => 'add_package', $user['User']['login'], $repository['Repository']['name'])); ?>
 					</td>
 				</tr>
 				<?php endforeach; ?>

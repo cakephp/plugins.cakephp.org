@@ -424,30 +424,28 @@ class Github extends AppModel {
 		return call_user_func_array(array(&$this, $method), $params);
 	}
 
-	function _getNewPackages($username = null) {
-		if (!$username) return false;
-		ClassRegistry::init('Maintainer');
-		$Maintainer = &new Maintainer;
-		$existingUser = $Maintainer->find('view', $username);
-		$repoList = $this->find('reposShow', $username);
+    function _getNewRepositories($username = null) {
+        if (!$username) return false;
 
-		$repos = $Maintainer->Package->find('list', array(
-			'conditions' => array(
-				'Package.maintainer_id' => $existingUser['Maintainer']['id'])));
-		if (isset($repoList['Repositories']['Repository']['description'])) {
-			if (in_array($repoList['Repositories']['Repository']['name'], $repos)) return false;
-			if ($repoList['Repositories']['Repository']['fork']['value'] == 'true') return false;
-			return array('0' => $repoList['Repositories']['Repository']);
-		} else {
-		    if (!isset($repoList['Repositories']['Repository'])) return false;
-			foreach ($repoList['Repositories']['Repository'] as $key => $package) {
-				if (in_array($package['name'], $repos) || ($package['fork']['value'] == 'true')) {
-					unset($repoList['Repositories']['Repository'][$key]);
-				}
-			}
-			return $repoList['Repositories']['Repository'];
-		}
-	}
+        $repositories = $this->find('reposShow', $username);
+        if (empty($repositories)) {
+            return false;
+        }
+
+        $Maintainer = ClassRegistry::init('Maintainer');
+        $existingUser = $Maintainer->find('view', $username);
+        $packages = $Maintainer->Package->find('list', array('conditions' => array(
+            'Package.maintainer_id' => $existingUser['Maintainer']['id'])
+        ));
+
+        $results = array();
+        foreach ($repositories as $key => $repository) {
+            if (!in_array($repository['Repository']['name'], $packages) && ($repository['Repository']['fork'] != 1)) {
+                $results[] = $repository;
+            }
+        }
+        return $results;
+    }
 
 	function _getUnlisted($username = 'josegonzalez') {
 		$following = $this->find('usersShowFollowing', 'josegonzalez');

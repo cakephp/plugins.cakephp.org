@@ -16,22 +16,22 @@ class GithubController extends AppController {
 		$this->set(compact('maintainers'));
 	}
 
-	function view($username = null) {
-		$user = $this->Github->find('userShow', $username);
-		if (!$user) {
-			$this->Session->setFlash(sprintf(__('Invalid %s', true), 'user'));
-			$this->redirect(array('action' => 'index'));
-		}
+    function view($username = null) {
+        $user = $this->Github->find('userShow', $username);
+        if (!$user) {
+            $this->Session->setFlash(sprintf(__('Invalid %s', true), 'user'));
+            $this->redirect(array('action' => 'index'));
+        }
 
-		try {
-			$existing = $this->Maintainer->find('existing', $username);
-		} catch (Exception $e) {
-			$this->__flashAndRedirect($e->getMessage());
-		}
+        try {
+            $existing = $this->Maintainer->find('existing', $username);
+        } catch (Exception $e) {
+            $this->__flashAndRedirect($e->getMessage());
+        }
 
-		$packages = $this->Github->get('newPackages', $username);
-		$this->set(compact('existing', 'packages', 'user'));
-	}
+        $repositories = $this->Github->get('newRepositories', $username);
+        $this->set(compact('existing', 'repositories', 'user'));
+    }
 
 	function add($username = null) {
 		$user = $this->Github->find('userShow', $username);
