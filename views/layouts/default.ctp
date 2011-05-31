@@ -16,6 +16,7 @@
       $this->AssetCompress->css('html5/10_maintainer.css');
       $this->AssetCompress->css('html5/11_indexes.css');
       $this->AssetCompress->css('html5/12_pages.css');
+      $this->AssetCompress->css('html5/13_notices.css');
       echo $this->AssetCompress->includeAssets();
     ?>
     <!--[if lt IE 9]>
@@ -49,7 +50,7 @@
     <?php if ($this->params['action'] == 'home') echo $this->element('navigation'); ?>
 
     <div id="main" class="<?php echo $this->params['controller'] . '_' . $this->params['action']; ?>">
-      <?php if ($this->Session->check('flash')) : ?>
+      <?php if ($this->Session->check('Message.flash')) : ?>
         <p><?php echo $this->Session->flash(); ?></p>
       <?php endif; ?>
       <?php echo $content_for_layout; ?>

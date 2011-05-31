@@ -1,0 +1,7 @@
+/** Notices and Errors **/
+div.message { clear: both; color: #fff; font-size: 140%; font-weight: bold; margin: 0 0 1em 0; background: #c73e14; padding: 5px; }
+div.error-message { clear: both; color: #fff; font-weight: bold; background: #c73e14; }
+p.error { background-color: #e32; color: #fff; font-size: 120%; line-height: 140%; padding: 0.8em; margin: 1em 0; }
+p.error em { color: #000; font-weight: normal; line-height: 140%; }
+.notice { background: #ffcc00; color: #000; display: block; padding: 0.8em; margin: 1em 0; text-align: center; }
+.success { background: green; color: #fff; }
