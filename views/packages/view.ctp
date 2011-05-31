@@ -1,9 +1,8 @@
-<?php $this->Html->for_layout('<span class="package_name">' . $package['Package']['name'] . '</span>', 'h2'); ?>
-<?php $this->Html->for_layout("by " . $this->Resource->maintainer($package['Maintainer']['username'], $package['Maintainer']['username']), 'h3'); ?>
-<?php $this->Html->for_layout(sprintf("%s by %s", 
+<?php $this->Html->for_layout('h2', '<span class="package_name">' . $package['Package']['name'] . '</span>'); ?>
+<?php $this->Html->for_layout('h3', "by " . $this->Resource->maintainer($package['Maintainer']['username'], $package['Maintainer']['username'])); ?>
+<?php $this->Html->for_layout('title', sprintf("%s by %s", 
     $package['Package']['name'],
-    ($package['Maintainer']['username']) ? $package['Maintainer']['username'] : $package['Maintainer']['username']),    
-    'title'); ?>
+    ($package['Maintainer']['username']) ? $package['Maintainer']['username'] : $package['Maintainer']['username'])); ?>
 <h4>
 	<?php
 		echo $this->Clearance->link(sprintf(__('Edit %s', true), __('Package', true)), array(

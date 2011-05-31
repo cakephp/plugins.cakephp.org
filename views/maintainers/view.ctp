@@ -1,5 +1,5 @@
-<?php $this->Html->for_layout($maintainer['Maintainer']['username'], 'h2'); ?>
-<?php $this->Html->for_layout($maintainer['Maintainer']['name'], 'h3'); ?>
+<?php $this->Html->for_layout('h2', $maintainer['Maintainer']['username']); ?>
+<?php $this->Html->for_layout('h3', $maintainer['Maintainer']['name']); ?>
 <div class="meta-data">
 	<div class="meta-maintainer border-radius">
 		<?php echo $this->Html->image('https://secure.gravatar.com/avatar/' . $maintainer['Maintainer']['gravatar_id'], array('alt' => sprintf('Gravatar for %s', $maintainer['Maintainer']['username']), 'class' => 'gravatar')); ?>

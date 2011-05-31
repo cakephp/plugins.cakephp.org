@@ -1,15 +1,14 @@
 <?php
 App::import('Vendor', 'UrlCache.url_cache_app_helper');
 class AppHelper extends UrlCacheAppHelper {
+
 	var $view = null;
 
-	function for_layout($content, $name) {
-		ob_start();
+	function for_layout($name, $content) {
 		if (!$this->view) {
 			$this->view = ClassRegistry::getObject('view');
 		}
-		echo $content;
-		$this->view->set("{$name}_for_layout", ob_get_clean());
+		$this->view->set("{$name}_for_layout", $content);
 	}
 
 	function h2($contents, $alternate = null) {
@@ -18,7 +17,7 @@ class AppHelper extends UrlCacheAppHelper {
 			$contents = $alternate;
 		}
 
-		$this->for_layout($contents, 'title');
-		$this->for_layout("<h2>{$contents}</h2>", 'h2');
+		$this->for_layout('title', $contents);
+		$this->for_layout('h2', "<h2>{$contents}</h2>");
 	}
 }

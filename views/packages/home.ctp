@@ -1,5 +1,5 @@
-<?php $this->Html->for_layout('cakephp code for you to download', 'title'); ?>
-<?php $this->Html->for_layout('cakephp code for you to download', 'h2'); ?>
+<?php $this->Html->for_layout('title', 'cakephp code for you to download'); ?>
+<?php $this->Html->for_layout('h2', 'cakephp code for you to download'); ?>
 <?php $types = array(
 		'latest' => array(__('Latest Packages', true), true),
 		'random' => array(__('Random Packages', true), false),
