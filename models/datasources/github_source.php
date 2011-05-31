@@ -1,5 +1,7 @@
 <?php
-App::import('Core', 'HttpSocket');
+if (!class_exists('HttpSocket')) {
+	App::import('Core', 'HttpSocket');
+}
 class GithubSource extends DataSource {
 
 	var $_schema = array(
