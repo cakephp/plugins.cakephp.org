@@ -353,7 +353,7 @@ class Package extends AppModel {
 
 	function updateAttributes($package) {
 		if (!$this->Github) $this->Github = ClassRegistry::init('Github');
-		$repo = $this->Github->find('repos_show_single', array(
+		$repo = $this->Github->find('reposShowSingle', array(
 			'username' => $package['Maintainer']['username'],
 			'repo' => $package['Package']['name']
 		));
@@ -379,7 +379,7 @@ class Package extends AppModel {
 
 		// Detect total contributors
 		$contribs = null;
-		$contributors = $this->Github->find('repos_show_contributors', array(
+		$contributors = $this->Github->find('reposShowContributors', array(
 			'username' => $package['Maintainer']['username'], 'repo' => $package['Package']['name']
 		));
 		if (!empty($contributors)) {
@@ -391,7 +391,7 @@ class Package extends AppModel {
 		}
 
 		$collabs = null;
-		$collaborators = $this->Github->find('repos_show_collaborators', array(
+		$collaborators = $this->Github->find('reposShowCollaborators', array(
 			'username' => $package['Maintainer']['username'], 'repo' => $package['Package']['name']
 		));
 		if (!empty($collaborators)) {

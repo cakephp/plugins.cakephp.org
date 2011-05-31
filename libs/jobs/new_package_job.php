@@ -58,7 +58,7 @@ class NewPackageJob extends CakeJob {
 	}
 
 	function getRepo() {
- 		return $this->Github->find('repos_show_single', array(
+ 		return $this->Github->find('reposShowSingle', array(
 			'username' => $this->username,
 			'repo' => $this->name
 		));
@@ -92,7 +92,7 @@ class NewPackageJob extends CakeJob {
 
 	function getContributors($repo) {
 		$contribs = 1;
-		$contributors = $this->Github->find('repos_show_contributors', array(
+		$contributors = $this->Github->find('reposShowContributors', array(
 			'username' => $this->username,
 			'repo' => $this->name
 		));
@@ -106,7 +106,7 @@ class NewPackageJob extends CakeJob {
 
 	function getCollaborators($repo) {
 		$collabs = 1;
-		$collaborators = $this->Github->find('repos_show_collaborators', array(
+		$collaborators = $this->Github->find('reposShowCollaborators', array(
 			'username' => $this->username,
 			'repo' => $this->name
 		));
