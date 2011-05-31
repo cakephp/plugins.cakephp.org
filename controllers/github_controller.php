@@ -9,8 +9,10 @@ class GithubController extends AppController {
 	}
 
 	function index() {
-		$maintainers = $this->paginate('Maintainer');
-		$maintainers = $this->Github->get('relatedRepositories', $maintainers);
+		$maintainers = $this->Github->get(
+			'relatedRepositories',
+			$this->paginate('Maintainer')
+		);
 		$this->set(compact('maintainers'));
 	}
 
