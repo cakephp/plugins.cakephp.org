@@ -1,5 +1,4 @@
 <?php
-App::import('Core', 'Xml');
 class Github extends AppModel {
 	var $name = 'Github';
 	var $useTable = false;
