@@ -4,12 +4,9 @@ class Github extends AppModel {
 	var $name = 'Github';
 	var $useTable = false;
 	var $useDbConfig = 'github';
-	var $socket = null;
-	var $base_uri = null;
 
 	function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
-		$this->base_uri = "https://github.com/api/v2/xml";
 
 		$this->_findMethods['blobShow'] = true;
 		$this->_findMethods['blobShowAll'] = true;
@@ -465,31 +462,6 @@ class Github extends AppModel {
 			}
 		}
 		return $following['Users']['User'];
-	}
-
-	function http_socket() {
-		if (!$this->socket) {
-			App::import('Core', 'HttpSocket');
-			$this->socket = new HttpSocket();
-		}
-	}
-
-	function cached_xml_get($request, $var = null) {
-		$md5_request = md5(serialize(array($this->base_uri . $request, $var)));
-		$response = array();
-
-		Cache::set(array('duration' => '+2 days'));
-		if (($response = Cache::read("Github.{$md5_request}")) === false) {
-			sleep(1);
-			$this->http_socket();
-			$xml_response = new Xml($this->socket->get($this->base_uri . $request . $var));
-			$response = Set::reverse($xml_response);
-			if (!empty($response['Html'])) return false;
-			if (!empty($response['Error'])) return $response;
-			Cache::set(array('duration' => '+2 days'));
-			Cache::write("Github.{$md5_request}", $response);
-		}
-		return $response;
 	}
 
 	function savePackage($username, $name) {
