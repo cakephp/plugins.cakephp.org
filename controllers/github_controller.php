@@ -26,7 +26,7 @@ class GithubController extends AppController {
 		try {
 			$existing = $this->Maintainer->find('existing', $username);
 		} catch (Exception $e) {
-			$this->flashAndRedirect($e->getMessage());
+			$this->__flashAndRedirect($e->getMessage());
 		}
 
 		$packages = $this->Github->get('newPackages', $username);

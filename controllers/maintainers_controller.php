@@ -14,7 +14,7 @@ class MaintainersController extends AppController {
 		try {
 			$this->set('maintainer', $maintainer = $this->Maintainer->find('view', $username));
 		} catch (Exception $e) {
-			$this->flashAndRedirect($e->getMessage());
+			$this->____flashAndRedirect($e->getMessage());
 		}
 	}
 
@@ -32,11 +32,11 @@ class MaintainersController extends AppController {
 
 	function edit($id = null) {
 		if (!$id && empty($this->data)) {
-			$this->flashAndRedirect(__('Invalid maintainer', true));
+			$this->__flashAndRedirect(__('Invalid maintainer', true));
 		}
 		if (!empty($this->data)) {
 			if ($this->Maintainer->save($this->data)) {
-				$this->flashAndRedirect(__('The maintainer has been saved', true));
+				$this->__flashAndRedirect(__('The maintainer has been saved', true));
 			} else {
 				$this->Session->setFlash(sprintf(__('The %s could not be saved. Please, try again.', true), 'maintainer'));
 			}
@@ -45,14 +45,14 @@ class MaintainersController extends AppController {
 			try {
 				$this->data = $this->Maintainer->find('edit', $id);
 			} catch (Exception $e) {
-				$this->flashAndRedirect($e->getMessage());
+				$this->__flashAndRedirect($e->getMessage());
 			}
-			$this->redirectUnless($this->data);
+			$this->__redirectUnless($this->data);
 		}
 	}
 
 	function delete($id = null) {
-		$this->redirectUnless($id);
+		$this->__redirectUnless($id);
 
 		if ($this->Maintainer->delete($id)) {
 			$this->Session->setFlash(sprintf(__('%s deleted', true), 'Maintainer'));

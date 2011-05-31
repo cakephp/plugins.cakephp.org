@@ -27,13 +27,13 @@ class AppController extends Controller {
 	);
 	var $redirectTo = array('action' => 'index');
 
-	function flashAndRedirect($message = null, $redirectTo = array()) {
+	function __flashAndRedirect($message = null, $redirectTo = array()) {
 		if (empty($message)) $message = __('Access Error', true);
 		$this->Session->setFlash($message);
 		$this->redirect(array_merge($this->redirectTo, $redirectTo));
 	}
 
-	function redirectUnless($data = null, $message = null) {
+	function __redirectUnless($data = null, $message = null) {
 		if (empty($data)) {
 			$redirectTo = array();
 			$status = null;

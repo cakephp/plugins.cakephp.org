@@ -51,7 +51,7 @@ class UsersController extends AppController {
 				}
 
 			} catch (Exception $e) {
-				$this->flashAndRedirect($e->getMessage(), array('controller' => 'users', 'action' => 'forgot_password'));
+				$this->__flashAndRedirect($e->getMessage(), array('controller' => 'users', 'action' => 'forgot_password'));
 			}
 		}
 	}

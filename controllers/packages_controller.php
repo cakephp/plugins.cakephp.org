@@ -66,17 +66,17 @@ class PackagesController extends AppController {
                 'package' => $package,
             )));
         } catch (Exception $e) {
-            $this->flashAndRedirect($e->getMessage());
+            $this->__flashAndRedirect($e->getMessage());
         }
     }
 
     function edit($id = null) {
         if (!$id && empty($this->data)) {
-            $this->flashAndRedirect(__('Invalid package', true));
+            $this->__flashAndRedirect(__('Invalid package', true));
         }
         if (!empty($this->data)) {
             if ($this->Package->save($this->data)) {
-                $this->flashAndRedirect(__('The package has been saved', true));
+                $this->__flashAndRedirect(__('The package has been saved', true));
             } else {
                 $this->Session->setFlash(__('The package could not be saved. Please, try again.', true));
             }
@@ -86,16 +86,16 @@ class PackagesController extends AppController {
             try {
                 $this->data = $this->Package->find('edit', $id);
             } catch (Exception $e) {
-                $this->flashAndRedirect($e->getMessage());
+                $this->__flashAndRedirect($e->getMessage());
             }
-            $this->redirectUnless($this->data);
+            $this->__redirectUnless($this->data);
         }
 
         $this->set('maintainers', $this->Package->Maintainer->find('list'));
     }
 
     function delete($id = null) {
-        $this->redirectUnless($id);
+        $this->__redirectUnless($id);
 
         if ($this->Package->delete($id)) {
             $this->Session->setFlash(sprintf(__('%s deleted', true), 'Package'));
