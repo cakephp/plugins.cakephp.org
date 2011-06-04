@@ -248,6 +248,16 @@ class Package extends AppModel {
         }
     }
 
+    function afterSave($created) {
+        if ($created === true) {
+            $id = $this->getLastInsertID();
+            $package = $this->setupRepository($id);
+            if ($package) {
+                $this->characterize($package);
+            }
+        }
+    }
+
     function setupRepository($id = null) {
         if (!$id) return false;
 
@@ -327,16 +337,6 @@ class Package extends AppModel {
         $this->delete($id);
     }
 
-    function afterSave($created) {
-        if ($created === true) {
-            $id = $this->getLastInsertID();
-            $package = $this->setupRepository($id);
-            if ($package) {
-                $this->characterize($package);
-            }
-        }
-    }
-
     function getSearchableData($data) {
         $searchableData = array();
         foreach ($data as $modelName => $modelData) {
@@ -357,7 +357,10 @@ class Package extends AppModel {
     }
 
     function updateAttributes($package) {
-        if (!$this->Github) $this->Github = ClassRegistry::init('Github');
+        if (!$this->Github) {
+            $this->Github = ClassRegistry::init('Github');
+        }
+
         $repo = $this->Github->find('reposShowSingle', array(
             'username' => $package['Maintainer']['username'],
             'repo' => $package['Package']['name']
@@ -366,9 +369,9 @@ class Package extends AppModel {
 
         // Detect homepage
         $homepage = (string) $repo['Repository']['url'];
-        if (!empty($repo['Repository']['homepage']['value'])) {
+        if (!empty($repo['Repository']['homepage'])) {
             if (is_array($repo['Repository']['homepage'])) {
-                $homepage = $repo['Repository']['homepage']['value'];
+                $homepage = $repo['Repository']['homepage'];
             } else {
                 $homepage = $repo['Repository']['homepage'];
             }
@@ -378,33 +381,26 @@ class Package extends AppModel {
 
         // Detect issues
         $issues = null;
-        if ($repo['Repository']['has-issues']['value'] == 'true') {
-            $issues = $repo['Repository']['open-issues']['value'];
+        if ($repo['Repository']['has_issues']) {
+            $issues = $repo['Repository']['open_issues'];
         }
 
         // Detect total contributors
-        $contribs = null;
+        $contribs = 1;
         $contributors = $this->Github->find('reposShowContributors', array(
             'username' => $package['Maintainer']['username'], 'repo' => $package['Package']['name']
         ));
         if (!empty($contributors)) {
-            if (!empty($contributors['Contributors']['Contributor'][0])) {
-                $contribs = count($contributors['Contributors']['Contributor']);
-            } else {
-                $contribs = 1;
-            }
+            $contribs = count($contributors);
         }
 
-        $collabs = null;
+        $collabs = 1;
         $collaborators = $this->Github->find('reposShowCollaborators', array(
             'username' => $package['Maintainer']['username'], 'repo' => $package['Package']['name']
         ));
+
         if (!empty($collaborators)) {
-            if (!empty($collaborators['Collaborators']['Collaborator']) && is_array($collaborators['Collaborators']['Collaborator'])) {
-                $collabs = count($collaborators['Collaborators']['Collaborator']);
-            } else {
-                $collabs = 1;
-            }
+            $collabs = count($collaborators);
         }
 
         if (isset($repo['Repository']['description'])) {
@@ -424,10 +420,10 @@ class Package extends AppModel {
             $package['Package']['open_issues'] = $issues;
         }
 
-        $package['Package']['forks'] = $repo['Repository']['forks']['value'];
-        $package['Package']['watchers'] = $repo['Repository']['watchers']['value'];
-        $package['Package']['created_at'] = substr(str_replace('T', ' ', $repo['Repository']['created-at']['value']), 0, 20);
-        $package['Package']['last_pushed_at'] = substr(str_replace('T', ' ', $repo['Repository']['pushed-at']['value']), 0, 20);
+        $package['Package']['forks'] = $repo['Repository']['forks'];
+        $package['Package']['watchers'] = $repo['Repository']['watchers'];
+        $package['Package']['created_at'] = substr(str_replace('T', ' ', $repo['Repository']['created_at']), 0, 20);
+        $package['Package']['last_pushed_at'] = substr(str_replace('T', ' ', $repo['Repository']['pushed_at']), 0, 20);
 
         $this->create();
         return $this->save($package);

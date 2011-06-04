@@ -92,7 +92,6 @@ class PackagesShell extends Shell {
 		));
 
 		$this->Package->Behaviors->detach('Searchable');
-		$this->Package->Github = ClassRegistry::init('Github');
 		$count = 0;
 		foreach ($packages as $package) {
 			sleep(1);
