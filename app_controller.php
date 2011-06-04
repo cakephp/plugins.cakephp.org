@@ -58,6 +58,14 @@ class AppController extends Controller {
     var $redirectTo = array('action' => 'index');
 
 /**
+ * Used to set a max for the pagination limit
+ *
+ * @var int
+ */
+    var $paginationMaxLimit = 25;
+
+
+/**
  * Object constructor - Adds the Debugkit panel if in development mode
  *
  * @return void
@@ -68,6 +76,25 @@ class AppController extends Controller {
         }
 
         parent::__construct();
+    }
+
+/**
+ * Called before the controller action.
+ *
+ * Used to set a max for the pagination limit
+ *
+ * @access public
+ */
+    public function beforeFilter() {
+        parent::beforeFilter();
+
+        // Enforces an absolute limit of 25
+        if (isset($this->passedArgs['limit'])) {
+            $this->passedArgs['limit'] = min(
+                $this->paginationMaxLimit,
+                $this->passedArgs['limit']
+            );
+        }
     }
 
 /**
