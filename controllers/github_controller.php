@@ -57,10 +57,7 @@ class GithubController extends AppController {
  */
     function view($username = null) {
         $user = $this->Github->find('userShow', $username);
-        if (!$user) {
-            $this->Session->setFlash(__('Invalid user', true));
-            $this->redirect(array('action' => 'index'));
-        }
+        $this->_redirectUnless($user, __('Invalid user', true));
 
         try {
             $existing = $this->Maintainer->find('existing', $username);
@@ -79,7 +76,6 @@ class GithubController extends AppController {
  */
     function add($username = null) {
         $user = $this->Github->find('userShow', $username);
-
         $this->_redirectUnless($user, __('Invalid user', true));
 
         if ($this->Github->saveUser($username)) {
@@ -101,7 +97,7 @@ class GithubController extends AppController {
  * @param string $package Name of repository belonging to user
  */
     function add_package($username = null, $package = null) {
-        $this->_redirectUnless($user, __('Invalid user', true));
+        $this->_redirectUnless($username, __('Invalid user', true));
         $this->_redirectUnless($package, __('Invalid package', true));
 
         if ($this->Github->savePackage($username, $package)) {
@@ -122,7 +118,7 @@ class GithubController extends AppController {
  */
     function github($username = null) {
         $user = $this->Github->find('userShow', $username);
-        $this->_redirectUnless($user, __('Invalid user', true));
+        $this->_redirectUnless($username, __('Invalid user', true));
         $this->set(compact('user'));
     }
 
