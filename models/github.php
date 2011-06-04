@@ -494,7 +494,7 @@ class Github extends AppModel {
         if (!$username) return false;
 
         App::import('Lib', 'NewMaintainerJob');
-        return $this->enqueue(new NewMaintainerJob($username, $name));
+        return $this->enqueue(new NewMaintainerJob($username));
     }
 
     function _getRelatedRepositories($maintainers = array()) {

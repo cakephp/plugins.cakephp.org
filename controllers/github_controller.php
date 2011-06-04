@@ -74,13 +74,12 @@ class GithubController extends AppController {
  *
  * @param string $username Github username
  */
-    function add($username = null) {
+    function add_maintainer($username = null) {
         $user = $this->Github->find('userShow', $username);
         $this->_redirectUnless($user, __('Invalid user', true));
 
         if ($this->Github->saveUser($username)) {
-            $this->Session->setFlash(sprintf(__('%s saved!', true), $username));
-            $this->redirect(array('action' => 'view', $username));
+            $this->_flashAndRedirect(sprintf(__('%s saved!', true), $username), array('element' => 'flash/success'));
         }
 
         $this->_flashAndRedirect(sprintf(__('%s not saved!', true), $username));

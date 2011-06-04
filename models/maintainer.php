@@ -9,13 +9,17 @@ class Maintainer extends AppModel {
         $this->order = "`{$this->alias}`.`{$this->displayField}` asc";
         $this->validate = array(
             'username' => array(
-                'required' => array(
-                    'rule' => array('notempty'),
-                    'message' => __('cannot be left empty', true),
-                ),
                 'alphanumeric' => array(
                     'rule' => array('alphanumeric'),
                     'message' => __('must contain only letters and numbers', true),
+                ),
+                'isUnique' => array(
+                    'rule' => array('isUnique'),
+                    'message' => __('must be a unique maintainer', true),
+                ),
+                'required' => array(
+                    'rule' => array('notempty'),
+                    'message' => __('cannot be left empty', true),
                 ),
             ),
             'twitter_username' => array(
