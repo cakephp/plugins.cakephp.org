@@ -46,7 +46,7 @@ if (!$items) {
 			<?php echo $this->Html->link($item['title'], $item['Link']['href'], array('target' => '_blank')); ?>
 		</td>
 		<td class="commit-date">
-			<?php echo $time->timeAgoInWords($item['updated']); ?>
+			<?php echo $this->Time->timeAgoInWords($item['updated']); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>
