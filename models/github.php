@@ -1,9 +1,40 @@
 <?php
 class Github extends AppModel {
+
+/**
+ * Name of the model.
+ *
+ * @var string
+ * @access public
+ * @link http://book.cakephp.org/view/1057/Model-Attributes#name-1068
+ */
     var $name = 'Github';
+
+/**
+ * Custom database table name, or null/false if no table association is desired.
+ *
+ * @var string
+ * @access public
+ * @link http://book.cakephp.org/view/1057/Model-Attributes#useTable-1059
+ */
     var $useTable = false;
+
+/**
+ * The name of the DataSource connection that this Model uses
+ *
+ * @var string
+ * @access public
+ * @link http://book.cakephp.org/view/1057/Model-Attributes#useDbConfig-1058
+ */
     var $useDbConfig = 'github';
 
+/**
+ * Override the constructor to provide custom model finds
+ *
+ * @param mixed $id Set this ID for this model on startup, can also be an array of options, see above.
+ * @param string $table Name of database table to use.
+ * @param string $ds DataSource connection name.
+ */
     function __construct($id = false, $table = null, $ds = null) {
         parent::__construct($id, $table, $ds);
 

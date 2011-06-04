@@ -1,13 +1,62 @@
 <?php
 class ApiPackage extends AppModel {
-    var $name = 'ApiPackage';
-    var $belongsTo = array('Maintainer');
-    var $hasOne = array('Source');
-    var $useTable = 'packages';
-    var $_findMethods = array(
-        'install' => true
-    );
 
+/**
+ * Name of the model.
+ *
+ * @var string
+ * @access public
+ * @link http://book.cakephp.org/view/1057/Model-Attributes#name-1068
+ */
+    var $name = 'ApiPackage';
+
+/**
+ * Detailed list of belongsTo associations.
+ *
+ * @var array
+ * @access public
+ * @link http://book.cakephp.org/view/1042/belongsTo
+ */
+    var $belongsTo = array('Maintainer');
+
+/**
+ * Detailed list of hasOne associations.
+ *
+ * @var array
+ * @access public
+ * @link http://book.cakephp.org/view/1041/hasOne
+ */
+    var $hasOne = array('Source');
+
+/**
+ * Custom database table name, or null/false if no table association is desired.
+ *
+ * @var string
+ * @access public
+ * @link http://book.cakephp.org/view/1057/Model-Attributes#useTable-1059
+ */
+    var $useTable = 'packages';
+
+/**
+ * Override the constructor to provide custom model finds
+ *
+ * @param mixed $id Set this ID for this model on startup, can also be an array of options, see above.
+ * @param string $table Name of database table to use.
+ * @param string $ds DataSource connection name.
+ */
+    function __construct($id = false, $table = null, $ds = null) {
+        parent::__construct($id, $table, $ds);
+        $this->_findMethods['install'] = true;
+    }
+
+/**
+ * Custom find that attaches may "source" to the returned results
+ *
+ * @param string $state Either "before" or "after"
+ * @param array $query
+ * @return mixed array of results or false if none found
+ * @return void
+ */
     function _findInstall($state, $query, $results = array()) {
         if ($state == 'before') {
             $query['conditions'] = array(

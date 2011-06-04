@@ -1,11 +1,42 @@
 <?php
 class ApiSearchIndex extends AppModel {
-    var $name = 'ApiSearchIndex';
-    var $useTable = 'search_index';
-    var $_findMethods = array(
-        'search' => true, 'types' => true
-    );
 
+/**
+ * Name of the model.
+ *
+ * @var string
+ * @access public
+ * @link http://book.cakephp.org/view/1057/Model-Attributes#name-1068
+ */
+    var $name = 'ApiSearch';
+
+/**
+ * Custom database table name, or null/false if no table association is desired.
+ *
+ * @var string
+ * @access public
+ * @link http://book.cakephp.org/view/1057/Model-Attributes#useTable-1059
+ */
+    var $useTable = 'search_index';
+
+/**
+ * Override the constructor to provide custom model finds
+ *
+ * @param mixed $id Set this ID for this model on startup, can also be an array of options, see above.
+ * @param string $table Name of database table to use.
+ * @param string $ds DataSource connection name.
+ */
+    function __construct($id = false, $table = null, $ds = null) {
+        parent::__construct($id, $table, $ds);
+        $this->_findMethods['search'] = true;
+        $this->_findMethods['types'] = true;
+    }
+
+/**
+ * Returns an array of sha-encoded mappings for search "decryption"
+ *
+ * @return array Array of json
+ */
     function getHashedMapping() {
         $response = array();
         $Package = ClassRegistry::init('Package');
@@ -31,6 +62,14 @@ class ApiSearchIndex extends AppModel {
          return $this->find('types');
      }
 
+/**
+ * Custom search method for paginating results
+ *
+ * @param string $state Either "before" or "after"
+ * @param array $query
+ * @param array $results
+ * @return mixed array of results or false if none found
+ */
     function _findSearch($state, $query, $results = array()) {
         if ($state == 'before') {
             $query['conditions'] = array(
@@ -112,6 +151,14 @@ class ApiSearchIndex extends AppModel {
         }
     }
 
+/**
+ * Custom search method for paginating results
+ *
+ * @param string $state Either "before" or "after"
+ * @param array $query
+ * @param array $results
+ * @return mixed array of results or false if none found
+ */
     function _findTypes($state, $query, $results = array()) {
         if ($state == 'before') {
             $query['fields'] = array(
@@ -134,10 +181,23 @@ class ApiSearchIndex extends AppModel {
         }
     }
 
-    function replace($v) {
-        return str_replace(array(' +-', ' +~', ' ++', ' +'), array('-', '~', '+', '+'), " +{$v}");
+/**
+ * Parses a search phrase and adds modifiers where necessary 
+ *
+ * @param string $search phrase being parsed
+ * @return string modified search phrase
+ */
+    function replace($search) {
+        return str_replace(array(' +-', ' +~', ' ++', ' +'), array('-', '~', '+', '+'), ' +' . $search);
     }
 
+/**
+ * Returns a search result for maintainers and packages
+ *
+ * @param string $query 
+ * @return mixed array of results or false if none found
+ * @author Jose Diaz-Gonzalez
+ */
     function getSearch($query = null) {
         return $this->find('search', array(
             'term'      => $query,
