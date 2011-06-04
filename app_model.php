@@ -8,6 +8,7 @@
  */
 App::import('Lib', 'LazyModel.LazyModel');
 class AppModel extends LazyModel {
+
 /**
  * List of behaviors to load when the model object is initialized. Settings can be
  * passed to behaviors by using the behavior name as index. Eg:
