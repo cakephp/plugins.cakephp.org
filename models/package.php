@@ -59,6 +59,11 @@ class Package extends AppModel {
             if (empty($query['term'])) {
                 throw new InvalidArgumentException(__('Invalid query', true));
             }
+
+            if (!class_exists('Sanitize')) {
+                App::import('Core', 'Sanitize');
+            }
+
             $query['term'] = Sanitize::clean($query['term']);
             $query['cache'] = true;
             $query['conditions'] = array("{$this->alias}.{$this->displayField} LIKE" => "%{$query['term']}%");
