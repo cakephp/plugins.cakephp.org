@@ -136,19 +136,35 @@ class AppController extends Controller {
  * @access protected
  */
     function _flashAndRedirect($message = null, $redirectTo = array()) {
-        if ($message == null) {
-            $message = __('Access Error', true);
+        $status = null;
+        $exit = true;
+        $element = 'flash/error';
+
+        if (is_array($redirectTo)) {
+            if (isset($redirectTo['status'])) $status = $redirectTo['status'];
+            if (isset($redirectTo['exit'])) $exit = $redirectTo['exit'];
+            if (isset($redirectTo['message'])) $message = $redirectTo['message'];
+            if (isset($redirectTo['element'])) $element = $redirectTo['element'];
+            if (isset($redirectTo['redirectTo'])) {
+                $redirectTo = $redirectTo['redirectTo'];
+            } else {
+                $redirectTo = array();
+            }
         }
 
-        if ($message !== false) {
-            $this->Session->setFlash($message);
+        if ($message === null) {
+            $message = __('Access Error', true);
         }
 
         if (is_array($redirectTo)) {
             $redirectTo = array_merge($this->redirectTo, $redirectTo);
         }
 
-        $this->redirect($redirectTo);
+        if ($message !== false) {
+            $this->Session->setFlash($message, $element);
+        }
+
+        $this->redirect($redirectTo, $status, $exit);
     }
 
 /**
