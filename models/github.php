@@ -448,13 +448,6 @@ class Github extends AppModel {
         }
     }
 
-    function get($method) {
-        $params = func_get_args();
-        array_shift($params);
-        $method ='_get' . ucfirst($method);
-        return call_user_func_array(array(&$this, $method), $params);
-    }
-
     function _getNewRepositories($username = null) {
         if (!$username) return false;
 

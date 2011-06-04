@@ -143,7 +143,31 @@ class AppModel extends LazyModel {
         }
     }
 
-    function __findLookup($options = array()) {
+/**
+ * Wrapper around _get* magic methods
+ *
+ * @param string $method method name
+ * @return results of the _get call
+ */
+    function get($method) {
+        $params = func_get_args();
+        array_shift($params);
+        $method ='_get' . ucfirst($method);
+
+        if (!method_exists($this, $method)) {
+            return false;
+        }
+
+        return call_user_func_array(array(&$this, $method), $params);
+    }
+
+/**
+ * Magic _getLookup() method creates a record if it does not exist
+ *
+ * @param mixed $options Options for the lookup
+ * @return record
+ */
+    function _getLookup($options = array()) {
         if (!is_array($options)) $options = array('conditions' => array($this->displayField => $options));
         $options = array_merge(array(
             'field' => $this->primaryKey,
