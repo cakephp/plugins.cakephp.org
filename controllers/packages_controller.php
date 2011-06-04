@@ -1,9 +1,42 @@
 <?php
 class PackagesController extends AppController {
+
+/**
+ * The name of this controller. Controller names are plural, named after the model they manipulate.
+ *
+ * @var string
+ * @access public
+ * @link http://book.cakephp.org/view/959/Controller-Attributes
+ */
     var $name = 'Packages';
+
+/**
+ * Array containing the names of components this controller uses. Component names
+ * should not contain the "Component" portion of the classname.
+ *
+ * Example: `var $components = array('Session', 'RequestHandler', 'Acl');`
+ *
+ * @var array
+ * @access public
+ * @link http://book.cakephp.org/view/961/components-helpers-and-uses
+ */
     var $components = array('Searchable.Search');
+
+/**
+ * An array containing the names of helpers this controller uses. The array elements should
+ * not contain the "Helper" part of the classname.
+ *
+ * Example: `var $helpers = array('Html', 'Javascript', 'Time', 'Ajax');`
+ *
+ * @var mixed A single name as a string or a list of names as an array.
+ * @access protected
+ * @link http://book.cakephp.org/view/961/components-helpers-and-uses
+ */
     var $helpers = array('Searchable.Searchable');
 
+/**
+ * Default page for entire application
+ */
     function home() {
         $this->set(array(
             'latest' => $this->Package->find('latest'),
@@ -11,15 +44,24 @@ class PackagesController extends AppController {
         ));
     }
 
+/**
+ * Alternative pagination method for showing latest packages
+ */
     function latest() {
         $this->paginate = array('latest', 'is_paginate' => true);
-        $this->set(array(
-            'h2_for_layout' => 'Latest Packages',
-            'packages' => $this->paginate()
-        ));
+        $packages = $this->paginate();
+
+        $this->set(compact('packages'));
+        $this->_seoForAction();
         $this->render('index');
     }
 
+/**
+ * Index page that also provides search functionality
+ *
+ * @param string $search String to search by
+ * @todo refactor this to use something like Sphinx
+ */
     function index($search = null) {
         $this->paginate = array(
             'index',
@@ -29,9 +71,14 @@ class PackagesController extends AppController {
         $packages = $this->paginate();
 
         $this->set(compact('packages', 'search'));
-        $this->_seoForAction('index');
+        $this->_seoForAction();
     }
 
+/**
+ * Filters results by package attributes and paginates the result
+ *
+ * @todo refactor this into /index
+ */
     function filter() {
         $search = Inflector::singularize($this->params['by']);
         $this->paginate = array(
@@ -42,10 +89,16 @@ class PackagesController extends AppController {
         $packages = $this->paginate();
 
         $this->set(compact('packages', 'search'));
-        $this->_seoForAction('filter', $search);
+        $this->_seoForAction($search);
         $this->render('index');
     }
 
+/**
+ * Allows searching of the SearchIndex
+ *
+ * @param string $search String to search by
+ * @todo Figure out whats the difference between this and the index() action
+ */
     function search($search = null) {
         // Redirect with search data in the URL in pretty format
         $this->Search->redirectUnlessGet();
@@ -55,10 +108,16 @@ class PackagesController extends AppController {
         $packages = $this->Search->paginate($search);
 
         $this->set(compact('packages', 'search'));
-        $this->_seoForAction('search', $search);
+        $this->_seoForAction($search);
         $this->render('index');
     }
 
+/**
+ * Allows viewing of a particular package
+ *
+ * @param string $maintainer Maintainer name
+ * @param string $package Package name
+ */
     function view($maintainer = null, $package = null) {
         try {
             $this->set('package', $this->Package->find('view', array(
@@ -66,17 +125,22 @@ class PackagesController extends AppController {
                 'package' => $package,
             )));
         } catch (Exception $e) {
-            $this->__flashAndRedirect($e->getMessage());
+            $this->_flashAndRedirect($e->getMessage());
         }
     }
 
+/**
+ * Allows editing a package by id
+ *
+ * @param string $id package id
+ */
     function edit($id = null) {
-        if (!$id && empty($this->data)) {
-            $this->__flashAndRedirect(__('Invalid package', true));
-        }
+        $this->_redirectUnless($id, __('Invalid package', true));
+        $this->_redirectUnless($this->data, __('Invalid package', true));
+
         if (!empty($this->data)) {
             if ($this->Package->save($this->data)) {
-                $this->__flashAndRedirect(__('The package has been saved', true));
+                $this->_flashAndRedirect(__('The package has been saved', true));
             } else {
                 $this->Session->setFlash(__('The package could not be saved. Please, try again.', true));
             }
@@ -86,26 +150,36 @@ class PackagesController extends AppController {
             try {
                 $this->data = $this->Package->find('edit', $id);
             } catch (Exception $e) {
-                $this->__flashAndRedirect($e->getMessage());
+                $this->_flashAndRedirect($e->getMessage());
             }
-            $this->__redirectUnless($this->data);
+
+            $this->_redirectUnless($this->data);
         }
 
         $this->set('maintainers', $this->Package->Maintainer->find('list'));
     }
 
+/**
+ * Allows deleting of a package
+ *
+ * @param string $id package id
+ * @return void
+ * @author Jose Diaz-Gonzalez
+ */
     function delete($id = null) {
-        $this->__redirectUnless($id);
+        $this->_redirectUnless($id);
 
+        $message = __('Package was not deleted', true);
         if ($this->Package->delete($id)) {
-            $this->Session->setFlash(sprintf(__('%s deleted', true), 'Package'));
-        } else {
-            $this->Session->setFlash(sprintf(__('%s was not deleted', true), 'Package'));
+            $message = __('Package deleted', true);
         }
 
-        $this->redirect(array('action' => 'index'));
+        $this->_flashAndRedirect($message);
     }
 
+/**
+ * Provides a jquery autocomplete response
+ */
     function autocomplete() {
         $term = (isset($this->params['url']['term'])) ? $this->params['url']['term'] : '';
         $this->set('results', $this->Package->find('autocomplete', array('term' => $term)));
@@ -113,18 +187,29 @@ class PackagesController extends AppController {
         Configure::write('debug', 0);
     }
 
-    function _seoForAction($type = 'index', $extra = null) {
-        if ($type == 'index') {
-            $h2_for_layout = $title_for_layout = 'Browse Packages';
+/**
+ * Creates seo information for the particular action
+ *
+ * @param string $extra Extra string to use in sprintf
+ */
+    function _seoForAction($extra = null) {
+        switch ($this->params['action']) {
+            case 'index':
+                $h2_for_layout = $title_for_layout = 'Browse Packages';
+                break;
+            case 'filter':
+                $h2_for_layout = sprintf('Browse Packages containing %s', $extra);
+                $title_for_layout = $h2_for_layout;
+                break;
+            case 'search':
+                $h2_for_layout = sprintf('Search Results for %s', $extra);
+                $title_for_layout = $h2_for_layout;
+                break;
+            case 'latest':
+                $h2_for_layout = $title_for_layout = 'Latest Packages';
+                break;
         }
-        else if ($type == 'filter') {
-            $h2_for_layout = sprintf('Browse Packages containing %ss', $extra);
-            $title_for_layout = $h2_for_layout;
-        }
-        else if ($type == 'search') {
-            $h2_for_layout = sprintf('Search Results for %s', $extra);
-            $title_for_layout = $h2_for_layout;
-        }
+
         $this->set(compact('h2_for_layout', 'title_for_layout'));
     }
 

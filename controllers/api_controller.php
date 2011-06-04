@@ -19,13 +19,27 @@ class ApiController extends AppController {
         404 => array('status' => 404, 'error' => 'not found'),
     );
 
+/**
+ * Called after the controller action is run, but before the view is rendered.
+ *
+ * Used to ensure that json responses are handled correctly by the action
+ *
+ * @access public
+ * @link http://book.cakephp.org/view/984/Callbacks
+ */
     function beforeRender() {
         parent::beforeFilter();
+
         Configure::write('debug', 0);
         $this->action = 'response';
         $this->layout = false;
     }
 
+/**
+ * Provides search functionality across the SearchIndex
+ *
+ * @param string $query 
+ */
     function one_search($query = null) {
         if (!$query) {
             return $this->set('results', $this->status[400]);
@@ -43,6 +57,9 @@ class ApiController extends AppController {
         return $this->set(compact('results'));
     }
 
+/**
+ * Returns a set of packages that may match an install query
+ */
     function one_install() {
         if (empty($this->params['url']['package'])) {
             return $this->set('results', $this->status[400]);
