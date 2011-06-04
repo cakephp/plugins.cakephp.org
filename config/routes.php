@@ -54,7 +54,6 @@
 	Router::connect('/maintainer/*', array('controller' => 'maintainers', 'action' => 'view'));
 	Router::connect('/posts/*', array('plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'index'));
 	Router::connect('/post/*', array('plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'view'));
-	Router::connect('/lost/*', array('controller' => 'lost', 'action' => 'index'));
 
 	Router::connect('/:by/*', array('controller' => 'packages', 'action' => 'filter'),
 		array('by' => 'models|views|controllers|behaviors|helpers|components|datasources|themes|shells', 'pass' => array('by'))
