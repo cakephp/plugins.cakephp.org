@@ -28,7 +28,7 @@ class ApiController extends AppController {
  * @link http://book.cakephp.org/view/984/Callbacks
  */
     function beforeRender() {
-        parent::beforeFilter();
+        parent::beforeRender();
 
         Configure::write('debug', 0);
         $this->action = 'response';

@@ -106,6 +106,7 @@ class AppController extends Controller {
  * @link http://book.cakephp.org/view/984/Callbacks
  */
     function beforeRender() {
+        parent::beforeRender();
         $this->params['useJsonNative'] = true;
     }
 

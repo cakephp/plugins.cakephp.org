@@ -34,6 +34,7 @@ class GithubController extends AppController {
  * @link http://book.cakephp.org/view/984/Callbacks
  */
     function beforeFilter() {
+        parent::beforeFilter();
         $this->Maintainer->Package->Behaviors->detach('Softdeletable');
     }
 
