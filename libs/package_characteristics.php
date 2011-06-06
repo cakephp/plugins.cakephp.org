@@ -60,7 +60,7 @@ class PackageCharacteristics extends ApiFile {
  *
  * @var array
  **/
-    public $excludeDirectories = array('config', 'tests', 'plugins', 'webroot');
+    public $excludeDirectories = array('plugins', 'webroot');
 
 /**
  * excludeMethods property
