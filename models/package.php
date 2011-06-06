@@ -328,9 +328,15 @@ class Package extends AppModel {
 
         $this->enableSoftDeletable('find', false);
         list($id, $path) = $this->setupRepository($id);
-        if (!$id || !$path) return false;
+        if (!$id || !$path) {
+            $this->broken($id);
+            return false;
+        }
 
-        if (!class_exists('PackageCharacteristics')) App::import('Lib', 'PackageCharacteristics');
+        if (!class_exists('PackageCharacteristics')) {
+            App::import('Lib', 'PackageCharacteristics');
+        }
+
         try {
             $characterizer = new PackageCharacteristics($path);
             $data = $characterizer->characterize();
@@ -341,10 +347,10 @@ class Package extends AppModel {
             return false;
         }
 
-        $data = array_merge($data, array('id' => $id, 'deleted' => 0));
         $this->create(false);
-        $this->set(array('Package' => $data));
-        return $this->save(array('Package' => $data));
+        return $this->save(array('Package' => array_merge(
+            $data, array('id' => $id, 'deleted' => 0)
+        )));
     }
 
     function broken($id) {
