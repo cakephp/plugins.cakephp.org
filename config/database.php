@@ -84,6 +84,17 @@ class DATABASE_CONFIG {
 		'encoding'      => 'utf8',
 	);
 
+	var $database_logger = array(
+		'driver'        => 'mysql',
+		'persistent'    => false,
+		'host'          => 'localhost',
+		'login'         => 'user',
+		'password'      => 'password',
+		'database'      => 'cakepackages',
+		'prefix'        => '',
+		'encoding'      => 'utf8',
+	);
+
 	var $github = array(
 		'datasource'    => 'github',
 		'host'          => 'github.com',

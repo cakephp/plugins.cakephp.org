@@ -40,3 +40,6 @@
 [submodule "plugins/package_installer"]
 	path = plugins/package_installer
 	url = git://github.com/josegonzalez/package_installer.git
+[submodule "plugins/database_logger"]
+	path = plugins/database_logger
+	url = git://github.com/josegonzalez/database_logger.git

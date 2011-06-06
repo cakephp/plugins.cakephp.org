@@ -14,5 +14,7 @@ $map = array(
 		'006_innodb' => 'M4da202c0fc984da39bdb59a0cbdd56cb'),
 	7 => array(
 		'007_sources' => 'M4db126f0bbe4472f9d762e7ecbdd56cb'),
+	8 => array(
+		'008_remove_log_table' => 'M4dec394c8e2c48d29f9737d5cbdd56cb'),
 );
 ?>
