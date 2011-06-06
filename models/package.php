@@ -260,12 +260,18 @@ class Package extends AppModel {
     }
 
     function setupRepository($id = null) {
-        if (!$id) return false;
+        if (!$id) {
+            return false;
+        }
 
         $package = $this->find('repoclone', $id);
-        if (!$package) return false;
+        if (!$package) {
+            return false;
+        }
 
-        if (!$this->folder) $this->folder = new Folder();
+        if (!$this->folder) {
+            $this->folder = new Folder();
+        }
 
         $path = rtrim(trim(TMP), DS);
         $appends = array(
@@ -298,13 +304,20 @@ class Package extends AppModel {
                 DS,
                 $package['Package']['name']
             ));
-            if (stristr($var, 'fatal')) return false;
+
+            if (stristr($var, 'fatal')) {
+	            $this->log($var);
+                return false;
+            }
         }
 
         $var = shell_exec(sprintf("cd %s && git pull",
             $path . DS . $package['Package']['name']
         ));
-        if (stristr($var, 'fatal')) return false;
+        if (stristr($var, 'fatal')) {
+            $this->log($var);
+            return false;
+        }
 
         return array($package['Package']['id'], $path . DS . $package['Package']['name']);
     }
