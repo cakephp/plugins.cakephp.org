@@ -51,7 +51,7 @@ class MaintainersController extends AppController {
 
         if (empty($this->data)) {
             try {
-                $this->data = $this->Maintainer->find('edit', $id);
+                $this->data = $this->Maintainer->find('user', $id);
             } catch (Exception $e) {
                 $this->_flashAndRedirect($e->getMessage());
             }

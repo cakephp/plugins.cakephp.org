@@ -58,6 +58,7 @@ class NewPackageJob extends CakeJob {
             'created_at' => substr(str_replace('T', ' ', $repo['Repository']['created_at']), 0, 19),
             'last_pushed_at' => substr(str_replace('T', ' ', $repo['Repository']['pushed_at']), 0, 19),
         )));
+        $this->out('Package saved');
     }
 
     function getHomepage($repo) {

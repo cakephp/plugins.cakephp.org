@@ -30,7 +30,7 @@ class UsersController extends AppController {
  * @return void
  */
     function dashboard() {
-        $user = $this->Maintainer->find('dashboard');
+        $user = $this->Maintainer->find('user');
         $this->set(compact('user'));
     }
 
@@ -106,14 +106,8 @@ class UsersController extends AppController {
             $this->redirect(array('action' => 'login'));
         }
 
-        $maintainer = $this->Maintainer->find('resetpassword', array('username' => $username, 'key' => $key));
-        if (!isset($maintainer)) {
-            $this->Session->setFlash(__('An error occurred', true));
-            $this->redirect(array('controller' => 'users', 'action' => 'login'));
-        }
-
-        if (!empty($this->data) && isset($this->data['Maintainer']['password'])) {
-            if ($this->Maintainer->save($this->data, array('fields' => array('id', 'password', 'activation_key'), 'callback' => 'reset_password', 'user_id' => $maintainer['Maintainer']['id']))) {
+        if (!empty($this->data)) {
+            if ($this->Maintainer->changePassword($this->data, compact('username', 'key'))) {
                 $this->Session->setFlash(__('Your password has been reset successfully', true));
                 $this->redirect(array('controller' => 'users', 'action' => 'login'));
             } else {
@@ -121,7 +115,7 @@ class UsersController extends AppController {
             }
         }
 
-        $this->set(compact('maintainer', 'username', 'key'));
+        $this->set(compact('username', 'key'));
     }
 
 /**
@@ -129,7 +123,7 @@ class UsersController extends AppController {
  */
     function change_password() {
         if (!empty($this->data)) {
-            if ($this->Maintainer->save($this->data, array('fieldList' => array('id', 'password'), 'callback' => 'change_password'))) {
+            if ($this->Maintainer->changePassword($this->data)) {
                 $this->Session->setFlash(__('Your password has been successfully changed', true));
                 $this->redirect(array('action' => 'dashboard'));
             } else {

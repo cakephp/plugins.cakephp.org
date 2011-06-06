@@ -1,9 +1,41 @@
 <?php
 class Maintainer extends AppModel {
+
+/**
+ * Name of the model.
+ *
+ * @var string
+ * @access public
+ * @link http://book.cakephp.org/view/1057/Model-Attributes#name-1068
+ */
     var $name = 'Maintainer';
+
+/**
+ * Custom display field name. Display fields are used by Scaffold, in SELECT boxes' OPTION elements.
+ *
+ * @var string
+ * @access public
+ * @link http://book.cakephp.org/view/1057/Model-Attributes#displayField-1062
+ */
     var $displayField = 'username';
+
+/**
+ * Detailed list of hasMany associations.
+ *
+ * @var array
+ * @access public
+ * @link http://book.cakephp.org/view/1043/hasMany
+ */
     var $hasMany = array('Package');
 
+/**
+ * Override the constructor to provide custom model finds
+ * and validation rule internationalization
+ *
+ * @param mixed $id Set this ID for this model on startup, can also be an array of options, see above.
+ * @param string $table Name of database table to use.
+ * @param string $ds DataSource connection name.
+ */
     function __construct($id = false, $table = null, $ds = null) {
         parent::__construct($id, $table, $ds);
         $this->order = "`{$this->alias}`.`{$this->displayField}` asc";
@@ -30,32 +62,41 @@ class Maintainer extends AppModel {
                 ),
             ),
         );
-        $this->_findMethods['dashboard'] = true;
-        $this->_findMethods['edit'] = true;
         $this->_findMethods['existing'] = true;
         $this->_findMethods['forgotpassword'] = true;
         $this->_findMethods['index'] = true;
         $this->_findMethods['resetpassword'] = true;
         $this->_findMethods['username'] = true;
+        $this->_findMethods['user'] = true;
         $this->_findMethods['view'] = true;
     }
 
-    function __beforeSaveChangePassword($data, $extra) {
+/**
+ * Change password method
+ *
+ * @param array $data Data array containing old and new password
+ * @return boolean True on success, false otherwise
+ */
+    function changePassword($data) {
         if (!$data || !isset($data[$this->alias])) return false;
 
-        $data = array(
-            $this->alias => array(
-                'password' => $data[$this->alias]['password'],
-                'new_password' => $data[$this->alias]['new_password'],
-                'new_password_confirm' => $data[$this->alias]['new_password_confirm']));
+        $data = array($this->alias => array(
+            'password'              => $data[$this->alias]['password'],
+            'new_password'          => $data[$this->alias]['new_password'],
+            'new_password_confirm'  => $data[$this->alias]['new_password_confirm']
+        ));
 
-        if ($data[$this->alias]['new_password'] != $data[$this->alias]['new_password_confirm']) return false;
+        if ($data[$this->alias]['new_password'] != $data[$this->alias]['new_password_confirm']) {
+            return false;
+        }
+
         foreach ($data[$this->alias] as $key => &$value) {
             $value = Security::hash($value, null, true);
             if ($value == Security::hash('', null, true)) {
                 return false;
             }
         }
+
         $data[$this->alias][$this->primaryKey] = Authsome::get($this->primaryKey);
 
         $user = $this->find('first', array(
@@ -63,60 +104,50 @@ class Maintainer extends AppModel {
                 "{$this->alias}.{$this->primaryKey}" => Authsome::get($this->primaryKey),
                 "{$this->alias}.password" => $data[$this->alias]['password']),
             'contain' => false,
-            'fields' => array($this->primaryKey)));
+            'fields' => array($this->primaryKey)
+        ));
 
         if (!$user) return false;
-        return $data;
+        return $this->save($data, array('fieldList' => array('id', 'password')));
     }
 
-    function __beforeSaveResetPassword($data, $extra) {
-        return array($this->alias => array(
-            $this->primaryKey => $extra['user_id'],
-            'password' => Authsome::hash($data[$this->alias]['password']),
-            'activation_key' => md5(uniqid())));
-    }
-
-    function _findDashboard($state, $query, $results = array()) {
-        if ($state == 'before') {
-            $user_id = Authsome::get($this->primaryKey);
-            if (empty($user_id)) {
-                throw new OutOfBoundsException(__('Invalid user', true));
-            }
-
-            $query['contain'] = false;
-            $query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $user_id);
-            $query['limit'] = 1;
-            return $query;
-        } elseif ($state == 'after') {
-            if (empty($results[0])) {
-                throw new OutOfBoundsException(__('Invalid user', true));
-            }
-            return $results[0];
+/**
+ * Resets a password and the activation key for a given user
+ *
+ * @param array $data 
+ * @param array $params Array containing the name of a user and their activation key
+ * @return boolean True on success, false otherwise
+ */
+    function resetPassword($data, $params) {
+        if (empty($data[$this->alias]['password'])) {
+            return false;
         }
-    }
 
-    function _findEdit($state, $query, $results = array()) {
-        if ($state == 'before') {
-            if (empty($query[0])) {
-                throw new InvalidArgumentException(__('Invalid maintainer', true));
-            }
-
-            $query['contain'] = false;
-            $query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $query[0]);
-            $query['limit'] = 1;
-            return $query;
-        } elseif ($state == 'after') {
-            if (empty($results[0])) {
-                throw new OutOfBoundsException(__('Invalid maintainer', true));
-            }
-            return $results[0];
+        $maintainer = $this->find('resetpassword', $params);
+        if (!isset($maintainer)) {
+            return false;
         }
+
+        $data = array($this->alias => array(
+            $this->primaryKey   => $maintainer[$this->alias][$this->primaryKey],
+            'password'          => Authsome::hash($data[$this->alias]['password']),
+            'activation_key'    => md5(uniqid())
+        ));
+        return $this->save($data, array('fieldList' => array('id', 'password', 'activation_key')));
     }
 
+/**
+ * Finds a given maintainer by name as well as their packages
+ *
+ * @param string $state Either "before" or "after"
+ * @param array $query
+ * @return mixed array of results or false if none found
+ * @return array
+ */
     function _findExisting($state, $query, $results = array()) {
         if ($state == 'before') {
             if (empty($query[0])) {
-                throw new InvalidArgumentException(__('Nonexistent maintainer', true));
+                throw new InvalidArgumentException(__('Nonexistent user', true));
             }
 
             $query['contain'] = array('Package');
@@ -125,12 +156,20 @@ class Maintainer extends AppModel {
             return $query;
         } elseif ($state == 'after') {
             if (empty($results[0])) {
-                throw new OutOfBoundsException(__('Nonexistent maintainer', true));
+                throw new OutOfBoundsException(__('Nonexistent user', true));
             }
             return $results[0];
         }
     }
 
+/**
+ * Finds a user by email for reseting their password
+ *
+ * @param string $state Either "before" or "after"
+ * @param array $query
+ * @return mixed array of results or false if none found
+ * @return array
+ */
     function _findForgotpassword($state, $query, $results = array()) {
         if ($state == 'before') {
             if (empty($query[0])) {
@@ -150,6 +189,14 @@ class Maintainer extends AppModel {
         }
     }
 
+/**
+ * Finds maintainers for pagination
+ *
+ * @param string $state Either "before" or "after"
+ * @param array $query
+ * @return mixed array of results or false if none found
+ * @return array
+ */
     function _findIndex($state, $query, $results = array()) {
         if ($state == 'before') {
             $query['fields'] = array('id', 'username', 'name', 'alias', 'url', 'twitter_username', 'company', 'location', 'gravatar_id');
@@ -166,6 +213,14 @@ class Maintainer extends AppModel {
         }
     }
 
+/**
+ * Finds a user by name/key for resetting of the password
+ *
+ * @param string $state Either "before" or "after"
+ * @param array $query
+ * @return mixed array of results or false if none found
+ * @return array
+ */
     function _findResetpassword($state, $query, $results = array()) {
         if ($state == 'before') {
             if (empty($query['username']) || empty($query['key'])) {
@@ -187,6 +242,49 @@ class Maintainer extends AppModel {
         }
     }
 
+/**
+ * Finds the current user for the dashboard
+ *
+ * @param string $state Either "before" or "after"
+ * @param array $query
+ * @return mixed array of results or false if none found
+ * @return array
+ */
+    function _findUser($state, $query, $results = array()) {
+        if ($state == 'before') {
+            $user_id = false;
+            if (!empty($query[0])) {
+                $user_id = $query[0];
+            } elseif (!empty($query['id'])){
+                $user_id = $query['id'];
+            } else {
+                $user_id = Authsome::get($this->primaryKey);
+            }
+
+            if (empty($user_id)) {
+                throw new OutOfBoundsException(__('Invalid maintainer', true));
+            }
+
+            $query['contain'] = false;
+            $query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $user_id);
+            $query['limit'] = 1;
+            return $query;
+        } elseif ($state == 'after') {
+            if (empty($results[0])) {
+                throw new OutOfBoundsException(__('Invalid user', true));
+            }
+            return $results[0];
+        }
+    }
+
+/**
+ * Finds a user by username
+ *
+ * @param string $state Either "before" or "after"
+ * @param array $query
+ * @return mixed array of results or false if none found
+ * @return array
+ */
     function _findUsername($state, $query, $results = array()) {
         if ($state == 'before') {
             if (empty($query[0])) {
@@ -205,6 +303,14 @@ class Maintainer extends AppModel {
         }
     }
 
+/**
+ * Finds a user by name for the /maintainers/view action
+ *
+ * @param string $state Either "before" or "after"
+ * @param array $query
+ * @return mixed array of results or false if none found
+ * @return array
+ */
     function _findView($state, $query, $results = array()) {
         if ($state == 'before') {
             if (empty($query[0])) {
@@ -243,6 +349,13 @@ class Maintainer extends AppModel {
         return true;
     }
 
+/**
+ * Logs a user in
+ *
+ * @param string $type type of login
+ * @param array $credentials 
+ * @return mixed user data if logged in, false otherwise
+ */
     function authsomeLogin($type, $credentials = array()) {
         switch ($type) {
             case 'guest':
@@ -250,6 +363,11 @@ class Maintainer extends AppModel {
                 // have a guest account, just return an empty array
                 return array('guest' => 'guest');
             case 'credentials':
+                // Don't even attempt to login an invalid email address
+                if (!strstr($credentials['login'], '@')) {
+                    return false;
+                }
+
                 // This is the logic for validating the login
                 $conditions = array(
                     "{$this->alias}.email" => $credentials['login'],
@@ -292,35 +410,50 @@ class Maintainer extends AppModel {
                 return null;
         }
 
-        $maintainer = $this->find('first', compact('conditions'));
-        if (!$maintainer) {
+        $data = $this->find('first', compact('conditions'));
+        if (!$data) {
             return false;
         }
-        $maintainer[$this->alias]['loginType'] = $type;
-        return $maintainer;
+
+        $data[$this->alias]['loginType'] = $type;
+        return $data;
     }
 
-    function authsomePersist($maintainer, $duration) {
+/**
+ * Persists a user's login information
+ *
+ * @param array $data user data
+ * @param string $duration Time in a date() compatible format
+ * @return string login token to be parsed
+ */
+    function authsomePersist($data, $duration) {
         $token = md5(uniqid(mt_rand(), true));
-        $maintainerId = $maintainer[$this->alias][$this->primaryKey];
+        $userId = $data[$this->alias][$this->primaryKey];
 
         $this->LoginToken->create(array(
-            'user_id' => $maintainerId,
+            'user_id' => $userId,
             'token' => $token,
             'duration' => $duration,
             'expires' => date('Y-m-d H:i:s', strtotime($duration)),
         ));
         $this->LoginToken->save();
 
-        return "${token}:${maintainerId}";
+        return "${token}:${userId}";
     }
 
+/**
+ * Changes the current user's activation key
+ *
+ * @param int $id record's primaryKey
+ * @return mixed False on failure, new activation key otherwise
+ * @author Jose Diaz-Gonzalez
+ */
     function changeActivationKey($id) {
         $activationKey = md5(uniqid());
         $data = array(
-            "{$this->alias}" => array(
-                "{$this->primaryKey}" => $id,
-                'activation_key' => $activationKey,
+            $this->alias => array(
+                $this->primaryKey => $id,
+                'activation_key'  => $activationKey,
             ),
         );
 
@@ -328,12 +461,18 @@ class Maintainer extends AppModel {
         return $activationKey;
     }
 
+/**
+ * Enqueues a forgotPassword job
+ *
+ * @param array $data User data
+ * @return mixed True when job enqueued, false otherwise
+ */
     function forgotPassword($data) {
-        if (empty($data['Maintainer']['email'])) return false;
-        $maintainer = $this->find('forgotpassword', $data['Maintainer']['email']);
+        if (empty($data[$this->alias]['email'])) return false;
+        $data = $this->find('forgotpassword', $data[$this->alias]['email']);
 
         App::import('Lib', 'ForgotPasswordJob');
-        return $this->enqueue(new ForgotPasswordJob($maintainer['Maintainer'], $_SERVER['REMOTE_ADDR']));
+        return $this->enqueue(new ForgotPasswordJob($data[$this->alias], $_SERVER['REMOTE_ADDR']));
     }
 
 }
