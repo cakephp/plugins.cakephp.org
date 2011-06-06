@@ -23,6 +23,7 @@ class Package extends AppModel {
     );
     var $folder = null;
     var $Github = null;
+    var $SearchIndex = null;
     var $_findMethods = array(
         'autocomplete'      => true,
         'edit'              => true,
@@ -450,9 +451,31 @@ class Package extends AppModel {
         return $this->save($package);
     }
 
-    function checkExistenceOf($package = null) {
-        if (!$package) return false;
+    function existenceCheck($package = null) {
+        $exists = $this->findOnGithub($package);
 
+        if ($exists) {
+            return true;
+        }
+
+        $result = $this->Package->delete($package['Package']['id']);
+        if ($result) {
+            return false;
+        }
+
+        if (!$this->SearchIndex) {
+            $this->SearchIndex = ClassRegistry::init('Searchable.SearchIndex');
+        }
+
+        $index = $this->SearchIndex->find('first', array('conditions' => array(
+            'SearchIndex.model' => 'Package',
+            'SearchIndex.foreign_key' => $package['Package']['id']
+        )));
+        $index['SearchIndex']['active'] = 0;
+        return !$this->SearchIndex->save($index);
+    }
+
+    function findOnGithub($package = null) {
         if (!is_array($package)) {
             $package = $this->find('first', array(
                 'conditions' => array("{$this->alias}.{$this->primaryKey}" => $package),
@@ -460,15 +483,21 @@ class Package extends AppModel {
                 'fields' => array('name', 'repository_url')
             ));
         }
-        if (!$package) return false;
 
-        $response = ClassRegistry::init('Github')->find('repos_show_single', array(
+        if (!$package) {
+            return false;
+        }
+
+        if (!$this->Github) {
+            $this->Github = ClassRegistry::init('Github');
+        }
+
+        $response = $this->Github->find('reposShowSingle', array(
             'username' => $package['Maintainer']['username'],
             'repo' => $package[$this->alias]['name']
         ));
 
-        if (!empty($response['Error'])) return false;
-        return true;
+        return empty($response['Error']);
     }
 
 }

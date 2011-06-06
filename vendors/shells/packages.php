@@ -110,32 +110,23 @@ class PackagesShell extends Shell {
  * @todo send summary email so packages can be manually verified/removed
  * @author Jose Diaz-Gonzalez
  */
-	function existencecCheck() {
+	function existenceCheck() {
 		$this->Package->Behaviors->detach('Searchable');
 		$packages = $this->Package->find('all', array(
 			'contain' => array('Maintainer' => array('id', 'username')),
 			'fields' => array('id', 'name'),
-			'order' => array('Package.name ASC')));
-		$SearchIndex = ClassRegistry::init('Searchable.SearchIndex');
+			'order' => array('Package.name ASC')
+		));
+
 		foreach ($packages as $package) {
 			sleep(1);
-			$exists = $this->Package->checkExistenceOf($package);
-			if (!$exists) {
-				$this->out(sprintf(__('* Deleting record %s', true), $package['Package']['id']));
-				$result = $this->Package->delete($package['Package']['id']);
-				if ($result) continue;
+			$exists = $this->Package->existenceCheck($package);
 
-				$search_index = $SearchIndex->find('first', array(
-					'conditions' => array(
-						'SearchIndex.model' => 'Package',
-						'SearchIndex.foreign_key' => $package['Package']['id']
-				)));
-				$search_index['SearchIndex']['active'] = 0;
-				$SearchIndex->save($search_index);
+			if ($exists) {
+				$this->out(sprintf(__('* Record %s exists', true), $package['Package']['id']));
+			} else {
 				$this->out(sprintf(__('* Record %s deleted', true), $package['Package']['id']));
-				continue;
 			}
-			$this->out(sprintf(__('* Record %s exists', true), $package['Package']['id']));
 		}
 	}
 
