@@ -39,7 +39,6 @@ class PackagesShell extends Shell {
 			$this->out("[F]ix Repository Urls");
 			$this->out("[G]it Clone Repositories");
 			$this->out("[R]eset Characteristics");
-			$this->out("[U]pdate Repositories");
 			$this->out("[Q]uit");
 			$temp = $this->in("What command would you like to perform?", $validCommands, 'i');
 			if (in_array(strtolower($temp), $validCommands)) {
@@ -67,9 +66,6 @@ class PackagesShell extends Shell {
 				break;
 			case 'r' :
 				$this->resetCharacteristics();
-				break;
-			case 'u' :
-				$this->updateRepositories();
 				break;
 			case 'q' :
 				$this->out(__("Exit", true));
@@ -161,35 +157,6 @@ class PackagesShell extends Shell {
 			}
 		}
 		$this->out(sprintf(__('* Downloaded %s of %s repositories', true), $count, count($packages)));
-	}
-
-/**
- * Recurses through all repositories and updates them
- * where possible
- *
- * @return void
- * @author Jose Diaz-Gonzalez
- */
-	function updateRepositories() {
-		$p_count = 0;
-		$repo_dir = trim(TMP . 'repos');
-		if (!$this->folder) $this->folder = new Folder();
-
-		foreach (range('a', 'z') as $letter) {
-			$this->folder->cd($repo_dir . DS . $letter);
-			$user_folders = $this->folder->read();
-			foreach ($user_folders['0'] as $user_folder) {
-				$this->folder->cd($repo_dir . DS . $letter . DS . $user_folder);
-				$repositories = $this->folder->read();
-				foreach ($repositories['0'] as $repository) {
-					$p_count++;
-					$repository_path = $repo_dir . DS . $letter . DS . $user_folder . DS . $repository;
-					$this->out(sprintf(__("Updating repository %s...", true), $repository));
-					$this->out(shell_exec("cd {$repository_path} ; git pull"));
-				}
-			}
-		}
-		$this->out(sprintf(__('* Updated %s repositories', true), $p_count));
 	}
 
 /**
