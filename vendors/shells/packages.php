@@ -206,11 +206,19 @@ class PackagesShell extends Shell {
  * recursing through all letter folders and checking
  * each individual user
  *
+ * Uses PCNTL extension in order to ensure that a given
+ * characterization doesn't fail spectacularly. Sometimes a plugin
+ * will require or include a file that doesn't exist, leading to a
+ * fatal error
  * @return void
  * @author Jose Diaz-Gonzalez
  */
 	function characterize() {
-		if (! function_exists('pcntl_fork')) die("PCNTL functions not available on this PHP installation\n");
+		if (!function_exists('pcntl_fork')) {
+		    die("PCNTL functions not available on this PHP installation\n");
+		}
+
+		CakeLog::drop('database');
 
 		$count = 0;
 
@@ -224,8 +232,7 @@ class PackagesShell extends Shell {
 			$pid = pcntl_fork();
 			if ($pid == -1) {
 				die("PCNTL Unable to fork\n");
-			}
-			else if ( $pid == 0 ) {
+			} else if ( $pid == 0 ) {
 				$status = SIG_ERR;
 
 				// This is the child process.  Do something here.
@@ -241,8 +248,7 @@ class PackagesShell extends Shell {
 				$this->Package->getDatasource()->disconnect();
 				posix_kill(getmypid(), $status);
 				return;
-			}
-			else {
+			} else {
 				pcntl_wait($status);
 				if ($status === SIGKILL) {
 					$count++;
