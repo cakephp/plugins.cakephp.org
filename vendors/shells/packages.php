@@ -143,7 +143,7 @@ class PackagesShell extends Shell {
 		$packages = $this->Package->find('list');
 		foreach ($packages as $id => $name) {
 			$this->out(sprintf(__("* Downloading package %s", true), $name));
-			if ($this->Package->setupRepoDirectory($id)); {
+			if ($this->Package->setupRepository($id)); {
 				$count++;
 			}
 		}
