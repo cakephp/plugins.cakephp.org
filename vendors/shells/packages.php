@@ -219,6 +219,8 @@ class PackagesShell extends Shell {
 		}
 
 		CakeLog::drop('database');
+		Cache::drop('default');
+		Cache::config('default', array('engine' => 'File'));
 
 		$count = 0;
 
