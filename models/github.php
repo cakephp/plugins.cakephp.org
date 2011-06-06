@@ -471,6 +471,27 @@ class Github extends AppModel {
         return $results;
     }
 
+    function _getRelatedRepositories($maintainers = array()) {
+        if (!$maintainers) return false;
+
+        $Package = ClassRegistry::init('Package');
+        foreach ($maintainers as $i => $maintainer) {
+            $repos = $this->find('reposShow', $maintainer['Maintainer']['username']);
+            $maintainers[$i]['Repository'] = array();
+            if (!empty($repos)) {
+                $packages = $Package->find('listformaintainer', $maintainer['Maintainer']['id']);
+
+                foreach ($repos as $j => $repo) {
+                    if (!in_array($repo['Repository']['name'], $packages) && $repo['Repository']['fork'] != true) {
+                        $maintainers[$i]['Repository'][] = $repo['Repository'];
+                    }
+                }
+            }
+        }
+
+        return $maintainers;
+    }
+
     function _getUnlisted($username = 'josegonzalez') {
         $following = $this->find('usersShowFollowing', 'josegonzalez');
         ClassRegistry::init('Maintainer');
@@ -497,25 +518,4 @@ class Github extends AppModel {
         return $this->enqueue(new NewMaintainerJob($username));
     }
 
-    function _getRelatedRepositories($maintainers = array()) {
-        if (!$maintainers) return false;
-
-        $Package = ClassRegistry::init('Package');
-        foreach ($maintainers as $i => $maintainer) {
-            $repos = $this->find('reposShow', $maintainer['Maintainer']['username']);
-            $maintainers[$i]['Repository'] = array();
-            if (!empty($repos)) {
-                $packages = $Package->find('listformaintainer', $maintainer['Maintainer']['id']);
-
-                foreach ($repos as $j => $repo) {
-                    if (!in_array($repo['Repository']['name'], $packages) && $repo['Repository']['fork'] != true) {
-                        $maintainers[$i]['Repository'][] = $repo['Repository'];
-                    }
-                }
-            }
-        }
-
-        return $maintainers;
-    }
 }
-?>

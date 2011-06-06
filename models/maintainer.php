@@ -72,71 +72,6 @@ class Maintainer extends AppModel {
     }
 
 /**
- * Change password method
- *
- * @param array $data Data array containing old and new password
- * @return boolean True on success, false otherwise
- */
-    function changePassword($data) {
-        if (!$data || !isset($data[$this->alias])) return false;
-
-        $data = array($this->alias => array(
-            'password'              => $data[$this->alias]['password'],
-            'new_password'          => $data[$this->alias]['new_password'],
-            'new_password_confirm'  => $data[$this->alias]['new_password_confirm']
-        ));
-
-        if ($data[$this->alias]['new_password'] != $data[$this->alias]['new_password_confirm']) {
-            return false;
-        }
-
-        foreach ($data[$this->alias] as $key => &$value) {
-            $value = Security::hash($value, null, true);
-            if ($value == Security::hash('', null, true)) {
-                return false;
-            }
-        }
-
-        $data[$this->alias][$this->primaryKey] = Authsome::get($this->primaryKey);
-
-        $user = $this->find('first', array(
-            'conditions' => array(
-                "{$this->alias}.{$this->primaryKey}" => Authsome::get($this->primaryKey),
-                "{$this->alias}.password" => $data[$this->alias]['password']),
-            'contain' => false,
-            'fields' => array($this->primaryKey)
-        ));
-
-        if (!$user) return false;
-        return $this->save($data, array('fieldList' => array('id', 'password')));
-    }
-
-/**
- * Resets a password and the activation key for a given user
- *
- * @param array $data 
- * @param array $params Array containing the name of a user and their activation key
- * @return boolean True on success, false otherwise
- */
-    function resetPassword($data, $params) {
-        if (empty($data[$this->alias]['password'])) {
-            return false;
-        }
-
-        $maintainer = $this->find('resetpassword', $params);
-        if (!isset($maintainer)) {
-            return false;
-        }
-
-        $data = array($this->alias => array(
-            $this->primaryKey   => $maintainer[$this->alias][$this->primaryKey],
-            'password'          => Authsome::hash($data[$this->alias]['password']),
-            'activation_key'    => md5(uniqid())
-        ));
-        return $this->save($data, array('fieldList' => array('id', 'password', 'activation_key')));
-    }
-
-/**
  * Finds a given maintainer by name as well as their packages
  *
  * @param string $state Either "before" or "after"
@@ -462,6 +397,46 @@ class Maintainer extends AppModel {
     }
 
 /**
+ * Change password method
+ *
+ * @param array $data Data array containing old and new password
+ * @return boolean True on success, false otherwise
+ */
+    function changePassword($data) {
+        if (!$data || !isset($data[$this->alias])) return false;
+
+        $data = array($this->alias => array(
+            'password'              => $data[$this->alias]['password'],
+            'new_password'          => $data[$this->alias]['new_password'],
+            'new_password_confirm'  => $data[$this->alias]['new_password_confirm']
+        ));
+
+        if ($data[$this->alias]['new_password'] != $data[$this->alias]['new_password_confirm']) {
+            return false;
+        }
+
+        foreach ($data[$this->alias] as $key => &$value) {
+            $value = Security::hash($value, null, true);
+            if ($value == Security::hash('', null, true)) {
+                return false;
+            }
+        }
+
+        $data[$this->alias][$this->primaryKey] = Authsome::get($this->primaryKey);
+
+        $user = $this->find('first', array(
+            'conditions' => array(
+                "{$this->alias}.{$this->primaryKey}" => Authsome::get($this->primaryKey),
+                "{$this->alias}.password" => $data[$this->alias]['password']),
+            'contain' => false,
+            'fields' => array($this->primaryKey)
+        ));
+
+        if (!$user) return false;
+        return $this->save($data, array('fieldList' => array('id', 'password')));
+    }
+
+/**
  * Enqueues a forgotPassword job
  *
  * @param array $data User data
@@ -473,6 +448,31 @@ class Maintainer extends AppModel {
 
         App::import('Lib', 'ForgotPasswordJob');
         return $this->enqueue(new ForgotPasswordJob($data[$this->alias], $_SERVER['REMOTE_ADDR']));
+    }
+
+/**
+ * Resets a password and the activation key for a given user
+ *
+ * @param array $data 
+ * @param array $params Array containing the name of a user and their activation key
+ * @return boolean True on success, false otherwise
+ */
+    function resetPassword($data, $params) {
+        if (empty($data[$this->alias]['password'])) {
+            return false;
+        }
+
+        $maintainer = $this->find('resetpassword', $params);
+        if (!isset($maintainer)) {
+            return false;
+        }
+
+        $data = array($this->alias => array(
+            $this->primaryKey   => $maintainer[$this->alias][$this->primaryKey],
+            'password'          => Authsome::hash($data[$this->alias]['password']),
+            'activation_key'    => md5(uniqid())
+        ));
+        return $this->save($data, array('fieldList' => array('id', 'password', 'activation_key')));
     }
 
 }
