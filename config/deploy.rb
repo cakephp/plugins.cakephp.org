@@ -1,9 +1,30 @@
+$config = {
+    "application"       => "cakepackages.com",
+    "repository"        => "git://github.com/josegonzalez/cakepackages.git",
+    "remoteusername"    => "deploy",
+    "cake_folder"       => "/apps/production/resources",
+    "cake_version"      => "cakephp1.3",
+    "plugin_dir"        => "cakephp-plugins",
+    "servers"           => {
+        "prod"              => {
+            "server"        => "cakepackages.com",
+            "application"   => "cakepackages.com",
+            "deploy_to"     => "/apps/production/cakepackages.com/default"
+        },
+        "dev"               => {
+            "server"        => "dev.cakepackages.com",
+            "application"   => "dev.cakepackages.com",
+            "deploy_to"     => "/apps/production/cakepackages.com/dev"
+        }
+    }
+}
+
 # The application name. Pretty arbitrary, doesn't affect anything I think
-set :application,     "cakepackages.com"
+set :application,     $config["application"]
 # Where is the repository held? Depends on your application
-set :repository,      "git://github.com/josegonzalez/cakepackages.git"
+set :repository,      $config["repository"]
 # Deploy as this username
-set :user,            "deploy"
+set :user,            $config["remoteusername"]
 # Do NOT use sudo by default. Helps with file permissions. You can still
 # manually sudo by prepending #{sudo} to run commands
 set :use_sudo,        false
@@ -26,33 +47,36 @@ set :current_dir,     "public"
 ## Deploy Specific settings
 # The folder holding all of my CakePHP core stuff,
 # like plugins and the individual cores
-set :cake_folder,     "/apps/production/resources"
+set :cake_folder,     $config["cake_folder"]
 # Folder name of the specific cakephp version I want to use.
 # This is a raw checkout straight from github
-set :cake_version,    "cakephp1.3"
+# Assumes you have this folder in the :cake_folder directory
+set :cake_version,    $config["cake_version"]
 # The plugin directory (relative to :cake_folder) to be deployed
-set :plugin_dir,      "cakephp-plugins"
+set :plugin_dir,      $config["plugin_dir"]
 
 ## SSH Options
+# Deploy as this username
+set :ssh_options,     :username => $config["remoteusername"]
 # SSH Agent forwarding, sends my personal keys for usage by git when deploying.
 set :ssh_options,     :forward_agent => true
 
 ## Available Environments
 task :prod do
-  server "cakepackages.com", :web, :god
-  set :application, "cakepackages.com"
-  set :deploy_to, "/apps/production/cakepackages.com/default"
-  set :branch, :master
+  server              $config["servers"]["prod"]["server"], :web, :god
+  set :application,   $config["servers"]["prod"]["application"]
+  set :deploy_to,     $config["servers"]["prod"]["deploy_to"]
+  set :branch,        :master
 end
 
 task :dev do
-  role :web, "dev.cakepackages.com"
-  set :application, "dev.cakepackages.com"
-  set :deploy_to, "/apps/production/cakepackages.com/dev"
-  set :branch, ENV['branch'] if ENV.has_key?('branch') && ENV['branch'] =~ /[\w_-]+/i
+  role :web,          $config["servers"]["dev"]["server"]
+  set :application,   $config["servers"]["dev"]["application"]
+  set :deploy_to,     $config["servers"]["dev"]["deploy_to"]
+  set :branch,        ENV['branch'] if ENV.has_key?('branch') && ENV['branch'] =~ /[\w_-]+/i
 end
 
-#Deployment tasks
+## Deployment tasks
 namespace :deploy do
   task :start do
   end
@@ -88,20 +112,27 @@ namespace :deploy do
 
 end
 
+## Link tasks
 namespace :link do
-  desc "Link the CakePHP Core"
+  desc <<-DESC
+    Link the CakePHP Core
+    You may need to change this to a 'cp -rf' instead of 'ln -s' depending upon your shell requirements
+  DESC
   task :core do
     run "rm -rf #{deploy_to}/cake && cp -rf #{cake_folder}/#{cake_version}/cake #{deploy_to}/cake"
   end
 
   desc "Link the CakePHP Plugins for this repository"
   task :plugins do
-    run "rm -rf #{deploy_to}/#{plugin_dir} && cp -rf #{cake_folder}/#{plugin_dir} #{deploy_to}/plugins"
+    run "rm -rf #{deploy_to}/plugins && cp -rf #{cake_folder}/#{plugin_dir} #{deploy_to}/plugins"
   end
 
-  desc "Link the configuration files"
+  desc <<-DESC
+    Link the configuration files
+    May fail if you are not using the asset_compress plugin
+  DESC
   task :config do
-    cmd = [
+    run [
       "rm -rf #{current_release}/config/core.php",
       "ln -s #{shared_path}/config/core.php #{current_release}/config/core.php",
 
@@ -116,9 +147,13 @@ namespace :link do
 
       "rm -rf #{current_release}/webroot/cache_js",
       "ln -s #{shared_path}/webroot/cache_js #{current_release}/webroot/cache_js",
-    ]
 
-    run cmd.join(' && ')
+      "rm -rf #{current_release}/webroot/uploads",
+      "ln -s #{shared_path}/webroot/uploads #{current_release}/webroot/uploads",
+
+      "rm -rf #{current_release}/webroot/files",
+      "ln -s #{shared_path}/webroot/files #{current_release}/webroot/files",
+    ].join(' && ')
   end
 
   desc "Link the temporary directory"
@@ -128,6 +163,7 @@ namespace :link do
 
 end
 
+## Miscellaneous tasks
 namespace :misc do
   desc "Blow up all the cache files CakePHP uses, ensuring a clean restart."
   task :clear_cache do
@@ -135,7 +171,20 @@ namespace :misc do
     run "rm -rf #{shared_path}/tmp/*"
 
     # Create TMP folders
-    run "mkdir -p #{shared_path}/tmp/{cache/{models,persistent,views},sessions,logs,tests}"
+    run [
+      "rm -rf #{shared_path}/tmp/*",
+      "rm -rf #{shared_path}/webroot/cache_css/*",
+      "rm -rf #{shared_path}/webroot/cache_js/*",
+
+      "mkdir -p #{shared_path}/tmp/cache/models",
+      "mkdir -p #{shared_path}/tmp/cache/persistent",
+      "mkdir -p #{shared_path}/tmp/cache/views",
+      "mkdir -p #{shared_path}/tmp/sessions",
+      "mkdir -p #{shared_path}/tmp/logs",
+      "mkdir -p #{shared_path}/tmp/tests",
+
+      "chmod -R 777 #{shared_path}/tmp",
+    ].join(' && ')
   end
 
   desc "Build the search index"
@@ -148,15 +197,25 @@ namespace :misc do
     # symlink the cake core folder to where we need it
     after "misc:startup", "link:core", "link:plugins"
 
-    # Setup shared folders
-    run "mkdir -p #{shared_path}/tmp/{cache/{data,models,persistent,views},sessions,logs,tests};"
-    run "mkdir -p #{shared_path}/webroot/uploads"
-    run "mkdir -p #{shared_path}/webroot/cache_css"
-    run "mkdir -p #{shared_path}/webroot/cache_js"
+    run [
+      # Setup shared folders
+      "mkdir -p #{shared_path}/tmp/cache/models",
+      "mkdir -p #{shared_path}/tmp/cache/persistent",
+      "mkdir -p #{shared_path}/tmp/cache/views",
+      "mkdir -p #{shared_path}/tmp/sessions",
+      "mkdir -p #{shared_path}/tmp/logs",
+      "mkdir -p #{shared_path}/tmp/tests",
+      
+      "mkdir -p #{shared_path}/webroot/files",
+      "mkdir -p #{shared_path}/webroot/uploads",
+      "mkdir -p #{shared_path}/webroot/cache_css",
+      "mkdir -p #{shared_path}/webroot/cache_js",
 
-    # Make the TMP and Uploads folder writeable
-    run "chmod -R 644 #{shared_path}/webroot/cache_css #{shared_path}/webroot/cache_js"
-    run "chmod -R 755 #{shared_path}/tmp #{shared_path}/webroot/uploads"
+      # Make the TMP and Uploads folder writeable
+      "chmod -R 777 #{shared_path}/tmp",
+      "chmod -R 644 #{shared_path}/webroot/cache_css #{shared_path}/webroot/cache_js",
+      "chmod -R 755 #{shared_path}/tmp #{shared_path}/webroot/uploads #{shared_path}/webroot/files"
+    ].join(' && ')
   end
 
   desc "Initialize the submodules and update them"
@@ -166,23 +225,45 @@ namespace :misc do
 
   desc "Tail the log files"
   task :tail do
-    run "tail -f #{deploy_to}/logs/*.log"
+    run "tail -f #{deploy_to}/log/default.0.log"
+  end
+end
+
+## Tasks involving migrations
+namespace :migrate do
+  desc "Run CakeDC Migrations"
+  task :all do
+    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -app #{deploy_to}/#{current_dir} migration run all"
   end
 
-  task :god_stop, :roles => :god do
+  desc "Run CakeDC Migrations"
+  task :status do
+    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -app #{deploy_to}/#{current_dir} migration status"
+  end
+end
+
+## Tasks involving God+CakeDJJob
+namespace :god do
+  task :stop, :roles => :god do
     run "#{sudo} service god stop"
   end
 
-  task :god_start, :roles => :god do
+  task :start, :roles => :god do
     run "#{sudo} service god start"
   end
 
-  task :god_restart, :roles => :god do
-    run "#{sudo} service god stop"
-    run "#{sudo} rm /etc/god/conf.d/workers.god"
-    run "#{sudo} rm /etc/god/conf.d/cakephp_god.rb"
-    run "#{sudo} ln -s #{current_release}/config/workers.god /etc/god/conf.d/workers.god"
-    run "#{sudo} ln -s #{current_release}/config/cakephp_god.rb /etc/god/conf.d/cakephp_god.rb"
-    run "#{sudo} service god start"
+  task :status, :roles => :god do
+    run "#{sudo} service god status"
+  end
+
+  task :restart, :roles => :god do
+    run [
+      "#{sudo} service god stop",
+      "#{sudo} rm /etc/god/conf.d/workers.god",
+      "#{sudo} rm /etc/god/conf.d/cakephp_god.rb",
+      "#{sudo} ln -s #{current_release}/config/workers.god /etc/god/conf.d/workers.god",
+      "#{sudo} ln -s #{current_release}/config/cakephp_god.rb /etc/god/conf.d/cakephp_god.rb",
+      "#{sudo} service god start"
+    ].join(' && ')
   end
 end
