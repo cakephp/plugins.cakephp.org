@@ -17,6 +17,7 @@ class NewMaintainerJob extends CakeJob {
             return false;
         } catch (Exception $e) {}
 
+        $this->Maintainer->create();
         return $this->Maintainer->save(array('Maintainer' => array(
                 'username' => $user['User']['login'],
                 'gravatar_id' => $user['User']['gravatar_id'],

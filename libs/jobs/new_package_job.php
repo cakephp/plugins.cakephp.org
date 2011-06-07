@@ -44,6 +44,7 @@ class NewPackageJob extends CakeJob {
         $collaborators = $this->getCollaborators($repo);
 
         $this->out('Saving package');
+        $this->Maintainer->Package->create();
         $this->Maintainer->Package->save(array('Package' => array(
             'maintainer_id' => $maintainer['Maintainer']['id'],
             'name' => $this->name,
