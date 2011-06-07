@@ -16,5 +16,7 @@ $map = array(
 		'007_sources' => 'M4db126f0bbe4472f9d762e7ecbdd56cb'),
 	8 => array(
 		'008_remove_log_table' => 'M4dec394c8e2c48d29f9737d5cbdd56cb'),
+	9 => array(
+		'009_added_logs_table' => 'M4dedc5be228c498caa31454acbdd56cb'),
 );
 ?>
