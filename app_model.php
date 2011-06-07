@@ -20,7 +20,6 @@ class AppModel extends LazyModel {
  * @link http://book.cakephp.org/view/1072/Using-Behaviors
  */
     var $actsAs = array(
-        'Callbackable',
         'CakeDjjob.CakeDjjob',
         'Containable',
     );
