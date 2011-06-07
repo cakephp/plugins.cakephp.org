@@ -18,5 +18,7 @@ $map = array(
 		'008_remove_log_table' => 'M4dec394c8e2c48d29f9737d5cbdd56cb'),
 	9 => array(
 		'009_added_logs_table' => 'M4dedc5be228c498caa31454acbdd56cb'),
+	10 => array(
+		'010_removed_api_generator_plugin' => 'M4dedc61218084cc9977e4911cbdd56cb'),
 );
 ?>
