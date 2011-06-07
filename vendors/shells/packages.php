@@ -206,59 +206,23 @@ class PackagesShell extends Shell {
  * recursing through all letter folders and checking
  * each individual user
  *
- * Uses PCNTL extension in order to ensure that a given
- * characterization doesn't fail spectacularly. Sometimes a plugin
- * will require or include a file that doesn't exist, leading to a
- * fatal error
  * @return void
  * @author Jose Diaz-Gonzalez
  */
 	function characterize() {
-		if (!function_exists('pcntl_fork')) {
-		    die("PCNTL functions not available on this PHP installation\n");
-		}
-
-		CakeLog::drop('database');
-		Cache::drop('default');
-		Cache::config('default', array('engine' => 'File'));
-
 		$count = 0;
-
 		$this->Package->Behaviors->detach('Searchable');
-		$this->Package->enableSoftDeletable('find', false);
+		$this->Package->Behaviors->detach('Softdeletable');
 		$packages = $this->Package->find('list', array(
-			// 'conditions' => array('id' => 8),
-			'order' => 'id'
+			'order' => 'Package.id'
 		));
 		foreach ($packages as $id => $name) {
-			$pid = pcntl_fork();
-			if ($pid == -1) {
-				die("PCNTL Unable to fork\n");
-			} else if ( $pid == 0 ) {
-				$status = SIG_ERR;
-
-				// This is the child process.  Do something here.
-				// Instead of calling exit(), we use posix_kill()
-				$this->out(sprintf(__('* Processing %s', true), $name));
-				$this->Package->getDatasource()->disconnect();
-				$this->Package->getDatasource()->connect();
-
-				if ($this->Package->characterize($id)) {
-					$status = SIGKILL;
-				}
-
-				$this->Package->getDatasource()->disconnect();
-				posix_kill(getmypid(), $status);
-				return;
+			$this->out(sprintf("[SCAN] %s", $name));
+			if ($this->Package->characterize($id)) {
+				$this->out(" [COMPLETE]");
+				$count++;
 			} else {
-				pcntl_wait($status);
-				if ($status === SIGKILL) {
-					$count++;
-					continue;
-				}
-				$this->Package->getDatasource()->connect();
-				$this->Package->broken($id);
-				$this->Package->getDatasource()->disconnect();
+				$this->out(" [FAIL]");
 			}
 		}
 		$this->out(sprintf(__('* Checked %s of %s repositories', true), $count, count($packages)));

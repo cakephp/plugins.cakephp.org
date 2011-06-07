@@ -322,40 +322,30 @@ class Package extends AppModel {
         return array($package['Package']['id'], $path . DS . $package['Package']['name']);
     }
 
-    function characterize($id) {
-        $this->getDatasource()->disconnect();
-        $this->getDatasource()->connect();
+	function characterize($id) {
+		$this->Behaviors->detach('Searchable');
+		$this->Behaviors->detach('Softdeletable');
+		list($package_id, $path) = $this->setupRepository($id);
+		if (!$package_id || !$path) {
+			return !$this->broken($id);
+		}
 
-        $this->enableSoftDeletable('find', false);
-        list($id, $path) = $this->setupRepository($id);
-        if (!$id || !$path) {
-            $this->broken($id);
-            return false;
-        }
+		if (!class_exists('Characterizer')) {
+			App::import('Lib', 'Characterizer');
+		}
 
-        if (!class_exists('PackageCharacteristics')) {
-            App::import('Lib', 'PackageCharacteristics');
-        }
+		$characterizer = new Characterizer($path);
+		$data = $characterizer->classify();
+		$this->create(false);
+		return $this->save(array('Package' => array_merge(
+			$data, array('id' => $package_id, 'deleted' => false)
+		)));
+	}
 
-        try {
-            $characterizer = new PackageCharacteristics($path);
-            $data = $characterizer->characterize();
-            if (!$data) throw new Exception('Potentially not a CakePHP Repository');
-        } catch (Exception $e) {
-            printf("============== EXCEPTION %s\n", $e->getMessage());
-            $this->broken($id);
-            return false;
-        }
-
-        $this->create(false);
-        return $this->save(array('Package' => array_merge(
-            $data, array('id' => $id, 'deleted' => 0)
-        )));
-    }
-
-    function broken($id) {
-        $this->delete($id);
-    }
+	function broken($id) {
+		$this->id = $id;
+		return $this->saveField('deleted', true);
+	}
 
     function getSearchableData($data) {
         $searchableData = array();
