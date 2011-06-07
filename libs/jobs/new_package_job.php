@@ -11,7 +11,7 @@ class NewPackageJob extends CakeJob {
     }
 
     function perform() {
-        $this->out('Verifying package uniqueness');
+        $this->out(sprintf('Verifying package uniqueness %s/%s', $this->username, $this->name));
         $this->loadModel('Maintainer');
         $maintainer = $this->Maintainer->find('view', $this->username);
 
