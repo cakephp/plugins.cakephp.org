@@ -60,7 +60,7 @@ class UsersController extends AppController {
         }
 
         if ($maintainer) {
-            $this->Session->setFlash(__('You have been logged in', true));
+            $this->Session->setFlash(__('You have been logged in', true), 'flash/success');
             $this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
         }
     }

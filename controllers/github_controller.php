@@ -100,7 +100,7 @@ class GithubController extends AppController {
         $this->_redirectUnless($package, __('Invalid package', true));
 
         if ($this->Github->savePackage($username, $package)) {
-            $this->Session->setFlash(sprintf(__('Code for %s saved!', true), $package));
+            $this->Session->setFlash(sprintf(__('Code for %s saved!', true), $package), 'flash/success');
             $this->redirect(array('action' => 'view', $username));
         }
 
