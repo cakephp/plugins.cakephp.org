@@ -42,7 +42,7 @@ class Maintainer extends AppModel {
         $this->validate = array(
             'username' => array(
                 'alphanumeric' => array(
-                    'rule' => array('alphanumeric'),
+                    'rule' => '/[\w_-]+/i',
                     'message' => __('must contain only letters and numbers', true),
                 ),
                 'isUnique' => array(
