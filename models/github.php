@@ -507,15 +507,13 @@ class Github extends AppModel {
     }
 
     function savePackage($username, $name) {
-        App::import('Lib', 'NewPackageJob');
-        return $this->enqueue(new NewPackageJob($username, $name));
+        return $this->enqueue($this->load('NewPackageJob', $username, $name));
     }
 
     function saveUser($username = null) {
         if (!$username) return false;
 
-        App::import('Lib', 'NewMaintainerJob');
-        return $this->enqueue(new NewMaintainerJob($username));
+        return $this->enqueue($this->load('NewMaintainerJob', $username));
     }
 
 }
