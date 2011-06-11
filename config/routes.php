@@ -42,8 +42,6 @@
 	Router::connect('/cache_js/*', array('plugin' => 'asset_compress', 'controller' => 'js_files', 'action' => 'get'));
 
 	Router::connect('/home', array('controller' => 'packages', 'action' => 'home'));
-	Router::connect('/about', array('controller' => 'pages', 'action' => 'display', 'opensource'));
-	Router::connect('/opensource', array('controller' => 'pages', 'action' => 'display', 'opensource'));
 	Router::connect('/login', array('controller' => 'users', 'action' => 'login'));
 	Router::connect('/logout', array('controller' => 'users', 'action' => 'logout'));
 	Router::connect('/dashboard', array('controller' => 'users', 'action' => 'dashboard'));
@@ -69,8 +67,7 @@
 		'controller' => 'packages', 'action' => 'search', 'type' => 'Package'
 	));
 
-/**
- * ...and connect the rest of 'Pages' controller's urls.
- */
-	Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
-?>
+	App::import('Lib', 'PageRoute.PageRoute');
+	Router::connect('/:page', array('controller' => 'pages', 'action' => 'display'),
+		array('routeClass' => 'PageRoute')
+	);
