@@ -33,6 +33,7 @@ class Package extends AppModel {
         'random'            => true,
         'randomids'         => true,
         'repoclone'         => true,
+        'searchable'        => true,
         'view'              => true,
     );
 
@@ -227,6 +228,28 @@ class Package extends AppModel {
         }
     }
 
+	function _findSearchable($state, $query, $results = array()) {
+		if ($state == 'before') {
+			if (empty($query['id']) && empty($query[0])) {
+				throw new InvalidArgumentException(__('Invalid package', true));
+			}
+
+			$query['conditions'] = array(
+				'Package.deleted' => 0,
+				'Package.id' => (isset($query['id'])) ? $query['id'] : $query[0]
+			);
+			$query['contain'] = array('Maintainer' => array(
+				'fields' => array('name', 'username', 'twitter_username')
+			));
+			return $query;
+		} elseif ($state == 'after') {
+			if (empty($results[0])) {
+				throw new OutOfBoundsException(__('Invalid package', true));
+			}
+			return $results[0];
+		}
+	}
+
     function _findView($state, $query, $results = array()) {
         if ($state == 'before') {
             if (empty($query['maintainer']) || empty($query['package'])) {
@@ -323,7 +346,6 @@ class Package extends AppModel {
     }
 
 	function characterize($id) {
-		$this->Behaviors->detach('Searchable');
 		$this->Behaviors->detach('Softdeletable');
 		list($package_id, $path) = $this->setupRepository($id);
 		if (!$package_id || !$path) {
@@ -347,15 +369,23 @@ class Package extends AppModel {
 		return $this->saveField('deleted', true);
 	}
 
-    function getSearchableData($data) {
-        $searchableData = array();
-        foreach ($data as $modelName => $modelData) {
-            foreach ($modelData as $field => $value) {
-                $searchableData["{$modelName}.{$field}"] = $value;
-            }
-        }
-        return $searchableData;
-    }
+	function getSearchableData($data, $id = null) {
+		if (empty($data['Maintainer'])) {
+			if (!empty($data[$this->alias][$this->primaryKey])) {
+				$data = $this->find('searchable', $data[$this->alias][$this->primaryKey]);
+			} else {
+				$data = $this->find('searchable', $id);
+			}
+		}
+
+		$searchableData = array();
+		foreach ($data as $modelName => $modelData) {
+			foreach ($modelData as $field => $value) {
+				$searchableData["{$modelName}.{$field}"] = $value;
+			}
+		}
+		return $searchableData;
+	}
 
     function getAllSearchableData() {
         return $this->find('all', array(
