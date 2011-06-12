@@ -40,3 +40,6 @@
 [submodule "plugins/database_logger"]
 	path = plugins/database_logger
 	url = git://github.com/josegonzalez/database_logger.git
+[submodule "plugins/page_route"]
+	path = plugins/page_route
+	url = git://github.com/josegonzalez/page_route.git
