@@ -51,16 +51,5 @@ $installed = array(
 		'pre-depends' => 'CakePHP==1.3',
 		'install-path' => '/Users/jose/Sites/repositories/cakepackages/app/plugins/settings',
 	),
-	'webservice' => array(
-		'source' => 'git://github.com/josegonzalez/webservice_plugin.git',
-		'package' => 'webservice_plugin',
-		'description' => 'CakePHP plugin that takes the data you set and automatically serves it as JSON and XML',
-		'type' => 'plugin',
-		'homepage' => 'http://github.com/josegonzalez/webservice_plugin',
-		'alias' => 'webservice',
-		'section' => 'api',
-		'pre-depends' => 'CakePHP==1.3',
-		'install-path' => '/Users/jose/Sites/repositories/cakepackages/app/plugins/webservice',
-	),
 );
 ?>

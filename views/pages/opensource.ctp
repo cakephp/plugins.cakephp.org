@@ -61,23 +61,3 @@
     </div>
     <div class="clear"></div>
 </div>
-<div class="meta_listing">
-    <div class="icons-container">
-        <div class="icons">
-            <a href="/behaviors" class="hasno be" label="behavior">be</a>
-            <a href="/helpers" class="hasno h" label="helper">h</a>
-            <a href="/components" class="tooltip cp" label="component" original-title="Includes component">cp</a>
-            <a href="/models" class="hasno m" label="model">m</a>
-            <a href="/views" class="hasno v" label="view">v</a>
-            <a href="/controllers" class="hasno c" label="controller">c</a>
-            <a href="/datasources" class="hasno ds" label="datasource">ds</a>
-            <a href="/themes" class="hasno t" label="theme">t</a>
-            <a href="/shells" class="hasno s" label="shell">s</a>
-        </div>
-    </div>
-    <div class="information">
-        <a href="/package/josegonzalez/webservice_plugin">webservice_plugin</a><br>
-        <p>CakePHP plugin that takes the data you set and automatically serves it as JSON and XML</p>
-    </div>
-    <div class="clear"></div>
-</div>

@@ -21,7 +21,6 @@ class AppController extends Controller {
         ),
         'Session',
         'Settings.Settings',
-        'Webservice.Webservice',
     );
 
 /**
@@ -95,19 +94,6 @@ class AppController extends Controller {
                 $this->passedArgs['limit']
             );
         }
-    }
-
-/**
- * Called after the controller action is run, but before the view is rendered.
- *
- * Used to set the useJsonNative parameter to true for Webservice requests
- *
- * @access public
- * @link http://book.cakephp.org/view/984/Callbacks
- */
-    function beforeRender() {
-        parent::beforeRender();
-        $this->params['useJsonNative'] = true;
     }
 
 /**
