@@ -1,5 +1,6 @@
 <?php
-class AppController extends Controller {
+App::import('Lib', 'AjaxController.AjaxController');
+class AppController extends AjaxController {
 
 /**
  * Array containing the names of components this controller uses. Component names

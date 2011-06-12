@@ -43,3 +43,6 @@
 [submodule "plugins/page_route"]
 	path = plugins/page_route
 	url = git://github.com/josegonzalez/page_route.git
+[submodule "plugins/ajax_controller"]
+	path = plugins/ajax_controller
+	url = https://github.com/josegonzalez/ajax_controller
