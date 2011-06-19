@@ -298,9 +298,15 @@
 if (function_exists('apc_fetch')) {
     Cache::config('default', array(
         'engine' => 'Apc', //[required]
-        'duration'=> 3600, //[optional]
-        'probability'=> 100, //[optional]
-        'prefix' =>  'packages_', //[optional]  prefix every cache file with this string
+        'duration' => 3600, //[optional]
+        'probability' => 100, //[optional]
+        'prefix' => 'packages_', //[optional]  prefix every cache file with this string
+    ));
+    Cache::config('_cake_core_', array(
+        'engine' => 'Apc', //[required]
+        'duration' => 3600, //[optional]
+        'probability' => 100, //[optional]
+        'prefix' => '_cake_core_', //[optional]  prefix every cache file with this string
     ));
 } else {
     Cache::config('default', array('engine' => 'File'));
