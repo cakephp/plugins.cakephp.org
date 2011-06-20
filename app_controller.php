@@ -68,13 +68,6 @@ class AppController extends AjaxController {
     var $paginationMaxLimit = 25;
 
 /**
- * Theme name
- *
- * @var string
- **/
-	var $theme = 'new';
-
-/**
  * Object constructor - Adds the Debugkit panel if in development mode
  *
  * @return void

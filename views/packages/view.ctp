@@ -1,44 +1,47 @@
-<?php $this->Html->for_layout('h2', '<span class="package_name">' . $package['Package']['name'] . '</span>'); ?>
-<?php $this->Html->for_layout('h3', "by " . $this->Resource->maintainer($package['Maintainer']['username'], $package['Maintainer']['username'])); ?>
-<?php $this->Html->for_layout('title', sprintf("%s by %s", 
-    $package['Package']['name'],
-    ($package['Maintainer']['username']) ? $package['Maintainer']['username'] : $package['Maintainer']['username'])); ?>
-<h4>
-	<?php
-		echo $this->Clearance->link(sprintf(__('Edit %s', true), __('Package', true)), array(
-			'action' => 'edit', $package['Package']['id']));
-	?>
-</h4>
-<h4>
-	<?php
-		echo $this->Clearance->link(sprintf(__('Delete %s', true), __('Package', true)), array(
-			'action' => 'delete', $package['Package']['id']), null,
-			sprintf(__('Are you sure you want to delete # %s?', true), $package['Package']['id']
-	)); ?>
-</h4>
-<div class="description">
-	<p><?php echo $package['Package']['description']; ?></p>
-	<?php echo $this->element('rss_reader', array(
-		'url' =>  "https://github.com/{$package['Maintainer']['username']}/{$package['Package']['name']}/commits/master.atom"))?>
-</div>
-<div class="meta-data">
-	<div class="meta-package border-radius">
-		<div style="icons-container">
-			<?php echo $this->element('icons', array(
-			    'package' => $package['Package'], 'search' => false, 'meta' => false)); ?>
+<h2 class="secondary-title">
+	<?php echo $this->element('icons', array('cache' => array(
+		'key' => sha1(serialize($package['Package'])), 'time' => '+1 day'
+	))); ?>
+	
+	<span class="name"><?php echo $package['Package']['name']; ?></span>
+	<br class="clear" />
+</h2>
+
+<article class="package">
+	<p class="description"><?php echo $this->Resource->description($package['Package']['description']); ?></p>
+	<div class="outbound">
+		<div>
+			<span class="title">Github Url</span>
+			<?php echo $this->Resource->repository($package['Maintainer']['username'], $package['Package']['name']); ?>
 		</div>
-		<dl><?php $i = 0; $class = ' class="altrow"';?>
-			<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Github Url'); ?></dt>
-			<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-				<?php echo $this->Resource->repository($package['Maintainer']['username'], $package['Package']['name']); ?>
-				&nbsp;
-			</dd>
-			<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Clone Url'); ?></dt>
-			<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-				<?php echo $this->Resource->clone_url($package['Maintainer']['username'], $package['Package']['name']); ?>
-				&nbsp;
-			</dd>
-		</dl>
+		<div>
+			<span class="title">Clone Url</span>
+			<input id="clone" onclick="document.getElementById('clone').focus();document.getElementById('clone').select();" value="<?php echo $this->Resource->clone_url($package['Maintainer']['username'], $package['Package']['name']); ?>" />
+		</div>
+	</dl>
+	
+	<div class="meta">
+		<!-- <span class="category"></span> -->
+		<span class="watchers"><?php echo $package['Package']['watchers'] . ' ' . __n('watcher', 'watchers', $package['Package']['watchers'], true); ?></span>
+		<span class="maintainer">Maintained by <?php $name = trim($package['Maintainer']['name']); echo $this->Html->link((!empty($name)) ? $name : $package['Maintainer']['username'],
+			array('plugin' => null, 'controller' => 'maintainers', 'action' => 'view', $package['Maintainer']['username']),
+			array('class' => 'maintainer_name')
+		); ?></span>
+		<span class="last_pushed">Last Pushed: <?php echo $this->Time->niceShort($package['Package']['last_pushed_at']); ?></span>
+		<!-- <span class="tags">
+			<a href="#">database</a>
+			<a href="#">logging</a>
+			<a href="#">library</a>
+		</span> -->
 	</div>
-</div>
-<div class="clear"></div>
+</article>
+
+
+<article class="description">
+	<?php echo $this->element('rss_reader', array(
+		'url' => "https://github.com/{$package['Maintainer']['username']}/{$package['Package']['name']}/commits/master.atom",
+		'cache' => array(
+			'key' => 'package.rss.' . md5($package['Maintainer']['username'] . $package['Package']['name']),
+			'time' => '+6 hours',
+		))); ?>
+</article>

@@ -1,37 +1,32 @@
-<?php $this->Html->for_layout('title', 'cakephp code for you to download'); ?>
-<?php $this->Html->for_layout('h2', 'cakephp code for you to download'); ?>
-<?php $types = array(
-		'latest' => array(__('Latest Packages', true), true),
-		'random' => array(__('Random Packages', true), false),
-	);
-?>
-<?php foreach ($types as $type => $header): ?>
-	<div class="list latest">
-		<h3>
-			<?php if ($header[1]) : ?>
-				<?php echo $this->Html->link($header[0], array('controller' => 'packages', 'action' => $type)); ?>
-			<?php else : ?>
-				<?php echo $header[0]?>
-			<?php endif; ?>
-		</h3>
-		<ul>
-		<?php foreach ($$type as $package) : ?>
-			<li>
-				<?php echo $this->Html->link($package['Package']['name'], array(
-						'controller' => 'packages',
-						'action' => 'view',
-						$package['Maintainer']['username'],
-						$package['Package']['name']
-					), array('class' => 'package_name'));
-				?>
-				<span>
-				by
-				<?php echo $this->Resource->maintainer($package['Maintainer']['name'], $package['Maintainer']['username']);
-				?>
-				</span>
-			</li>
-		<?php endforeach; ?>
-		</ul>
-	</div>
-<?php endforeach; ?>
-<div class="clear"></div>
+<h2 class="secondary-title">
+	Latest Packages
+</h2>
+
+<div class="package-list">
+	<?php foreach ($packages as $i => $package) : ?>
+		<article class="package<?php echo ($i%2 == 0) ? ' alt' : '' ?>">
+			<?php echo $this->Html->link($package['Package']['name'],
+				array('plugin' => null, 'controller' => 'packages', 'action' => 'view', $package['Maintainer']['username'], $package['Package']['name']),
+				array('class' => 'name')
+			); ?>
+			<p class="description"><?php echo $this->Resource->description($package['Package']['description']); ?></p>
+			<div class="meta">
+				<!-- <span class="category"></span> -->
+				<span class="watchers"><?php echo $package['Package']['watchers'] . ' ' . __n('watcher', 'watchers', $package['Package']['watchers'], true); ?></span>
+				<span class="maintainer">Maintained by <?php $name = trim($package['Maintainer']['name']); echo $this->Html->link((!empty($name)) ? $name : $package['Maintainer']['username'],
+					array('plugin' => null, 'controller' => 'maintainers', 'action' => 'view', $package['Maintainer']['username']),
+					array('class' => 'maintainer_name')
+				); ?></span>
+				<span class="last_pushed"><?php echo $this->Time->niceShort($package['Package']['last_pushed_at']); ?></span>
+				<!-- <span class="tags">
+					<a href="#">database</a>
+					<a href="#">logging</a>
+					<a href="#">library</a>
+				</span> -->
+			</div>
+		</article>
+	<?php endforeach; ?>
+</div>
+<article class="paging">
+	<?php echo $this->Html->link('Browse packages', array('plugin' => null, 'controller' => 'packages', 'action' => 'index')); ?>
+</article>

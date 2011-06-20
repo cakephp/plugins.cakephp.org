@@ -1,53 +1,48 @@
-<?php $this->Html->for_layout('h2', $maintainer['Maintainer']['username']); ?>
-<?php $this->Html->for_layout('h3', $maintainer['Maintainer']['name']); ?>
-<div class="meta-data">
-	<div class="meta-maintainer border-radius">
-		<?php echo $this->Html->image('https://secure.gravatar.com/avatar/' . $maintainer['Maintainer']['gravatar_id'], array('alt' => sprintf('Gravatar for %s', $maintainer['Maintainer']['username']), 'class' => 'gravatar')); ?>
-		<dl><?php $i = 0; $class = ' class="altrow"';?>
-			<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Github Username'); ?></dt>
-			<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-				<?php echo $this->Html->link($maintainer['Maintainer']['username'], "http://github.com/{$maintainer['Maintainer']['username']}"); ?>
-				&nbsp;
-			</dd>
-			<?php if (!empty($maintainer['Maintainer']['alias'])) : ?>
-				<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Alias'); ?></dt>
-				<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-					<?php echo $maintainer['Maintainer']['alias']; ?>
-					&nbsp;
-				</dd>
-			<?php endif; ?>
-			<?php if (!empty($maintainer['Maintainer']['url'])) : ?>
-				<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Url'); ?></dt>
-				<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-					<?php
-						if (!strpos($maintainer['Maintainer']['url'], '://')) {
-							$maintainer['Maintainer']['url'] = 'http://' . $maintainer['Maintainer']['url'];
-						}
-						echo  $this->Html->link($maintainer['Maintainer']['url'], $maintainer['Maintainer']['url']);
-					?>
-				&nbsp;
-				</dd>
-			<?php endif; ?>
-			<?php if (!empty($maintainer['Maintainer']['twitter_username'])) : ?>
-				<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Twitter Username'); ?></dt>
-				<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-					<?php echo $maintainer['Maintainer']['twitter_username']; ?>
-					&nbsp;
-				</dd>
-			<?php endif; ?>
-		</dl>
-		<div class="clear"></div>
-	</div>
-</div>
-<div class="related">
-	<h3><?php __('Packages');?></h3>
-	<?php if (!empty($maintainer['Package'])):?>
-	<?php $i = 0; foreach ($maintainer['Package'] as $package): ?>
-		<div class="meta-listing">
-			<?php echo $this->Resource->package($package['name'], $maintainer['Maintainer']['username']); ?><br />
-			<p><?php echo $package['description'];?></p>
+<h2 class="secondary-title">
+	<?php echo $this->Html->image('https://secure.gravatar.com/avatar/' . $maintainer['Maintainer']['gravatar_id'], array('alt' => sprintf('Gravatar for %s', $maintainer['Maintainer']['username']), 'class' => 'gravatar')); ?>
+	<span class="name"><?php echo ($maintainer['Maintainer']['name']) ? $maintainer['Maintainer']['name'] : $maintainer['Maintainer']['username']; ?></span>
+	<div class="github regular">Github Username: <?php echo $this->Html->link($maintainer['Maintainer']['username'], "http://github.com/{$maintainer['Maintainer']['username']}"); ?></div>
+	<?php if (!empty($maintainer['Maintainer']['alias'])) : ?><div class="alias regular">Alias: <?php echo $maintainer['Maintainer']['alias']; ?></div><?php endif; ?>
+	<?php if (!empty($maintainer['Maintainer']['url'])) : ?>
+		<div class="url regular">
+			Url: <?php
+				if (!strpos($maintainer['Maintainer']['url'], '://')) {$maintainer['Maintainer']['url'] = 'http://' . $maintainer['Maintainer']['url'];}
+				echo  $this->Html->link($maintainer['Maintainer']['url'], $maintainer['Maintainer']['url']);
+			?>
 		</div>
+	<?php endif; ?>
+	<?php if (!empty($maintainer['Mai regularntainer']['twitter_username'])) : ?>
+		<div class="twitter_username">
+			Twitter Username: <?php echo $maintainer['Maintainer']['twitter_username']; ?>
+		</div>
+	<?php endif; ?>
+	<br class="clear">
+</h2>
+<h3 class="secondary-title">
+	Packages
+</h3>
+<?php if (!empty($maintainer['Package'])):?>
+	<?php foreach ($maintainer['Package'] as $package): ?>
+		<article class="package">
+			<?php echo $this->Html->link($package['name'],
+				array('plugin' => null, 'controller' => 'packages', 'action' => 'view', $maintainer['Maintainer']['username'], $package['name']),
+				array('class' => 'name')
+			); ?>
+			<p class="description"><?php echo $this->Resource->description($package['description']); ?></p>
+			<div class="meta">
+				<!-- <span class="category"></span> -->
+				<span class="watchers"><?php echo $package['watchers'] . ' ' . __n('watcher', 'watchers', $package['watchers'], true); ?></span>
+				<span class="maintainer">Maintained by <?php $name = trim($maintainer['Maintainer']['name']); echo $this->Html->link((!empty($name)) ? $name : $maintainer['Maintainer']['username'],
+					array('plugin' => null, 'controller' => 'maintainers', 'action' => 'view', $maintainer['Maintainer']['username']),
+					array('class' => 'maintainer_name')
+				); ?></span>
+				<span class="last-pushed">Last Pushed: <?php echo $this->Time->niceShort($package['last_pushed_at']); ?></span>
+				<!-- <span class="tags">
+					<a href="#">database</a>
+					<a href="#">logging</a>
+					<a href="#">library</a>
+				</span> -->
+			</div>
+		</article>
 	<?php endforeach; ?>
 <?php endif; ?>
-</div>
-<div class="clear"></div>
