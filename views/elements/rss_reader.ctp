@@ -7,7 +7,8 @@ if (!$items) {
 	App::import('Core', 'HttpSocket');
 	$HttpSocket = new HttpSocket();
 	$result = $HttpSocket->request(array('uri' => $url));
-	if ($result) {
+
+	if ($result && $HttpSocket->response['status']['code'] != 404) {
 		App::import('Xml');
 		$result = new Xml($result);
 		$result = $result->toArray();
@@ -43,7 +44,7 @@ if (!$items) {
 	<?php $hash = explode("Commit/", $item['id']); ?>
 	<tr<?php echo ($i++ % 2 == 0) ? ' class="altrow"' : ''; ?>>
 		<td class="commit-msg" rel="<?php echo end($hash) ;?>">
-			<?php echo $this->Html->link($item['title'], $item['Link']['href'], array('target' => '_blank')); ?>
+			<?php echo $this->Html->link(Sanitize::clean($item['title']), $item['Link']['href'], array('target' => '_blank')); ?>
 		</td>
 		<td class="commit-date">
 			<?php echo $this->Time->timeAgoInWords($item['updated']); ?>
