@@ -1,5 +1,7 @@
 <?php
-App::import('Vendor', 'UrlCache.url_cache_app_helper');
+if (!class_exists('UrlCacheAppHelper')) {
+	App::import('Vendor', 'UrlCache.url_cache_app_helper');
+}
 class AppHelper extends UrlCacheAppHelper {
 
 /**
