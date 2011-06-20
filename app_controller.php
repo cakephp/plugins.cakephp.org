@@ -14,17 +14,17 @@ class AppController extends AjaxController {
  * @access public
  * @link http://book.cakephp.org/view/961/components-helpers-and-uses
  */
-    var $components = array(
-        'Authsome.Authsome' => array('model' => 'Maintainer'),
-        'Mail',
-        'RequestHandler',
-        'Sanction.Permit' => array(
-            'check' => 'group',
-            'path' => 'Maintainer.Maintainer'
-        ),
-        'Session',
-        'Settings.Settings',
-    );
+	var $components = array(
+		'Authsome.Authsome' => array('model' => 'Maintainer'),
+		'RequestHandler',
+		'Sanction.Permit' => array(
+			'check' => 'group',
+			'path' => 'Maintainer.Maintainer'
+		),
+		'Session',
+		'Settings.Settings',
+		'Sham.Sham',
+	);
 
 /**
  * An array containing the names of helpers this controller uses. The array elements should
@@ -36,13 +36,14 @@ class AppController extends AjaxController {
  * @access protected
  * @link http://book.cakephp.org/view/961/components-helpers-and-uses
  */
-    var $helpers = array(
-        'AssetCompress.AssetCompress',
-        'Sanction.Clearance' => array(
-            'check' => 'group',
-            'path' => 'Maintainer.Maintainer'
-        ),
-    );
+	var $helpers = array(
+		'AssetCompress.AssetCompress',
+		'Sanction.Clearance' => array(
+			'check' => 'group',
+			'path' => 'Maintainer.Maintainer'
+		),
+		'Sham.Sham',
+	);
 
 /**
  * Sets the view class to AutoHelper, which autoloads helpers when needed
@@ -66,6 +67,12 @@ class AppController extends AjaxController {
  */
     var $paginationMaxLimit = 25;
 
+/**
+ * Theme name
+ *
+ * @var string
+ **/
+	var $theme = 'new';
 
 /**
  * Object constructor - Adds the Debugkit panel if in development mode
@@ -98,6 +105,39 @@ class AppController extends AjaxController {
             );
         }
     }
+
+/**
+ * Sets some meta headers for the response
+ *
+ * @return void
+ */
+	public function _seoFallback() {
+		if ($this->params['controller'] == 'blog_posts') {
+			if ($this->params['action'] == 'view') {
+				$this->Sham->setMeta('title', $this->viewVars['blogPost']['BlogPost']['title'] . ' | Developer Blog | CakePackages');
+				$this->Sham->setMeta('canonical', '/posts/' . $this->viewVars['blogPost']['BlogPost']['slug'] . '/');
+			} else {
+				$this->Sham->setMeta('title', 'Developer Blog | CakePackages');
+				$this->Sham->setMeta('canonical', '/posts/');
+			}
+			$this->Sham->setMeta('description', 'CakePackages Developer Blog - Notes on the development and future of CakePackages');
+		} elseif ($this->params['controller'] == 'pages') {
+			$this->Sham->setMeta('title', $this->viewVars['title_for_layout'] . ' | CakePackages');
+			$this->Sham->setMeta('canonical', '/' . $this->viewVars['page'] . '/');
+		}
+
+		if (!$this->Sham->getMeta('title')) {
+			$this->Sham->setMeta('title', Inflector::humanize($this->params['controller']) . ' ' . $this->params['action'] . ' | CakePackages');
+		}
+
+		if (!$this->Sham->getMeta('description')) {
+			$this->Sham->setMeta('description', 'CakePHP Package Index - Search for reusable, open source CakePHP plugins and applications, tutorials and code snippets on CakePackages');
+		}
+
+		if (!$this->Sham->getMeta('keywords')) {
+			$this->Sham->setMeta('keywords', 'cakephp package, cakephp, plugins, php, open source code, tutorials');
+		}
+	}
 
 /**
  * Convenience method for logging a user out of the application completely

@@ -37,24 +37,10 @@ class PackagesController extends AppController {
 /**
  * Default page for entire application
  */
-    function home() {
-        $this->set(array(
-            'latest' => $this->Package->find('latest'),
-            'random' => $this->Package->find('random'),
-        ));
-    }
-
-/**
- * Alternative pagination method for showing latest packages
- */
-    function latest() {
-        $this->paginate = array('latest', 'is_paginate' => true);
-        $packages = $this->paginate();
-
-        $this->set(compact('packages'));
-        $this->_seoForAction();
-        $this->render('index');
-    }
+	function home() {
+		$packages = $this->Package->find('latest');
+		$this->set(compact('packages'));
+	}
 
 /**
  * Index page that also provides search functionality
@@ -62,36 +48,21 @@ class PackagesController extends AppController {
  * @param string $search String to search by
  * @todo refactor this to use something like Sphinx
  */
-    function index($search = null) {
-        $this->paginate = array(
-            'index',
-            'paginateType' => $search
-        );
+	function index($search = null) {
+		$seo = null;
+		if (isset($this->params['named']['with'])) {
+			$seo = $search = Inflector::singularize($this->params['named']['with']);
+		}
 
-        $packages = $this->paginate();
+		$this->paginate = array(
+			'index',
+			'paginateType' => $search
+		);
 
-        $this->set(compact('packages', 'search'));
-        $this->_seoForAction();
-    }
+		$packages = $this->paginate();
 
-/**
- * Filters results by package attributes and paginates the result
- *
- * @todo refactor this into /index
- */
-    function filter() {
-        $search = Inflector::singularize($this->params['by']);
-        $this->paginate = array(
-            'index',
-            'paginateType' => $search,
-        );
-
-        $packages = $this->paginate();
-
-        $this->set(compact('packages', 'search'));
-        $this->_seoForAction($search);
-        $this->render('index');
-    }
+		$this->set(compact('packages', 'search'));
+	}
 
 /**
  * Allows searching of the SearchIndex
@@ -99,18 +70,22 @@ class PackagesController extends AppController {
  * @param string $search String to search by
  * @todo Figure out whats the difference between this and the index() action
  */
-    function search($search = null) {
-        // Redirect with search data in the URL in pretty format
-        $this->Search->redirectUnlessGet();
+	function search($search = null) {
+		// Redirect with search data in the URL in pretty format
+		$this->Search->redirectUnlessGet();
 
-        // Get Pagination results
-        $this->loadModel('Searchable.SearchIndex');
-        $packages = $this->Search->paginate($search);
+		if (!isset($this->params['term']) || !strlen($this->params['term'])) {
+			$this->redirect(array('action' => 'index'));
+		}
 
-        $this->set(compact('packages', 'search'));
-        $this->_seoForAction($search);
-        $this->render('index');
-    }
+		// Get Pagination results
+		$this->loadModel('Searchable.SearchIndex');
+		$packages = $this->Search->paginate($search);
+
+		$this->set(compact('packages', 'search'));
+		$this->_seoForAction($search);
+		$this->render('index');
+	}
 
 /**
  * Allows viewing of a particular package
@@ -118,64 +93,18 @@ class PackagesController extends AppController {
  * @param string $maintainer Maintainer name
  * @param string $package Package name
  */
-    function view($maintainer = null, $package = null) {
-        try {
-            $this->set('package', $this->Package->find('view', array(
-                'maintainer' => $maintainer,
-                'package' => $package,
-            )));
-        } catch (Exception $e) {
-            $this->_flashAndRedirect($e->getMessage());
-        }
-    }
+	function view($maintainer = null, $package = null) {
+		try {
+			$package = $this->Package->find('view', array(
+				'maintainer' => $maintainer,
+				'package' => $package,
+			));
+		} catch (Exception $e) {
+			$this->_flashAndRedirect($e->getMessage());
+		}
 
-/**
- * Allows editing a package by id
- *
- * @param string $id package id
- */
-    function edit($id = null) {
-        $this->_redirectUnless($id, __('Invalid package', true));
-        $this->_redirectUnless($this->data, __('Invalid package', true));
-
-        if (!empty($this->data)) {
-            if ($this->Package->save($this->data)) {
-                $this->_flashAndRedirect(__('The package has been saved', true));
-            } else {
-                $this->Session->setFlash(__('The package could not be saved. Please, try again.', true));
-            }
-        }
-
-        if (empty($this->data)) {
-            try {
-                $this->data = $this->Package->find('edit', $id);
-            } catch (Exception $e) {
-                $this->_flashAndRedirect($e->getMessage());
-            }
-
-            $this->_redirectUnless($this->data);
-        }
-
-        $this->set('maintainers', $this->Package->Maintainer->find('list'));
-    }
-
-/**
- * Allows deleting of a package
- *
- * @param string $id package id
- * @return void
- * @author Jose Diaz-Gonzalez
- */
-    function delete($id = null) {
-        $this->_redirectUnless($id);
-
-        $message = __('Package was not deleted', true);
-        if ($this->Package->delete($id)) {
-            $message = __('Package deleted', true);
-        }
-
-        $this->_flashAndRedirect($message);
-    }
+		$this->set(compact('package'));
+	}
 
 /**
  * Provides a jquery autocomplete response
@@ -192,25 +121,65 @@ class PackagesController extends AppController {
  *
  * @param string $extra Extra string to use in sprintf
  */
-    function _seoForAction($extra = null) {
-        switch ($this->params['action']) {
-            case 'index':
-                $h2_for_layout = $title_for_layout = 'Browse Packages';
-                break;
-            case 'filter':
-                $h2_for_layout = sprintf('Browse Packages containing %s', $extra);
-                $title_for_layout = $h2_for_layout;
-                break;
-            case 'search':
-                $h2_for_layout = sprintf('Search Results for %s', $extra);
-                $title_for_layout = $h2_for_layout;
-                break;
-            case 'latest':
-                $h2_for_layout = $title_for_layout = 'Latest Packages';
-                break;
-        }
+	function _seoForAction($extra = null) {
+		$slug = $this->Package->seo($this->params);
+		if (!$slug) {
+			return;
+		}
+	}
 
-        $this->set(compact('h2_for_layout', 'title_for_layout'));
-    }
+	function _seoHome() {
+		$this->Sham->loadBySlug('packages/home');
 
+		$this->Sham->setMeta('title', 'CakePackages: Open source CakePHP Plugins and Applications');
+		$this->Sham->setMeta('description', 'CakePHP Package Index - Search for reusable, open source CakePHP plugins and applications, tutorials and code snippets on CakePackages');
+		$this->Sham->setMeta('keywords', 'cakephp package, cakephp, plugins, php, open source code, tutorials');
+		$this->Sham->setMeta('canonical', '/', array('escape' => false));
+	}
+
+	function _seoIndex() {
+		$this->Sham->loadBySlug('packages');
+
+		$this->Sham->setMeta('title', 'CakePHP Plugin and Application Search | CakePackages');
+		$this->Sham->setMeta('description', 'CakePHP Package Index - Search for reusable, open source CakePHP plugins and applications, tutorials and code snippets');
+		$this->Sham->setMeta('keywords', 'package search index, cakephp package, cakephp, plugins, php, open source code, tutorials');
+		$this->Sham->setMeta('canonical', '/packages/');
+		if (!in_array($this->here, array('/packages', '/packages/'))) {
+			$this->Sham->setMeta('robots', 'noindex');
+		}
+	}
+
+	function _seoView() {
+		if (!class_exists('Sanitize')) {
+			App::import('Core', 'Sanitize');
+		}
+		
+		$package = $this->viewVars['package'];
+
+		$canonical = 'package/' . $package['Package']['name'] . '/' . $package['Maintainer']['username'];
+		$this->Sham->loadBySlug($canonical);
+
+		$title = array();
+		$title[] = Sanitize::clean($package['Package']['name'] . ' by ' . $package['Maintainer']['username']);
+		$title[] = 'CakePHP Plugins and Applications';
+		$title[] = 'CakePackages';
+		$description = Sanitize::clean($package['Package']['description']) . ' - CakePHP Package on CakePackages';
+		$keywords = explode(' ', $package['Package']['name']);
+		if (count($keywords) > 1) {
+			$keywords[] = $package['Package']['name'];
+		}
+		$keywords[] = 'cakephp package';
+		$keywords[] = 'cakephp';
+
+		foreach ($this->Package->validTypes as $type) {
+			if (isset($package['Package']['contains_' . $type]) && $package['Package']['contains_' . $type] == 1) {
+				$keywords[] = $type;
+			}
+		}
+
+		$this->Sham->setMeta('title', implode(' | ', $title));
+		$this->Sham->setMeta('description', $description);
+		$this->Sham->setMeta('keywords', implode(', ', $keywords));
+		$this->Sham->setMeta('canonical', '/' . $canonical . '/');
+	}
 }

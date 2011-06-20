@@ -128,30 +128,26 @@ class Package extends AppModel {
         }
     }
 
-    function _findLatest($state, $query, $results = array()) {
-        if ($state == 'before') {
-            $query['contain'] = array('Maintainer' => array('id', 'username', 'name'));
-            if (empty($query['is_paginate'])) {
-                $query['fields'] = array("{$this->alias}.$this->displayField", "{$this->alias}.maintainer_id");
-            } else {
-                $query['fields'] = array_diff(
-                    array_keys($this->schema()),
-                    array('deleted', 'created', 'modified', 'repository_url', 'homepage', 'tags', 'bakery_article')
-                );
-            }
-            $query['limit'] = (empty($query['limit'])) ? 5 : $query['limit'];
-            $query['order'] = array("{$this->alias}.created DESC");
-            if (!empty($query['operation'])) {
-                return $this->_findCount($state, $query, $results);
-            }
-            return $query;
-        } elseif ($state == 'after') {
-            if (!empty($query['operation'])) {
-                return $this->_findCount($state, $query, $results);
-            }
-            return $results;
-        }
-    }
+	function _findLatest($state, $query, $results = array()) {
+		if ($state == 'before') {
+			$query['contain'] = array('Maintainer' => array('id', 'username', 'name'));
+			$query['fields'] = array_diff(
+				array_keys($this->schema()),
+				array('deleted', 'created', 'modified', 'repository_url', 'homepage', 'tags', 'bakery_article')
+			);
+			$query['limit'] = (empty($query['limit'])) ? 5 : $query['limit'];
+			$query['order'] = array("{$this->alias}.created DESC");
+			if (!empty($query['operation'])) {
+				return $this->_findCount($state, $query, $results);
+			}
+			return $query;
+		} elseif ($state == 'after') {
+			if (!empty($query['operation'])) {
+				return $this->_findCount($state, $query, $results);
+			}
+			return $results;
+		}
+	}
 
     function _findListformaintainer($state, $query, $results = array()) {
         if ($state == 'before') {
@@ -538,5 +534,15 @@ class Package extends AppModel {
 
         return empty($response['Error']);
     }
+
+	function seo($params = array()) {
+		if (isset($params['with'])) {
+			return $params['with'];
+		} elseif (in_array($params['action'], array('latest', 'search'))) {
+			return $params['action'];
+		}
+
+		return 'packages';
+	}
 
 }

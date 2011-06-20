@@ -32,48 +32,46 @@ class MaintainersController extends AppController {
         }
     }
 
-/**
- * Allows editing of a maintainer by id
- *
- * @param string $id 
- */
-    function edit($id = null) {
-        $this->_redirectUnless($id, __('Invalid maintainer', true));
-        $this->_redirectUnless($this->data, __('Invalid maintainer', true));
+	function _seoIndex() {
+		$keywords = array();
+		$keywords[] = 'cakephp developers';
+		$keywords[] = 'package maintainers';
+		$keywords[] = 'cakephp package';
+		$keywords[] = 'cakephp';
 
-        if (!empty($this->data)) {
-            if ($this->Maintainer->save($this->data)) {
-                $this->_flashAndRedirect(__('The maintainer has been saved', true));
-            } else {
-                $this->Session->setFlash(__('The maintainer could not be saved. Please, try again.', true));
-            }
-        }
+		$this->Sham->setMeta('title', 'CakePHP Maintainer Index | CakePackages');
+		$this->Sham->setMeta('description', 'CakePHP Maintainer Index - Browse CakePHP application and plugin developers');
+		$this->Sham->setMeta('keywords', implode(', ', $keywords));
+		$this->Sham->setMeta('canonical', '/');
+	}
 
-        if (empty($this->data)) {
-            try {
-                $this->data = $this->Maintainer->find('user', $id);
-            } catch (Exception $e) {
-                $this->_flashAndRedirect($e->getMessage());
-            }
+	function _seoView() {
+		if (!class_exists('Sanitize')) {
+			App::import('Core', 'Sanitize');
+		}
+		$maintainer = $this->viewVars['maintainer'];
 
-            $this->_redirectUnless($this->data);
-        }
-    }
+		$canonical = 'maintainer/' . $maintainer['Maintainer']['username'];
+		$this->Sham->loadBySlug($canonical);
 
-/**
- * Allows deleting a maintainer by id
- *
- * @param string $id 
- */
-    function delete($id = null) {
-        $this->_redirectUnless($id);
+		$name = ($maintainer['Maintainer']['name']) ? $maintainer['Maintainer']['name'] : $maintainer['Maintainer']['username'];
+		$title = array();
+		$title[] = Sanitize::clean($name);
+		$title[] = 'CakePHP Package Maintainer';
+		$title[] = 'CakePackages';
+		$description = Sanitize::clean($name) . ' - CakePHP Package on CakePackages';
 
-        $message = __('Maintainer was not deleted', true);
-        if ($this->Maintainer->delete($id)) {
-            $message = __('Maintainer deleted', true);
-        }
+		$keywords = array();
+		if (!empty($maintainer['Package'])) {
+			$keywords = array_slice(Set::classicExtract($maintainer, 'Package.{n}.name'), 0, 5);
+		}
+		$keywords[] = 'cakephp package';
+		$keywords[] = 'cakephp';
 
-        $this->_flashAndRedirect($message);
-    }
+		$this->Sham->setMeta('title', implode(' | ', $title));
+		$this->Sham->setMeta('description', $description);
+		$this->Sham->setMeta('keywords', implode(', ', $keywords));
+		$this->Sham->setMeta('canonical', '/' . $canonical . '/');
+	}
 
 }

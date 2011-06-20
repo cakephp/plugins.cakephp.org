@@ -246,28 +246,29 @@ class Maintainer extends AppModel {
  * @return mixed array of results or false if none found
  * @return array
  */
-    function _findView($state, $query, $results = array()) {
-        if ($state == 'before') {
-            if (empty($query[0])) {
-                throw new InvalidArgumentException(__('Invalid maintainer', true));
-            }
+	function _findView($state, $query, $results = array()) {
+		if ($state == 'before') {
+			if (empty($query[0])) {
+				throw new InvalidArgumentException(__('Invalid maintainer', true));
+			}
 
-            $query['fields'] = array('id', 'username', 'name', 'alias', 'url', 'twitter_username', 'company', 'location', 'gravatar_id');
-            $query['cache'] = 3600;
-            $query['contain'] = array('Package' => array(
-                'fields' => array('maintainer_id', 'name', 'description'),
-                'conditions' => array('Package.deleted' => 0)
-            ));
-            $query['conditions'] = array("{$this->alias}.{$this->displayField}" => $query[0]);
-            $query['limit'] = 1;
-            return $query;
-        } elseif ($state == 'after') {
-            if (empty($results[0])) {
-                throw new OutOfBoundsException(__('Invalid maintainer', true));
-            }
-            return $results[0];
-        }
-    }
+			$query['fields'] = array('id', 'username', 'name', 'alias', 'url', 'twitter_username', 'company', 'location', 'gravatar_id');
+			$query['cache'] = 3600;
+			$query['contain'] = array('Package' => array(
+				'conditions' => array('Package.deleted' => 0),
+				'order' => array('Package.last_pushed_at desc'),
+			));
+			$query['conditions'] = array("{$this->alias}.{$this->displayField}" => $query[0]);
+			$query['limit'] = 1;
+			return $query;
+		} elseif ($state == 'after') {
+			if (empty($results[0])) {
+				throw new OutOfBoundsException(__('Invalid maintainer', true));
+			}
+
+			return $results[0];
+		}
+	}
 
 /**
  * Ensure the uri is valid if it's been specified
