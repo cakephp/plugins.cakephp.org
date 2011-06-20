@@ -41,7 +41,6 @@
 	Router::connect('/cache_css/*', array('plugin' => 'asset_compress', 'controller' => 'css_files', 'action' => 'get'));
 	Router::connect('/cache_js/*', array('plugin' => 'asset_compress', 'controller' => 'js_files', 'action' => 'get'));
 
-	Router::connect('/home', array('controller' => 'packages', 'action' => 'home'));
 	Router::connect('/login', array('controller' => 'users', 'action' => 'login'));
 	Router::connect('/logout', array('controller' => 'users', 'action' => 'logout'));
 	Router::connect('/dashboard', array('controller' => 'users', 'action' => 'dashboard'));
@@ -53,19 +52,15 @@
 	Router::connect('/posts/*', array('plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'index'));
 	Router::connect('/post/*', array('plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'view'));
 
-	Router::connect('/:by/*', array('controller' => 'packages', 'action' => 'filter'),
-		array('by' => 'models|views|controllers|behaviors|helpers|components|datasources|themes|shells', 'pass' => array('by'))
-	);
-
 	Router::connect("/search/page::page/*", array(
-		'controller' => 'packages', 'action' => 'search', 'type' => 'Package'
-	));
+		'plugin' => null, 'controller' => 'packages', 'action' => 'search', 'type' => 'Package'
+	), array('pass' => array('term', 'type')));
 	Router::connect("/search/:term/*", array(
-		'controller' => 'packages', 'action' => 'search', 'type' => 'Package'
-	));
+		'plugin' => null, 'controller' => 'packages', 'action' => 'search', 'type' => 'Package'
+	), array('pass' => array('term', 'type')));
 	Router::connect("/search/*", array(
-		'controller' => 'packages', 'action' => 'search', 'type' => 'Package'
-	));
+		'plugin' => null, 'controller' => 'packages', 'action' => 'search', 'type' => 'Package'
+	), array('pass' => array('term', 'type')));
 
 	App::import('Lib', 'PageRoute.PageRoute');
 	Router::connect('/:page', array('controller' => 'pages', 'action' => 'display'),
