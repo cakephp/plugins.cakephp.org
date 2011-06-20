@@ -29,8 +29,19 @@ class ResourceHelper extends AppHelper {
 	}
 
 	function description($text) {
+		if (!strlen(trim($text))) {
+			return;
+		}
+
+		$hash = sha1($text);
+		if (($record = Cache::read('package.description.' . $hash)) !== false) {
+			return $record;
+		}
+
 		$text = ereg_replace("[[:alpha:]]+://[^<>[:space:]]+[[:alnum:]/]","<a href=\"\\0\">link</a>", $text);
-		return $this->truncate($text, 100, array('html' => true));
+		$text = $this->truncate($text, 100, array('html' => true));
+		Cache::write('package.description.' . $hash, $text);
+		return $text;
 	}
 
 	function searchableHighlight($text, $term = null) {
@@ -168,4 +179,3 @@ class ResourceHelper extends AppHelper {
 		return $truncate;
 	}
 }
-?>
