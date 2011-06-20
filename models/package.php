@@ -39,7 +39,7 @@ class Package extends AppModel {
 
     function __construct($id = false, $table = null, $ds = null) {
         parent::__construct($id, $table, $ds);
-        $this->order = "`{$this->alias}`.`{$this->displayField}` asc";
+        $this->order = "`{$this->alias}`.`last_pushed_at` asc";
         $this->validate = array(
             'maintainer_id' => array(
                 'numeric' => array(
