@@ -11,12 +11,12 @@
 	<p class="description"><?php echo $this->Resource->description($package['Package']['description']); ?></p>
 	<div class="outbound">
 		<div>
-			<?php __('Github Url'); ?>
+			<span class="title">Github Url</span>
 			<?php echo $this->Resource->repository($package['Maintainer']['username'], $package['Package']['name']); ?>
 		</div>
 		<div>
-			<?php __('Clone Url'); ?>
-			<?php echo $this->Resource->clone_url($package['Maintainer']['username'], $package['Package']['name']); ?>
+			<span class="title">Clone Url</span>
+			<input id="clone" onclick="document.getElementById('clone').focus();document.getElementById('clone').select();" value="<?php echo $this->Resource->clone_url($package['Maintainer']['username'], $package['Package']['name']); ?>" />
 		</div>
 	</dl>
 	

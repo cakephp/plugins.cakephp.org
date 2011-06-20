@@ -231,8 +231,17 @@ article .description, article .para {
 	color: #000;
 	margin: 0;
 }
-article .outbound {
-	
+article .outbound .title {
+	width: 70px;
+}
+article #clone {
+	background-color: white;
+	border: none;
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 13px;
+	outline: none;
+	padding: 2px 2px 2px 5px;
+	width: 400px;
 }
 article span {
 	margin-right: 12px;
@@ -313,6 +322,9 @@ article.paging {
 .packages-c.view-a .contents .icons {
 	float: left;
 	margin-right: 10px;
+}
+.packages-c.view-a .contents .description {
+	margin-bottom: 20px;
 }
 .blog_posts-c article p, .blog_posts-c article ol, .blog_posts-c article ul {
 	color: #000;
