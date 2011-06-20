@@ -94,6 +94,6 @@ TEXT;
 	}
 }
 
-CakeLog::config('database', array(
-	'engine' => 'DatabaseLogger.DatabaseLogger',
-));
+// CakeLog::config('database', array(
+// 	'engine' => 'DatabaseLogger.DatabaseLogger',
+// ));
