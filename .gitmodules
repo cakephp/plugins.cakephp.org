@@ -46,3 +46,6 @@
 [submodule "plugins/ajax_controller"]
 	path = plugins/ajax_controller
 	url = https://github.com/josegonzalez/ajax_controller
+[submodule "plugins/sham"]
+	path = plugins/sham
+	url = git://github.com/josegonzalez/sham.git
