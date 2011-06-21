@@ -13,9 +13,6 @@
 [submodule "plugins/migrations"]
 	path = plugins/migrations
 	url = git://github.com/CakeDC/migrations.git
-[submodule "plugins/searchable"]
-	path = plugins/searchable
-	url = git://github.com/josegonzalez/searchable.git
 [submodule "plugins/djjob/vendors"]
 	path = plugins/djjob/vendors
 	url = git://github.com/seatgeek/djjob.git

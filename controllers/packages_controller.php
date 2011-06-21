@@ -11,30 +11,6 @@ class PackagesController extends AppController {
     var $name = 'Packages';
 
 /**
- * Array containing the names of components this controller uses. Component names
- * should not contain the "Component" portion of the classname.
- *
- * Example: `var $components = array('Session', 'RequestHandler', 'Acl');`
- *
- * @var array
- * @access public
- * @link http://book.cakephp.org/view/961/components-helpers-and-uses
- */
-    var $components = array('Searchable.Search');
-
-/**
- * An array containing the names of helpers this controller uses. The array elements should
- * not contain the "Helper" part of the classname.
- *
- * Example: `var $helpers = array('Html', 'Javascript', 'Time', 'Ajax');`
- *
- * @var mixed A single name as a string or a list of names as an array.
- * @access protected
- * @link http://book.cakephp.org/view/961/components-helpers-and-uses
- */
-    var $helpers = array('Searchable.Searchable');
-
-/**
  * Default page for entire application
  */
 	function home() {
@@ -49,42 +25,24 @@ class PackagesController extends AppController {
  * @todo refactor this to use something like Sphinx
  */
 	function index($search = null) {
-		$seo = null;
-		if (isset($this->params['named']['with'])) {
-			$seo = $search = Inflector::singularize($this->params['named']['with']);
+		if (!empty($this->data)) {
+			$clean = $this->Package->cleanParams($this->data, false);
+			$this->redirect($clean);
 		}
 
+		$allowed = array('with', 'since', 'query', 'watchers');
+		$clean = $this->Package->cleanParams($this->params['named'], compact('allowed'));
 		$this->paginate = array(
 			'index',
-			'paginateType' => $search
+			'named' => $clean,
 		);
 
 		$packages = $this->paginate();
 
-		$this->set(compact('packages', 'search'));
-	}
-
-/**
- * Allows searching of the SearchIndex
- *
- * @param string $search String to search by
- * @todo Figure out whats the difference between this and the index() action
- */
-	function search($search = null) {
-		// Redirect with search data in the URL in pretty format
-		$this->Search->redirectUnlessGet();
-
-		if (!isset($this->params['term']) || !strlen($this->params['term'])) {
-			$this->redirect(array('action' => 'index'));
-		}
-
-		// Get Pagination results
-		$this->loadModel('Searchable.SearchIndex');
-		$packages = $this->Search->paginate($search);
-
-		$this->set(compact('packages', 'search'));
-		$this->_seoForAction($search);
-		$this->render('index');
+		$search = null;
+		$this->data = $clean;
+		$merge = $this->Package->cleanParams($clean, false);
+		$this->set(compact('merge', 'packages', 'search'));
 	}
 
 /**
@@ -116,18 +74,6 @@ class PackagesController extends AppController {
         Configure::write('debug', 0);
     }
 
-/**
- * Creates seo information for the particular action
- *
- * @param string $extra Extra string to use in sprintf
- */
-	function _seoForAction($extra = null) {
-		$slug = $this->Package->seo($this->params);
-		if (!$slug) {
-			return;
-		}
-	}
-
 	function _seoHome() {
 		$this->Sham->loadBySlug('packages/home');
 
@@ -145,7 +91,7 @@ class PackagesController extends AppController {
 		$this->Sham->setMeta('keywords', 'package search index, cakephp package, cakephp, plugins, php, open source code, tutorials');
 		$this->Sham->setMeta('canonical', '/packages/');
 		if (!in_array($this->here, array('/packages', '/packages/'))) {
-			$this->Sham->setMeta('robots', 'noindex');
+			$this->Sham->setMeta('robots', 'noindex, follow');
 		}
 	}
 

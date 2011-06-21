@@ -52,16 +52,6 @@
 	Router::connect('/posts/*', array('plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'index'));
 	Router::connect('/post/*', array('plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'view'));
 
-	Router::connect("/search/page::page/*", array(
-		'plugin' => null, 'controller' => 'packages', 'action' => 'search', 'type' => 'Package'
-	), array('pass' => array('term', 'type')));
-	Router::connect("/search/:term/*", array(
-		'plugin' => null, 'controller' => 'packages', 'action' => 'search', 'type' => 'Package'
-	), array('pass' => array('term', 'type')));
-	Router::connect("/search/*", array(
-		'plugin' => null, 'controller' => 'packages', 'action' => 'search', 'type' => 'Package'
-	), array('pass' => array('term', 'type')));
-
 	App::import('Lib', 'PageRoute.PageRoute');
 	Router::connect('/:page', array('controller' => 'pages', 'action' => 'display'),
 		array('routeClass' => 'PageRoute')

@@ -17,22 +17,11 @@
 				<nav class="navigation">
 					<ul>
 						<li><?php echo $this->Html->link('Browse Packages', array('plugin' => null, 'controller' => 'packages', 'action' => 'index')); ?></li>
-						<li><?php echo $this->Html->link('About', array('plugin' => null, 'controller' => 'pages', 'action' => 'display', 'about')); ?></li>
-						<li><?php echo $this->Html->link('Open source', array('plugin' => null, 'controller' => 'pages', 'action' => 'display', 'opensource')); ?></li>
 						<li><?php echo $this->Html->link('Blog', array('plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'index')); ?></li>
 					</ul>
 				</nav>
-				<?php echo $this->Form->create('SearchIndex', array(
-						'class' => 'search-form',
-						'url' => array('plugin' => null, 'controller' => 'packages', 'action' => 'search', 'type' => 'Package'))); ?>
-					<div>
-						<?php echo $this->Form->input('SearchIndex.term', array('div' => false, 'label' => false)); ?>
-						<?php echo $this->Form->hidden('SearchIndex.type', array('value' => 'Package')); ?>
-						<input type="submit" value="Go" class="button">
-					</div>
-				<?php echo $this->Form->end(null); ?>
 				<nav class="filter">
-					<?php echo $this->element('navigation', array('cache' => true)); ?>
+					<?php echo $this->element('navigation', array('cache' => array('key' => sha1(serialize($this->params['named'])), 'time' => '+1 hour'))); ?>
 				</nav>
 			</header>
 			<section>
@@ -41,7 +30,10 @@
 				</div>
 			</section>
 			<footer>
-		  
+				<ul>
+					<li><?php echo $this->Html->link('Open source', array('plugin' => null, 'controller' => 'pages', 'action' => 'display', 'opensource')); ?></li>
+					<li><?php echo $this->Html->link('About', array('plugin' => null, 'controller' => 'pages', 'action' => 'display', 'about')); ?></li>
+				</ul>
 			</footer>
 		</div>
 	</body>

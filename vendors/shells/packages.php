@@ -87,7 +87,6 @@ class PackagesShell extends Shell {
 			'order' => array('Package.name ASC')
 		));
 
-		$this->Package->Behaviors->detach('Searchable');
 		$count = 0;
 		foreach ($packages as $package) {
 			sleep(1);
@@ -111,7 +110,6 @@ class PackagesShell extends Shell {
  * @author Jose Diaz-Gonzalez
  */
 	function existenceCheck() {
-		$this->Package->Behaviors->detach('Searchable');
 		$packages = $this->Package->find('all', array(
 			'contain' => array('Maintainer' => array('id', 'username')),
 			'fields' => array('id', 'name'),
@@ -160,7 +158,6 @@ class PackagesShell extends Shell {
 	function fixRepositoryUrls() {
 		$update_count = 0;
 
-		$this->Package->Behaviors->detach('Searchable');
 		$packages = $this->Package->find('all', array(
 			'contain' => array('Maintainer' => array('id', 'username')),
 			'fields' => array('id', 'maintainer_id', 'name'),
@@ -211,7 +208,6 @@ class PackagesShell extends Shell {
  */
 	function characterize() {
 		$count = 0;
-		$this->Package->Behaviors->detach('Searchable');
 		$this->Package->Behaviors->detach('Softdeletable');
 		$packages = $this->Package->find('list', array(
 			'order' => 'Package.id'

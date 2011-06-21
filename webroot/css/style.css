@@ -101,22 +101,23 @@ header h1.logo a {
 /* Search Form */
 .search-form {
 	float: left;
-	margin-bottom: 20px;
 	width: 100%;
 }
 .search-form div {
 	float: left;
-	width: 100%;
+	padding-bottom: 4px;
 	position: relative;
+	width: 100%;
 }
-#SearchIndexTerm {
+.search-form .input {
 	background: white;
 	border: 0;
 	border: 1px solid gainsboro;
-	color: #ADADAD;
+	color: #000;
 	float: left;
 	font: normal 12px/18px Helvetica, Arial, sans-serif;
-	margin: 0;
+	line-height: 12px;
+	margin: 0 0 2px 0;
 	padding: 10px 41px 9px 10px;
 	width: 129px;
 	-opera-border-radius: 10px;
@@ -126,8 +127,14 @@ header h1.logo a {
 	-webkit-border-radius: 10px;
 	border-radius: 10px;
 }
-#SearchIndexTerm:focus {
+.search-form .input:focus {
 	outline: 0;
+}
+.search-form .input::-webkit-input-placeholder {
+	color: #ADADAD;
+}
+.search-form .input:-moz-placeholder {
+	color: #ADADAD;
 }
 .search-form .button {
 	background: url(../img/search-arrow.png) no-repeat top center;
@@ -148,9 +155,8 @@ header h1.logo a {
 .search-form .button:hover { background-position: bottom; }
 
 /* Filter */
-.filter h4 {
+.filter h3 {
 	color: black;
-	font-size: 170%;
 	margin: 10px 0;
 	text-shadow: 0 1px 0 white;
 }
@@ -161,10 +167,10 @@ header h1.logo a {
 	padding-left: 0;
 }
 .filter li {
-	margin: 4px 0;
+	margin: 2px 0;
 	padding: 4px;
 }
-.filter li:hover {
+.filter li:hover, .filter li.selected {
 	background-color: #e43715;
 	-opera-border-radius: 5px;
 	-o-border-radius: 5px;
@@ -173,9 +179,10 @@ header h1.logo a {
 	-webkit-border-radius: 5px;
 	border-radius: 5px;
 }
-.filter li:hover  a.text {
-	color: #fff;
-	-webkit-font-smoothing: antialiased;
+.filter li.selected:hover {
+	background-image: url('../img/Untitled 2.png');
+	background-repeat: no-repeat;
+	background-position: top right;
 }
 .filter .text {
 	display: block; 
@@ -184,6 +191,10 @@ header h1.logo a {
 	margin: 3px 20px 0 10px; 
 	overflow: hidden;
 	text-align: left;
+}
+.filter li:hover  a.text, .filter li.selected a.text {
+	color: #fff;
+	-webkit-font-smoothing: antialiased;
 }
 .filter .icon {
 	border-style: solid;

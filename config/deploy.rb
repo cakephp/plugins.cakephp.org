@@ -99,7 +99,6 @@ namespace :deploy do
   DESC
   task :finalize_update do
     before "deploy:symlink", "link:core", "link:plugins", "link:config", "link:tmp", "misc:submodule"
-    after "deploy:symlink", "misc:index"
   end
 
   desc <<-DESC
@@ -185,11 +184,6 @@ namespace :misc do
 
       "chmod -R 777 #{shared_path}/tmp",
     ].join(' && ')
-  end
-
-  desc "Build the search index"
-  task :index do
-    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -app #{deploy_to}/#{current_dir} build_search_index Package -interactive false -quiet true"
   end
 
   desc "Startup a new deployment"

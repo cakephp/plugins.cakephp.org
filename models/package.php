@@ -3,15 +3,6 @@ class Package extends AppModel {
     var $name = 'Package';
     var $belongsTo = array('Maintainer');
     var $actsAs = array(
-        'Searchable.Searchable' => array(
-            'scope' => array('deleted' => 0),
-            'summary' => 'description',
-            'allowNumericKeys' => true,
-            'url' => array(
-                'Package' => array(1 => 'name'),
-                'Maintainer' => array(0 => 'username')
-            ),
-        ),
         'Softdeletable'
     );
     var $validTypes = array(
@@ -33,7 +24,6 @@ class Package extends AppModel {
         'random'            => true,
         'randomids'         => true,
         'repoclone'         => true,
-        'searchable'        => true,
         'view'              => true,
     );
 
@@ -105,28 +95,57 @@ class Package extends AppModel {
         }
     }
 
-    function _findIndex($state, $query, $results = array()) {
-        if ($state == 'before') {
-            if (!empty($query['paginateType']) && in_array($query['paginateType'], $this->validTypes)) {
-                $query['conditions'] = array("{$this->alias}.contains_{$query['paginateType']}" => true);
-            }
+	function _findIndex($state, $query, $results = array()) {
+		if ($state == 'before') {
+			$query['named'] = array_merge(array(
+				'query' => null,
+				'since' => null,
+				'watchers' => null,
+				'with' => null,
+			), $query['named']);
 
-            $query['contain'] = array('Maintainer' => array('id','username', 'name'));
-            $query['fields'] = array_diff(
-                array_keys($this->schema()),
-                array('deleted', 'created', 'modified', 'repository_url', 'homepage', 'tags', 'bakery_article')
-            );
-            if (!empty($query['operation'])) {
-                return $this->_findCount($state, $query, $results);
-            }
-            return $query;
-        } elseif ($state == 'after') {
-            if (!empty($query['operation'])) {
-                return $this->_findCount($state, $query, $results);
-            }
-            return $results;
-        }
-    }
+			$query['conditions'] = array();
+			$query['contain'] = array('Maintainer' => array('id','username', 'name'));
+			$query['fields'] = array_diff(
+				array_keys($this->schema()),
+				array('deleted', 'created', 'modified', 'repository_url', 'homepage', 'tags', 'bakery_article')
+			);
+
+			if ($query['named']['query']) {
+				$query['conditions'][]['OR'] = array(
+					"{$this->alias}.name LIKE" => '%' . $query['named']['query'] . '%',
+					"{$this->alias}.description LIKE" => '%' . $query['named']['query'] . '%',
+				);
+			}
+
+			if ($query['named']['since']) {
+				$time = date('Y-m-d H:i:s', strtotime($query['named']['since']));
+				$query['conditions']["{$this->alias}.last_pushed_at >"] = $time;
+			}
+
+			if ($query['named']['watchers']) {
+				$query['conditions']["{$this->alias}.watchers >"] = $query['named']['watchers'];
+			}
+
+			if ($query['named']['with']) {
+				$query['named']['with'] = Inflector::singularize($query['named']['with']);
+			}
+
+			if (in_array($query['named']['with'], $this->validTypes)) {
+				$query['conditions']["{$this->alias}.contains_{$query['named']['with']}"] = true;
+			}
+
+			if (!empty($query['operation'])) {
+				return $this->_findCount($state, $query, $results);
+			}
+			return $query;
+		} elseif ($state == 'after') {
+			if (!empty($query['operation'])) {
+				return $this->_findCount($state, $query, $results);
+			}
+			return $results;
+		}
+	}
 
 	function _findLatest($state, $query, $results = array()) {
 		if ($state == 'before') {
@@ -223,28 +242,6 @@ class Package extends AppModel {
             return $results[0];
         }
     }
-
-	function _findSearchable($state, $query, $results = array()) {
-		if ($state == 'before') {
-			if (empty($query['id']) && empty($query[0])) {
-				throw new InvalidArgumentException(__('Invalid package', true));
-			}
-
-			$query['conditions'] = array(
-				'Package.deleted' => 0,
-				'Package.id' => (isset($query['id'])) ? $query['id'] : $query[0]
-			);
-			$query['contain'] = array('Maintainer' => array(
-				'fields' => array('name', 'username', 'twitter_username')
-			));
-			return $query;
-		} elseif ($state == 'after') {
-			if (empty($results[0])) {
-				throw new OutOfBoundsException(__('Invalid package', true));
-			}
-			return $results[0];
-		}
-	}
 
     function _findView($state, $query, $results = array()) {
         if ($state == 'before') {
@@ -365,33 +362,6 @@ class Package extends AppModel {
 		return $this->saveField('deleted', true);
 	}
 
-	function getSearchableData($data, $id = null) {
-		if (empty($data['Maintainer'])) {
-			if (!empty($data[$this->alias][$this->primaryKey])) {
-				$data = $this->find('searchable', $data[$this->alias][$this->primaryKey]);
-			} else {
-				$data = $this->find('searchable', $id);
-			}
-		}
-
-		$searchableData = array();
-		foreach ($data as $modelName => $modelData) {
-			foreach ($modelData as $field => $value) {
-				$searchableData["{$modelName}.{$field}"] = $value;
-			}
-		}
-		return $searchableData;
-	}
-
-    function getAllSearchableData() {
-        return $this->find('all', array(
-            'conditions' => array('deleted' => 0),
-            'contain' => array('Maintainer' => array(
-                'fields' => array('name', 'username', 'twitter_username')
-            ))
-        ));
-    }
-
     function updateAttributes($package) {
         if (!$this->Github) {
             $this->Github = ClassRegistry::init('Github');
@@ -486,29 +456,15 @@ class Package extends AppModel {
         return $this->save($package);
     }
 
-    function existenceCheck($package = null) {
-        $exists = $this->findOnGithub($package);
+	function existenceCheck($package = null) {
+		$exists = $this->findOnGithub($package);
 
-        if ($exists) {
-            return true;
-        }
+		if ($exists) {
+			return true;
+		}
 
-        $result = $this->Package->delete($package['Package']['id']);
-        if ($result) {
-            return false;
-        }
-
-        if (!$this->SearchIndex) {
-            $this->SearchIndex = ClassRegistry::init('Searchable.SearchIndex');
-        }
-
-        $index = $this->SearchIndex->find('first', array('conditions' => array(
-            'SearchIndex.model' => 'Package',
-            'SearchIndex.foreign_key' => $package['Package']['id']
-        )));
-        $index['SearchIndex']['active'] = 0;
-        return !$this->SearchIndex->save($index);
-    }
+		return !$this->Package->delete($package['Package']['id']);
+	}
 
     function findOnGithub($package = null) {
         if (!is_array($package)) {
@@ -535,14 +491,47 @@ class Package extends AppModel {
         return empty($response['Error']);
     }
 
-	function seo($params = array()) {
-		if (isset($params['with'])) {
-			return $params['with'];
-		} elseif (in_array($params['action'], array('latest', 'search'))) {
-			return $params['action'];
+	function cleanParams($named, $options = array()) {
+		if (empty($named)) {
+			return array();
+		}
+		if (is_bool($options)) {
+			$options = array('rinse' => $options);
 		}
 
-		return 'packages';
+		$options = array_merge(array(
+			'rinse' => true,
+			'allowed' => array(),
+		), $options);
+
+		if ($options['rinse']) {
+			$search = '+';
+			$replace = ' ';
+		} else {
+			$search = ' ';
+			$replace = '+';
+		}
+
+		if (!empty($options['allowed'])) {
+			$named = array_intersect_key($named, array_combine($options['allowed'], $options['allowed']));
+		}
+
+		if (!class_exists('Sanitize')) {
+			App::import('Core', 'Sanitize');
+		}
+
+		foreach ($named as $key => $value) {
+			if (is_array($value)) {
+				$values = array();
+				foreach ($value as $v) {
+					$values[] = str_replace($search, $replace, Sanitize::clean($v));
+				}
+				$named[$key] = $values;
+			} else {
+				$named[$key] = str_replace($search, $replace, Sanitize::clean($value));
+			}
+		}
+		return $named;
 	}
 
 }
