@@ -1,7 +1,7 @@
 <?php $types = array(
     'be' => 'behavior',        'h' => 'helper',    'cp' => 'component',
-    'm'  => 'model',           'c' => 'controller',
-    'ds' => 'datasource',      's' => 'shell',
+    'm'  => 'model',           'v' => 'view',      'c' => 'controller',
+    'ds' => 'datasource',      't' => 'theme',     's' => 'shell',
 ); ?>
 
 <h3>Filters</h3>
