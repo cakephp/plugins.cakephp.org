@@ -10,7 +10,7 @@
 		if ($package['Package']['contains_'.$label]) {
 			$clear = true;
 			echo $this->Html->link($class,
-				array('plugin' => null, 'controller' => 'packages', 'action' => 'filter', 'with' => $label . 's'),
+				array('plugin' => null, 'controller' => 'packages', 'action' => 'index', 'with' => $label . 's'),
 				array(
 					'class' => 'icon tooltip ' . $class,
 					'label' => $label,
