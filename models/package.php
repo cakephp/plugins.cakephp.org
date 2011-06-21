@@ -86,7 +86,7 @@ class Package extends AppModel {
 				'with' => null,
 			), $query['named']);
 
-			$query['conditions'] = array();
+			$query['conditions'] = array("{this->alias}.deleted" => false);
 			$query['contain'] = array('Maintainer' => array('id','username', 'name'));
 			$query['fields'] = array_diff(
 				array_keys($this->schema()),
@@ -212,16 +212,6 @@ class Package extends AppModel {
                 throw new OutOfBoundsException(__('Invalid package', true));
             }
             return $results[0];
-        }
-    }
-
-    function afterSave($created) {
-        if ($created === true) {
-            $id = $this->getLastInsertID();
-            $package = $this->setupRepository($id);
-            if ($package) {
-                $this->characterize($package);
-            }
         }
     }
 
