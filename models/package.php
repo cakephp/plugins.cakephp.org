@@ -86,7 +86,7 @@ class Package extends AppModel {
 				'with' => null,
 			), $query['named']);
 
-			$query['conditions'] = array();
+			$query['conditions'] = array("{$this->alias}.deleted" => false);
 			$query['contain'] = array('Maintainer' => array('id','username', 'name'));
 			$query['fields'] = array_diff(
 				array_keys($this->schema()),
