@@ -77,24 +77,6 @@ class Package extends AppModel {
         }
     }
 
-    function _findEdit($state, $query, $results = array()) {
-        if ($state == 'before') {
-            if (empty($query[0])) {
-                throw new InvalidArgumentException(__('Invalid package', true));
-            }
-
-            $query['contain'] = array('Maintainer');
-            $query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $query[0]);
-            $query['limit'] = 1;
-            return $query;
-        } elseif ($state == 'after') {
-            if (empty($results[0])) {
-                throw new OutOfBoundsException(__('Invalid package', true));
-            }
-            return $results[0];
-        }
-    }
-
 	function _findIndex($state, $query, $results = array()) {
 		if ($state == 'before') {
 			$query['named'] = array_merge(array(
@@ -187,38 +169,6 @@ class Package extends AppModel {
                 $results,
                 "{n}.{$this->alias}.{$this->primaryKey}",
                 "{n}.{$this->alias}.{$this->displayField}"
-            );
-        }
-    }
-
-    function _findRandom($state, $query, $results = array()) {
-        if ($state == 'before') {
-            $query['cache'] = 600;
-            $query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $this->find('randomids'));
-            $query['contain'] = array('Maintainer' => array('id', 'username', 'name'));
-            $query['fields'] = array("{$this->alias}.$this->displayField", "{$this->alias}.maintainer_id");
-            return $query;
-        } elseif ($state == 'after') {
-            return $results;
-        }
-    }
-
-    function _findRandomids($state, $query, $results = array()) {
-        if ($state == 'before') {
-            $query['fields'] = array("{$this->alias}.{$this->primaryKey}", "{$this->alias}.{$this->primaryKey}");
-            $query['group'] = array("{$this->alias}.maintainer_id");
-            $query['limit'] = (empty($query[0])) ? 5 : $query[0];
-            $query['order'] = array('RAND()');
-            $query['recursive'] = -1;
-            return $query;
-        } elseif ($state == 'after') {
-            if (empty($results)) {
-                return array();
-            }
-            return Set::combine(
-                $results,
-                "{n}.{$this->alias}.{$this->primaryKey}",
-                "{n}.{$this->alias}.{$this->primaryKey}"
             );
         }
     }

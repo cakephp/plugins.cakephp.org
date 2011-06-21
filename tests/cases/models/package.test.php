@@ -33,25 +33,5 @@ class PackageTestCase extends CakeTestCase {
         $this->Package->find('autocomplete');
     }
 
-    function testFindEdit() {
-        $result = $this->Package->find('edit', 1);
-        $this->assertNotNull($result);
-        $this->assertNotNull($result['Maintainer']['id']);
-        $this->assertEqual($result['Maintainer']['id'], 1);
-
-        try {
-            $result = $this->Package->find('edit', 2);
-            $this->fail();
-        } catch (OutOfBoundsException $e) {
-            $this->pass();
-        }
-
-        try {
-            $result = $this->Package->find('edit');
-            $this->fail();
-        } catch (InvalidArgumentException $e) {
-            $this->pass();
-        }
-    }
 
 }
