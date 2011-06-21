@@ -180,7 +180,7 @@ header h1.logo a {
 	border-radius: 5px;
 }
 .filter li.selected:hover {
-	background-image: url('../img/Untitled 2.png');
+	background-image: url('../img/clear.png');
 	background-repeat: no-repeat;
 	background-position: top right;
 }
