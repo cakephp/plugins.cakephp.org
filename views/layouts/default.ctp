@@ -8,7 +8,11 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<?php echo $this->Sham->out(null, array('skip' => array('charset'))); ?>
 		<?php echo $this->Html->css(array('style')); ?>
-		
+		<script type="text/javascript">
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', 'UA-8668344-5']);
+			_gaq.push(['_trackPageview']);
+		</script>
 	</head>
 	<body class="<?php echo $this->params['controller'] . '-c ' . $this->params['action'] . '-a'; ?>">
 		<div class="wrapper">
@@ -36,5 +40,14 @@
 				</ul>
 			</footer>
 		</div>
+		<?php if (Configure::read() == 0 && Authsome::get('group') != 'admin' ) : ?>
+		<script type="text/javascript">
+			(function() {
+				var ga = document.createElement('script');     ga.type = 'text/javascript'; ga.async = true;
+				ga.src = ('https:'   == document.location.protocol ? 'https://ssl'   : 'http://www') + '.google-analytics.com/ga.js';
+				var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+			})();
+		</script>
+		<?php endif; ?>
 	</body>
 </body>
