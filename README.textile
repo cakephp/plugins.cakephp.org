@@ -1,0 +1,82 @@
+h1. CakePackages
+
+A self-contained application that automatically tracks cakephp developer's open source code repositories, including applications and plugins
+
+h2. Background
+
+After constantly searching for CakePHP code, I realized a lot of it existed on Github. And, in fact, the core code is on GitHub. So it seemed natural to create a site to index all this code.
+
+Since I was unemployed, bored, and miserable, I decided to focus all my energy on creating just such a thing. That was over a year ago (March 1st seems to be my first commit, although I know I was working on it before then...), and the codebase has been through at least two redesigns and countless code iterations. I've learned a thing or two in the process, and have even gotten a job as a result of it.
+
+This is an unofficial project. I do not foresee it becoming official for various reasons, some of which are private. Therefore, I do not expect it to get the traffic it deserves, or the developer manpower it needs. So it's a labor of love, on top of my already busy schedule. Please understand that when commenting on that.
+
+h2. Requirements
+
+* PHP 5.3+ .
+* CakePHP 1.3.10+
+* GIT for version control
+* "God":https://github.com/mojombo/god for running DJJob in the background on a server
+
+h2. Installation
+
+_[Manual]_
+
+# Download this: http://github.com/josegonzalez/cakepackages/zipball/master
+# Unzip that download.
+# Copy the resulting folder to a new directory containing the cake core
+
+_[GIT Clone]_
+
+<pre><code>git clone git://github.com/josegonzalez/cakepackages.git cakepackages</code></pre>
+
+h2. Usage
+
+You'll want to run the migrations for both cakepackages and the plugins. I've also included a schema.php file, as well as a slightly out of date sql dump
+
+h2. Todo
+
+* Documentation
+* Set Default retry on CakeDjjob to be at least 1, so adding new packages/maintainers doesn't fail randomly
+* Integrate with GitHub's OAuth implementation for user accounts
+* Push user accounts and a user dashboard
+** Possible dashboard aggregating both code and community resources useful to that person?
+* Integrate a "risingcake.com":risingcake.com like news dashboard
+* Fix RSS Sanitization such that characters that should be escaped are escaped properly
+* Integrate a project's readme
+* More robust application/plugin distinction, as well as checking both standards and to see if something that should be a plugin is
+* Full Plugin Installer API. Docs to come
+* Allow users to submit new packages for inclusion in the index
+** Possible DDOS issue?
+* More robust filtering
+** May need to look into alternative searching systems, such as ElasticSearch or Sphinx
+* Allow rating/commenting on packages
+* Allow users to submit tags for a package
+* Fix issue where packages that should be disabled are passing that check
+* Add support for organizations
+* Add support for CodaSet/Google Code/SourceForge/BitBucket/OTHER_NAME_HERE
+* Unit tests
+* Increase visibility across the web through social integration
+* Minify assets for new design
+* Add shell tasks to cron where necessary
+
+h2. License
+
+Copyright (c) 2011 Jose Diaz-Gonzalez
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
