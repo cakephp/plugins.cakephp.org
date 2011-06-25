@@ -17,7 +17,7 @@
 	<body class="<?php echo $this->params['controller'] . '-c ' . $this->params['action'] . '-a'; ?>">
 		<div class="wrapper">
 			<header>
-				<h1 class="logo"><?php echo $this->Html->link('CakePackages', '/'); ?></h1>
+				<h1 class="logo"><?php echo $this->Html->link('CakePackages', array('plugin' => null, 'controller' => 'packages', 'action' => 'index')); ?></h1>
 				<nav class="navigation">
 					<ul>
 						<li><?php echo $this->Html->link('Browse Packages', array('plugin' => null, 'controller' => 'packages', 'action' => 'index')); ?></li>
