@@ -21,6 +21,9 @@
 <h3 class="secondary-title">
 	Packages
 </h3>
+
+<?php echo $this->Session->flash(); ?>
+
 <?php if (!empty($maintainer['Package'])):?>
 	<?php foreach ($maintainer['Package'] as $package): ?>
 		<article class="package">

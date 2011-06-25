@@ -14,6 +14,8 @@
 	'cache' => array('key' => md5(serialize($this->params)), 'time' => '+1 day')
 )); ?>
 
+<?php echo $this->Session->flash(); ?>
+
 <div class="maintainer-list">
 	<?php foreach ($maintainers as $i => $maintainer) : ?>
 		<article class="maintainer<?php echo ($i%2 == 0) ? ' alt' : '' ?>">

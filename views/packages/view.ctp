@@ -7,6 +7,8 @@
 	<br class="clear" />
 </h2>
 
+<?php echo $this->Session->flash(); ?>
+
 <article class="package">
 	<p class="description"><?php echo $this->Resource->description($package['Package']['description']); ?></p>
 	<div class="outbound">

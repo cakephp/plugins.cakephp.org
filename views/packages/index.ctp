@@ -14,6 +14,8 @@
 	'cache' => array('key' => md5(serialize($this->params)), 'time' => '+1 day')
 )); ?>
 
+<?php echo $this->Session->flash(); ?>
+
 <div class="package-list">
 	<?php if ($this->params['action'] != 'search') : ?>
 		<?php foreach ($packages as $i => $package) : ?>

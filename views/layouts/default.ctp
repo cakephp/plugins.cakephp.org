@@ -7,7 +7,7 @@
 		<?php echo $this->Sham->out('charset'); ?>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<?php echo $this->Sham->out(null, array('skip' => array('charset'))); ?>
-		<?php echo $this->Html->css(array('style')); ?>
+		<?php echo $this->Html->css(array('style', 'uniform.default')); ?>
 		<script type="text/javascript">
 			var _gaq = _gaq || [];
 			_gaq.push(['_setAccount', 'UA-8668344-5']);
@@ -49,5 +49,13 @@
 			})();
 		</script>
 		<?php endif; ?>
+		<?php echo $this->Html->script(array('jquery.min', 'jquery.uniform.min')); ?>
+		<?php echo $scripts_for_layout; ?>
+		<script type="text/javascript">
+			jQuery.noConflict();
+			jQuery(function() {
+				jQuery("select, input:checkbox, input:radio, input:file, .contents input").uniform();
+			});
+		</script>
 	</body>
 </body>

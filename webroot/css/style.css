@@ -290,6 +290,50 @@ article .tags a {
 	text-decoration: underline;
 }
 
+/* Notices and Errors */
+.message {
+	clear: both;
+	color: #fff;
+	font-size: 140%;
+	font-weight: bold;
+	margin: 0 0 10px 0;
+	background: #c73e14;
+	padding: 5px;
+	-opera-border-radius: 10px;
+	-o-border-radius: 10px;
+	-khtml-border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+}
+.message.error {
+	clear: both;
+	color: #fff;
+	font-weight: bold;
+	background: #c73e14;
+}
+.message.notice {
+	background: #ffcc00;
+	color: #000;
+	display: block;
+	padding: 0.8em;
+	margin: 1em 0;
+	text-align: center;
+}
+.message.success {
+	background: green;
+	color: #fff;
+}
+.message p {
+	font-size: 110%;
+	line-height: 140%;
+	padding: 0.2em;
+	margin: 0; }
+.message p em {
+	font-weight: normal;
+	line-height: 140%;
+}
+
 /* Pagination */
 article.paging {
 	padding: 10px;
@@ -362,4 +406,57 @@ article.paging {
 }
 .packages-c.home-a .contents .paging:hover a {
 	color: #fff;
+}
+
+/* Forms */
+.button {
+	font-size: 1em;
+	color: #234e70;
+	height: 27px;
+	line-height: 26px;
+	text-shadow: rgba(255,255,255,0.5) 0px 1px 0px;
+	display: inline;
+	float: left;
+	margin-right: 5px;
+	padding: 0 10px
+}
+.button:hover {
+	text-decoration: none;
+	color: #234e70
+}
+.button:active {
+	background-position: 0px bottom
+}
+.contents .input {
+	height: 32px;
+	line-height: 32px;
+}
+.contents label {
+	display: inline-block;
+	min-width: 70px;
+}
+.contents .alternate-action {
+	height: 24px;
+	line-height: 24px;
+	margin-left: 4px;
+}
+
+/** Scaffold View **/
+dl {
+	line-height: 2em;
+	margin: 0em 0em;
+	width: 60%;
+}
+dl .altrow {
+	background: #f4f4f4;
+}
+dt {
+	font-weight: bold;
+	padding-left: 4px;
+	vertical-align: top;
+}
+dd {
+	margin-left: 10em;
+	margin-top: -2em;
+	vertical-align: top;
 }

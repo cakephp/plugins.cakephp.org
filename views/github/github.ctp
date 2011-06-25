@@ -1,5 +1,12 @@
-<?php  echo $this->Html->h2(__('Maintainer', true));?></h2>
-<div class="meta-data">
+<h2 class="secondary-title">
+	<?php echo $user['User']['login']; ?>
+</h2>
+
+<?php echo $this->Session->flash(); ?>
+
+<article class="meta-data">
+	<?php echo $this->Clearance->link(sprintf(__('Add %s', true), __('Maintainer', true)), array('action' => 'add_maintainer', $user['User']['login'])); ?>
+
 	<div class="meta-maintainer border-radius">
 		<dl><?php $i = 0; $class = ' class="altrow"';?>
 			<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Gravatar ID'); ?></dt>
@@ -40,11 +47,4 @@
 		</dl>
 		<div class="clear"></div>
 	</div>
-</div>
-<div class="related">
-	<h3><?php __('Actions'); ?></h3>
-	<div class="meta-listing">
-		<?php echo $this->Clearance->link(sprintf(__('Add %s', true), __('Maintainer', true)), array('action' => 'add_maintainer', $user['User']['login'])); ?>
-	</div>
-</div>
-<div class="clear"></div>
+</article>

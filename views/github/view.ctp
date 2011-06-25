@@ -3,8 +3,13 @@
 	'path' => 'Maintainer.Maintainer'
 ); ?>
 
-<?php $this->Html->h2(__('Maintainer', true));?>
-<div class="grid_6 alpha">
+<h2 class="secondary-title">
+	Maintainer
+</h2>
+
+<?php echo $this->Session->flash(); ?>
+
+<article>
 	<dl class="description"><?php $i = 0; $class = ' class="altrow"';?>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Gravatar ID'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
@@ -42,9 +47,9 @@
 			&nbsp;
 		</dd>
 	</dl>
-</div>
+</article>
 <br />
-<div class="grid_6 omega">
+<article>
 	<div class="meta-package border-radius">
 		<h3><?php  __('New Packages');?></h3>
 		<?php if (!empty($repositories)) : ?>
@@ -92,5 +97,4 @@
 			</div>
 		<?php endif; ?>
 	</div>
-</div>
-<div class="clear"></div>
+</article>

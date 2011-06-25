@@ -2,6 +2,8 @@
 	Latest Packages
 </h2>
 
+<?php echo $this->Session->flash(); ?>
+
 <div class="package-list">
 	<?php foreach ($packages as $i => $package) : ?>
 		<article class="package<?php echo ($i%2 == 0) ? ' alt' : '' ?>">
