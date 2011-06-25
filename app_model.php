@@ -6,7 +6,9 @@
  *
  * @package       app
  */
-App::import('Lib', 'LazyModel.LazyModel');
+if (!class_exists('LazyModel')) {
+	App::import('Lib', 'LazyModel.LazyModel');
+}
 class AppModel extends LazyModel {
 
 /**
@@ -19,10 +21,10 @@ class AppModel extends LazyModel {
  * @access public
  * @link http://book.cakephp.org/view/1072/Using-Behaviors
  */
-    var $actsAs = array(
-        'CakeDjjob.CakeDjjob',
-        'Containable',
-    );
+	public $actsAs = array(
+		'CakeDjjob.CakeDjjob',
+		'Containable',
+	);
 
 /**
  * Number of associations to recurse through during find calls. Fetches only
@@ -32,35 +34,7 @@ class AppModel extends LazyModel {
  * @access public
  * @link http://book.cakephp.org/view/1057/Model-Attributes#recursive-1063
  */
-    var $recursive = -1;
-
-/**
- * Query currently executing.
- *
- * @var array
- * @access public
- */
-    var $query = null;
-
-/**
- * Convenience method to update one record without invoking any callbacks
- *
- * @param array $fields Set of fields and values, indexed by fields.
- *    Fields are treated as SQL snippets, to insert literal values manually escape your data.
- * @param mixed $conditions Conditions to match, true for all records
- * @return boolean True on success, false on Model::id is not set or failure
- * @access public
- * @author Jose Diaz-Gonzalez
- * @link http://book.cakephp.org/view/1031/Saving-Your-Data
- **/
-    function update($fields, $conditions = array()) {
-        $conditions = (array) $conditions;
-        if (!$this->id) return false;
-
-        $conditions = array_merge(array("{$this->alias}.{$this->primaryKey}" => $this->id), $conditions);
-
-        return $this->updateAll($fields, $conditions);
-    }
+	public $recursive = -1;
 
 /**
  * Custom Model::paginateCount() method to support custom model find pagination
@@ -108,42 +82,6 @@ class AppModel extends LazyModel {
     }
 
 /**
- * Disables/detaches all behaviors from model
- *
- * @param mixed $except string or array of behaviors to exclude from detachment
- * @param boolean $detach If true, detaches the behavior instead of disabling it
- * @return void
- * @access public
- * @author Jose Diaz-Gonzalez
- */
-    function disableAllBehaviors($except = array(), $detach = false) {
-        $behaviors = array_diff($this->Behaviors->attached(), (array) $except);
-        foreach ($behaviors as &$behavior) {
-            if ($detach) {
-                $this->Behaviors->detach($behavior);
-            } else {
-                $this->Behaviors->disable($behavior);
-            }
-        }
-    }
-
-/**
- * Enables all previously disabled attachments
- *
- * @return void
- * @access public
- * @author Jose Diaz-Gonzalez
- */
-    function enableAllBehaviors() {
-        $behaviors = $this->Behaviors->attached();
-        foreach ($behaviors as &$behavior) {
-            if (!$this->Behaviors->enabled($behavior)) {
-                $this->Behaviors->enable($behavior);
-            }
-        }
-    }
-
-/**
  * Wrapper around _get* magic methods
  *
  * @param string $method method name
@@ -159,37 +97,6 @@ class AppModel extends LazyModel {
         }
 
         return call_user_func_array(array(&$this, $method), $params);
-    }
-
-/**
- * Magic _getLookup() method creates a record if it does not exist
- *
- * @param mixed $options Options for the lookup
- * @return record
- */
-    function _getLookup($options = array()) {
-        if (!is_array($options)) $options = array('conditions' => array($this->displayField => $options));
-        $options = array_merge(array(
-            'field' => $this->primaryKey,
-            'create' => true,
-            'conditions' => array()
-        ), $options);
-
-        if (!empty($options['field'])) {
-            $fieldValue = $this->field($options['field'], $options['condition']);
-        } else {
-            $fieldValue = $this->find('first', $options['conditions']);
-        }
-
-        if ($fieldValue !== false) return $fieldValue;
-        if ($options['create'] === false) return false;
-
-        $this->create($options['conditions']);
-        if (!$this->save()) return false;
-
-        $conditions[$this->primaryKey] = $this->id;
-        if (empty($options['field'])) return $this->read();
-        return $this->field($options['field'], $options['conditions']);
     }
 
 }
