@@ -49,6 +49,8 @@ h2. Todo
 ** Possible DDOS issue?
 * More robust filtering
 ** May need to look into alternative searching systems, such as ElasticSearch or Sphinx
+** Allow filtering by maintainer?
+*** -For now just appended Maintainer.username to like query-
 * Allow rating/commenting on packages
 * Allow users to submit tags for a package
 * Fix issue where packages that should be disabled are passing that check

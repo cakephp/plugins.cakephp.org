@@ -97,6 +97,7 @@ class Package extends AppModel {
 				$query['conditions'][]['OR'] = array(
 					"{$this->alias}.name LIKE" => '%' . $query['named']['query'] . '%',
 					"{$this->alias}.description LIKE" => '%' . $query['named']['query'] . '%',
+					"Maintainer.username LIKE" => '%' . $query['named']['query'] . '%',
 				);
 			}
 
