@@ -253,7 +253,6 @@ class Maintainer extends AppModel {
 			}
 
 			$query['fields'] = array('id', 'username', 'name', 'alias', 'url', 'twitter_username', 'company', 'location', 'gravatar_id');
-			$query['cache'] = 3600;
 			$query['contain'] = array('Package' => array(
 				'conditions' => array('Package.deleted' => 0),
 				'order' => array('Package.last_pushed_at desc'),
