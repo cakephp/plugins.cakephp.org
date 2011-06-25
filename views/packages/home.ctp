@@ -1,5 +1,5 @@
 <h2 class="secondary-title">
-	Latest Packages
+	Latest CakePHP Code
 </h2>
 
 <?php echo $this->Session->flash(); ?>
