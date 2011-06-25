@@ -13,6 +13,9 @@
 			_gaq.push(['_setAccount', 'UA-8668344-5']);
 			_gaq.push(['_trackPageview']);
 		</script>
+		<!--[if lt IE 9]>
+			<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
 	</head>
 	<body class="<?php echo $this->params['controller'] . '-c ' . $this->params['action'] . '-a'; ?>">
 		<div class="wrapper">
