@@ -113,7 +113,7 @@ class PackagesShell extends Shell {
 		$packages = $this->Package->find('all', array(
 			'contain' => array('Maintainer' => array('id', 'username')),
 			'fields' => array('id', 'name'),
-			'order' => array('Package.name ASC')
+			'order' => array('Package.id ASC')
 		));
 
 		foreach ($packages as $package) {
