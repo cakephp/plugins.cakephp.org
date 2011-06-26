@@ -295,7 +295,7 @@
  *
  */
 
-if (function_exists('apc_fetch')) {
+if (function_exists('apc_fetch') && Configure::read('debug') == 0) {
 	Cache::config('default', array(
 		'engine' => 'Apc', //[required]
 		'duration' => 3600, //[optional]
