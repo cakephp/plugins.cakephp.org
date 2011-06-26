@@ -20,5 +20,7 @@ $map = array(
 		'009_added_logs_table' => 'M4dedc5be228c498caa31454acbdd56cb'),
 	10 => array(
 		'010_removed_api_generator_plugin' => 'M4dedc61218084cc9977e4911cbdd56cb'),
+	11 => array(
+		'011_added_github_id' => 'M4e07b9c08ae44661bdc44a51cbdd56cb'),
 );
 ?>
