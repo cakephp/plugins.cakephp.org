@@ -14,7 +14,7 @@ class AppController extends AjaxController {
  * @access public
  * @link http://book.cakephp.org/view/961/components-helpers-and-uses
  */
-	var $components = array(
+	public $components = array(
 		'Authsome.Authsome' => array('model' => 'Maintainer'),
 		'RequestHandler',
 		'Sanction.Permit' => array(
@@ -36,7 +36,7 @@ class AppController extends AjaxController {
  * @access protected
  * @link http://book.cakephp.org/view/961/components-helpers-and-uses
  */
-	var $helpers = array(
+	public $helpers = array(
 		'AssetCompress.AssetCompress',
 		'Sanction.Clearance' => array(
 			'check' => 'group',
@@ -51,34 +51,34 @@ class AppController extends AjaxController {
  * @var string
  * @access public
  */
-    var $view = 'AutoHelper';
+	public $view = 'AutoHelper';
 
 /**
  * Sets the default redirection array
  *
  * @var array
  */
-    var $redirectTo = array('action' => 'index');
+	public $redirectTo = array('action' => 'index');
 
 /**
  * Used to set a max for the pagination limit
  *
  * @var int
  */
-    var $paginationMaxLimit = 25;
+	public $paginationMaxLimit = 25;
 
 /**
  * Object constructor - Adds the Debugkit panel if in development mode
  *
  * @return void
  */
-    function __construct() {
-        if (Configure::read('debug')) {
-            $this->components['DebugKit.Toolbar'] = array('panels' => array('Sanction.permit'));
-        }
+	public function __construct() {
+		if (Configure::read('debug')) {
+			$this->components['DebugKit.Toolbar'] = array('panels' => array('Sanction.permit'));
+		}
 
-        parent::__construct();
-    }
+		parent::__construct();
+	}
 
 /**
  * Called before the controller action.
@@ -87,24 +87,24 @@ class AppController extends AjaxController {
  *
  * @access public
  */
-    public function beforeFilter() {
-        parent::beforeFilter();
+	public function beforeFilter() {
+		parent::beforeFilter();
 
-        // Enforces an absolute limit of 25
-        if (isset($this->passedArgs['limit'])) {
-            $this->passedArgs['limit'] = min(
-                $this->paginationMaxLimit,
-                $this->passedArgs['limit']
-            );
-        }
-    }
+		// Enforces an absolute limit of 25
+		if (isset($this->passedArgs['limit'])) {
+			$this->passedArgs['limit'] = min(
+				$this->paginationMaxLimit,
+				$this->passedArgs['limit']
+			);
+		}
+	}
 
 /**
  * Sets some meta headers for the response
  *
  * @return void
  */
-	public function _seoFallback() {
+	protected function _seoFallback() {
 		if ($this->params['controller'] == 'blog_posts') {
 			if ($this->params['action'] == 'view') {
 				$this->Sham->setMeta('title', $this->viewVars['blogPost']['BlogPost']['title'] . ' | Developer Blog | CakePackages');
@@ -139,14 +139,14 @@ class AppController extends AjaxController {
  * @return void
  * @access protected
  */
-    function _logout($redirect = array('action' => 'login')) {
-        $this->Authsome->logout();
-        $this->Session->delete($this->Authsome->settings['model']);
+	protected function _logout($redirect = array('action' => 'login')) {
+		$this->Authsome->logout();
+		$this->Session->delete($this->Authsome->settings['model']);
 
-        if ($redirect) {
-            $this->redirect($redirect);
-        }
-    }
+		if ($redirect) {
+			$this->redirect($redirect);
+		}
+	}
 
 /**
  * Convenience method to perform both a flash and a redirect in one call
@@ -157,37 +157,37 @@ class AppController extends AjaxController {
  * @return void
  * @access protected
  */
-    function _flashAndRedirect($message = null, $redirectTo = array()) {
-        $status = null;
-        $exit = true;
-        $element = 'flash/error';
+	protected function _flashAndRedirect($message = null, $redirectTo = array()) {
+		$status = null;
+		$exit = true;
+		$element = 'flash/error';
 
-        if (is_array($redirectTo)) {
-            if (isset($redirectTo['status'])) $status = $redirectTo['status'];
-            if (isset($redirectTo['exit'])) $exit = $redirectTo['exit'];
-            if (isset($redirectTo['message'])) $message = $redirectTo['message'];
-            if (isset($redirectTo['element'])) $element = $redirectTo['element'];
-            if (isset($redirectTo['redirectTo'])) {
-                $redirectTo = $redirectTo['redirectTo'];
-            } else {
-                $redirectTo = array();
-            }
-        }
+		if (is_array($redirectTo)) {
+			if (isset($redirectTo['status'])) $status = $redirectTo['status'];
+			if (isset($redirectTo['exit'])) $exit = $redirectTo['exit'];
+			if (isset($redirectTo['message'])) $message = $redirectTo['message'];
+			if (isset($redirectTo['element'])) $element = $redirectTo['element'];
+			if (isset($redirectTo['redirectTo'])) {
+				$redirectTo = $redirectTo['redirectTo'];
+			} else {
+				$redirectTo = array();
+			}
+		}
 
-        if ($message === null) {
-            $message = __('Access Error', true);
-        }
+		if ($message === null) {
+			$message = __('Access Error', true);
+		}
 
-        if (is_array($redirectTo)) {
-            $redirectTo = array_merge($this->redirectTo, $redirectTo);
-        }
+		if (is_array($redirectTo)) {
+			$redirectTo = array_merge($this->redirectTo, $redirectTo);
+		}
 
-        if ($message !== false) {
-            $this->Session->setFlash($message, $element);
-        }
+		if ($message !== false) {
+			$this->Session->setFlash($message, $element);
+		}
 
-        $this->redirect($redirectTo, $status, $exit);
-    }
+		$this->redirect($redirectTo, $status, $exit);
+	}
 
 /**
  * Redirect to some url if a given piece of information evaluates to false
@@ -197,36 +197,36 @@ class AppController extends AjaxController {
  * @return void
  * @access protected
  */
-    function _redirectUnless($data = null, $message = null) {
-        if (empty($data)) {
-            $redirectTo = array();
-            $status = null;
-            $exit = true;
-            $element = 'flash/error';
+	protected function _redirectUnless($data = null, $message = null) {
+		if (empty($data)) {
+			$redirectTo = array();
+			$status = null;
+			$exit = true;
+			$element = 'flash/error';
 
-            if (is_array($message)) {
-                if (isset($message['redirectTo'])) $redirectTo = $message['redirectTo'];
-                if (isset($message['status'])) $status = $message['status'];
+			if (is_array($message)) {
+				if (isset($message['redirectTo'])) $redirectTo = $message['redirectTo'];
+				if (isset($message['status'])) $status = $message['status'];
 
-                if (isset($message['exit'])) $exit = $message['exit'];
-                if (isset($message['message'])) $message = $message['message'];
-                if (isset($message['element'])) $element = $message['element'];
-            }
+				if (isset($message['exit'])) $exit = $message['exit'];
+				if (isset($message['message'])) $message = $message['message'];
+				if (isset($message['element'])) $element = $message['element'];
+			}
 
-            if ($message === null) {
-                $message = __('Access Error', true);
-            }
+			if ($message === null) {
+				$message = __('Access Error', true);
+			}
 
-            if (is_array($redirectTo)) {
-                $redirectTo = array_merge($this->redirectTo, $redirectTo);
-            }
+			if (is_array($redirectTo)) {
+				$redirectTo = array_merge($this->redirectTo, $redirectTo);
+			}
 
-            if ($message !== false) {
-                $this->Session->setFlash($message, $element);
-            }
+			if ($message !== false) {
+				$this->Session->setFlash($message, $element);
+			}
 
-            $this->redirect($redirectTo, $status, $exit);
-        }
-    }
+			$this->redirect($redirectTo, $status, $exit);
+		}
+	}
 
 }
