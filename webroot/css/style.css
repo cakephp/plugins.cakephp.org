@@ -433,7 +433,7 @@ article.paging {
 }
 .contents label {
 	display: inline-block;
-	min-width: 70px;
+	min-width: 160px;
 }
 .contents .alternate-action {
 	height: 24px;

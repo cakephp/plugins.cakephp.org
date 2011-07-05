@@ -24,6 +24,7 @@
 				<nav class="navigation">
 					<ul>
 						<li><?php echo $this->Html->link('Browse Packages', array('plugin' => null, 'controller' => 'packages', 'action' => 'index')); ?></li>
+						<li><?php echo $this->Html->link('Suggest a package', array('plugin' => null, 'controller' => 'packages', 'action' => 'suggest')); ?></li>
 						<li><?php echo $this->Html->link('Blog', array('plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'index')); ?></li>
 					</ul>
 				</nav>

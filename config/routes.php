@@ -41,6 +41,7 @@
 	Router::connect('/cache_css/*', array('plugin' => 'asset_compress', 'controller' => 'css_files', 'action' => 'get'));
 	Router::connect('/cache_js/*', array('plugin' => 'asset_compress', 'controller' => 'js_files', 'action' => 'get'));
 
+	Router::connect('/suggest', array('controller' => 'packages', 'action' => 'suggest'));
 	Router::connect('/login', array('controller' => 'users', 'action' => 'login'));
 	Router::connect('/logout', array('controller' => 'users', 'action' => 'logout'));
 	Router::connect('/dashboard', array('controller' => 'users', 'action' => 'dashboard'));

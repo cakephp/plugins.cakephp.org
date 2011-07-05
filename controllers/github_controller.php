@@ -70,22 +70,6 @@ class GithubController extends AppController {
     }
 
 /**
- * Allows adding a github user to the index
- *
- * @param string $username Github username
- */
-    function add_maintainer($username = null) {
-        $user = $this->Github->find('userShow', $username);
-        $this->_redirectUnless($user, __('Invalid user', true));
-
-        if ($this->Github->saveUser($username)) {
-            $this->_flashAndRedirect(sprintf(__('%s saved!', true), $username), array('element' => 'flash/success'));
-        }
-
-        $this->_flashAndRedirect(sprintf(__('%s not saved!', true), $username));
-    }
-
-/**
  * Allows adding a github user's package to the index
  *
  * Note that the user must already exist in the index for this to succeed

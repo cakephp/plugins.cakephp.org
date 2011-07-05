@@ -94,6 +94,15 @@ TEXT;
 	if ($die) die;
 }
 
-// CakeLog::config('database', array(
-// 	'engine' => 'DatabaseLogger.DatabaseLogger',
-// ));
+CakeLog::config('database', array(
+	'engine' => 'DatabaseLogger.DatabaseLogger',
+));
+Configure::write('logQueries', true);
+Configure::write('UrlCache.pageFiles', true);
+Configure::write('Settings.SiteTitle', 'CakePackages');
+Configure::write('Settings.FULL_BASE_URL', 'http://cakepackages.com');
+
+Configure::write('Email.username', 'email@example.com');
+Configure::write('Email.password', 'password');
+Configure::write('Email.test', 'email@example.com');
+Configure::write('Email.from', 'email@example.com');

@@ -104,7 +104,7 @@ class AppController extends AjaxController {
  *
  * @return void
  */
-	protected function _seoFallback() {
+	public function _seoFallback() {
 		if ($this->params['controller'] == 'blog_posts') {
 			if ($this->params['action'] == 'view') {
 				$this->Sham->setMeta('title', $this->viewVars['blogPost']['BlogPost']['title'] . ' | Developer Blog | CakePackages');

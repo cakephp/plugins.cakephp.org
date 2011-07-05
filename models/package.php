@@ -475,4 +475,17 @@ class Package extends AppModel {
 		return $named;
 	}
 
+	function suggest($data) {
+		if (empty($data['username']) || empty($data['repository'])) {
+			return false;
+		}
+
+		$job = $this->load('SuggestPackageJob', $data['username'], $data['repository']);
+		if (!$job) {
+			return false;
+		}
+
+		return $this->enqueue($job);
+	}
+
 }

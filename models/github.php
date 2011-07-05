@@ -510,10 +510,4 @@ class Github extends AppModel {
         return $this->enqueue($this->load('NewPackageJob', $username, $name));
     }
 
-    function saveUser($username = null) {
-        if (!$username) return false;
-
-        return $this->enqueue($this->load('NewMaintainerJob', $username));
-    }
-
 }

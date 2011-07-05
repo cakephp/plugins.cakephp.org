@@ -8,12 +8,12 @@ class PackagesController extends AppController {
  * @access public
  * @link http://book.cakephp.org/view/959/Controller-Attributes
  */
-    var $name = 'Packages';
+	public $name = 'Packages';
 
 /**
  * Default page for entire application
  */
-	function home() {
+	public function home() {
 		$packages = $this->Package->find('latest');
 		$this->set(compact('packages'));
 	}
@@ -24,7 +24,7 @@ class PackagesController extends AppController {
  * @param string $search String to search by
  * @todo refactor this to use something like Sphinx
  */
-	function index($search = null) {
+	public function index($search = null) {
 		if (!empty($this->data)) {
 			$clean = $this->Package->cleanParams($this->data, false);
 			$this->redirect($clean);
@@ -51,7 +51,7 @@ class PackagesController extends AppController {
  * @param string $maintainer Maintainer name
  * @param string $package Package name
  */
-	function view($maintainer = null, $package = null) {
+	public function view($maintainer = null, $package = null) {
 		try {
 			$package = $this->Package->find('view', array(
 				'maintainer' => $maintainer,
@@ -64,17 +64,31 @@ class PackagesController extends AppController {
 		$this->set(compact('package'));
 	}
 
+	public function suggest() {
+		if (!empty($this->data['Package'])) {
+			if ($this->Package->suggest($this->data['Package'])) {
+				$this->Session->setFlash('Thanks, your submission will be reviewed shortly!', 'flash/success');
+				unset($this->data['Package']);
+			} else{
+				$this->Session->setFlash('There was some sort of error...', 'flash/error');
+			}
+		}
+	}
+
 /**
  * Provides a jquery autocomplete response
  */
-    function autocomplete() {
-        $term = (isset($this->params['url']['term'])) ? $this->params['url']['term'] : '';
-        $this->set('results', $this->Package->find('autocomplete', array('term' => $term)));
-        $this->layout = 'ajax';
-        Configure::write('debug', 0);
-    }
+	public function autocomplete() {
+		$term = (isset($this->params['url']['term'])) ? $this->params['url']['term'] : '';
+		$this->set('results', $this->Package->find('autocomplete', array('term' => $term)));
+		$this->layout = 'ajax';
+		Configure::write('debug', 0);
+	}
 
-	function _seoHome() {
+/**
+ * Sets seo information for the homepage
+ */
+	public function _seoHome() {
 		$this->Sham->loadBySlug('packages/home');
 
 		$this->Sham->setMeta('title', 'CakePackages: Open source CakePHP Plugins and Applications');
@@ -83,19 +97,37 @@ class PackagesController extends AppController {
 		$this->Sham->setMeta('canonical', '/', array('escape' => false));
 	}
 
-	function _seoIndex() {
+/**
+ * Sets SEO information for any of the package search pages
+ */
+	public function _seoIndex() {
 		$this->Sham->loadBySlug('packages');
 
 		$this->Sham->setMeta('title', 'CakePHP Plugin and Application Search | CakePackages');
 		$this->Sham->setMeta('description', 'CakePHP Package Index - Search for reusable, open source CakePHP plugins and applications, tutorials and code snippets');
 		$this->Sham->setMeta('keywords', 'package search index, cakephp package, cakephp, plugins, php, open source code, tutorials');
-		$this->Sham->setMeta('canonical', '/packages/');
+		$this->Sham->setMeta('canonical', '/packages/', array('escape' => false));
 		if (!in_array($this->here, array('/packages', '/packages/'))) {
 			$this->Sham->setMeta('robots', 'noindex, follow');
 		}
 	}
 
-	function _seoView() {
+/**
+ * Sets seo information for the suggest page
+ */
+	public function _seoSuggest() {
+		$this->Sham->loadBySlug('packages/suggest');
+
+		$this->Sham->setMeta('title', 'Suggest New Plugins | CakePHP Plugins and Applications | CakePackages');
+		$this->Sham->setMeta('description', 'CakePHP Package Suggestion page - Suggest new, open source CakePHP plugins and applications for indexing on CakePackages');
+		$this->Sham->setMeta('keywords', 'suggest plugins, cakephp package, cakephp, plugins, php, open source code, tutorials');
+		$this->Sham->setMeta('canonical', '/suggest/', array('escape' => false));
+	}
+
+/**
+ * Sets SEO information for a specific package page
+ */
+	public function _seoView() {
 		if (!class_exists('Sanitize')) {
 			App::import('Core', 'Sanitize');
 		}
@@ -126,6 +158,7 @@ class PackagesController extends AppController {
 		$this->Sham->setMeta('title', implode(' | ', $title));
 		$this->Sham->setMeta('description', $description);
 		$this->Sham->setMeta('keywords', implode(', ', $keywords));
-		$this->Sham->setMeta('canonical', '/' . $canonical . '/');
+		$this->Sham->setMeta('canonical', '/' . $canonical . '/', array('escape' => false));
 	}
+
 }
