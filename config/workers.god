@@ -6,7 +6,7 @@ require File.expand_path(File.dirname(__FILE__) + '/cakephp_god.rb')
 God.pid_file_directory = "/apps/pids"
 God.log_level = :error
 
-%w(default quick).each do |queue|
+%w(default).each do |queue|
   CakePHPGod.queue_workers(queue, 1)
 end
 
