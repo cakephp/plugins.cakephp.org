@@ -1,0 +1,23 @@
+# tagglet cron jobs
+APP_PATH=/apps/production/cakepackages.com/default/public
+LOG_PATH=/apps/production/cakepackages.com/default/log
+CAKEPHP_ENV=production
+
+PATH=/usr/local/bin:/usr/bin:/bin
+
+# m   h   dom mon dow   command
+# *   *   *   *   *     command to be executed
+# -   -   -   -   -
+# |   |   |   |   |
+# |   |   |   |   +----- day of week (0 - 6) (Sunday=0)
+# |   |   |   +------- month (1 - 12)
+# |   |   +--------- day of month (1 - 31)
+# |   +----------- hour (0 - 23)
+# +----------- min (0 - 59)
+
+### HIGH TRAFFIC TIME IS B/W 20:00 - 0:00 AND 10:00 - 19:59
+### RUN YOUR TASKS FROM 00:00 - 10:00
+### KEEP SORTED IN TIME ORDER
+
+# Send out notifications
+0 * * * *        deploy cd $APP_PATH && ../cake/console/cake -app $APP_PATH packages existenceCheck

@@ -62,18 +62,20 @@ set :ssh_options,     :username => $config["remoteusername"]
 set :ssh_options,     :forward_agent => true
 
 ## Available Environments
-task :prod do
-  server              $config["servers"]["prod"]["server"], :web, :god
+task :production do
+  server              $config["servers"]["prod"]["server"], :web, :god, :cron
   set :application,   $config["servers"]["prod"]["application"]
   set :deploy_to,     $config["servers"]["prod"]["deploy_to"]
   set :branch,        :master
+  set :deploy_env,    :production
 end
 
-task :dev do
+task :staging do
   role :web,          $config["servers"]["dev"]["server"]
   set :application,   $config["servers"]["dev"]["application"]
   set :deploy_to,     $config["servers"]["dev"]["deploy_to"]
   set :branch,        ENV['branch'] if ENV.has_key?('branch') && ENV['branch'] =~ /[\w_-]+/i
+  set :deploy_env,    :staging
 end
 
 ## Deployment tasks
@@ -98,7 +100,7 @@ namespace :deploy do
     Also clear persistent and model cache and sessions and symlink for usability.
   DESC
   task :finalize_update do
-    before "deploy:symlink", "link:core", "link:plugins", "link:config", "link:tmp", "misc:submodule"
+    before "deploy:symlink", "link:cron", "link:core", "link:plugins", "link:config", "link:tmp", "misc:submodule"
   end
 
   desc <<-DESC
@@ -108,7 +110,6 @@ namespace :deploy do
   task :symlink do
     run "rm -rf #{deploy_to}/#{current_dir} && cp -rf #{latest_release} #{deploy_to}/#{current_dir}"
   end
-
 end
 
 ## Link tasks
@@ -118,12 +119,12 @@ namespace :link do
     You may need to change this to a 'cp -rf' instead of 'ln -s' depending upon your shell requirements
   DESC
   task :core do
-    run "rm -rf #{deploy_to}/cake && cp -rf #{cake_folder}/#{cake_version}/cake #{deploy_to}/cake"
+    run "rm -rf #{deploy_to}/cake && ln -s #{cake_folder}/#{cake_version}/cake #{deploy_to}/cake"
   end
 
   desc "Link the CakePHP Plugins for this repository"
   task :plugins do
-    run "rm -rf #{deploy_to}/plugins && cp -rf #{cake_folder}/#{plugin_dir} #{deploy_to}/plugins"
+    run "rm -rf #{deploy_to}/plugins && ln -s #{cake_folder}/#{plugin_dir} #{deploy_to}/plugins"
   end
 
   desc <<-DESC
@@ -141,8 +142,16 @@ namespace :link do
       "rm -rf #{current_release}/config/bootstrap.php",
       "ln -s #{shared_path}/config/bootstrap.php #{current_release}/config/bootstrap.php",
 
+      'if [ ! -d "' + shared_path + '/webroot/cache_css" ]; then ' +
+          "mkdir -p #{shared_path}/webroot/cache_css && chmod -R 777 #{shared_path}/webroot/cache_css;" +
+      "fi",
+
       "rm -rf #{current_release}/webroot/cache_css",
       "ln -s #{shared_path}/webroot/cache_css #{current_release}/webroot/cache_css",
+
+      'if [ ! -d "' + shared_path + '/webroot/cache_js" ]; then ' +
+          "mkdir -p #{shared_path}/webroot/cache_js && chmod -R 777 #{shared_path}/webroot/cache_js;" +
+      "fi",
 
       "rm -rf #{current_release}/webroot/cache_js",
       "ln -s #{shared_path}/webroot/cache_js #{current_release}/webroot/cache_js",
@@ -160,6 +169,15 @@ namespace :link do
     run "rm -rf #{current_release}/tmp && ln -s #{shared_path}/tmp #{current_release}/tmp"
   end
 
+  desc "Symlink the cron file"
+  task :cron, :roles => :cron do
+    if deploy_env == :prod
+      run [
+        "sudo chown root:root #{current_path}/config/cakepackages.cron",
+        "sudo ln -sf #{current_path}/config/cakepackages.cron /etc/cron.d/cakepackages"
+      ].join(' && ')
+    end
+  end
 end
 
 ## Miscellaneous tasks
@@ -189,7 +207,7 @@ namespace :misc do
   desc "Startup a new deployment"
   task :startup do
     # symlink the cake core folder to where we need it
-    after "misc:startup", "link:core", "link:plugins"
+    after "misc:startup", "link:core", "link:plugins", "misc:clear_cache"
 
     run [
       # Setup shared folders
@@ -199,7 +217,7 @@ namespace :misc do
       "mkdir -p #{shared_path}/tmp/sessions",
       "mkdir -p #{shared_path}/tmp/logs",
       "mkdir -p #{shared_path}/tmp/tests",
-      
+
       "mkdir -p #{shared_path}/webroot/files",
       "mkdir -p #{shared_path}/webroot/uploads",
       "mkdir -p #{shared_path}/webroot/cache_css",
@@ -219,7 +237,31 @@ namespace :misc do
 
   desc "Tail the log files"
   task :tail do
-    run "tail -f #{deploy_to}/log/default.0.log"
+    run "tail -f #{deploy_to}/logs/*.log"
+  end
+end
+
+## Tasks involving assets
+namespace :asset do
+  desc "Clears assets"
+  task :clear do
+    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -app #{deploy_to}/#{current_dir} asset_compress clear"
+  end
+
+  desc "Builds all assets"
+  task :build do
+    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -app #{deploy_to}/#{current_dir} asset_compress build"
+  end
+
+  desc "Builds ini assets"
+  task :build_ini do
+    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -app #{deploy_to}/#{current_dir} asset_compress build_ini"
+  end
+
+  desc "Rebuilds assets"
+  task :rebuild do
+    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -app #{deploy_to}/#{current_dir} asset_compress clear"
+    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -app #{deploy_to}/#{current_dir} asset_compress build"
   end
 end
 
@@ -230,7 +272,7 @@ namespace :migrate do
     run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -app #{deploy_to}/#{current_dir} migration run all"
   end
 
-  desc "Run CakeDC Migrations"
+  desc "Gets the status of CakeDC Migrations"
   task :status do
     run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -app #{deploy_to}/#{current_dir} migration status"
   end
