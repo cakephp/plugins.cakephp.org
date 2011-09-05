@@ -116,6 +116,7 @@ class PackagesShell extends Shell {
 			'order' => array('Package.id ASC')
 		));
 
+		$this->out(sprintf(__('* %d records to process', true), count($packages)));
 		foreach ($packages as $package) {
 			sleep(1);
 			$exists = $this->Package->existenceCheck($package);
