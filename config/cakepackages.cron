@@ -19,5 +19,8 @@ PATH=/usr/local/bin:/usr/bin:/bin
 ### RUN YOUR TASKS FROM 00:00 - 10:00
 ### KEEP SORTED IN TIME ORDER
 
-# Send out notifications
-0 * * * *        deploy cd $APP_PATH && ../cake/console/cake  packages existenceCheck -env=production -app $APP_PATH
+# Check package existence
+0 4 * * *        deploy cd $APP_PATH && ../cake/console/cake packages existenceCheck -env=production -app $APP_PATH
+
+# Update package attributes where possible
+0 6 * * *        deploy cd $APP_PATH && ../cake/console/cake packages addMissingAttributes -env=production -app $APP_PATH
