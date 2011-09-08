@@ -126,7 +126,7 @@ class PackagesShell extends Shell {
 				continue;
 			}
 
-			if (!$this->Package->delete($package['Package']['id'])) {
+			if ($this->Package->softDelete($package['Package']['id'], false)) {
 				$this->out(sprintf(__('* Record %s deleted', true), $package['Package']['id']));
 			} else {
 				$this->out(sprintf(__('* Unable to delete record', true)));
