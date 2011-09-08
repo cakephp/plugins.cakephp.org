@@ -133,14 +133,8 @@ namespace :link do
   DESC
   task :config do
     run [
-      "rm -rf #{current_release}/config/core.php",
-      "ln -s #{shared_path}/config/core.php #{current_release}/config/core.php",
-
-      "rm -rf #{current_release}/config/database.php",
-      "ln -s #{shared_path}/config/database.php #{current_release}/config/database.php",
-
-      "rm -rf #{current_release}/config/bootstrap.php",
-      "ln -s #{shared_path}/config/bootstrap.php #{current_release}/config/bootstrap.php",
+      "rm -rf #{current_release}/config/environments.php",
+      "ln -s #{shared_path}/config/environments.php #{current_release}/config/environments.php",
 
       'if [ ! -d "' + shared_path + '/webroot/cache_css" ]; then ' +
           "mkdir -p #{shared_path}/webroot/cache_css && chmod -R 777 #{shared_path}/webroot/cache_css;" +
