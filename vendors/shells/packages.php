@@ -119,12 +119,18 @@ class PackagesShell extends Shell {
 		$this->out(sprintf(__('* %d records to process', true), count($packages)));
 		foreach ($packages as $package) {
 			sleep(1);
-			$exists = $this->Package->existenceCheck($package);
+			$exists = $this->Package->findOnGithub($package);
 
 			if ($exists) {
 				$this->out(sprintf(__('* Record %s exists', true), $package['Package']['id']));
-			} else {
+				continue;
+			}
+
+			$this->Package->id = $package['Package']['id'];
+			if ($this->Package->saveField('deleted', 1)) {
 				$this->out(sprintf(__('* Record %s deleted', true), $package['Package']['id']));
+			} else {
+				$this->out(sprintf(__('* Unable to delete record', true)));
 			}
 		}
 	}

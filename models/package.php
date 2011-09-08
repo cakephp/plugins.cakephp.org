@@ -398,40 +398,30 @@ class Package extends AppModel {
         return $this->save($package);
     }
 
-	function existenceCheck($package = null) {
-		$exists = $this->findOnGithub($package);
-
-		if ($exists) {
-			return true;
+	function findOnGithub($package = null) {
+		if (!is_array($package)) {
+			$package = $this->find('first', array(
+				'conditions' => array("{$this->alias}.{$this->primaryKey}" => $package),
+				'contain' => array('Maintainer' => array('fields' => 'username')),
+				'fields' => array('name', 'repository_url')
+			));
 		}
 
-		return !$this->Package->delete($package['Package']['id']);
+		if (!$package) {
+			return false;
+		}
+
+		if (!$this->Github) {
+			$this->Github = ClassRegistry::init('Github');
+		}
+
+		$response = $this->Github->find('reposShowSingle', array(
+			'username' => $package['Maintainer']['username'],
+			'repo' => $package[$this->alias]['name']
+		));
+
+		return !empty($response['Repository']);
 	}
-
-    function findOnGithub($package = null) {
-        if (!is_array($package)) {
-            $package = $this->find('first', array(
-                'conditions' => array("{$this->alias}.{$this->primaryKey}" => $package),
-                'contain' => array('Maintainer' => array('fields' => 'username')),
-                'fields' => array('name', 'repository_url')
-            ));
-        }
-
-        if (!$package) {
-            return false;
-        }
-
-        if (!$this->Github) {
-            $this->Github = ClassRegistry::init('Github');
-        }
-
-        $response = $this->Github->find('reposShowSingle', array(
-            'username' => $package['Maintainer']['username'],
-            'repo' => $package[$this->alias]['name']
-        ));
-
-        return empty($response['Error']);
-    }
 
 	function cleanParams($named, $options = array()) {
 		if (empty($named)) {
