@@ -116,6 +116,10 @@ class PackagesShell extends Shell {
 			'order' => array('Package.id ASC')
 		));
 
+		if (!class_exists('PackageExistsJob')) {
+			App::import('Lib', 'PackageExistsJob');
+		}
+
 		$jobs = array();
 		$this->out(sprintf(__('* %d records to process', true), count($packages)));
 		foreach ($packages as $package) {
@@ -123,7 +127,7 @@ class PackagesShell extends Shell {
 		}
 
 		if (!empty($jobs)) {
-			$this->CakeDjjob->bulkEnqueue($jobs);
+			$this->CakeDjjob->bulkEnqueue($jobs, 'default');
 		}
 
 		$this->out(sprintf(__('* Enqueued %d jobs', true), count($jobs)));
