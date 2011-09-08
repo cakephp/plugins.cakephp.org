@@ -6,15 +6,15 @@ $config = {
     "cake_version"      => "cakephp1.3",
     "plugin_dir"        => "cakephp-plugins",
     "servers"           => {
-        "prod"              => {
+        "production"              => {
             "server"        => "cakepackages.com",
             "application"   => "cakepackages.com",
             "deploy_to"     => "/apps/production/cakepackages.com/default"
         },
-        "dev"               => {
+        "staging"           => {
             "server"        => "dev.cakepackages.com",
             "application"   => "dev.cakepackages.com",
-            "deploy_to"     => "/apps/production/cakepackages.com/dev"
+            "deploy_to"     => "/apps/staging/cakepackages.com/default"
         }
     }
 }
@@ -63,17 +63,17 @@ set :ssh_options,     :forward_agent => true
 
 ## Available Environments
 task :production do
-  server              $config["servers"]["prod"]["server"], :web, :god, :cron
-  set :application,   $config["servers"]["prod"]["application"]
-  set :deploy_to,     $config["servers"]["prod"]["deploy_to"]
+  server              $config["servers"]["production"]["server"], :web, :god, :cron
+  set :application,   $config["servers"]["production"]["application"]
+  set :deploy_to,     $config["servers"]["production"]["deploy_to"]
   set :branch,        :master
   set :deploy_env,    :production
 end
 
 task :staging do
-  role :web,          $config["servers"]["dev"]["server"]
-  set :application,   $config["servers"]["dev"]["application"]
-  set :deploy_to,     $config["servers"]["dev"]["deploy_to"]
+  role :web,          $config["servers"]["staging"]["server"]
+  set :application,   $config["servers"]["staging"]["application"]
+  set :deploy_to,     $config["servers"]["staging"]["deploy_to"]
   set :branch,        ENV['branch'] if ENV.has_key?('branch') && ENV['branch'] =~ /[\w_-]+/i
   set :deploy_env,    :staging
 end
