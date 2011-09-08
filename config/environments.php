@@ -11,6 +11,7 @@ Environment::configure('production',
 		'UrlCache.pageFiles'      => true,
 		'Settings.SiteTitle'      => 'cakepackages',
 		'Settings.FULL_BASE_URL'  => 'http://cakepackages.com',
+
 		'Email.username'          => 'info@cakepackages.com',
 		'Email.password'          => 'password',
 		'Email.test'              => 'info@cakepackages.com',
@@ -63,6 +64,7 @@ Environment::configure('staging',
 		'UrlCache.pageFiles'      => true,
 		'Settings.SiteTitle'      => 'cakepackages',
 		'Settings.FULL_BASE_URL'  => 'http://staging.cakepackages.com',
+
 		'Email.username'          => 'info@cakepackages.com',
 		'Email.password'          => 'password',
 		'Email.test'              => 'info@cakepackages.com',
@@ -104,7 +106,7 @@ Environment::configure('development',
 		'Email.password'          => 'password',
 		'Email.test'              => 'email@example.com',
 		'Email.from'              => 'email@example.com',
-		
+
 		'logQueries'              => true,
 
 		'debug'                   => 2,
