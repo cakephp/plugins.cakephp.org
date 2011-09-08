@@ -7,7 +7,7 @@ class CakePHPGod
         w.interval      = 10.minutes
         w.log           = "#{ROOT}/log/#{queue}.#{i}.log"
         w.dir           = "#{ROOT}/public"
-        w.start         = "../cake/console/cake -app #{ROOT}/public worker run -queue #{queue} -count 100"
+        w.start         = "../cake/console/cake worker run -env=production -app #{ROOT}/public -queue #{queue} -count 100"
         w.start_grace   = 10.seconds
         w.restart_grace = 10.seconds
         w.uid           = uid
