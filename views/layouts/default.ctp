@@ -26,6 +26,9 @@
 						<li><?php echo $this->Html->link('Browse Packages', array('plugin' => null, 'controller' => 'packages', 'action' => 'index')); ?></li>
 						<li><?php echo $this->Html->link('Suggest a package', array('plugin' => null, 'controller' => 'packages', 'action' => 'suggest')); ?></li>
 						<li><?php echo $this->Html->link('Blog', array('plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'index')); ?></li>
+						<?php if (Authsome::get('id')) : ?>
+							<li><?php echo $this->Html->link('Logout', array('plugin' => null, 'controller' => 'users', 'action' => 'logout')); ?></li>
+						<?php endif; ?>
 					</ul>
 				</nav>
 				<nav class="filter">
