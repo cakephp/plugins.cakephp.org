@@ -20,4 +20,4 @@ PATH=/usr/local/bin:/usr/bin:/bin
 ### KEEP SORTED IN TIME ORDER
 
 # Send out notifications
-0 * * * *        deploy cd $APP_PATH && ../cake/console/cake -app $APP_PATH packages existenceCheck
+0 * * * *        deploy cd $APP_PATH && ../cake/console/cake  packages existenceCheck -env=production -app $APP_PATH
