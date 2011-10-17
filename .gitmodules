@@ -21,7 +21,7 @@
 	url = git://github.com/josegonzalez/cake_djjob.git
 [submodule "plugins/asset_compress"]
 	path = plugins/asset_compress
-	url = git://github.com/josegonzalez/asset_compress.git
+	url = git://github.com/markstory/asset_compress.git
 [submodule "plugins/lazy_model"]
 	path = plugins/lazy_model
 	url = git://github.com/Phally/lazy_model.git
