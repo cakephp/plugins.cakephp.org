@@ -100,7 +100,9 @@ namespace :deploy do
     Also clear persistent and model cache and sessions and symlink for usability.
   DESC
   task :finalize_update do
-    before "deploy:symlink", "link:cron", "link:core", "link:plugins", "link:config", "link:tmp", "misc:submodule"
+    before "deploy:symlink", "link:core", "link:plugins", "link:config", "link:tmp", "misc:submodule"
+    after "deploy:symlink_cron"
+    before "deploy:symlink", "link:core", "link:plugins", "link:config", "link:tmp", "misc:submodule"
   end
 
   desc <<-DESC
@@ -109,6 +111,16 @@ namespace :deploy do
   DESC
   task :symlink do
     run "rm -rf #{deploy_to}/#{current_dir} && cp -rf #{latest_release} #{deploy_to}/#{current_dir}"
+  end
+
+  desc "Symlink the cron file"
+  task :symlink_cron, :roles => :cron do
+    if deploy_env == :production
+      run [
+        "sudo chown root:root #{current_path}/config/cakepackages.cron",
+        "sudo ln -sf #{current_path}/config/cakepackages.cron /etc/cron.d/cakepackages"
+      ].join(' && ')
+    end
   end
 end
 
@@ -161,16 +173,6 @@ namespace :link do
   desc "Link the temporary directory"
   task :tmp do
     run "rm -rf #{current_release}/tmp && ln -s #{shared_path}/tmp #{current_release}/tmp"
-  end
-
-  desc "Symlink the cron file"
-  task :cron, :roles => :cron do
-    if deploy_env == :prod
-      run [
-        "sudo chown root:root #{current_path}/config/cakepackages.cron",
-        "sudo ln -sf #{current_path}/config/cakepackages.cron /etc/cron.d/cakepackages"
-      ].join(' && ')
-    end
   end
 end
 
@@ -239,23 +241,23 @@ end
 namespace :asset do
   desc "Clears assets"
   task :clear do
-    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -app #{deploy_to}/#{current_dir} asset_compress clear"
+    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -env=#{deploy_env} -app #{deploy_to}/#{current_dir} asset_compress clear"
   end
 
   desc "Builds all assets"
   task :build do
-    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -app #{deploy_to}/#{current_dir} asset_compress build"
+    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -env=#{deploy_env} -app #{deploy_to}/#{current_dir} asset_compress build"
   end
 
   desc "Builds ini assets"
   task :build_ini do
-    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -app #{deploy_to}/#{current_dir} asset_compress build_ini"
+    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -env=#{deploy_env} -app #{deploy_to}/#{current_dir} asset_compress build_ini"
   end
 
   desc "Rebuilds assets"
   task :rebuild do
-    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -app #{deploy_to}/#{current_dir} asset_compress clear"
-    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -app #{deploy_to}/#{current_dir} asset_compress build"
+    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -env=#{deploy_env} -app #{deploy_to}/#{current_dir} asset_compress clear"
+    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -env=#{deploy_env} -app #{deploy_to}/#{current_dir} asset_compress build"
   end
 end
 
@@ -263,12 +265,12 @@ end
 namespace :migrate do
   desc "Run CakeDC Migrations"
   task :all do
-    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -app #{deploy_to}/#{current_dir} migration run all"
+    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -env=#{deploy_env} -app #{deploy_to}/#{current_dir} migration run all"
   end
 
   desc "Gets the status of CakeDC Migrations"
   task :status do
-    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -app #{deploy_to}/#{current_dir} migration status"
+    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -env=#{deploy_env} -app #{deploy_to}/#{current_dir} migration status"
   end
 end
 
