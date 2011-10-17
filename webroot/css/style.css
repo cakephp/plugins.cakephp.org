@@ -137,7 +137,7 @@ header h1.logo a {
 	color: #ADADAD;
 }
 .search-form .button {
-	background: url(../img/search-arrow.png) no-repeat top center;
+	background: url(/img/search-arrow.png) no-repeat top center;
 	border: none;
 	box-shadow: 0;
 	color: black;

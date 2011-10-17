@@ -18,7 +18,7 @@
 		</div>
 		<div>
 			<span class="title">Clone Url</span>
-			<input id="clone" onclick="document.getElementById('clone').focus();document.getElementById('clone').select();" value="<?php echo $this->Resource->clone_url($package['Maintainer']['username'], $package['Package']['name']); ?>" />
+			<input id="clone" class="clone-link" value="<?php echo $this->Resource->clone_url($package['Maintainer']['username'], $package['Package']['name']); ?>" />
 		</div>
 	</dl>
 	
