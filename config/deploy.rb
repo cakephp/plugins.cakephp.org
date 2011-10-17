@@ -102,7 +102,6 @@ namespace :deploy do
   task :finalize_update do
     before "deploy:symlink", "link:core", "link:plugins", "link:config", "link:tmp", "misc:submodule"
     after "deploy:symlink_cron"
-    before "deploy:symlink", "link:core", "link:plugins", "link:config", "link:tmp", "misc:submodule"
   end
 
   desc <<-DESC
@@ -145,9 +144,6 @@ namespace :link do
   DESC
   task :config do
     run [
-      "rm -rf #{current_release}/config/environments.php",
-      "ln -s #{shared_path}/config/environments.php #{current_release}/config/environments.php",
-
       'if [ ! -d "' + shared_path + '/webroot/cache_css" ]; then ' +
           "mkdir -p #{shared_path}/webroot/cache_css && chmod -R 777 #{shared_path}/webroot/cache_css;" +
       "fi",
@@ -174,6 +170,7 @@ namespace :link do
   task :tmp do
     run "rm -rf #{current_release}/tmp && ln -s #{shared_path}/tmp #{current_release}/tmp"
   end
+
 end
 
 ## Miscellaneous tasks
