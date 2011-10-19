@@ -22,5 +22,7 @@ $map = array(
 		'010_removed_api_generator_plugin' => 'M4dedc61218084cc9977e4911cbdd56cb'),
 	11 => array(
 		'011_added_github_id' => 'M4e07b9c08ae44661bdc44a51cbdd56cb'),
+	12 => array(
+		'012_add_profiles_table' => 'M4e9e3bde9b604c4496f83dfacbdd56cb'),
 );
 ?>
