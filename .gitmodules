@@ -58,6 +58,3 @@
 [submodule "plugins/search"]
 	path = plugins/search
 	url = git@github.com:CakeDC/search.git
-[submodule "plugins/csfnavbar"]
-	path = plugins/csfnavbar
-	url = git@github.com:cakephp/csfnavbar.git
