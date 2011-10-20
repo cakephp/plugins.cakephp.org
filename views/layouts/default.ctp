@@ -40,7 +40,7 @@
 		!window.jQuery &&
 		document.write(unescape('%3Cscript src="<?php $this->Html->url("/js/jquery-1.4.2.min.js") ?>"%3E%3C/script%3E'));
 	</script>
-	<?php echo $this->Html->script(array('core')); ?>
+	<?php echo $this->AssetCompress->css('default'); ?>
 	<script>
 		var App = App || {};
 		App.basePath = "<?php echo $this->webroot; ?>";

@@ -1,8 +1,0 @@
-/** Notices and Errors **/
-.message { clear: both; color: #fff; font-size: 140%; font-weight: bold; margin: 0 0 1em 0; background: #c73e14; padding: 5px; }
-.message.error { clear: both; color: #fff; font-weight: bold; background: #c73e14; }
-.message.notice { background: #ffcc00; color: #000; display: block; padding: 0.8em; margin: 1em 0; text-align: center; }
-.message.success { background: green; color: #fff; }
-
-.message p { font-size: 110%; line-height: 140%; padding: 0.2em; margin: 0; }
-.message p em { font-weight: normal; line-height: 140%; }
