@@ -1,8 +1,5 @@
 <?php
-if (!class_exists('AjaxController')) {
-	App::import('Lib', 'AjaxController.AjaxController');
-}
-class AppController extends AjaxController {
+class AppController extends Controller {
 
 /**
  * Array containing the names of components this controller uses. Component names
