@@ -45,16 +45,16 @@
 	url = git://github.com/neilcrookes/http_socket_oauth.git
 [submodule "plugins/users"]
 	path = plugins/users
-	url = git@github.com:CakeDC/users.git
+	url = git://github.com/CakeDC/users.git
 [submodule "plugins/recaptcha"]
 	path = plugins/recaptcha
-	url = git@github.com:CakeDC/recaptcha.git
+	url = git://github.com/CakeDC/recaptcha.git
 [submodule "plugins/ratings"]
 	path = plugins/ratings
-	url = git@github.com:CakeDC/ratings.git
+	url = git://github.com/CakeDC/ratings.git
 [submodule "plugins/utils"]
 	path = plugins/utils
-	url = git@github.com:CakeDC/utils.git
+	url = git://github.com/CakeDC/utils.git
 [submodule "plugins/search"]
 	path = plugins/search
-	url = git@github.com:CakeDC/search.git
+	url = git://github.com/CakeDC/search.git
