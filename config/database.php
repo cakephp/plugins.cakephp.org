@@ -34,10 +34,6 @@ class DATABASE_CONFIG {
 		'database'      => 'test',
 	);
 
-	public $database_logger = array(
-		'driver'        => 'mysql',
-	);
-
 	public $github = array(
 		'datasource'    => 'github',
 		'host'          => 'github.com',
@@ -66,9 +62,6 @@ class DATABASE_CONFIG {
 
 				// if so, i then merge any options into $default.
 				$this->default = array_merge($this->default, $this->{$environment});
-
-				// Merge the database_logger config with the environment
-				$this->database_logger = array_merge($this->database_logger, $this->{$environment});
 			}
 		}
 

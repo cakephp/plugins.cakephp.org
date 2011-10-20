@@ -123,9 +123,6 @@ Environment::configure('development',
 		Configure::write('paths', array(
 			'/usr/local/bin'
 		));
-		CakeLog::config('database', array(
-			'engine' => 'DatabaseLogger.DatabaseLogger',
-		));
 	}
 );
 

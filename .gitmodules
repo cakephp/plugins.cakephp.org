@@ -34,15 +34,9 @@
 [submodule "plugins/package_installer"]
 	path = plugins/package_installer
 	url = git://github.com/josegonzalez/package_installer.git
-[submodule "plugins/database_logger"]
-	path = plugins/database_logger
-	url = git://github.com/josegonzalez/database_logger.git
 [submodule "plugins/page_route"]
 	path = plugins/page_route
 	url = git://github.com/josegonzalez/page_route.git
-[submodule "plugins/ajax_controller"]
-	path = plugins/ajax_controller
-	url = https://github.com/josegonzalez/ajax_controller
 [submodule "plugins/sham"]
 	path = plugins/sham
 	url = git://github.com/josegonzalez/sham.git
