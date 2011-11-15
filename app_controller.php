@@ -8,6 +8,7 @@ class AppController extends Controller {
 		'Session',
 		'Settings.Settings',
 		'DebugKit.Toolbar',
+		'Webservice.Webservice',
 	);
 	var $helpers = array('Ajax', 'Sanction.Clearance', 'Form', 'Html', 'Resource', 'Session', 'Time');
 

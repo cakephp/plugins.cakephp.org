@@ -1,0 +1,3 @@
+[submodule "plugins/webservice"]
+	path = plugins/webservice
+	url = https://github.com/josegonzalez/webservice_plugin
