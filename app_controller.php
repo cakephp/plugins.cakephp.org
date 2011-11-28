@@ -80,11 +80,11 @@ class AppController extends Controller {
 	}
 
 /**
-* Before filter callback
-*
-* @return void
-* @access public
-*/
+ * Before filter callback
+ *
+ * @return void
+ * @access public
+ */
 	public function beforeFilter() {
 		if (Configure::read('debug')) {
 			$this->theme = Configure::read('Config.theme');

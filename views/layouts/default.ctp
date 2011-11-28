@@ -12,6 +12,9 @@
 		<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
 	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-8668344-5']);
+		_gaq.push(['_trackPageview']);
 		var RecaptchaOptions = {
 			theme : 'clean'
 		};
