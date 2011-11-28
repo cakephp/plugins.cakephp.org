@@ -5,5 +5,5 @@ Section: application
 Description: An application that can be used to index other cakephp applications and plugins
 Pre-depends: CakePHP==1.3
 Bugs: http://github.com/josegonzalez/cakepackages/issues
-Homepage: https://cakepackages.com
+Homepage: http://cakepackages.com
 Callbacks: git-submodules
