@@ -35,7 +35,7 @@ class PackagesController extends AppController {
 		$this->paginate = array(
 			'index',
 			'named' => $clean,
-			'limit' => 21
+			'limit' => 21,
 		);
 
 		$packages = $this->paginate();

@@ -92,7 +92,8 @@ class Package extends AppModel {
 				array_keys($this->schema()),
 				array('deleted', 'created', 'modified', 'repository_url', 'homepage', 'tags', 'bakery_article')
 			);
-			$query['order'] = array("{$this->alias}.created DESC");
+
+			$query['order'][] = array("{$this->alias}.created DESC");
 
 			if ($query['named']['query']) {
 				$query['conditions'][]['OR'] = array(
