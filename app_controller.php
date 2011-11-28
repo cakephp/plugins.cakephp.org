@@ -86,7 +86,7 @@ class AppController extends Controller {
  * @access public
  */
 	public function beforeFilter() {
-		if (Configure::read('debug')) {
+		if (Configure::read('Config.theme')) {
 			$this->theme = Configure::read('Config.theme');
 		}
 		$this->_setupAuth();
