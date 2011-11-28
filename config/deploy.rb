@@ -1,6 +1,6 @@
 $config = {
     "application"       => "cakepackages.com",
-    "repository"        => "git://github.com/josegonzalez/cakepackages.git",
+    "repository"        => "git://github.com/cakephp/cakepackages.git",
     "remoteusername"    => "deploy",
     "cake_folder"       => "/apps/production/resources",
     "cake_version"      => "cakephp1.3",
@@ -12,8 +12,8 @@ $config = {
             "deploy_to"     => "/apps/production/cakepackages.com/default"
         },
         "staging"           => {
-            "server"        => "dev.cakepackages.com",
-            "application"   => "dev.cakepackages.com",
+            "server"        => "staging.cakepackages.com",
+            "application"   => "staging.cakepackages.com",
             "deploy_to"     => "/apps/staging/cakepackages.com/default"
         }
     }
