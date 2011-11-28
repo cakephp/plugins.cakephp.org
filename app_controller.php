@@ -91,22 +91,21 @@ class AppController extends Controller {
 		}
 		$this->_setupAuth();
 		$this->_beforeFilterAuth();
-	
+
 		if (!isset($this->params['prefix']) || $this->params['prefix'] != 'admin') {
 			$this->Auth->allow();
 		}
-	
-	
+
 		// Enforces an absolute limit of 25
 		if (isset($this->passedArgs['limit'])) {
 			$this->passedArgs['limit'] = min(
-			$this->paginationMaxLimit,
-			$this->passedArgs['limit']
+				$this->paginationMaxLimit,
+				$this->passedArgs['limit']
 			);
 		}
-		
+
 	}
-	
+
 /**
  * Setup Authentication
  *
@@ -130,7 +129,7 @@ class AppController extends Controller {
 			'PkgUser.active' => 1
 		);
 	}
-	
+
 /**
  * beforeFilterAuth
  *
@@ -147,7 +146,7 @@ class AppController extends Controller {
 			$this->Auth->login($data);
 		}
 	}
-	
+
 /**
  * isAuthorized Auth callback
  *
