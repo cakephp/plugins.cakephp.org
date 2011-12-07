@@ -30,18 +30,17 @@ class PackagesController extends AppController {
 		}
 
 		$allowed = array('with', 'since', 'query', 'watchers');
-		$clean = $this->Package->cleanParams($this->params['named'], compact('allowed'));
+		$this->data = $this->Package->cleanParams($this->params['named'], compact('allowed'));
 		$this->paginate = array(
 			'index',
-			'named' => $clean,
+			'named' => $this->data,
 			'limit' => 21,
 		);
 
 		$packages = $this->paginate();
 
-		$this->data = $clean;
 		$tabs = $this->Package->tabs;
-		$merge = $this->Package->cleanParams($clean, false);
+		$merge = $this->Package->cleanParams($this->data, false);
 		$this->set(compact('merge', 'packages', 'tabs'));
 	}
 
@@ -125,36 +124,14 @@ class PackagesController extends AppController {
  * Sets SEO information for a specific package page
  */
 	public function _seoView() {
-		if (!class_exists('Sanitize')) {
-			App::import('Core', 'Sanitize');
-		}
-		
 		$package = $this->viewVars['package'];
-
 		$canonical = 'package/' . $package['Package']['name'] . '/' . $package['Maintainer']['username'];
 		$this->Sham->loadBySlug($canonical);
+		list($title, $description, $keywords) = $this->Package->seoView($package);
 
-		$title = array();
-		$title[] = Sanitize::clean($package['Package']['name'] . ' by ' . $package['Maintainer']['username']);
-		$title[] = 'CakePHP Plugins and Applications';
-		$title[] = 'CakePackages';
-		$description = Sanitize::clean($package['Package']['description']) . ' - CakePHP Package on CakePackages';
-		$keywords = explode(' ', $package['Package']['name']);
-		if (count($keywords) > 1) {
-			$keywords[] = $package['Package']['name'];
-		}
-		$keywords[] = 'cakephp package';
-		$keywords[] = 'cakephp';
-
-		foreach ($this->Package->validTypes as $type) {
-			if (isset($package['Package']['contains_' . $type]) && $package['Package']['contains_' . $type] == 1) {
-				$keywords[] = $type;
-			}
-		}
-
-		$this->Sham->setMeta('title', implode(' | ', $title));
+		$this->Sham->setMeta('title', $title);
 		$this->Sham->setMeta('description', $description);
-		$this->Sham->setMeta('keywords', implode(', ', $keywords));
+		$this->Sham->setMeta('keywords', $keywords);
 		$this->Sham->setMeta('canonical', '/' . $canonical . '/', array('escape' => false));
 	}
 

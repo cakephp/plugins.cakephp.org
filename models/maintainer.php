@@ -471,4 +471,33 @@ class Maintainer extends AppModel {
 		return $this->save($data, array('fieldList' => array('id', 'password', 'activation_key')));
 	}
 
+	public function seoView($maintainer) {
+		if (!class_exists('Sanitize')) {
+			App::import('Core', 'Sanitize');
+		}
+
+		if ($maintainer['Maintainer']['name']) {
+			$name = $maintainer['Maintainer']['name'];
+		} else {
+			$name = $maintainer['Maintainer']['username'];
+		}
+
+		$title = array();
+		$title[] = Sanitize::clean($name);
+		$title[] = 'CakePHP Package Maintainer';
+		$title[] = 'CakePackages';
+		$title = implode(' | ', $title);
+
+		$description = Sanitize::clean($name) . ' - CakePHP Package on CakePackages';
+
+		$keywords = array();
+		if (!empty($maintainer['Package'])) {
+			$keywords = array_slice(Set::classicExtract($maintainer, 'Package.{n}.name'), 0, 5);
+		}
+		$keywords[] = 'cakephp package';
+		$keywords[] = 'cakephp';
+		$keywords = implode(' | ', $keywords);
+
+		return array($title, $description, $keywords);
+	}
 }

@@ -496,4 +496,34 @@ class Package extends AppModel {
 		return $this->enqueue($job);
 	}
 
+	public function seoView($package) {
+		if (!class_exists('Sanitize')) {
+			App::import('Core', 'Sanitize');
+		}
+
+		$title = array();
+		$title[] = Sanitize::clean($package['Package']['name'] . ' by ' . $package['Maintainer']['username']);
+		$title[] = 'CakePHP Plugins and Applications';
+		$title[] = 'CakePackages';
+		$title = implode(' | ', $title);
+
+		$description = Sanitize::clean($package['Package']['description']) . ' - CakePHP Package on CakePackages';
+
+		$keywords = explode(' ', $package['Package']['name']);
+		if (count($keywords) > 1) {
+			$keywords[] = $package['Package']['name'];
+		}
+		$keywords[] = 'cakephp package';
+		$keywords[] = 'cakephp';
+
+		foreach ($this->validTypes as $type) {
+			if (isset($package['Package']['contains_' . $type]) && $package['Package']['contains_' . $type] == 1) {
+				$keywords[] = $type;
+			}
+		}
+		$keywords = implode(', ', $keywords);
+
+		return array($title, $description, $keywords);
+	}
+
 }

@@ -45,37 +45,15 @@ class MaintainersController extends AppController {
 	}
 
 	public function _seoView() {
-		if (!class_exists('Sanitize')) {
-			App::import('Core', 'Sanitize');
-		}
 		$maintainer = $this->viewVars['maintainer'];
-
 		$canonical = 'maintainer/' . $maintainer['Maintainer']['username'];
 		$this->Sham->loadBySlug($canonical);
+		list($title, $description, $keywords) = $this->Maintainer->seoView($maintainer);
 
-		if ($maintainer['Maintainer']['name']) {
-			$name = $maintainer['Maintainer']['name'];
-		} else {
-			$name = $maintainer['Maintainer']['username'];
-		}
-
-		$title = array();
-		$title[] = Sanitize::clean($name);
-		$title[] = 'CakePHP Package Maintainer';
-		$title[] = 'CakePackages';
-		$description = Sanitize::clean($name) . ' - CakePHP Package on CakePackages';
-
-		$keywords = array();
-		if (!empty($maintainer['Package'])) {
-			$keywords = array_slice(Set::classicExtract($maintainer, 'Package.{n}.name'), 0, 5);
-		}
-		$keywords[] = 'cakephp package';
-		$keywords[] = 'cakephp';
-
-		$this->Sham->setMeta('title', implode(' | ', $title));
+		$this->Sham->setMeta('title', $title);
 		$this->Sham->setMeta('description', $description);
-		$this->Sham->setMeta('keywords', implode(', ', $keywords));
-		$this->Sham->setMeta('canonical', '/' . $canonical . '/');
+		$this->Sham->setMeta('keywords', $keywords);
+		$this->Sham->setMeta('canonical', '/' . $canonical . '/', array('escape' => false));
 	}
 
 }
