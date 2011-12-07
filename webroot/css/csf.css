@@ -50,10 +50,6 @@ h3 > a {
 	top: 30px;
 	position: relative;
 }
-#header h1 a {
-	color: #fff;
-	text-decoration: none;
-}
 #header .top-bar .login {
 	text-align: right;
 	line-height: 26px;
@@ -1000,7 +996,7 @@ body {
  Header
 *******************************************************************************/
 #header {
-	background: #204c58 url('/img/header_bg.png') repeat-x;
+	background-color: #204c58;
 	border-bottom: 2px solid #fff;
 	height: 110px;
 	padding-top: 5px;
@@ -1011,11 +1007,11 @@ body {
 	margin-top:0;
 }
 #header h1 a {
-	background: transparent url('/img/logo.png') no-repeat;
+	color: #fff;
 	display: inline-block;
 	height: 105px;
 	line-height: 105px;
-	padding-left: 110px;
+	text-decoration: none;
 	text-shadow:1px 1px 2px #000;
 }
 #header h1 a:hover {
