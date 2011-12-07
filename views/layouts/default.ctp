@@ -3,7 +3,7 @@
 	<?php echo $this->Sham->out('charset'); ?>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<?php echo $this->Sham->out(null, array('skip' => array('charset'))); ?>
-	<?php echo $this->AssetCompress->css('theme'); ?>
+	<?php echo $this->AssetCompress->css('default'); ?>
 	<title>
 		<?php __('CakePHP Packages -'); ?>
 		<?php echo $title_for_layout; ?>

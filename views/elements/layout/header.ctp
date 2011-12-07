@@ -17,7 +17,7 @@
 	</div>
 
 	<div class="inner-container nav-bar">
-		<h1><?php echo $this->Html->link(__('CakePHP Packages', true), '/'); ?></h1>
+		<h1><?php echo $this->Html->link(__('Package Indexer', true), '/'); ?></h1>
 		<?php echo $this->element('layout/nav'); ?>
 		<?php
 			echo $this->Form->create('Video', array(
