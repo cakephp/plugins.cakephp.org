@@ -26,8 +26,10 @@
 						<li><?php echo $this->Html->link('Browse Packages', array('plugin' => null, 'controller' => 'packages', 'action' => 'index')); ?></li>
 						<li><?php echo $this->Html->link('Suggest a package', array('plugin' => null, 'controller' => 'packages', 'action' => 'suggest')); ?></li>
 						<li><?php echo $this->Html->link('Blog', array('plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'index')); ?></li>
-						<?php if (Authsome::get('id')) : ?>
-							<li><?php echo $this->Html->link('Logout', array('plugin' => null, 'controller' => 'users', 'action' => 'logout')); ?></li>
+						<?php if ($this->Session->read('Auth.User.id')) : ?>
+							<li><?php echo $this->Html->link('Logout', array('plugin' => null, 'controller' => 'pkg_users', 'action' => 'logout')); ?></li>
+						<?php else: ?> 
+							<li><?php echo $this->Html->link('Login', array('plugin' => null, 'controller' => 'pkg_users', 'action' => 'login')); ?></li>
 						<?php endif; ?>
 					</ul>
 				</nav>

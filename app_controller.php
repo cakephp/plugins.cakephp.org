@@ -12,11 +12,12 @@ class AppController extends Controller {
  * @link http://book.cakephp.org/view/961/components-helpers-and-uses
  */
 	public $components = array(
-		'Authsome.Authsome' => array('model' => 'Maintainer'),
+		'Auth',
+		'Cookie',
 		'RequestHandler',
 		'Sanction.Permit' => array(
-			'check' => 'group',
-			'path' => 'Maintainer.Maintainer'
+			'check' => 'role',
+			'path' => 'PkgUser.PkgUser'
 		),
 		'Session',
 		'Settings.Settings',
@@ -36,8 +37,8 @@ class AppController extends Controller {
 	public $helpers = array(
 		'AssetCompress.AssetCompress',
 		'Sanction.Clearance' => array(
-			'check' => 'group',
-			'path' => 'Maintainer.Maintainer'
+			'check' => 'role',
+			'path' => 'PkgUser.PkgUser'
 		),
 		'Sham.Sham',
 	);
@@ -77,23 +78,86 @@ class AppController extends Controller {
 		parent::__construct();
 	}
 
-/**
- * Called before the controller action.
- *
- * Used to set a max for the pagination limit
- *
- * @access public
- */
+	/**
+	* Before filter callback
+	*
+	* @return void
+	* @access public
+	*/
 	public function beforeFilter() {
-		parent::beforeFilter();
-
+		if (Configure::read('debug')) {
+			$this->theme = Configure::read('Config.theme');
+		}
+		$this->_setupAuth();
+		$this->_beforeFilterAuth();
+	
+		if (!isset($this->params['prefix']) || $this->params['prefix'] != 'admin') {
+			$this->Auth->allow();
+		}
+	
+	
 		// Enforces an absolute limit of 25
 		if (isset($this->passedArgs['limit'])) {
 			$this->passedArgs['limit'] = min(
-				$this->paginationMaxLimit,
-				$this->passedArgs['limit']
+			$this->paginationMaxLimit,
+			$this->passedArgs['limit']
 			);
 		}
+		
+	}
+	
+	/**
+	 * Setup Authentication
+	 *
+	 * @return void
+	 * @access protected
+	 */
+	protected function _setupAuth() {
+		$this->Auth->authorize = 'controller';
+		$this->Auth->fields = array('username' => 'email', 'password' => 'passwd');
+		$this->Auth->loginAction = array('plugin' => null, 'admin' => false, 'controller' => 'pkg_users', 'action' => 'login');
+		$this->Auth->loginRedirect = '/';
+		$this->Auth->logoutRedirect = '/';
+		$this->Auth->authError = __('Sorry, but you need to be logged in to access this location.', true);
+		$this->Auth->loginError = __('Invalid credentials. Please try again or create an account.', true);
+		$this->Auth->autoRedirect = false;
+		$this->Auth->userModel = 'PkgUser';
+		$this->Auth->authenticate = null;
+		$this->Auth->sessionKey = 'Auth.User';
+		$this->Auth->userScope = array(
+				'PkgUser.email_authenticated' => 1,
+				'PkgUser.active' => 1);
+	}
+	
+	/**
+	 * beforeFilterAuth
+	 *
+	 * @access public
+	 * @return void
+	 */
+	protected function _beforeFilterAuth() {
+		$this->Cookie->domain = env('HTTP_BASE');
+		$this->Cookie->name = 'rememberMe';
+		$cookie = $this->Cookie->read('User');
+		if (!empty($cookie) && !$this->Auth->user()) {
+			$data['PkgUser'][$this->Auth->fields['username']] = $cookie[$this->Auth->fields['username']];
+			$data['PkgUser'][$this->Auth->fields['password']] = $cookie[$this->Auth->fields['password']];
+			$this->Auth->login($data);
+		}
+	}
+	
+	/**
+	 * isAuthorized Auth callback
+	 *
+	 * @return boolean Whether the user is authorized to access the current page or not
+	 * @access public
+	 */
+	public function isAuthorized() {
+		$authorized = true;
+		if (isset($this->params['prefix']) && $this->params['prefix'] == 'admin') {
+			$authorized = $this->Auth->user('role') === 'admin';
+		}
+		return $authorized;
 	}
 
 /**

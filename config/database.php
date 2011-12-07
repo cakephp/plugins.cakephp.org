@@ -17,6 +17,13 @@ class DATABASE_CONFIG {
 		'password'      => 'password',
 		'database'      => 'cakepackages',
 	);
+	
+	public $cakeusers = array(
+		'driver'        => 'mysql',
+		'login'         => 'user',
+		'password'      => 'password',
+		'database'      => 'cakeusers',
+	);
 
 	public $staging = array(
 		'login'         => 'cakepackages_dev',

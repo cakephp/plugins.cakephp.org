@@ -112,18 +112,11 @@ Environment::configure('development',
 		'debug'                   => 2,
 		'Cache.disable'           => true,
 		'Routing.prefixes'        => array('one'),
-		'Security.salt'           => 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi',
-		'Security.cipherSeed'     => '76859309657453542496749683645',
-	),
-	function() {
-		date_default_timezone_set('UTC');
-		ini_set('apc.slam_defense', 50);
-		Configure::write('logQueries', true);
-
-		Configure::write('paths', array(
-			'/usr/local/bin'
-		));
-	}
+		'Security.salt'           => 'AYcG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9ab',
+		'Security.cipherSeed'     => '76859364557429242496749683650',
+		'Recaptcha.publicKey' 	  => '6LeyksQSAAAAAJdkmQB7vBtsP9kYY75rE1ebY7B5',
+		'Recaptcha.privateKey'	  => '6LeyksQSAAAAAEOJpZmWFHoBzgpSBtVlbDCDy6Uv'
+	)
 );
 
 // run
