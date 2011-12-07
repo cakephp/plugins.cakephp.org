@@ -1,0 +1,125 @@
+/*******************************************************************************
+ Header
+*******************************************************************************/
+#header {
+	background-color: #204c58;
+	border-bottom: 2px solid #fff;
+	height: 110px;
+	padding-top: 5px;
+	width: 100%;
+}
+#header h1 {
+	font-size: 32px;
+	font-weight: bold;
+	display: inline-block;
+	margin-right: 20px;
+	margin-top:0;
+	top: 30px;
+	position: static;
+}
+#header h1 a {
+	color: #fff;
+	display: inline-block;
+	height: 105px;
+	line-height: 105px;
+	text-decoration: none;
+	text-shadow:1px 1px 2px #000;
+}
+#header h1 a:hover {
+	color: #fffbbe;
+}
+#header .nav-bar {
+	height: 110px;
+	position: relative;
+}
+.main-nav {
+	position: relative;
+	line-height: 105px;
+	height: 105px;
+	top: -7px;
+}
+.main-nav ul li a {
+	background: #1b404a;
+	border-color: #0f2d37;
+	text-shadow:1px 1px 2px #000;
+}
+.main-nav ul li a:hover {
+	background: #2f6f80;
+}
+#global-search {
+	background: #1b404a;
+	border: 1px solid #0f2d37;
+	color: #fff;
+	display: inline-block;
+	height: 30px;
+	float: right;
+	margin: 25px 0 3px 0px;
+	padding: 10px;
+	position: absolute;
+	text-decoration: none;
+	text-shadow:1px 1px 2px #000;
+	top: 0;
+	right: 0;
+	width: 290px;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	border-radius: 5px;
+	-moz-box-shadow: 1px 1px 1px #888;
+	-webkit-box-shadow: 1px 1px 1px #888;
+	box-shadow: 1px 1px 1px #888;
+}
+#global-search input {
+	height: 30px;
+}
+#global-search input[type=text] {
+	border: 1px solid #4c4c4c;
+	margin-right: 5px;
+	padding: 0 5px;
+	-moz-box-shadow: 1px 1px 1px #537076;
+	-webkit-box-shadow: 1px 1px 1px #537076;
+	box-shadow: 1px 1px 1px #537076;
+	width: 210px;
+}
+#global-search input[type=text]:hover,
+#global-search input[type=text]:focus {
+	border-color: #ccc;
+}
+#global-search input[type=submit] {
+	cursor: pointer;
+	text-shadow:1px 1px 2px #fff;
+	width: 60px;
+}
+.main-nav a.tutorials {
+	background:#1b404a url('/img/dropdown.png') no-repeat scroll 93% 7px;
+}
+.main-nav a.non-button {
+	cursor:default;
+}
+.no-wrap {
+	white-space:nowrap;
+}
+.search-instructions {
+	font-weight: bold;
+	padding-bottom: 5px;
+}
+.index > .search.wide-search {
+	height:auto;
+}
+.main-nav ul li:hover > ul {
+	background: #1b404a;
+	background:-webkit-gradient(linear, left top, left bottom, from(#1b404a), to(#245b6a));
+	background:-moz-linear-gradient(top, #1b404a, #245b6a);
+	border: 1px solid #0e2d35;
+	border-top:1px solid #1b4049;
+	margin-top:-43px;
+	-moz-box-shadow:inset -1px -1px 1px #888;
+	-webkit-box-shadow:inset -1px -1px 1px #888, 1px 0px 3px #333;
+	box-shadow:inset -1px -1px 1px #888;
+}
+.main-nav ul li:hover > ul > li {
+	display:list-item;
+	line-height:15px;
+}
+.main-nav ul li:hover > ul > li a:hover {
+	color: #fffbbe;
+}

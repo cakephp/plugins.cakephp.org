@@ -1,0 +1,36 @@
+/*******************************************************************************
+ Popup
+*******************************************************************************/
+#messages-container {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	width: 250px;
+	margin: 0px;
+	padding: 7px;
+	background: transparent;
+	z-index: 2;
+	position: fixed;
+}
+#messages-container div.error {
+	color: #fff;
+	padding: 7px;
+	margin-bottom: 7px;
+	background: #fd7575;
+	border-color: #883030;
+	border-style: solid;
+	border-width: thin;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+#messages-container div.message {
+	color: #fff;
+	padding: 7px;
+	margin-bottom: 7px;
+	background: #5864e8;
+	border-color: #586498;
+	border-style: solid;
+	border-width: thin;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}

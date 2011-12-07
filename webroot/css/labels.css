@@ -1,0 +1,54 @@
+/*******************************************************************************
+Labels
+*******************************************************************************/
+ul {
+	display:inline;
+}
+ul.labels li {
+	display:inline-block;
+	-webkit-border-radius:3px;
+	-moz-border-radius:3px;
+	border-radius: 3px;
+	-moz-box-shadow: 1px 1px 1px #888;
+	-webkit-box-shadow: 1px 1px 1px #888;
+	box-shadow: 1px 1px 1px #888;
+	padding:1px 4px;
+	font-size:10px;
+	color:white;
+	margin-left:2px;
+	margin-bottom:4px;
+}
+ul.labels li.helper {
+	background:#680080;
+}
+ul.labels li.behavior {
+	background:#005880;
+}
+ul.labels li.controller {
+	background:#188000;
+}
+ul.labels li.component {
+	background:orange;
+}
+ul.labels li.view {
+	background:#FE0057;
+}
+ul.labels li.model {
+	background:#802800;
+}
+ul.labels li.shell {
+	background:#FE2800;
+}
+ul.labels li.datasource {
+	background:#E04C1B;
+}
+ul.labels li.plugin {
+	background:green;
+}
+ul.labels li.theme {
+	background:#E01B4C;
+}
+.preview > ul.labels {
+	position:absolute;
+	bottom:5px;
+}

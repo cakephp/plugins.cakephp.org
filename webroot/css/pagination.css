@@ -1,0 +1,72 @@
+/*******************************************************************************
+ Paging
+*******************************************************************************/
+div.paging {
+	background: transparent;
+	color: #C4C4C4;
+	padding: 0px;
+	margin: 0px;
+	font-size: 12px;
+}
+div.paging .disabled {
+	display:none;
+}
+div.paging span {
+	display: inline-block;
+	margin-right:3px;
+	color:#474747;
+	padding:0;
+}
+div.paging span a {
+	text-decoration: none;
+	display: inline-block;
+	padding: 3px 6px;
+	color: #5E5E5E;
+}
+div.paging span a:hover {
+	padding: 3px 6px;
+}
+div.paging span.current {
+	color: #ccc;
+	padding: 3px 6px;
+	background-color: #F1F1F1;
+	border: 1px solid #C4C4C4;
+}
+div.paging div.numbers {
+	display: inline-block;
+	background-color: #F1F1F1;
+	padding: 0px;
+	border: 1px solid #C4C4C4;
+}
+
+/*******************************************************************************
+Pagination Sorters
+*******************************************************************************/
+ul.ui-tabs-nav > li > a.ratings.desc, ul.ui-tabs-nav > li > a.ratings.asc:hover {
+	background: transparent url('/img/sort-rating-descending.png') no-repeat;
+}
+ul.ui-tabs-nav > li > a.ratings, ul.ui-tabs-nav > li > a.ratings.desc:hover {
+	background: transparent url('/img/sort-rating.png') no-repeat;
+}
+ul.ui-tabs-nav > li > a.watchers, ul.ui-tabs-nav > li > a.watchers.desc:hover  {
+	background: transparent url('/img/eye-plus.png') no-repeat;
+}
+ul.ui-tabs-nav > li > a.watchers.desc, ul.ui-tabs-nav > li > a.watchers.asc:hover {
+	background: transparent url('/img/eye-minus.png') no-repeat;
+}
+ul.ui-tabs-nav > li > a.title, ul.ui-tabs-nav > li > a.maintainer,
+ul.ui-tabs-nav > li > a.title.desc:hover, ul.ui-tabs-nav > li > a.maintainer.desc:hover {
+	background: transparent url('/img/sort-alphabet.png') no-repeat;
+}
+ul.ui-tabs-nav > li > a.title.desc, ul.ui-tabs-nav > li > a.maintainer.desc,
+ul.ui-tabs-nav > li > a.title.asc:hover, ul.ui-tabs-nav > li > a.maintainer.asc:hover {
+	background: transparent url('/img/sort-alphabet-descending.png') no-repeat;
+}
+ul.ui-tabs-nav > li > a.date.desc, ul.ui-tabs-nav > li > a.updated.desc,
+ul.ui-tabs-nav > li > a.date.asc:hover, ul.ui-tabs-nav > li > a.updated.asc:hover {
+	background: transparent url('/img/sort-date-descending.png') no-repeat;
+}
+ul.ui-tabs-nav > li > a.date, ul.ui-tabs-nav > li > a.updated,
+ul.ui-tabs-nav > li > a.date.desc:hover, ul.ui-tabs-nav > li > a.updated.desc:hover {
+	background: transparent url('/img/sort-date.png') no-repeat;
+}
