@@ -1,15 +1,7 @@
 <?php
-	$tabs = array(
-		'ratings' => array('text' => __('Rating', true), 'sort' => 'rating'),
-		'watchers' => array('text' => __('Watchers', true), 'sort' => 'watchers', 'direction' => 'desc'),
-		'title' => array('text' => __('Title', true), 'sort' => 'name'),
-		'maintainer' => array('text' => __('Maintainer', true), 'sort' => 'Maintainer.name'),
-		'date' => array('text' => __('Date Created', true), 'sort' => 'created_at'),
-		'updated' => array('text' => __('Date Updated', true), 'sort' => 'last_pushed_at'),
-	);
 	if (empty($this->params['named']['sort'])) {
 		$this->params['named']['sort'] = 'rating';
-	}	
+	}
 ?>
 <div class="packages index">
 	<h1><?php echo __('Available CakePHP packages'); ?></h1>
@@ -41,13 +33,11 @@
 				<li <?php echo $sortClass; ?>>
 					<?php echo $this->Paginator->sort($tab['text'], $tab['sort'], array('class' => $k) + compact('direction')); ?>
 				</li>
-		<?php
-			endforeach;
-		?>
+		<?php endforeach; ?>
 		</ul>
 		<div class="packages-list">
 			<?php
-				foreach ($packages as $i => $package):
+				foreach ($packages as $i => $package) :
 					echo $this->element('packages/preview', array('data' => $package, 'description' => true));
 				endforeach;
 			?>

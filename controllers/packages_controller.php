@@ -24,7 +24,7 @@ class PackagesController extends AppController {
  * @param string $search String to search by
  * @todo refactor this to use something like Sphinx
  */
-	public function index($search = null) {
+	public function index() {
 		if (!empty($this->data)) {
 			$clean = $this->Package->cleanParams($this->data, false);
 			$this->redirect($clean);
@@ -40,10 +40,10 @@ class PackagesController extends AppController {
 
 		$packages = $this->paginate();
 
-		$search = null;
 		$this->data = $clean;
+		$tabs = $this->Package->tabs;
 		$merge = $this->Package->cleanParams($clean, false);
-		$this->set(compact('merge', 'packages', 'search'));
+		$this->set(compact('merge', 'packages', 'tabs'));
 	}
 
 /**
@@ -54,10 +54,7 @@ class PackagesController extends AppController {
  */
 	public function view($maintainer = null, $package = null) {
 		try {
-			$package = $this->Package->find('view', array(
-				'maintainer' => $maintainer,
-				'package' => $package,
-			));
+			$package = $this->Package->find('view', compact('maintainer', 'package'));
 		} catch (Exception $e) {
 			$this->_flashAndRedirect($e->getMessage());
 		}

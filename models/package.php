@@ -44,6 +44,14 @@ class Package extends AppModel {
 				),
 			),
 		);
+		$this->tabs = array(
+			'ratings' => array('text' => __('Rating', true), 'sort' => 'rating'),
+			'watchers' => array('text' => __('Watchers', true), 'sort' => 'watchers', 'direction' => 'desc'),
+			'title' => array('text' => __('Title', true), 'sort' => 'name'),
+			'maintainer' => array('text' => __('Maintainer', true), 'sort' => 'Maintainer.name'),
+			'date' => array('text' => __('Date Created', true), 'sort' => 'created_at'),
+			'updated' => array('text' => __('Date Updated', true), 'sort' => 'last_pushed_at'),
+		);
 	}
 
 	function _findAutocomplete($state, $query, $results = array()) {
