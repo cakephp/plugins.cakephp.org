@@ -1,34 +1,34 @@
-<h2 class="secondary-title">
-	Latest CakePHP Code
-</h2>
+<?php
+	$sortClass = null;
+	if (empty($this->params['named']['sort'])) {
+		$sortClass = 'class="ui-tabs-selected"';
+	}
+?>
+<div class="packages index">
+	<h1><?php echo __('Latest CakePHP code'); ?></h1>
 
-<?php echo $this->Session->flash(); ?>
-
-<div class="package-list">
-	<?php foreach ($packages as $i => $package) : ?>
-		<article class="package<?php echo ($i%2 == 0) ? ' alt' : '' ?>">
-			<?php echo $this->Html->link($package['Package']['name'],
-				array('plugin' => null, 'controller' => 'packages', 'action' => 'view', $package['Maintainer']['username'], $package['Package']['name']),
-				array('class' => 'name')
-			); ?>
-			<p class="description"><?php echo $this->Resource->description($package['Package']['description']); ?></p>
-			<div class="meta">
-				<!-- <span class="category"></span> -->
-				<span class="watchers"><?php echo $package['Package']['watchers'] . ' ' . __n('watcher', 'watchers', $package['Package']['watchers'], true); ?></span>
-				<span class="maintainer">Maintained by <?php $name = trim($package['Maintainer']['name']); echo $this->Html->link((!empty($name)) ? $name : $package['Maintainer']['username'],
-					array('plugin' => null, 'controller' => 'maintainers', 'action' => 'view', $package['Maintainer']['username']),
-					array('class' => 'maintainer_name')
-				); ?></span>
-				<span class="last_pushed"><?php echo $this->Time->niceShort($package['Package']['last_pushed_at']); ?></span>
-				<!-- <span class="tags">
-					<a href="#">database</a>
-					<a href="#">logging</a>
-					<a href="#">library</a>
-				</span> -->
-			</div>
-		</article>
-	<?php endforeach; ?>
+	<div class="search">
+		<?php echo $this->Form->create(null, array('action' => 'index'));?>
+		<?php
+			echo $this->Form->input('search', array(
+				'label' => __('Find packages', true),
+				'div' => false,
+				'placeholder' => __('Enter Keyword(s)', true)
+			));
+		?>
+		<?php echo $this->Form->submit(__('Filter', true), array('div' => false));?>
+		<?php echo $this->Form->end();?>
+	</div>
+	<section class="main-content">
+		<div class="packages-list">
+			<?php
+				foreach ($packages as $i => $package):
+					echo $this->element('packages/preview', array('data' => $package, 'description' => true));
+				endforeach;
+			?>
+		</div>
+	</section>
+	<aside class="sidebar">
+		
+	</aside>
 </div>
-<article class="paging">
-	<?php echo $this->Html->link('Browse packages', array('plugin' => null, 'controller' => 'packages', 'action' => 'index')); ?>
-</article>

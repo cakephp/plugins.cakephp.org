@@ -3,7 +3,7 @@
 	<?php echo $this->Sham->out('charset'); ?>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<?php echo $this->Sham->out(null, array('skip' => array('charset'))); ?>
-	<?php echo $this->AssetCompress->css('default'); ?>
+	<?php echo $this->AssetCompress->css('theme'); ?>
 	<title>
 		<?php __('CakePHP Packages -'); ?>
 		<?php echo $title_for_layout; ?>
@@ -43,7 +43,7 @@
 		!window.jQuery &&
 		document.write(unescape('%3Cscript src="<?php $this->Html->url("/js/jquery-1.4.2.min.js") ?>"%3E%3C/script%3E'));
 	</script>
-	<?php echo $this->AssetCompress->css('default'); ?>
+	<?php echo $this->AssetCompress->script('default'); ?>
 	<script>
 		var App = App || {};
 		App.basePath = "<?php echo $this->webroot; ?>";
