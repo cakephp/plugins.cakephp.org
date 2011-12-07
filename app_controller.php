@@ -8,7 +8,6 @@ class AppController extends Controller {
  * Example: `var $components = array('Session', 'RequestHandler', 'Acl');`
  *
  * @var array
- * @access public
  * @link http://book.cakephp.org/view/961/components-helpers-and-uses
  */
 	public $components = array(
@@ -31,7 +30,6 @@ class AppController extends Controller {
  * Example: `var $helpers = array('Html', 'Javascript', 'Time', 'Ajax');`
  *
  * @var mixed A single name as a string or a list of names as an array.
- * @access protected
  * @link http://book.cakephp.org/view/961/components-helpers-and-uses
  */
 	public $helpers = array(
@@ -48,7 +46,6 @@ class AppController extends Controller {
  * Sets the view class to AutoHelper, which autoloads helpers when needed
  *
  * @var string
- * @access public
  */
 	public $view = 'AutoHelper';
 
@@ -83,12 +80,9 @@ class AppController extends Controller {
  * Before filter callback
  *
  * @return void
- * @access public
  */
 	public function beforeFilter() {
-		if (Configure::read('Config.theme')) {
-			$this->theme = Configure::read('Config.theme');
-		}
+		$this->_setupTheme();
 		$this->_setupAuth();
 		$this->_beforeFilterAuth();
 
@@ -107,10 +101,32 @@ class AppController extends Controller {
 	}
 
 /**
+ * Setup Theme
+ *
+ * @return boolean True if theme set, false otherwise
+ **/
+	public function _setupTheme() {
+		if (($theme = Configure::read('Config.theme')) === null) {
+			return false;
+		}
+
+		$is_available = Cache::read('Theme.is_available');
+		if (!$is_available) {
+			$path = App::themePath($theme);
+			$is_available = file_exists($path . 'README.textile') ? 'yes' : 'no';
+			Cache::write('Theme.is_available', $is_available);
+		}
+
+		if ($is_available === 'yes') {
+			$this->theme = $theme;
+		}
+		return $is_available === 'yes';
+	}
+
+/**
  * Setup Authentication
  *
  * @return void
- * @access protected
  */
 	protected function _setupAuth() {
 		$this->Auth->authorize = 'controller';
@@ -133,7 +149,6 @@ class AppController extends Controller {
 /**
  * beforeFilterAuth
  *
- * @access public
  * @return void
  */
 	protected function _beforeFilterAuth() {
@@ -151,7 +166,6 @@ class AppController extends Controller {
  * isAuthorized Auth callback
  *
  * @return boolean Whether the user is authorized to access the current page or not
- * @access public
  */
 	public function isAuthorized() {
 		$authorized = true;
@@ -199,7 +213,6 @@ class AppController extends Controller {
  *
  * @param mixed $redirect If false, do not redirect, else redirect to specified action
  * @return void
- * @access protected
  */
 	protected function _logout($redirect = array('action' => 'login')) {
 		$this->Authsome->logout();
@@ -217,7 +230,6 @@ class AppController extends Controller {
  * @param mixed $url A string or array-based URL pointing to another location within the app,
  *     or an absolute URL
  * @return void
- * @access protected
  */
 	protected function _flashAndRedirect($message = null, $redirectTo = array()) {
 		$status = null;
@@ -257,7 +269,6 @@ class AppController extends Controller {
  * @param mixed $data Data to evaluate
  * @param mixed $message Message to use when redirecting
  * @return void
- * @access protected
  */
 	protected function _redirectUnless($data = null, $message = null) {
 		if (empty($data)) {

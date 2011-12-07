@@ -1,15 +1,15 @@
 <?php
 class AppError extends ErrorHandler {
 
-	var $_debug = 0;
+	public $_debug = 0;
 
-	function __construct($method, $messages) {
+	public function __construct($method, $messages) {
 		$this->_debug = Configure::read('debug');
 		Configure::write('debug', 1);
 		parent::__construct($method, $messages);
 	}
  
-	function _outputMessage($template) {
+	public function _outputMessage($template) {
 		if ($this->_debug == 0) {
 			$template = 'error404';
 		}

@@ -16,8 +16,8 @@
 /**
  * profile model
  *
- * @package		cakepackages
- * @subpackage	cakepackages.models
+ * @package cakepackages
+ * @subpackage cakepackages.models
  */
 class Profile extends AppModel {
 
@@ -25,25 +25,22 @@ class Profile extends AppModel {
  * Name
  *
  * @var string $name
- * @access public
  */
 	public $name = 'Profile';
-
 
 /**
  * Behaviors
  *
  * @var array
- * @access public
  */
 	public $actsAs = array(
-		'Ratings.Ratable' => array());
+		'Ratings.Ratable' => array()
+	);
 
 /**
  * Validation rules - initialized in constructor
  *
  * @var array
- * @access public
  */
 	public $validate = array();
 
@@ -51,7 +48,6 @@ class Profile extends AppModel {
  * belongsTo association
  *
  * @var array $belongsTo
- * @access public
  */
 	public $belongsTo = array();
 
@@ -59,7 +55,6 @@ class Profile extends AppModel {
  * Allowed values for the "sex" profile field - initialized in constructor
  *
  * @var array
- * @access public
  */
 	public $sexValues;
 
@@ -69,7 +64,6 @@ class Profile extends AppModel {
  * @param mixed $id Model ID
  * @param string $table Table name
  * @param string $ds Datasource
- * @access public
  */
 	public function __construct($id = false, $table = null, $ds = null) {
 		$userClass = Configure::read('App.UserClass');
@@ -90,7 +84,6 @@ class Profile extends AppModel {
  * @param string $userId, user id
  * @param array $data, controller post data usually $this->data
  * @return mixed True on successfully save else post data as array
- * @access public
  */
 	public function edit($id = null, $userId = null, $data = null) {
 		$conditions = array();
@@ -128,7 +121,6 @@ class Profile extends AppModel {
  *
  * @param boolean created, true if a new record was created
  * @return void
- * @access public
  */
 	public function createIfNotExists($userId) {
 		$profile = $this->find('first', array('conditions' => array('Profile.user_id' => $userId)));
@@ -140,5 +132,5 @@ class Profile extends AppModel {
 			$this->save();
 		}
 	}
-	
+
 }

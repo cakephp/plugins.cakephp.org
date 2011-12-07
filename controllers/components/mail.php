@@ -1,16 +1,16 @@
 <?php
 class MailComponent extends Object {
-	var $components = array('Email', 'SwiftMailer');
+	public $components = array('Email', 'SwiftMailer');
 
-	var $controller = null;
+	public $controller = null;
 
-	var $mailer = 'php';
+	public $mailer = 'php';
 
-	function initialize(&$controller, $settings = array()) {
+	public function initialize(&$controller, $settings = array()) {
 		$this->controller =& $controller;
 	}
 
-	function send($params = array()) {
+	public function send($params = array()) {
 		if (!isset($params['to']) || !isset($params['subject'])) return false;
 
 		if (!isset($params['mailer'])) $params['mailer'] = $this->mailer;

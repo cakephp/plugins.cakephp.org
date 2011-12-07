@@ -1,13 +1,13 @@
 <?php
-
-App::import('Model', 'Users.User');
+if (!class_exists('User')) {
+	App::import('Model', 'Users.User');
+}
 class PkgUser extends User {
 
 /**
  * Name
  *
  * @var string $name
- * @access public
  */
 	public $name = 'PkgUser';
 
@@ -15,22 +15,25 @@ class PkgUser extends User {
  * Database table used
  *
  * @var string
- * @access public
  */
 	public $useTable = 'users';
-	
+
+/**
+ * Database config used
+ *
+ * @var string
+ */
 	public $useDbConfig = 'cakeusers';
 
 /**
  * Behaviors
  *
  * @var array
- * @access public
  */
 	public $actsAs = array(
 		'Ratings.Ratable' => array(),
-		'Search.Searchable');
-
+		'Search.Searchable'
+	);
 
 /**
  * Find methods
@@ -39,33 +42,33 @@ class PkgUser extends User {
  */
 	public $findMethods = array(
 		'name' => array(
-			'order' => array('PkgUser.username' => 'asc')),
+			'order' => array('PkgUser.username' => 'asc')
+		),
 	);
-
 
 /**
  * hasMany associations
  *
  * @var array
- * @access public
  */
 	public $hasMany = array(
 		'Detail' => array(
 			'className' => 'Users.Detail',
-			'foreign_key' => 'user_id'),
+			'foreign_key' => 'user_id'
+		),
 	);
 
 /**
  * hasOne associations
  *
  * @var array
- * @access public
  */
 	public $hasOne = array(
 		'Profile' => array(
 			'className' => 'Profile',
-			'foreignKey' => 'user_id'));
-
+			'foreignKey' => 'user_id'
+		)
+	);
 
 /**
  * Constructor
@@ -73,7 +76,6 @@ class PkgUser extends User {
  * @param mixed $id Model ID
  * @param string $table Table name
  * @param string $ds Datasource
- * @access public
  */
 	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
@@ -83,7 +85,9 @@ class PkgUser extends User {
 				'rule' => 'notEmpty',
 				'message' => __d('packages', 'This field is required.', true),
 				'required' => true,
-				'last' => true));
+				'last' => true
+			)
+		);
 	}
 
 /**
@@ -91,12 +95,13 @@ class PkgUser extends User {
  *
  * @param string user slug
  * @return array
- * @access public
  */
 	public function view($slug = null) {
 		$user = $this->find('first', array(
 			'conditions' => array(
-				$this->alias . '.slug' => $slug)));
+				$this->alias . '.slug' => $slug
+			)
+		));
 
 		if (empty($user)) {
 			throw new Exception(__d('users', 'The user does not exist.', true));
@@ -106,9 +111,12 @@ class PkgUser extends User {
 			$this->Profile->createIfNotExists($user[$this->alias]['id']);
 			$user = $this->find('first', array(
 				'contain' => array(
-					'Profile'),
+					'Profile'
+				),
 				'conditions' => array(
-					$this->alias . '.slug' => $slug)));
+					$this->alias . '.slug' => $slug
+				)
+			));
 		}
 
 		return $user;
@@ -142,13 +150,11 @@ class PkgUser extends User {
 		return $results;
 	}
 
-
 /**
  * afterSave callback
  *
  * @param boolean created, true if a new record was created
  * @return void
- * @access public
  */
 	public function afterSave($created) {
 		if ($created) {

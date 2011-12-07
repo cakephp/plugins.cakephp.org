@@ -1,33 +1,41 @@
 <?php
 class Package extends AppModel {
-	var $name = 'Package';
-	var $belongsTo = array('Maintainer');
-	var $actsAs = array(
+
+	public $name = 'Package';
+
+	public $belongsTo = array('Maintainer');
+
+	public $actsAs = array(
 		'Softdeletable',
 	);
-	var $validTypes = array(
+
+	public $validTypes = array(
 		'model', 'controller', 'view',
 		'behavior', 'component', 'helper',
 		'shell', 'theme', 'datasource',
 		'lib', 'test', 'vendor',
 		'app', 'config', 'resource',
 	);
-	var $folder = null;
-	var $Github = null;
-	var $SearchIndex = null;
-	var $_findMethods = array(
-		'autocomplete'		=> true,
-		'edit'				=> true,
-		'index'				=> true,
-		'latest'			=> true,
+
+	public $folder = null;
+
+	public $Github = null;
+
+	public $SearchIndex = null;
+
+	public $_findMethods = array(
+		'autocomplete' => true,
+		'edit' => true,
+		'index' => true,
+		'latest' => true,
 		'listformaintainer' => true,
-		'random'			=> true,
-		'randomids'			=> true,
-		'repoclone'			=> true,
-		'view'				=> true,
+		'random' => true,
+		'randomids' => true,
+		'repoclone' => true,
+		'view' => true,
 	);
 
-	function __construct($id = false, $table = null, $ds = null) {
+	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
 		$this->order = "`{$this->alias}`.`last_pushed_at` asc";
 		$this->validate = array(
@@ -54,7 +62,7 @@ class Package extends AppModel {
 		);
 	}
 
-	function _findAutocomplete($state, $query, $results = array()) {
+	public function _findAutocomplete($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query['term'])) {
 				throw new InvalidArgumentException(__('Invalid query', true));
@@ -85,7 +93,7 @@ class Package extends AppModel {
 		}
 	}
 
-	function _findIndex($state, $query, $results = array()) {
+	public function _findIndex($state, $query, $results = array()) {
 		if ($state == 'before') {
 			$query['named'] = array_merge(array(
 				'query' => null,
@@ -140,7 +148,7 @@ class Package extends AppModel {
 		}
 	}
 
-	function _findLatest($state, $query, $results = array()) {
+	public function _findLatest($state, $query, $results = array()) {
 		if ($state == 'before') {
 			$query['contain'] = array('Maintainer' => array('id', 'username', 'name'));
 			$query['fields'] = array_diff(
@@ -161,7 +169,7 @@ class Package extends AppModel {
 		}
 	}
 
-	function _findListformaintainer($state, $query, $results = array()) {
+	public function _findListformaintainer($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query[0])) {
 				throw new InvalidArgumentException(__('Invalid package', true));
@@ -184,7 +192,7 @@ class Package extends AppModel {
 		}
 	}
 
-	function _findRepoclone($state, $query, $results = array()) {
+	public function _findRepoclone($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query[0])) {
 				throw new InvalidArgumentException(__('Invalid package', true));
@@ -204,7 +212,7 @@ class Package extends AppModel {
 		}
 	}
 
-	function _findView($state, $query, $results = array()) {
+	public function _findView($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query['maintainer']) || empty($query['package'])) {
 				throw new InvalidArgumentException(__('Invalid package', true));
@@ -226,7 +234,7 @@ class Package extends AppModel {
 		}
 	}
 
-	function setupRepository($id = null) {
+	public function setupRepository($id = null) {
 		if (!$id) {
 			return false;
 		}
@@ -289,7 +297,7 @@ class Package extends AppModel {
 		return array($package['Package']['id'], $path . DS . $package['Package']['name']);
 	}
 
-	function characterize($id) {
+	public function characterize($id) {
 		$this->Behaviors->detach('Softdeletable');
 		list($package_id, $path) = $this->setupRepository($id);
 		if (!$package_id || !$path) {
@@ -308,12 +316,12 @@ class Package extends AppModel {
 		)));
 	}
 
-	function broken($id) {
+	public function broken($id) {
 		$this->id = $id;
 		return $this->saveField('deleted', true);
 	}
 
-	function updateAttributes($package) {
+	public function updateAttributes($package) {
 		if (!$this->Github) {
 			$this->Github = ClassRegistry::init('Github');
 		}
@@ -386,7 +394,7 @@ class Package extends AppModel {
 		return $this->save($package);
 	}
 
-	function fixRepositoryUrl($package = null) {
+	public function fixRepositoryUrl($package = null) {
 		if (!$package) return false;
 
 		if (!is_array($package)) {
@@ -407,7 +415,7 @@ class Package extends AppModel {
 		return $this->save($package);
 	}
 
-	function findOnGithub($package = null) {
+	public function findOnGithub($package = null) {
 		if (!is_array($package)) {
 			$package = $this->find('first', array(
 				'conditions' => array("{$this->alias}.{$this->primaryKey}" => $package),
@@ -432,7 +440,7 @@ class Package extends AppModel {
 		return !empty($response['Repository']);
 	}
 
-	function cleanParams($named, $options = array()) {
+	public function cleanParams($named, $options = array()) {
 		if (empty($named)) {
 			return array();
 		}
@@ -475,7 +483,7 @@ class Package extends AppModel {
 		return $named;
 	}
 
-	function suggest($data) {
+	public function suggest($data) {
 		if (empty($data['username']) || empty($data['repository'])) {
 			return false;
 		}

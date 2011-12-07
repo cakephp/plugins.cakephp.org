@@ -4,14 +4,14 @@ if (!class_exists('HttpSocket')) {
 }
 class GithubSource extends DataSource {
 
-	var $_schema = array(
+	public $_schema = array(
 		'githubs' => array(),
 		'users' => array(),
 		'issues' => array(),
 		'repositories' => array(),
 	);
 
-	var $cacheSources = false;
+	public $cacheSources = false;
 
 	public function __construct($config) {
 		$config = array_merge(array(

@@ -5,34 +5,33 @@ class MaintainersController extends AppController {
  * The name of this controller. Controller names are plural, named after the model they manipulate.
  *
  * @var string
- * @access public
  * @link http://book.cakephp.org/view/959/Controller-Attributes
  */
-    var $name = 'Maintainers';
+	public $name = 'Maintainers';
 
 /**
  * Paginates the current maintainers
  */
-    function index() {
-        $this->paginate = array('index');
-        $maintainers = $this->paginate();
-        $this->set(compact('maintainers'));
-    }
+	public function index() {
+		$this->paginate = array('index');
+		$maintainers = $this->paginate();
+		$this->set(compact('maintainers'));
+	}
 
 /**
  * Allows the viewing of a user
  *
  * @param string $username Username
  */
-    function view($username = null) {
-        try {
-            $this->set('maintainer', $maintainer = $this->Maintainer->find('view', $username));
-        } catch (Exception $e) {
-            $this->_flashAndRedirect($e->getMessage());
-        }
-    }
+	public function view($username = null) {
+		try {
+			$this->set('maintainer', $maintainer = $this->Maintainer->find('view', $username));
+		} catch (Exception $e) {
+			$this->_flashAndRedirect($e->getMessage());
+		}
+	}
 
-	function _seoIndex() {
+	public function _seoIndex() {
 		$keywords = array();
 		$keywords[] = 'cakephp developers';
 		$keywords[] = 'package maintainers';
@@ -45,7 +44,7 @@ class MaintainersController extends AppController {
 		$this->Sham->setMeta('canonical', '/');
 	}
 
-	function _seoView() {
+	public function _seoView() {
 		if (!class_exists('Sanitize')) {
 			App::import('Core', 'Sanitize');
 		}
@@ -54,7 +53,12 @@ class MaintainersController extends AppController {
 		$canonical = 'maintainer/' . $maintainer['Maintainer']['username'];
 		$this->Sham->loadBySlug($canonical);
 
-		$name = ($maintainer['Maintainer']['name']) ? $maintainer['Maintainer']['name'] : $maintainer['Maintainer']['username'];
+		if ($maintainer['Maintainer']['name']) {
+			$name = $maintainer['Maintainer']['name'];
+		} else {
+			$name = $maintainer['Maintainer']['username'];
+		}
+
 		$title = array();
 		$title[] = Sanitize::clean($name);
 		$title[] = 'CakePHP Package Maintainer';

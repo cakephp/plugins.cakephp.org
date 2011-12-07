@@ -5,7 +5,6 @@ class PackagesController extends AppController {
  * The name of this controller. Controller names are plural, named after the model they manipulate.
  *
  * @var string
- * @access public
  * @link http://book.cakephp.org/view/959/Controller-Attributes
  */
 	public $name = 'Packages';

@@ -5,37 +5,33 @@ class ApiPackage extends AppModel {
  * Name of the model.
  *
  * @var string
- * @access public
  * @link http://book.cakephp.org/view/1057/Model-Attributes#name-1068
  */
-    var $name = 'ApiPackage';
+	public $name = 'ApiPackage';
 
 /**
  * Detailed list of belongsTo associations.
  *
  * @var array
- * @access public
  * @link http://book.cakephp.org/view/1042/belongsTo
  */
-    var $belongsTo = array('Maintainer');
+	public $belongsTo = array('Maintainer');
 
 /**
  * Detailed list of hasOne associations.
  *
  * @var array
- * @access public
  * @link http://book.cakephp.org/view/1041/hasOne
  */
-    var $hasOne = array('Source');
+	public $hasOne = array('Source');
 
 /**
  * Custom database table name, or null/false if no table association is desired.
  *
  * @var string
- * @access public
  * @link http://book.cakephp.org/view/1057/Model-Attributes#useTable-1059
  */
-    var $useTable = 'packages';
+	public $useTable = 'packages';
 
 /**
  * Override the constructor to provide custom model finds
@@ -44,10 +40,10 @@ class ApiPackage extends AppModel {
  * @param string $table Name of database table to use.
  * @param string $ds DataSource connection name.
  */
-    function __construct($id = false, $table = null, $ds = null) {
-        parent::__construct($id, $table, $ds);
-        $this->_findMethods['install'] = true;
-    }
+	public function __construct($id = false, $table = null, $ds = null) {
+		parent::__construct($id, $table, $ds);
+		$this->_findMethods['install'] = true;
+	}
 
 /**
  * Custom find that attaches may "source" to the returned results
@@ -57,59 +53,59 @@ class ApiPackage extends AppModel {
  * @return mixed array of results or false if none found
  * @return void
  */
-    function _findInstall($state, $query, $results = array()) {
-        if ($state == 'before') {
-            $query['conditions'] = array(
-                $this->alias . '.name LIKE' => $query['request']['package'],
-                $this->alias . '.deleted' => false,
-            );
+	public function _findInstall($state, $query, $results = array()) {
+		if ($state == 'before') {
+			$query['conditions'] = array(
+				$this->alias . '.name LIKE' => $query['request']['package'],
+				$this->alias . '.deleted' => false,
+			);
 
-            $query['fields'] = array('name', 'description', 'last_pushed_at');
+			$query['fields'] = array('name', 'description', 'last_pushed_at');
 
-            $contains = array();
+			$contains = array();
 
-            if (isset($query['request']['maintainer'])) {
-                $query['conditions']['Maintainer.username LIKE'] = $query['request']['maintainer'];
-                $contains['Maintainer'] = array('username', 'name');
-            }
+			if (isset($query['request']['maintainer'])) {
+				$query['conditions']['Maintainer.username LIKE'] = $query['request']['maintainer'];
+				$contains['Maintainer'] = array('username', 'name');
+			}
 
-            if (isset($query['request']['type'])) {
-                $query['conditions']['Source.type'] = $query['request']['type'];
-                $query['conditions']['Source.deleted'] = false;
-                $contains['Source'] = array('name', 'type', 'path', 'default', 'official');
+			if (isset($query['request']['type'])) {
+				$query['conditions']['Source.type'] = $query['request']['type'];
+				$query['conditions']['Source.deleted'] = false;
+				$contains['Source'] = array('name', 'type', 'path', 'default', 'official');
 
-                if (isset($query['request']['source'])) {
-                    $query['conditions']['Source.name'] = $query['request']['source'];
-                } else {
-                    $query['conditions']['Source.default'] = $query['request']['type'];
-                }
-            } elseif (isset($query['request']['source'])) {
-                $query['conditions']['Source.name'] = $query['request']['source'];
-                $query['conditions']['Source.deleted'] = false;
-                $contains['Source'] = array('name', 'type', 'path', 'default', 'official');
-            } else {
-                $contains['Source'] = array('name', 'type', 'path', 'default', 'official');
-            }
+				if (isset($query['request']['source'])) {
+					$query['conditions']['Source.name'] = $query['request']['source'];
+				} else {
+					$query['conditions']['Source.default'] = $query['request']['type'];
+				}
+			} elseif (isset($query['request']['source'])) {
+				$query['conditions']['Source.name'] = $query['request']['source'];
+				$query['conditions']['Source.deleted'] = false;
+				$contains['Source'] = array('name', 'type', 'path', 'default', 'official');
+			} else {
+				$contains['Source'] = array('name', 'type', 'path', 'default', 'official');
+			}
 
-            if (!empty($contains)) {
-                $query['contain'] = $contains;
-            }
+			if (!empty($contains)) {
+				$query['contain'] = $contains;
+			}
 
-            unset($query['request']);
-            return $query;
-        } elseif ($state == 'after') {
-            if (empty($results)) {
-                return false;
-            }
+			unset($query['request']);
+			return $query;
+		} elseif ($state == 'after') {
+			if (empty($results)) {
+				return false;
+			}
 
-            foreach ($results as &$result) {
-                $result['Source']['default'] = (bool) $result['Source']['default'];
-                $result['Source']['official'] = (bool) $result['Source']['official'];
-                $result['Package'] = $result[$this->alias];
-                unset($result[$this->alias], $result['Maintainer']['id']);
-            }
-            return $results;
-        }
-    }
+			foreach ($results as &$result) {
+				$result['Source']['default'] = (bool) $result['Source']['default'];
+				$result['Source']['official'] = (bool) $result['Source']['official'];
+				$result['Package'] = $result[$this->alias];
+				unset($result[$this->alias], $result['Maintainer']['id']);
+			}
+			return $results;
+		}
+	}
 
 }

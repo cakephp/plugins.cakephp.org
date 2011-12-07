@@ -40,7 +40,6 @@ class SoftDeletableBehavior extends ModelBehavior {
  *
  * @param object $model Model using the behaviour
  * @param array $settings Settings to override for model.
- * @access public
  */
 	function setup(&$model, $settings = array()) {
 		if (!is_array($settings)) $settings = array();
@@ -53,7 +52,6 @@ class SoftDeletableBehavior extends ModelBehavior {
  * @param object $model Model about to be deleted
  * @param boolean $cascade If true records that depend on this record will also be deleted
  * @return boolean Set to true to continue with delete, false otherwise
- * @access public
  */
 	function beforeDelete(&$model, $cascade = true) {
 		if (!$this->__settings[$model->alias]['delete'] || !$model->hasField($this->__settings[$model->alias]['field'])) {
@@ -70,7 +68,6 @@ class SoftDeletableBehavior extends ModelBehavior {
  * @param mixed $id ID of the soft-deleted record.
  * @param boolean $cascade Also delete dependent records
  * @return boolean Result of the operation.
- * @access public
  */
 	function hardDelete(&$model, $id, $cascade = true) {
 		$onFind = $this->__settings[$model->alias]['find'];
@@ -129,7 +126,6 @@ class SoftDeletableBehavior extends ModelBehavior {
  * @param object $model Model from where the method is being executed.
  * @param boolean $cascade Also delete dependent records
  * @return boolean Result of the operation.
- * @access public
  */
 	function purge(&$model, $cascade = true) {
 		$purged = false;
@@ -155,7 +151,6 @@ class SoftDeletableBehavior extends ModelBehavior {
  * @param mixed $id ID of the soft-deleted record.
  * @param $attributes Other fields to change (in the form of field => value)
  * @return boolean Result of the operation.
- * @access public
  */
 	function undelete(&$model, $id = null, $attributes = array()) {
 		if ($model->hasField($this->__settings[$model->alias]['field'])) {
@@ -199,7 +194,6 @@ class SoftDeletableBehavior extends ModelBehavior {
  * @param object $model Model about to be deleted.
  * @param mixed $methods If string, method (find / delete) to enable on, if array array of method names, if boolean, enable it for find method
  * @param boolean $enable If specified method should be overriden.
- * @access public
  */
 	function enableSoftDeletable(&$model, $methods, $enable = true) {
 		if (is_bool($methods)) {
@@ -222,7 +216,6 @@ class SoftDeletableBehavior extends ModelBehavior {
  * @param object $model Model about to be deleted.
  * @param array $queryData Data used to execute this query, i.e. conditions, order, etc.
  * @return mixed Set to false to abort find operation, or return an array with data used to execute query
- * @access public
  */
 	function beforeFind(&$model, $queryData) {
 		if ($this->__settings[$model->alias]['find'] && $model->hasField($this->__settings[$model->alias]['field'])) {
@@ -275,7 +268,6 @@ class SoftDeletableBehavior extends ModelBehavior {
  *
  * @param object $model Model about to be saved.
  * @return boolean True if the operation should continue, false if it should abort
- * @access public
  */
 	function beforeSave(&$model) {
 		if ($this->__settings[$model->alias]['find']) {
@@ -298,7 +290,6 @@ class SoftDeletableBehavior extends ModelBehavior {
  *
  * @param object $model Model just saved.
  * @param boolean $created True if this save created a new record
- * @access public
  */
 	function afterSave(&$model, $created) {
 		if (isset($this->__backAttributes[$model->alias]['find'])) {

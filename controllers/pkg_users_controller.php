@@ -8,8 +8,9 @@
  * @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-App::import('Controller', 'Users.Users');
+if (!class_exists('UsersController')) {
+	App::import('Controller', 'Users.Users');
+}
 
 /**
  * Packages app specific User controller
@@ -18,20 +19,18 @@ App::import('Controller', 'Users.Users');
  * @subpackage cakepackages.controller
  */
 class PkgUsersController extends UsersController {
-	/**
-	 * Controller name
-	 *
-	 * @var string
-	 * @access public
-	 */
+/**
+ * Controller name
+ *
+ * @var string
+ */
 	public $name = 'PkgUsers';
 
-	/**
-	 * Helpers
-	 *
-	 * @var array
-	 * @access public
-	 */
+/**
+ * Helpers
+ *
+ * @var array
+ */
 	public $helpers = array(
 		'Html',
 		'Form',
@@ -43,12 +42,11 @@ class PkgUsersController extends UsersController {
 		),
 	);
 
-	/**
-	 * Components
-	 *
-	 * @var array
-	 * @access public
-	 */
+/**
+ * Components
+ *
+ * @var array
+ */
 	public $components = array(
 		'Auth',
 		'Session',
@@ -56,21 +54,22 @@ class PkgUsersController extends UsersController {
 		'Cookie',
 		'Search.Prg',
 		'Recaptcha.Recaptcha' => array(
-			'actions' => array('register'))
-		);
+			'actions' => array('register')
+		)
+	);
 
-	/**
-	 * beforeFilter callback
-	 *
-	 * @var array
-	 * @access public
-	 */
+/**
+ * beforeFilter callback
+ *
+ * @var array
+ */
 	public function beforeFilter() {
 		if ($this->action == 'login') {
 			if (!empty($this->data)) {
 				$this->tmpData = $this->data;
 			}
 		}
+
 		parent::beforeFilter();
 		$this->User = ClassRegistry::init('PkgUser');
 		$this->Auth->allow('view');
@@ -80,24 +79,23 @@ class PkgUsersController extends UsersController {
 		}
 	}
 
-	/**
-	 * Displays the current user public profile
-	 *
-	 * @return void
-	 * @access public
-	 * @see PkgUsersController::view
-	 */
+/**
+ * Displays the current user public profile
+ *
+ * @return void
+ * @see PkgUsersController::view
+ */
 	public function profile() {
 		$this->setAction('view', $this->Auth->user('slug'));
 		$this->set('title_for_layout', __('My Profile', true));
 	}
 
-	/**
-	 * Shows a users profile
-	 *
-	 * @param string $slug User Slug
-	 * @return void
-	 */
+/**
+ * Shows a users profile
+ *
+ * @param string $slug User Slug
+ * @return void
+ */
 	public function view($slug = null) {
 		try {
 			$user = $this->User->view($slug);
@@ -114,12 +112,12 @@ class PkgUsersController extends UsersController {
 		$this->set('title_for_layout', sprintf(__('%s\'s profile page', true), $name));
 	}
 
-	/**
-	 * Edit
-	 *
-	 * @param string $id User ID
-	 * @return void
-	 */
+/**
+ * Edit
+ *
+ * @param string $id User ID
+ * @return void
+ */
 	public function edit() {
 		if (!empty($this->data)) {
 			if ($this->User->Detail->saveSection($this->Auth->user('id'), $this->data, 'User')) {
@@ -173,7 +171,6 @@ class PkgUsersController extends UsersController {
  * Common login action
  *
  * @return void
- * @access public
  */
 	public function login() {
 		if ($this->RequestHandler->isAjax() && $this->RequestHandler->accepts('json')) {

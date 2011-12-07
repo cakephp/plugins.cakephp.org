@@ -35,17 +35,15 @@ class DboMysqlLog extends DboMysql {
  * Datasource Description
  *
  * @var string
- * @access public
  */
-	var $description = "MySQL Logging DBO Driver";
+	public $description = "MySQL Logging DBO Driver";
 
 /**
  * Log given SQL query.
  *
  * @param string $sql SQL statement
- * @access public
  */
-	function logQuery($sql) {
+	public function logQuery($sql) {
 		$return = parent::logQuery($sql);
 		if (Configure::read('logQueries')) {
 			$this->log("sql[{$this->_queriesCnt}]:{$sql}", 'sql');
