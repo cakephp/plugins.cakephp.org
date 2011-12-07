@@ -24,7 +24,6 @@
 
 <body>
 	<div id="messages-container"></div>
-	<?php echo $this->element('navbar', array('plugin' => 'csfnavbar')); ?>
 	<?php echo $this->element('layout/header'); ?>
 	<div id="container-wrapper">
 		<div id="container">
