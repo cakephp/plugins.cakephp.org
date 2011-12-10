@@ -1,10 +1,8 @@
 <?php
-if (!class_exists('MiCache')) {
-	App::import('Vendor', 'mi_cache');
-}
+App::uses('MiCache', 'Lib');
 
 function diebug($var = false, $showHtml = true, $showFrom = true, $die = true) {
-    if (Configure::read() == 0) return;
+    if (Configure::read('debug') == 0) return;
 
 	$file = '';
 	$line = '';
@@ -43,3 +41,5 @@ TEXT;
 }
 
 config('environments');
+
+CakePlugin::loadAll();

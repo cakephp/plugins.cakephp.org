@@ -1,6 +1,6 @@
 <?php
 
-App::import('Component', 'Sanction.PermitComponent');
+App::uses('Permit', 'Sanction.Controller/Component');
 
 Permit::access(
 	array('controller' => 'github'),

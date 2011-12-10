@@ -1,7 +1,7 @@
 <?php
 class DATABASE_CONFIG {
 	public $default = array(
-		'driver'        => 'mysql',
+		'datasource'    => 'Database/Mysql',
 		'persistent'    => false,
 		'host'          => 'localhost',
 		'login'         => 'user',
@@ -12,14 +12,14 @@ class DATABASE_CONFIG {
 	);
 
 	public $development = array(
-		'driver'        => 'mysql_log',
+		'datasource'    => 'Database/MysqlLog',
 		'login'         => 'user',
 		'password'      => 'password',
 		'database'      => 'cakepackages',
 	);
 	
 	public $cakeusers = array(
-		'driver'        => 'mysql',
+		'datasource'    => 'Database/Mysql',
 		'login'         => 'user',
 		'password'      => 'password',
 		'database'      => 'cakeusers',
@@ -42,7 +42,7 @@ class DATABASE_CONFIG {
 	);
 
 	public $github = array(
-		'datasource'    => 'github',
+		'datasource'    => 'Datasource/Github',
 		'host'          => 'github.com',
 		'login'         => null,
 		'password'      => null,

@@ -50,7 +50,9 @@
 	Router::connect('/posts/*', array('plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'index'));
 	Router::connect('/post/*', array('plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'view'));
 
-	App::import('Lib', 'PageRoute.PageRoute');
+	App::uses('PageRoute', 'PageRoute.Routing/Route');
 	Router::connect('/:page', array('controller' => 'pages', 'action' => 'display'),
 		array('routeClass' => 'PageRoute')
 	);
+
+	require CAKE . 'Config' . DS . 'routes.php';

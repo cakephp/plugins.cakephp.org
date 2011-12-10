@@ -1,5 +1,5 @@
 <?php
-App::import('Lib', 'Environment');
+App::uses('Environment', 'Lib');
 
 // config
 
@@ -114,8 +114,8 @@ Environment::configure('development',
 		'Routing.prefixes'        => array('one'),
 		'Security.salt'           => 'AYcG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9ab',
 		'Security.cipherSeed'     => '76859364557429242496749683650',
-		'Recaptcha.publicKey' 	  => '6LeyksQSAAAAAJdkmQB7vBtsP9kYY75rE1ebY7B5',
-		'Recaptcha.privateKey'	  => '6LeyksQSAAAAAEOJpZmWFHoBzgpSBtVlbDCDy6Uv'
+		'Recaptcha.publicKey'     => '6LeyksQSAAAAAJdkmQB7vBtsP9kYY75rE1ebY7B5',
+		'Recaptcha.privateKey'    => '6LeyksQSAAAAAEOJpZmWFHoBzgpSBtVlbDCDy6Uv',
 	)
 );
 
