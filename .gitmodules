@@ -40,6 +40,3 @@
 [submodule "Plugin/Settings"]
 	path = Plugin/Settings
 	url = git://github.com/josegonzalez/settings.git
-[submodule "Plugin/HttpSocketOauth"]
-	path = Plugin/HttpSocketOauth
-	url = git://github.com/josegonzalez/http_socket_oauth.git
