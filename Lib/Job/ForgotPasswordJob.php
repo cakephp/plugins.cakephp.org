@@ -1,41 +1,33 @@
 <?php
-App::uses('Router', 'Routing');
+App::uses('BaseEmail', 'Lib/Job');
 
-class ForgotPasswordJob extends CakeJob {
-
-	var $maintainer;
-
-	var $ipaddress;
+/**
+ * Sends a forgotten password email
+ *
+ * @package default
+ * @todo Update this to send emails using the Users plugin
+ */
+class ForgotPasswordJob extends BaseEmail {
 
 	function __construct($maintainer, $ipaddress) {
-		$this->maintainer = $maintainer;
-		$this->ipaddress = $ipaddress;
+		parent::__construct(null, compact('maintainer', 'ipaddress'));
 	}
 
 	function perform() {
-		$this->out('Loading router and setting base url');
+		parent::build();
 
-		if (!defined('FULL_BASE_URL')) {
-			define('FULL_BASE_URL', 'http://cakepackages.com');
-		}
-
-		$this->out('Retrieving activation key');
-		$ipaddress = $this->ipaddress;
-		$username = $this->maintainer['username'];
 		$this->loadModel('Maintainer');
-		$activationKey = $this->Maintainer->changeActivationKey($this->maintainer['id']);
+		$activationKey = $this->Maintainer->changeActivationKey($this->_vars['maintainer']['id']);
 
-		$this->out('Loading Components');
-		$this->loadComponent('Settings.Settings');
-		$this->loadComponent('Mail');
-
-		$this->out('Sending mail');
-		$this->Mail->send(array(
-			'to' => $this->maintainer['email'],
-			'mailer' => 'swift',
+		$this->_email = $this->_vars['maintainer']['email'];
+		$this->updateVars(array(
 			'subject' => '[CakePackages] ' . __('Reset Password'),
-			'element' => 'forgot_password',
-			'variables' => compact('ipaddress', 'username', 'activationKey'),
+			'template' => 'forgot_password',
+			'variables' => array(
+				'ipaddress',
+				'username' => $this->_vars['maintainer']['username'],
+				'activationKey' => $activationKey
+			),
 		));
 	}
 

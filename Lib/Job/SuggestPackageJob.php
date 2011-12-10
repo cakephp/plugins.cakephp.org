@@ -1,5 +1,6 @@
 <?php
 App::uses('BaseEmail', 'Lib/Job');
+
 class SuggestPackageJob extends BaseEmail {
 
 	public function __construct($username, $repository) {

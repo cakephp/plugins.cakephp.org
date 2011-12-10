@@ -10,7 +10,6 @@ class BaseEmail extends DeferredEmail {
 		if (!defined('FULL_BASE_URL')) {
 			define('FULL_BASE_URL', Configure::read('Settings.FULL_BASE_URL'));
 		}
-		Configure::write('UrlCache.pageFiles', false);
 
 		$this->updateVars(array(
 			'delivery' => 'smtp',
