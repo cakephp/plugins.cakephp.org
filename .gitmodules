@@ -1,0 +1,45 @@
+[submodule "Plugin/AssetCompress"]
+	path = Plugin/AssetCompress
+	url = git://github.com/markstory/asset_compress.git
+[submodule "Plugin/CakeDjjob"]
+	path = Plugin/CakeDjjob
+	url = git://github.com/josegonzalez/cake_djjob.git
+[submodule "Plugin/DebugKit"]
+	path = Plugin/DebugKit
+	url = git://github.com/cakephp/debug_kit.git
+[submodule "Plugin/Djjob/Vendor"]
+	path = Plugin/Djjob/Vendor
+	url = git://github.com/seatgeek/djjob.git
+[submodule "Plugin/Migrations"]
+	path = Plugin/Migrations
+	url = git://github.com/CakeDC/migrations.git
+[submodule "Plugin/PageRoute"]
+	path = Plugin/PageRoute
+	url = git://github.com/josegonzalez/page_route.git
+[submodule "Plugin/Ratings"]
+	path = Plugin/Ratings
+	url = git://github.com/CakeDC/ratings.git
+[submodule "Plugin/Recaptcha"]
+	path = Plugin/Recaptcha
+	url = git://github.com/CakeDC/recaptcha.git
+[submodule "Plugin/Sanction"]
+	path = Plugin/Sanction
+	url = git://github.com/josegonzalez/sanction.git
+[submodule "Plugin/Search"]
+	path = Plugin/Search
+	url = git://github.com/CakeDC/search.git
+[submodule "Plugin/Users"]
+	path = Plugin/Users
+	url = git://github.com/CakeDC/users.git
+[submodule "Plugin/Utils"]
+	path = Plugin/Utils
+	url = git://github.com/CakeDC/utils.git
+[submodule "Plugin/Sham"]
+	path = Plugin/Sham
+	url = git://github.com/josegonzalez/sham.git
+[submodule "Plugin/Settings"]
+	path = Plugin/Settings
+	url = git://github.com/josegonzalez/settings.git
+[submodule "Plugin/HttpSocketOauth"]
+	path = Plugin/HttpSocketOauth
+	url = git://github.com/josegonzalez/http_socket_oauth.git
