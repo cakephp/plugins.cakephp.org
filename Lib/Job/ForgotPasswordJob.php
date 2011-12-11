@@ -13,7 +13,7 @@ class ForgotPasswordJob extends BaseEmail {
 		parent::__construct(null, compact('maintainer', 'ipaddress'));
 	}
 
-	function perform() {
+	function build() {
 		parent::build();
 
 		$this->loadModel('Maintainer');
