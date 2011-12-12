@@ -9,11 +9,11 @@ App::uses('BaseEmail', 'Lib/Job');
  */
 class ForgotPasswordJob extends BaseEmail {
 
-	function __construct($maintainer, $ipaddress) {
+	public function __construct($maintainer, $ipaddress) {
 		parent::__construct(null, compact('maintainer', 'ipaddress'));
 	}
 
-	function build() {
+	public function build() {
 		parent::build();
 
 		$this->loadModel('Maintainer');

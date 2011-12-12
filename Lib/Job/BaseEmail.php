@@ -3,7 +3,7 @@ App::uses('DeferredEmail', 'CakeDjjob.Lib/Job');
 App::uses('Router', 'Routing');
 
 class BaseEmail extends DeferredEmail {
-	
+
 	public function build() {
 		parent::build();
 

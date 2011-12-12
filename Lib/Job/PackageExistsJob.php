@@ -1,13 +1,13 @@
 <?php
 class PackageExistsJob extends CakeJob {
 
-	var $package;
+	public $package;
 
-	function __construct($package) {
+	public function __construct($package) {
 		$this->package = $package;
 	}
 
-	function perform() {
+	public function perform() {
 		$this->loadModel('Package');
 		$exists = $this->Package->findOnGithub($this->package);
 
