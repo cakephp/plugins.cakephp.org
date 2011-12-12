@@ -29,10 +29,13 @@ class PackagesController extends AppController {
 			'limit' => 21,
 		);
 
-		$packages = $this->paginate();
+		if (empty($this->request->params['named']['sort'])) {
+			$this->request->params['named']['sort'] = 'rating';
+		}
 
-		$tabs = $this->Package->tabs;
 		$merge = $this->Package->cleanParams($this->request->data, false);
+		$packages = $this->paginate();
+		$tabs = $this->Package->tabs;
 		$this->set(compact('merge', 'packages', 'tabs'));
 	}
 

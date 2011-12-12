@@ -40,6 +40,14 @@ TEXT;
 	if ($die) die;
 }
 
+Cache::config('default', array(
+	'engine' => $engine,
+	'prefix' => 'DEFAULT_',
+	'path' => CACHE . 'data' . DS,
+	'serialize' => ($engine === 'File'),
+	'duration' => $duration,
+));
+
 config('environments');
 
 CakePlugin::loadAll();

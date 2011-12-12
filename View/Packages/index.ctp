@@ -1,8 +1,3 @@
-<?php
-	if (empty($this->params['named']['sort'])) {
-		$this->params['named']['sort'] = 'rating';
-	}
-?>
 <div class="packages index">
 	<h1><?php echo __('Available CakePHP packages'); ?></h1>
 	<div class="search">
