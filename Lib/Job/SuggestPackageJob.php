@@ -1,5 +1,5 @@
 <?php
-App::uses('BaseEmail', 'Lib/Job');
+App::uses('BaseEmail', 'Job');
 
 class SuggestPackageJob extends BaseEmail {
 
@@ -8,15 +8,17 @@ class SuggestPackageJob extends BaseEmail {
 	}
 
 	public function build() {
+		$vars = $this->getVars();
+
 		parent::build();
 
 		$this->_email = Configure::read('Email.username');
 		$this->updateVars(array(
-			'subject' => sprintf("New Package: %s/%s", $this->_vars['username'], $this->_vars['repository']),
+			'subject' => sprintf("New Package: %s/%s", $vars['username'], $vars['repository']),
 			'template' => 'suggest_package',
 			'variables' => array(
-				'username' => $this->_vars['username'],
-				'repository' => $this->_vars['repository']
+				'username' => $vars['username'],
+				'repository' => $vars['repository']
 			),
 		));
 	}
