@@ -18,9 +18,8 @@
 # @license			MIT License (http://www.opensource.org/licenses/mit-license.php)
 #
 ################################################################################
-LIB=${0/%cake/}
 APP=`pwd`
 
-exec php -q ../cake/console/${LIB}cake.php -working "${APP}" "$@"
+exec php -q ../lib/Cake/Console/cake.php -working "${APP}" "$@"
 
 exit;
