@@ -1,6 +1,9 @@
 <footer>
 	<div class="container">
 		<div class="copyright">
+			<a href="http://www.cakephp.org/" target="_blank">
+				<img src="/img/cake.power.gif" alt="CakePHP: the rapid development php framework" border="0">
+			</a><br />
 			<?php 
 				echo sprintf(
 					__('Powered by %s'),
