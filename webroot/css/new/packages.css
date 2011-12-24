@@ -100,8 +100,8 @@
 	font-family: Monaco, "Courier New", "DejaVu Sans Mono", "Bitstream Vera Sans Mono",monospace;
 	font-size: 11px;
 	height: 16px;
-	padding: 3px 5px 2px 5px;
-	width: 330px;
+	padding: 3px 0 2px 5px;
+	width: 320px;
 }
 .packages-view .package .rss {
 	margin-top: 10px;
@@ -114,8 +114,8 @@
 .packages-view .stats {
 	float: right;
 	position: absolute;
-	right: 30px;
-	width: 182px;
+	right: 10px;
+	width: 160px;
 }
 .packages-view .stats p {
 	margin-bottom: 2px;

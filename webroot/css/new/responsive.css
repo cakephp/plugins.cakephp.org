@@ -32,3 +32,26 @@ body.mobile {
 	margin-top: 10px;
 	position: static;
 }
+.mobile.packages-view .summary p {
+	float: none;
+	margin-right: 0;
+}
+.mobile.packages-view .summary p.button {
+	position: static;
+	float: none;
+	right: 0;
+	margin: 0 auto;
+}
+.mobile.packages-view .stats {
+	float: none;
+	margin-top: 10px;
+	position: static;
+}
+.mobile.packages-view .package {
+	float: none;
+	margin-right: 0;
+}
+.mobile .mobile-block {
+	display: block;
+	margin-bottom: 4px;
+}

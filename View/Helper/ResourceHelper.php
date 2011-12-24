@@ -14,11 +14,12 @@ class ResourceHelper extends AppHelper {
 		$link = "https://github.com/{$maintainer}/{$name}";
 		return $this->Html->tag('span', $this->Html->link($link, $link, array(
 			'target' => '_blank'
-		)));
+		)), array('class' => 'mobile-block'));
 	}
 
 	public function clone_url($maintainer, $name) {
 		return $this->Form->input('clone', array(
+			'class' => 'mobile-block',
 			'div' => false,
 			'label' => false,
 			'value' => "git://github.com/{$maintainer}/{$name}.git"
