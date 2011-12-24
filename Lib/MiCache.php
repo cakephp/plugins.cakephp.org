@@ -546,16 +546,4 @@ class MiFileEngine extends FileEngine {
 		return MiFileEngine::_exec("rm -rf $dir/*");
 	}
 
-/**
- * destruct method
- *
- * Prevent potential cache Confusion
- *
- * @TODO still necessary?
- * @return void
- * @access private
- */
-	public function __destruct() {
-		Cache::getInstance()->__name = 'default';
-	}
 }
