@@ -52,6 +52,10 @@ Environment::configure('production',
 				'prefix' => 'QUERYCACHE_', //[optional]  prefix every cache file with this string
 			));
 		}
+
+		if (!defined('FULL_BASE_URL')) {
+			define('FULL_BASE_URL', Configure::read('Settings.FULL_BASE_URL'));
+		}
 	}
 );
 
@@ -92,6 +96,9 @@ Environment::configure('staging',
 		date_default_timezone_set('UTC');
 
 		Cache::config('default', array('engine' => 'File'));
+		if (!defined('FULL_BASE_URL')) {
+			define('FULL_BASE_URL', Configure::read('Settings.FULL_BASE_URL'));
+		}
 	}
 );
 
@@ -116,7 +123,12 @@ Environment::configure('development',
 		'Security.cipherSeed'     => '76859364557429242496749683650',
 		'Recaptcha.publicKey'     => '6LeyksQSAAAAAJdkmQB7vBtsP9kYY75rE1ebY7B5',
 		'Recaptcha.privateKey'    => '6LeyksQSAAAAAEOJpZmWFHoBzgpSBtVlbDCDy6Uv',
-	)
+	),
+	function() {
+		if (!defined('FULL_BASE_URL')) {
+			define('FULL_BASE_URL', Configure::read('Settings.FULL_BASE_URL'));
+		}
+	}
 );
 
 // run
