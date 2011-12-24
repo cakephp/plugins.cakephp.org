@@ -1,0 +1,69 @@
+header {
+	background-color: #427183;
+	height: 110px;
+	padding-top: 5px;
+	width: 100%;
+}
+header h1 {
+	font-size: 32px;
+	font-weight: bold;
+	display: inline-block;
+	margin-right: 20px;
+	margin-top:0;
+	top: 30px;
+	position: static;
+}
+header h1 a {
+	color: #fff;
+	display: inline-block;
+	height: 105px;
+	line-height: 105px;
+	text-decoration: none;
+	text-shadow:1px 1px 2px #000;
+}
+header h1 a:hover {
+	color: #fffbbe;
+}
+header form {
+	background: #2e5969;
+	border: 1px solid #0f2d37;
+	color: #fff;
+	display: inline-block;
+	height: 30px;
+	float: right;
+	margin: 25px 0 3px 0px;
+	padding: 10px;
+	position: absolute;
+	text-decoration: none;
+	text-shadow:1px 1px 2px #000;
+	top: 0;
+	right: 0;
+	width: 290px;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	border-radius: 5px;
+	-moz-box-shadow: 1px 1px 1px #888;
+	-webkit-box-shadow: 1px 1px 1px #888;
+	box-shadow: 1px 1px 1px #888;
+}
+header form input {
+	height: 30px;
+}
+header form input[type=text] {
+	border: 1px solid #4c4c4c;
+	margin-right: 5px;
+	padding: 0 5px;
+	-moz-box-shadow: 1px 1px 1px #537076;
+	-webkit-box-shadow: 1px 1px 1px #537076;
+	box-shadow: 1px 1px 1px #537076;
+	width: 210px;
+}
+header form input[type=text]:hover,
+header form input[type=text]:focus {
+	border-color: #ccc;
+}
+header form input[type=submit] {
+	cursor: pointer;
+	text-shadow:1px 1px 2px #fff;
+	width: 60px;
+}

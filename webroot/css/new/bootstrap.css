@@ -1,0 +1,77 @@
+/*
+ * Web Fonts from fontspring.com
+ *
+ * All OpenType features and all extended glyphs have been removed.
+ * Fully installable fonts can be purchased at http://www.fontspring.com
+ *
+ * The fonts included in this stylesheet are subject to the End User License you purchased
+ * from Fontspring. The fonts are protected under domestic and international trademark and 
+ * copyright law. You are prohibited from modifying, reverse engineering, duplicating, or
+ * distributing this font software.
+ *
+ * (c) 2010-2011 Fontspring
+ *
+ *
+ *
+ *
+ * The fonts included are copyrighted by the vendor listed below.
+ *
+ * Vendor:    exljbris
+ * License URL: http://www.fontspring.com/fflicense/exljbris
+ *
+ *
+ */
+
+@font-face {
+	font-family: 'MuseoSans500';
+	src: url('/css/new/MuseoSans_500-webfont.eot');
+	src: url('/css/new/MuseoSans_500-webfont.eot?#iefix') format('embedded-opentype'),
+		 url('/css/new/MuseoSans_500-webfont.woff') format('woff'),
+		 url('/css/new/MuseoSans_500-webfont.ttf') format('truetype'),
+		 url('/css/new/MuseoSans_500-webfont.svg#MuseoSans500') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+body, h1, h2, h3, h4, h5, h6, a {
+	font-family: 'MuseoSans500', Arial, Helvetica, sans-serif;
+}
+h2 {
+	border-bottom: 2px dotted #bb9066;
+	color: #cc222d;
+	font-size: 24px;
+	line-height: 24px;
+	padding-bottom: 12px;
+	margin-bottom: 18px;
+}
+h3 {
+	color: #476371;
+	font-size: 18px;
+	line-height: 18px;
+	padding-bottom: 9px;
+}
+h4 {
+	color: #1B252C;
+	font-size: 15px;
+	line-height: 15px;
+	padding: 2px 0 9px 0;
+}
+p {
+	margin-bottom: 12px;
+}
+a {
+	color: #1B252C;
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
+}
+a.outbound {
+}
+.clearfix:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}

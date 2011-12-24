@@ -1,4 +1,4 @@
-<h2 class="secondary-title">
+<h2>
 	<?php echo $blogPost['BlogPost']['title']; ?>
 </h2>
 

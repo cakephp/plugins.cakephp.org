@@ -1,34 +1,31 @@
-<?php
-	$sortClass = null;
-	if (empty($this->params['named']['sort'])) {
-		$sortClass = 'class="ui-tabs-selected"';
-	}
-?>
-<div class="packages index">
-	<h1><?php echo __('Latest CakePHP code'); ?></h1>
-
-	<div class="search">
-		<?php echo $this->Form->create(null, array('action' => 'index'));?>
-		<?php
-			echo $this->Form->input('search', array(
-				'label' => __('Find packages'),
-				'div' => false,
-				'placeholder' => __('Enter Keyword(s)')
-			));
-		?>
-		<?php echo $this->Form->submit(__('Filter'), array('div' => false));?>
-		<?php echo $this->Form->end();?>
+<section class="contribute">
+	<div class="bubble-top bubble-border">
+		<h2 class="header">Use and Share Open Source CakePHP Code</h2>
 	</div>
-	<section class="main-content">
-		<div class="packages-list">
-			<?php
-				foreach ($packages as $i => $package):
-					echo $this->element('packages/preview', array('data' => $package, 'description' => true));
-				endforeach;
-			?>
-		</div>
-	</section>
-	<aside class="sidebar">
-		
-	</aside>
-</div>
+	<div class="bubble-bottom clearfix">
+		<article>
+			Signup
+		</article>
+		<article>
+			Create a Package
+		</article>
+		<article>
+			Install Plugins
+		</article>
+		<article>
+			Follow Repositories
+		</article>
+	</div>
+</section>
+
+<section class="packages">
+	<h2><?php echo __('Latest CakePHP code'); ?></h2>
+	<?php foreach ($packages as $package) : ?>
+		<article>
+			<?php echo $this->element('new/preview', array(
+				'package' => $package['Package'],
+				'maintainer' => $package['Maintainer'],
+			)); ?>
+		</article>
+	<?php endforeach; ?>
+</section>

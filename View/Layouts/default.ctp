@@ -5,11 +5,15 @@
 	<?php echo $this->Sham->out(null, array('skip' => array('charset'))); ?>
 	<?php echo $this->AssetCompress->css('default'); ?>
 	<title>
-		<?php __('CakePHP Packages -'); ?>
-		<?php echo $title_for_layout; ?>
+		<?php echo __('CakePHP Packages -') . $title_for_layout; ?>
 	</title>
 	<!--[if lt IE 9]>
 		<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<!--[if IE]>
+		<style type="text/css">
+			.clearfix { zoom: 1; }
+		</style>
 	<![endif]-->
 	<script type="text/javascript">
 		var _gaq = _gaq || [];
@@ -22,20 +26,20 @@
 
 </head>
 
-<body>
-	<div id="messages-container"></div>
-	<?php echo $this->element('layout/header'); ?>
-	<div id="container-wrapper">
-		<div id="container">
-			<div id="content">
-				<div class="inner-container">
-					<?php echo $this->Session->flash(); ?>
-					<?php echo $content_for_layout; ?>
-				</div>
-			</div>
+<body class="<?php echo $this->request->params['controller'] . '-' . $this->request->params['action'] ?>">
+
+
+	<div class="wrapper">
+		<?php echo $this->element('new/header'); ?>
+		<div class="content container">
+			<?php echo $this->Session->flash(); ?>
+			<?php echo $content_for_layout; ?>
 		</div>
+		<div class="push"></div>
 	</div>
-	<?php echo $this->element('layout/footer'); ?>
+
+	<?php echo $this->element('new/footer'); ?>
+
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 	<script>

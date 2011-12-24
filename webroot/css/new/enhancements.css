@@ -1,0 +1,41 @@
+::-webkit-scrollbar {
+	-webkit-appearance: none;
+	width: 9px;
+}
+::-webkit-scrollbar-track  {
+	background-color: #fff;
+	-webkit-box-shadow: inset 0 0 1px rgba(255,255,255,.5);
+}
+::-webkit-scrollbar-thumb {
+	border-radius: 6px;
+	background-color: rgba(0,0,0,.5);
+	-webkit-box-shadow: inset 0 0 3px rgba(255,255,255,.3);
+	border: 2px solid #FFF;
+}
+.message {
+	text-shadow: rgba(0, 0, 0, 0.3) 0 1px 0;
+	-khtml-border-radius: 6px;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
+}
+.message p {
+	padding: 12px;
+}
+.message.success {
+	background-color: #69a95f;
+	color: white;
+}
+.message.error {
+	background-color: #ffdddd;
+	color: #000000;
+}
+.message.warning {
+	background-color: #ffffc0;
+	color: #000000;
+	text-shadow: none;
+}
+.message.info {
+	background-color: #89bdff;
+	color: #ffffff;
+}

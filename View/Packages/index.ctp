@@ -1,5 +1,5 @@
-<div class="packages index">
-	<h1><?php echo __('Available CakePHP packages'); ?></h1>
+<section>
+	<h2><?php echo __('Available CakePHP packages'); ?></h2>
 	<div class="search">
 		<?php echo $this->Form->create(false, array('action' => 'index'));?>
 		<?php
@@ -9,37 +9,20 @@
 				'placeholder' => __('Enter Keyword(s)')
 			));
 		?>
-		<?php echo $this->Form->submit(__('Filter'), array('div' => false));?>
+		<?php echo $this->Form->submit(__('Search'), array('div' => false));?>
 		<?php echo $this->Form->end();?>
 	</div>
-	<section class="main-content">
-		<ul class="ui-tabs-nav">
-		<?php
-			foreach ($tabs as $k => $tab) :
-					$sortClass = null;
-					$direction = null;
-				if (!empty($this->params['named']['sort']) && $this->params['named']['sort'] === $tab['sort']) {
-					$sortClass = 'class="ui-tabs-selected"';
-				}
-				if (!empty($tab['direction'])) {
-					$direction = $tab['direction'];
-				}
-		?>
-				<li <?php echo $sortClass; ?>>
-					<?php echo $this->Paginator->sort($tab['text'], $tab['sort'], array('class' => $k) + compact('direction')); ?>
-				</li>
-		<?php endforeach; ?>
-		</ul>
-		<div class="packages-list">
-			<?php
-				foreach ($packages as $i => $package) :
-					echo $this->element('packages/preview', array('data' => $package, 'description' => true));
-				endforeach;
-			?>
-		</div>
-		<?php echo $this->element('paging'); ?>
-	</section>
-	<aside class="sidebar">
-		
-	</aside>
-</div>
+</section>
+
+<section class="packages">
+	<?php foreach ($packages as $package) : ?>
+		<article>
+			<?php echo $this->element('new/preview', array(
+				'package' => $package['Package'],
+				'maintainer' => $package['Maintainer'],
+			)); ?>
+		</article>
+	<?php endforeach; ?>
+
+	<?php echo $this->element('paging'); ?>
+</section>

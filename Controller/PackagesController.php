@@ -5,8 +5,12 @@ class PackagesController extends AppController {
  * Default page for entire application
  */
 	public function home() {
+		$sortClass = null;
+		if (empty($this->request->params['named']['sort'])) {
+			$sortClass = 'class="ui-tabs-selected"';
+		}
 		$packages = $this->Package->find('latest');
-		$this->set(compact('packages'));
+		$this->set(compact('packages', 'sortClass'));
 	}
 
 /**
@@ -22,7 +26,10 @@ class PackagesController extends AppController {
 		}
 
 		$allowed = array('with', 'since', 'query', 'watchers');
-		$this->request->data = $this->Package->cleanParams($this->request->params['named'], compact('allowed'));
+		$this->request->data = $this->Package->cleanParams(
+			$this->request->params['named'],
+			compact('allowed')
+		);
 		$this->paginate = array(
 			'index',
 			'named' => $this->request->data,
@@ -52,7 +59,34 @@ class PackagesController extends AppController {
 			$this->_flashAndRedirect($e->getMessage());
 		}
 
-		$this->set(compact('package'));
+		list($rss, $cache) = $this->Package->rss($package);
+		$this->set(compact('cache', 'package', 'rss'));
+	}
+
+/**
+ * Redirects to proper download url
+ *
+ * @param int $id 
+ * @todo Track downloads for packages
+ */
+	public function download($id = null) {
+		if (!$id) {
+			$this->Session->setFlash('Invalid Package download');
+			$this->redirect($this->referer('/', true));
+		}
+
+		$branch = 'master';
+		if (!empty($this->request->params['named']['branch'])) {
+			$branch = $this->request->params['named']['branch'];
+		}
+
+		$download_url = $this->Package->find('download', compact('id', 'branch'));
+		if (!$download_url) {
+			$this->Session->setFlash('Invalid Package download');
+			$this->redirect($this->referer('/', true));
+		}
+
+		$this->redirect($download_url);
 	}
 
 	public function suggest() {

@@ -1,4 +1,4 @@
-<h2 class="secondary-title">
+<h2>
 	<?php echo $user['User']['login']; ?>
 </h2>
 

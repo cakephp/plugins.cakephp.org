@@ -3,7 +3,7 @@
 	'path' => 'Maintainer.Maintainer'
 ); ?>
 
-<h2 class="secondary-title">
+<h2>
 	Maintainer
 </h2>
 

@@ -1,49 +1,58 @@
-<h2 class="secondary-title">
-	<?php echo $this->element('icons', array('cache' => array(
-		'key' => sha1(serialize($package['Package'])), 'time' => '+1 day'
-	))); ?>
-	
-	<span class="name"><?php echo $package['Package']['name']; ?></span>
-	<br class="clear" />
-</h2>
+<h2><?php echo $package['Package']['name']; ?></h2>
 
-<?php echo $this->Session->flash(); ?>
+<section class="summary clearfix">
+	<?php echo $this->Resource->description($package['Package']['description']); ?>
 
-<article class="package">
-	<p class="description"><?php echo $this->Resource->description($package['Package']['description']); ?></p>
-	<div class="outbound">
+	<p class="button">
+		<?php echo $this->Html->link('Download Zip', array(
+			'controller' => 'packages', 'action' => 'download', 'branch' => 'master', $package['Package']['id']
+		), array('rel' => 'nofollow')); ?>
+	</p>
+</section>
+
+<div class="clearfix">
+	<section class="package">
+		<h3>Installation</h3>
+
 		<div>
-			<span class="title">Github Url</span>
-			<?php echo $this->Resource->repository($package['Maintainer']['username'], $package['Package']['name']); ?>
+			<h4>Github URL</h4>
+			<?php echo $this->Resource->github_url($package['Maintainer']['username'], $package['Package']['name']); ?>
 		</div>
+
 		<div>
-			<span class="title">Clone Url</span>
-			<input id="clone" class="clone-link" value="<?php echo $this->Resource->clone_url($package['Maintainer']['username'], $package['Package']['name']); ?>" />
+			<h4>Clone Url</h4>
+			<?php echo $this->Resource->clone_url($package['Maintainer']['username'], $package['Package']['name']); ?>
 		</div>
-	</dl>
-	
-	<div class="meta">
-		<!-- <span class="category"></span> -->
-		<span class="watchers"><?php echo $package['Package']['watchers'] . ' ' . __n('watcher', 'watchers', $package['Package']['watchers']); ?></span>
-		<span class="maintainer">Maintained by <?php $name = trim($package['Maintainer']['name']); echo $this->Html->link((!empty($name)) ? $name : $package['Maintainer']['username'],
-			array('plugin' => null, 'controller' => 'maintainers', 'action' => 'view', $package['Maintainer']['username']),
-			array('class' => 'maintainer_name')
-		); ?></span>
-		<span class="last_pushed">Last Pushed: <?php echo $this->Time->niceShort($package['Package']['last_pushed_at']); ?></span>
-		<!-- <span class="tags">
-			<a href="#">database</a>
-			<a href="#">logging</a>
-			<a href="#">library</a>
-		</span> -->
-	</div>
-</article>
 
+		<?php if (!empty($rss) && is_array($rss)) : ?>
+		<div class="rss">
+			<h3><?php echo __('Recent Activity'); ?></h3>
+			<ul>
+				<?php foreach ($rss as $entry) : ?>
+					<li>
+						<?php echo $this->Html->link(
+							$this->Time->format('Y-m-d', $entry['Entry']['updated']) . ' ' . $entry['Entry']['title'],
+							$entry['Entry']['link'], array('target' => '_blank', 'rel' => 'nofollow')
+						); ?>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+			<?php endif; ?>
+		</div>
+	</section>
 
-<article class="description">
-	<?php echo $this->element('rss_reader', array(
-		'url' => "https://github.com/{$package['Maintainer']['username']}/{$package['Package']['name']}/commits/master.atom",
-		'cache' => array(
-			'key' => 'package.rss.' . md5($package['Maintainer']['username'] . $package['Package']['name']),
-			'time' => '+6 hours',
-		))); ?>
-</article>
+	<aside class="stats">
+		<h3>Project Stats</h3>
+		<p><strong>Watchers:</strong>&nbsp;<?php echo $package['Package']['watchers']; ?></p>
+		<p><strong>Issues:</strong>&nbsp;<?php echo $package['Package']['open_issues']; ?></p>
+		<p><strong>Forks:</strong>&nbsp;<?php echo $package['Package']['forks']; ?></p>
+		<p><strong>Maintainer:</strong>&nbsp;<?php echo $this->Resource->maintainer(
+				$package['Maintainer']['username'],
+				$package['Maintainer']['name']
+			); ?>
+		</p>
+		<p><strong>Last Updated:</strong> 
+			<?php echo $this->Time->format('Y-m-d', $package['Package']['last_pushed_at']); ?>
+		</p>
+	</aside>
+</div>

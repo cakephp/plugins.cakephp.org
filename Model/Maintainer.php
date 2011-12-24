@@ -265,6 +265,23 @@ class Maintainer extends AppModel {
 				throw new OutOfBoundsException(__('Invalid maintainer'));
 			}
 
+			$url = $results[0]['Maintainer']['url'];
+			if (strlen($url) && !strpos($url, '://')) {
+				$results[0]['Maintainer']['url'] = 'http://' . $url;
+			}
+
+			$results[0][$this->alias]['has_summary'] = false;
+			$summaryFields = array('company', 'location', 'url', 'twitter_username');
+			foreach ($summaryFields as $field) {
+				if (!empty($results[0][$this->alias][$field])) {
+					$results[0][$this->alias]['has_summary'] = true;
+				}
+			}
+
+			if ($results[0][$this->alias]['has_summary']) {
+				$results[0][$this->alias]['package_count'] = count($results[0]['Package']);
+			}
+
 			return $results[0];
 		}
 	}

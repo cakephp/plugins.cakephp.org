@@ -1,6 +1,8 @@
 <?php
 App::uses('Sanitize', 'Utility');
 App::uses('Characterizer', 'Lib');
+App::uses('HttpSocket', 'Network/Http');
+App::uses('Xml', 'Utility');
 
 class Package extends AppModel {
 
@@ -24,18 +26,21 @@ class Package extends AppModel {
 
 	public $Github = null;
 
+	public $HttpSocket = null;
+
 	public $SearchIndex = null;
 
 	public $findMethods = array(
-		'autocomplete' => true,
-		'edit' => true,
-		'index' => true,
-		'latest' => true,
+		'autocomplete'      => true,
+		'download'          => true,
+		'edit'              => true,
+		'index'             => true,
+		'latest'            => true,
 		'listformaintainer' => true,
-		'random' => true,
-		'randomids' => true,
-		'repoclone' => true,
-		'view' => true,
+		'random'            => true,
+		'randomids'         => true,
+		'repoclone'         => true,
+		'view'              => true,
 	);
 
 	public function __construct($id = false, $table = null, $ds = null) {
@@ -72,7 +77,6 @@ class Package extends AppModel {
 			}
 
 			$query['term'] = Sanitize::clean($query['term']);
-			$query['cache'] = true;
 			$query['conditions'] = array("{$this->alias}.{$this->displayField} LIKE" => "%{$query['term']}%");
 			$query['contain'] = array('Maintainer' => array('username'));
 			$query['fields'] = array($this->primaryKey, $this->displayField);
@@ -82,13 +86,35 @@ class Package extends AppModel {
 			$searchResults = array();
 			foreach ($results as $package) {
 				$searchResults[] = array(
-					'id'	=> $package['Package']['id'],
-					'slug'	=> sprintf("%s/%s", $package['Maintainer']['username'], $package['Package']['name']),
+					'id' => $package['Package']['id'],
+					'slug' => sprintf("%s/%s", $package['Maintainer']['username'], $package['Package']['name']),
 					'value' => $package['Package']['name'],
 					"label" => preg_replace("/".$query['term']."/i", "<strong>$0</strong>", $package['Package']['name'])
 				);
 			}
 			return json_encode($searchResults);
+		}
+	}
+
+	public function _findDownload($state, $query, $results = array()) {
+		if ($state == 'before') {
+			$query['conditions'] = array(
+				"{$this->alias}.{$this->primaryKey}" => $query[$this->primaryKey],
+			);
+			$query['contain'] = array('Maintainer' => array('username'));
+			$query['fields'] = array('id', 'name');
+			$query['limit'] = 1;
+			return $query;
+		} elseif ($state == 'after') {
+			if (empty($results[0])) {
+				return false;
+			}
+			return sprintf(
+				'https://github.com/%s/%s/zipball/%s',
+				$results[0]['Maintainer']['username'],
+				$results[0]['Package']['name'],
+				$query['branch']
+			);
 		}
 	}
 
@@ -105,7 +131,7 @@ class Package extends AppModel {
 			$query['contain'] = array('Maintainer' => array('id','username', 'name'));
 			$query['fields'] = array_diff(
 				array_keys($this->schema()),
-				array('deleted', 'created', 'modified', 'repository_url', 'homepage', 'tags', 'bakery_article')
+				array('deleted', 'modified', 'repository_url', 'homepage', 'tags', 'bakery_article')
 			);
 
 			$query['order'][] = array("{$this->alias}.created DESC");
@@ -152,10 +178,10 @@ class Package extends AppModel {
 			$query['contain'] = array('Maintainer' => array('id', 'username', 'name'));
 			$query['fields'] = array_diff(
 				array_keys($this->schema()),
-				array('deleted', 'created', 'modified', 'repository_url', 'homepage', 'tags', 'bakery_article')
+				array('deleted', 'modified', 'repository_url', 'homepage', 'tags', 'bakery_article')
 			);
 			$query['limit'] = (empty($query['limit'])) ? 6 : $query['limit'];
-			$query['order'] = array("{$this->alias}.created DESC");
+			$query['order'] = array("{$this->alias}.{$this->primaryKey} DESC");
 			if (!empty($query['operation'])) {
 				return $this->_findCount($state, $query, $results);
 			}
@@ -217,7 +243,6 @@ class Package extends AppModel {
 				throw new InvalidArgumentException(__('Invalid package'));
 			}
 
-			$query['cache'] = 3600;
 			$query['conditions'] = array(
 				"{$this->alias}.{$this->displayField}" => $query['package'],
 				'Maintainer.username' => $query['maintainer'],
@@ -511,6 +536,110 @@ class Package extends AppModel {
 		$keywords = implode(', ', $keywords);
 
 		return array($title, $description, $keywords);
+	}
+
+	public function rss($package, $options = array()) {
+		$options = array_merge(array(
+			'cache' => null,
+			'limit' => 4,
+			'key' => null,
+			'uri' => null,
+		), $options);
+
+		if (!is_array($options['cache'])) {
+			$options['cache'] = array(
+				'key' => 'package.rss.' . md5($package['Maintainer']['username'] . $package['Package']['name']),
+				'time' => '+6 hours',
+			);
+		}
+
+		if (!$options['uri']) {
+			$options['uri'] = sprintf("https://github.com/%s/%s/commits/master.atom",
+				$package['Maintainer']['username'],
+				$package['Package']['name']
+			);
+		}
+
+		if (!$options['key']) {
+			$options['key'] = MiCache::key(md5($options['uri']));
+		}
+
+		$items = array();
+		if (($items = MiCache::read($options['key'])) !== false) {
+			return array($items, $options['cache']);
+		}
+
+		if (!$this->_HttpSocket()) {
+			return array($items, $options['cache']);
+		}
+
+		$result = $this->HttpSocket->request(array('uri' => $options['uri']));
+		$code = $this->HttpSocket->response['status']['code'];
+		$isError = is_array($result) && isset($result['Html']);
+
+		if ($code != 404  && $result && !$isError) {
+			$xmlError = libxml_use_internal_errors(true);
+			$result = simplexml_load_string($result['body']);
+			libxml_use_internal_errors($xmlError);
+		}
+
+		if ($result) {
+			$result = Xml::toArray($result);
+		}
+
+		if (!empty($result['feed']['entry'])) {
+			$result = array($result['feed']['entry']);
+			if (!empty($result[0])) {
+				$result = array_slice($result[0], 0, $options['limit'], true);
+			}
+
+			foreach ($result as $item) {
+				if (!empty($item['id'])) {
+					$item['hash'] = explode("Commit/", $item['id']);
+					$item['hash'] = end($item['hash']);
+				} else {
+					$item['hash'] = '';
+				}
+
+				if (!empty($item['title'])) {
+					$item['title'] = Sanitize::clean($item['title']);
+				} else {
+					$item['title'] = 'Empty Commit Message';
+				}
+
+				if (!empty($item['link']['@href'])) {
+					$item['link'] = $item['link']['@href'];
+				} else {
+					$item['link'] = '';
+				}
+
+				if (!empty($item['content']['@'])) {
+					$item['content'] = $item['content']['@'];
+				} else {
+					$item['content'] = '';
+				}
+
+				if (!empty($item['media:thumbnail']['@url'])) {
+					$item['avatar'] = $item['media:thumbnail']['@url'];
+					unset($item['media:thumbnail']);
+				} else {
+					$item['avatar'] = '';
+				}
+
+				$items[] = array('Entry' => $item);
+			}
+		}
+
+		MiCache::write($options['key'], $items);
+		return array($items, $options['cache']);
+	}
+
+	protected function _HttpSocket() {
+		if ($this->HttpSocket) {
+			return $this->HttpSocket;
+		}
+
+		return $this->HttpSocket = new HttpSocket();
 	}
 
 }
