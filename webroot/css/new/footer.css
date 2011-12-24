@@ -1,5 +1,16 @@
 footer {
 	background-color: #3c6a77;
 	border-top: 2px solid #bc8c5e;
+	color: #ffffff;
+	font-size: 12px;
 	height: 100px;
+}
+footer a {
+	color: #c0c25b;
+}
+footer .container {
+	margin-top: 10px;
+}
+footer .copyright {
+	text-align: right;
 }

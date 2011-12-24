@@ -24,5 +24,5 @@
 		</article>
 	<?php endforeach; ?>
 
-	<?php echo $this->element('paging'); ?>
+	<?php echo $this->element('new/paging'); ?>
 </section>
