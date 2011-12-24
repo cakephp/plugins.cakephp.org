@@ -3,7 +3,7 @@
 		<h1><?php echo $this->Html->link(__('Package Indexer'), '/'); ?></h1>
 
 		<?php
-			echo $this->Form->create('Package', array(
+			echo $this->Form->create(false, array(
 				'url' => array(
 					'admin' => false,
 					'plugin' => null,
