@@ -12,6 +12,9 @@ Environment::configure('production',
 		'Settings.SiteTitle'      => 'cakepackages',
 		'Settings.FULL_BASE_URL'  => 'http://cakepackages.com',
 
+		'Disqus.disqus_shortname' => 'cakepackages',
+		'Disqus.disqus_developer' => 0,
+
 		'Email.username'          => 'info@cakepackages.com',
 		'Email.password'          => 'password',
 		'Email.test'              => 'info@cakepackages.com',
@@ -69,6 +72,9 @@ Environment::configure('staging',
 		'Settings.SiteTitle'      => 'cakepackages',
 		'Settings.FULL_BASE_URL'  => 'http://staging.cakepackages.com',
 
+		'Disqus.disqus_shortname' => 'cakepackages',
+		'Disqus.disqus_developer' => 1,
+
 		'Email.username'          => 'info@cakepackages.com',
 		'Email.password'          => 'password',
 		'Email.test'              => 'info@cakepackages.com',
@@ -108,6 +114,9 @@ Environment::configure('development',
 		'UrlCache.pageFiles'      => true,
 		'Settings.SiteTitle'      => 'CakePackages',
 		'Settings.FULL_BASE_URL'  => 'http://cakepackages.dev',
+
+		'Disqus.disqus_shortname' => 'cakepackages',
+		'Disqus.disqus_developer' => 1,
 
 		'Email.username'          => 'email@example.com',
 		'Email.password'          => 'password',

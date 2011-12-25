@@ -47,10 +47,23 @@
 		document.write(unescape('%3Cscript src="<?php $this->Html->url("/js/jquery-1.7.1.min.js") ?>"%3E%3C/script%3E'));
 	</script>
 	<?php echo $this->AssetCompress->script('default'); ?>
-	<script>
+	<script type="text/javascript">
 		var App = App || {};
 		App.basePath = "<?php echo $this->webroot; ?>";
 		App.user = <?php echo empty($userData) ? '{}' : json_encode(array('username' => $userData['username'], 'slug' =>  $userData['slug'])); ?>;
+
+		<?php if (!empty($disqus)) : ?>
+			var disqus_developer = <?php echo Configure::read('Disqus.disqus_developer') ?>;
+			<?php foreach ($disqus as $k => $v) : ?>
+				<?php printf("var %s = '%s';\n", $k, $v) ?>
+			<?php endforeach; ?>
+
+			(function() {
+				var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+				dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+			})();
+		<?php endif; ?>
 	</script>
 	<?php echo $this->Js->writeBuffer(); ?>
 </body>

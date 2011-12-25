@@ -59,8 +59,9 @@ class PackagesController extends AppController {
 			$this->_flashAndRedirect($e->getMessage());
 		}
 
+		$disqus = $this->Package->disqus($package);
 		list($rss, $cache) = $this->Package->rss($package);
-		$this->set(compact('cache', 'package', 'rss'));
+		$this->set(compact('cache', 'disqus', 'package', 'rss'));
 	}
 
 /**

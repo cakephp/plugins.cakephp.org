@@ -634,6 +634,24 @@ class Package extends AppModel {
 		return array($items, $options['cache']);
 	}
 
+	public function disqus($package = array()) {
+		return array(
+			'disqus_shortname' => Configure::read('Disqus.disqus_shortname'),
+			'disqus_identifier' => $package[$this->alias][$this->primaryKey],
+			'disqus_title' => Sanitize::clean(implode(' ', array(
+				$package['Package']['name'],
+				'by',
+				$package['Maintainer']['username'],
+			))),
+			'disqus_url' => Router::url(array(
+				'controller' => 'packages',
+				'action' => 'view',
+				$package['Maintainer']['username'],
+				$package['Package']['name']
+			), true),
+		);
+	}
+
 	protected function _HttpSocket() {
 		if ($this->HttpSocket) {
 			return $this->HttpSocket;
