@@ -311,9 +311,6 @@ class AppController extends Controller {
  * @return void
  */
 	public function beforeRender() {
-		if (!$this->Auth->userScope) {
-			$this->_setupAuth();
-		}
 		if ($userData = $this->Auth->user()) {
 			$this->set('userData', $userData['PkgUser']);
 		}
