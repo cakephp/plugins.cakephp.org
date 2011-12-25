@@ -6,12 +6,17 @@ body {
 	margin: auto;
 	position: relative;
 }
+
 body.minimal {
 	min-width: 600px;
 }
 .minimal .container {
 	width: 600px;
 }
+.minimal#packages .packages article {
+	width: 280px;
+}
+
 body.mobile {
 	min-width: 320px;
 }
@@ -54,4 +59,13 @@ body.mobile {
 .mobile .mobile-block {
 	display: block;
 	margin-bottom: 4px;
+}
+.mobile#packages .packages {
+	float: none;
+	margin-right: 0;
+}
+.mobile#packages .sidebar {
+	float: none;
+	margin-top: 10px;
+	position: static;
 }

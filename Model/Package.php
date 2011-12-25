@@ -500,8 +500,25 @@ class Package extends AppModel {
 	}
 
 	public function suggest($data) {
-		if (empty($data['username']) || empty($data['repository'])) {
+		if (empty($data['username'])) {
 			return false;
+		}
+
+		// If the repository is empty, they may have submitted a url
+		if (empty($data['repository'])) {
+			$pieces = explode('/', str_replace(array(
+				'http://github.com/',
+				'https://github.com/',
+				'github.com/'
+				), '', $data['username']
+			));
+
+			if (count($pieces) < 2) {
+				return false;
+			}
+
+			$data['username'] = $pieces[0];
+			$data['repository'] = $pieces[1];
 		}
 
 		$job = $this->load('SuggestPackageJob', $data['username'], $data['repository']);

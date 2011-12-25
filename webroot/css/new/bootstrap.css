@@ -75,3 +75,6 @@ a.outbound {
 	clear: both;
 	visibility: hidden;
 }
+.columns {
+	position: relative;
+}

@@ -18,14 +18,20 @@
 	</div>
 </section>
 
-<section class="packages">
-	<h2><?php echo __('Latest CakePHP code'); ?></h2>
-	<?php foreach ($packages as $package) : ?>
-		<article>
-			<?php echo $this->element('new/preview', array(
-				'package' => $package['Package'],
-				'maintainer' => $package['Maintainer'],
-			)); ?>
-		</article>
-	<?php endforeach; ?>
-</section>
+<div class="clearfix columns">
+	<section class="packages">
+		<h2><?php echo __('Latest CakePHP code'); ?></h2>
+		<?php foreach ($packages as $package) : ?>
+			<article>
+				<?php echo $this->element('new/preview', array(
+					'package' => $package['Package'],
+					'maintainer' => $package['Maintainer'],
+				)); ?>
+			</article>
+		<?php endforeach; ?>
+	</section>
+
+	<section class="sidebar">
+		<?php echo $this->element('new/suggest'); ?>
+	</section>
+</div>

@@ -26,11 +26,11 @@
 
 </head>
 
-<body class="<?php echo $this->request->params['controller'] . '-' . $this->request->params['action'] ?>">
+<body class="<?php echo $this->request->params['controller'] . '-' . $this->request->params['action'] ?>" id="<?php echo $this->request->params['controller']; ?>">
 
 
 	<div class="wrapper">
-		<?php echo $this->element('new/header'); ?>
+		<?php echo $this->element('new/header', array(), array('cache' => true)); ?>
 		<div class="content container">
 			<?php echo $this->Session->flash(); ?>
 			<?php echo $content_for_layout; ?>
@@ -38,7 +38,7 @@
 		<div class="push"></div>
 	</div>
 
-	<?php echo $this->element('new/footer'); ?>
+	<?php echo $this->element('new/footer', array(), array('cache' => true)); ?>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
