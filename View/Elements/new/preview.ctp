@@ -35,7 +35,7 @@ $title = $this->Html->link($this->Text->truncate($package['name'], 35), array(
 
 		<?php if ($showDate) : ?>
 			<span class="date">
-				added on <?php echo $package['created']; ?>
+				added on <?php echo $this->Time->format('Y-m-d', $package['created']); ?>
 			</span>
 		<?php endif; ?>
 
