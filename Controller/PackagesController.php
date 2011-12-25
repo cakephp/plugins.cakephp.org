@@ -154,7 +154,7 @@ class PackagesController extends AppController {
  */
 	public function _seoView() {
 		$package = $this->viewVars['package'];
-		$canonical = 'package/' . $package['Package']['name'] . '/' . $package['Maintainer']['username'];
+		$canonical = 'package/' . $package['Maintainer']['username'] . '/' . $package['Package']['name'];
 		$this->Sham->loadBySlug($canonical);
 		list($title, $description, $keywords) = $this->Package->seoView($package);
 
