@@ -446,7 +446,7 @@ class MiCache extends Object {
 }
 
 if (!class_exists('FileEngine')) {
-	require LIBS . DS . 'cache' . DS . 'file.php';
+	require Cake . DS . 'Cache' . DS . 'Engine' . DS . 'FileEngine.php';
 }
 
 /**
