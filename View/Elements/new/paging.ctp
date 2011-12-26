@@ -9,7 +9,7 @@ $Paginator->options(array(
 <?php if ($Paginator->hasNext() || $Paginator->hasPrev()): ?>
 	<div class="paging">
 		<?php echo $Paginator->prev('prev', array(), null, array('class' => 'disabled'));?>
-		<?php echo $Paginator->numbers(array('separator' => ' ', 'modulus' => 26));?>
+		<?php echo $Paginator->numbers(array('separator' => ' ', 'modulus' => 8));?>
 		<?php echo $Paginator->next('next', array(), null, array('class' => 'disabled'));?>
 	</div>
 <?php endif; ?>

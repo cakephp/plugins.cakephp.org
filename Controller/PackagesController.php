@@ -33,7 +33,7 @@ class PackagesController extends AppController {
 		$this->paginate = array(
 			'index',
 			'named' => $this->request->data,
-			'limit' => 21,
+			'limit' => 20,
 		);
 
 		if (empty($this->request->params['named']['sort'])) {
