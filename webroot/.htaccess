@@ -1,7 +1,11 @@
 <IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_URI} !^/(img|css|js)/(.*)$
-    RewriteRule ^(.*)$ index.php?/$1 [QSA,L]
+	RewriteEngine On
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_URI} !^/(img|css|js)/(.*)$
+	RewriteRule ^(.*)$ index.php?/$1 [QSA,L]
 </IfModule>
+
+<FilesMatch "\.(eot|svg|ttf|woff)$">
+	ExpiresDefault "access plus 7 days"
+</FilesMatch>

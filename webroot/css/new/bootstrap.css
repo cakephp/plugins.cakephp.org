@@ -16,25 +16,24 @@
  *
  * The fonts included are copyrighted by the vendor listed below.
  *
- * Vendor:    exljbris
+ * Vendor:      exljbris
  * License URL: http://www.fontspring.com/fflicense/exljbris
  *
  *
  */
 
 @font-face {
-	font-family: 'MuseoSans500';
-	src: url('/css/new/MuseoSans_500-webfont.eot');
-	src: url('/css/new/MuseoSans_500-webfont.eot?#iefix') format('embedded-opentype'),
-		 url('/css/new/MuseoSans_500-webfont.woff') format('woff'),
-		 url('/css/new/MuseoSans_500-webfont.ttf') format('truetype'),
-		 url('/css/new/MuseoSans_500-webfont.svg#MuseoSans500') format('svg');
+	font-family: 'MuseoSlab500';
+	src: url('/fonts/Museo_Slab_500-webfont.eot');
+	src: url('/fonts/Museo_Slab_500-webfont.eot?#iefix') format('embedded-opentype'),
+		url('/fonts/Museo_Slab_500-webfont.woff') format('woff'),
+		url('/fonts/Museo_Slab_500-webfont.ttf') format('truetype'),
+		url('/fonts/Museo_Slab_500-webfont.svg#MuseoSlab500') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
-
 body, h1, h2, h3, h4, h5, h6, a {
-	font-family: 'MuseoSans500', Arial, Helvetica, sans-serif;
+	font-family: 'MuseoSlab500', Arial, Helvetica, sans-serif;
 }
 h2 {
 	border-bottom: 2px dotted #bb9066;

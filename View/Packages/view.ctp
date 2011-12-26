@@ -10,7 +10,7 @@
 	</p>
 </section>
 
-<div class="clearfix">
+<div class="package-info clearfix">
 	<section class="package">
 		<h3>Installation</h3>
 
