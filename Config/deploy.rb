@@ -4,7 +4,7 @@ $config = {
     "remoteusername"    => "deploy",
     "cake_folder"       => "/apps/production/resources",
     "cake_version"      => "cakephp2.0.4",
-    "plugin_dir"        => "cakephp-plugins",
+    "plugin_dir"        => false,
     "servers"           => {
         "production"              => {
             "server"        => "cakepackages.com",
@@ -116,8 +116,8 @@ namespace :deploy do
   task :symlink_cron, :roles => :cron do
     if deploy_env == :production
       run [
-        "sudo chown root:root #{current_path}/config/cakepackages.cron",
-        "sudo ln -sf #{current_path}/config/cakepackages.cron /etc/cron.d/cakepackages"
+        "sudo chown root:root #{current_path}/Config/cakepackages.cron",
+        "sudo ln -sf #{current_path}/Config/cakepackages.cron /etc/cron.d/cakepackages"
       ].join(' && ')
     end
   end
@@ -130,12 +130,14 @@ namespace :link do
     You may need to change this to a 'cp -rf' instead of 'ln -s' depending upon your shell requirements
   DESC
   task :core do
-    run "rm -rf #{deploy_to}/cake && ln -s #{cake_folder}/#{cake_version}/cake #{deploy_to}/cake"
+    run "rm -rf #{deploy_to}/lib && ln -s #{cake_folder}/#{cake_version}/lib #{deploy_to}/lib"
   end
 
   desc "Link the CakePHP Plugins for this repository"
   task :plugins do
-    run "rm -rf #{deploy_to}/plugins && ln -s #{cake_folder}/#{plugin_dir} #{deploy_to}/plugins"
+    if plugin_dir
+      run "rm -rf #{deploy_to}/Plugin && ln -s #{cake_folder}/#{plugin_dir} #{deploy_to}/Plugin"
+    end
   end
 
   desc <<-DESC
@@ -144,8 +146,8 @@ namespace :link do
   DESC
   task :config do
     run [
-      "rm -rf #{current_release}/config/environments.php",
-      "ln -s #{shared_path}/config/environments.php #{current_release}/config/environments.php",
+      "rm -rf #{current_release}/Config/environments.php",
+      "ln -s #{shared_path}/Config/environments.php #{current_release}/Config/environments.php",
       
       'if [ ! -d "' + shared_path + '/webroot/cache_css" ]; then ' +
           "mkdir -p #{shared_path}/webroot/cache_css && chmod -R 777 #{shared_path}/webroot/cache_css;" +
@@ -241,23 +243,23 @@ end
 namespace :asset do
   desc "Clears assets"
   task :clear do
-    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -env=#{deploy_env} -app #{deploy_to}/#{current_dir} asset_compress clear"
+    run "cd #{deploy_to}/#{current_dir} && ../lib/Cake/Console/cake -env=#{deploy_env} -app #{deploy_to}/#{current_dir} asset_compress clear"
   end
 
   desc "Builds all assets"
   task :build do
-    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -env=#{deploy_env} -app #{deploy_to}/#{current_dir} asset_compress build"
+    run "cd #{deploy_to}/#{current_dir} && ../lib/Cake/Console/cake -env=#{deploy_env} -app #{deploy_to}/#{current_dir} asset_compress build"
   end
 
   desc "Builds ini assets"
   task :build_ini do
-    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -env=#{deploy_env} -app #{deploy_to}/#{current_dir} asset_compress build_ini"
+    run "cd #{deploy_to}/#{current_dir} && ../lib/Cake/Console/cake -env=#{deploy_env} -app #{deploy_to}/#{current_dir} asset_compress build_ini"
   end
 
   desc "Rebuilds assets"
   task :rebuild do
-    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -env=#{deploy_env} -app #{deploy_to}/#{current_dir} asset_compress clear"
-    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -env=#{deploy_env} -app #{deploy_to}/#{current_dir} asset_compress build"
+    run "cd #{deploy_to}/#{current_dir} && ../lib/Cake/Console/cake -env=#{deploy_env} -app #{deploy_to}/#{current_dir} asset_compress clear"
+    run "cd #{deploy_to}/#{current_dir} && ../lib/Cake/Console/cake -env=#{deploy_env} -app #{deploy_to}/#{current_dir} asset_compress build"
   end
 end
 
@@ -265,12 +267,12 @@ end
 namespace :migrate do
   desc "Run CakeDC Migrations"
   task :all do
-    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -env=#{deploy_env} -app #{deploy_to}/#{current_dir} migration run all"
+    run "cd #{deploy_to}/#{current_dir} && ../lib/Cake/Console/cake -env=#{deploy_env} -app #{deploy_to}/#{current_dir} migration run all"
   end
 
   desc "Gets the status of CakeDC Migrations"
   task :status do
-    run "cd #{deploy_to}/#{current_dir} && ../cake/console/cake -env=#{deploy_env} -app #{deploy_to}/#{current_dir} migration status"
+    run "cd #{deploy_to}/#{current_dir} && ../lib/Cake/Console/cake -env=#{deploy_env} -app #{deploy_to}/#{current_dir} migration status"
   end
 end
 
@@ -293,8 +295,8 @@ namespace :god do
       "#{sudo} service god stop",
       "#{sudo} rm /etc/god/conf.d/workers.god",
       "#{sudo} rm /etc/god/conf.d/cakephp_god.rb",
-      "#{sudo} ln -s #{current_release}/config/workers.god /etc/god/conf.d/workers.god",
-      "#{sudo} ln -s #{current_release}/config/cakephp_god.rb /etc/god/conf.d/cakephp_god.rb",
+      "#{sudo} ln -s #{current_release}/Config/workers.god /etc/god/conf.d/workers.god",
+      "#{sudo} ln -s #{current_release}/Config/cakephp_god.rb /etc/god/conf.d/cakephp_god.rb",
       "#{sudo} service god start"
     ].join(' && ')
   end
