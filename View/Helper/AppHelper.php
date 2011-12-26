@@ -29,4 +29,44 @@ class AppHelper extends Helper {
 		$this->for_layout('h2', "<h2>{$contents}</h2>");
 	}
 
+/**
+ * Retrieves a given tag if it exists
+ *
+ * @param string $tagName Name of tag
+ * @return mixed String of tag format if available, False otherwise
+ */
+	public function getTag($tagName) {
+		if (isset($this->_tags[$tagName])) {
+			return $this->_tags[$tagName];
+		}
+		return false;
+	}
+
+/**
+ * Retrieves a given tag if it exists
+ *
+ * @param mixed $tagNames Name of tag or array of tags mapping to values
+ * @param string $format Tag format
+ * @return mixed False on failure, array of tags mapping to values on success
+ */
+	public function setTag($tagNames = array(), $format = null) {
+		if (!$tagNames) {
+			return false;
+		}
+
+		if (!is_array($tagNames)) {
+			$tagNames = array((string)$tagNames => (string)$format);
+		}
+
+		if (empty($tagNames)) {
+			return false;
+		}
+
+		foreach ($tagNames as $tagName => $value) {
+			$this->_tags[$tagName] = $value;
+		}
+
+		return $tagNames;
+	}
+
 }
