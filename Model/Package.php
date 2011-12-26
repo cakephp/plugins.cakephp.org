@@ -321,6 +321,11 @@ class Package extends AppModel {
 		return array($package['Package']['id'], $path . DS . $package['Package']['name']);
 	}
 
+	public function broken($id) {
+		$this->id = $id;
+		return $this->saveField('deleted', true);
+	}
+
 	public function characterize($id) {
 		$this->Behaviors->detach('Softdeletable');
 		list($package_id, $path) = $this->setupRepository($id);
@@ -336,9 +341,25 @@ class Package extends AppModel {
 		)));
 	}
 
-	public function broken($id) {
-		$this->id = $id;
-		return $this->saveField('deleted', true);
+	public function fixRepositoryUrl($package = null) {
+		if (!$package) return false;
+
+		if (!is_array($package)) {
+			$package = $this->find('first', array(
+				'conditions' => array("{$this->alias}.{$this->primaryKey}" => $package),
+				'contain' => array('Maintainer' => array('fields' => 'username')),
+				'fields' => array('name', 'repository_url')
+			));
+		}
+		if (!$package) return false;
+
+		$package[$this->alias]['repository_url']	= array();
+		$package[$this->alias]['repository_url'][]	  = "git://github.com";
+		$package[$this->alias]['repository_url'][]	  = $package['Maintainer']['username'];
+		$package[$this->alias]['repository_url'][]	  = $package[$this->alias]['name'];
+		$package[$this->alias]['repository_url']	= implode("/", $package[$this->alias]['repository_url']);
+		$package[$this->alias]['repository_url']   .= '.git';
+		return $this->save($package);
 	}
 
 	public function updateAttributes($package) {
@@ -411,27 +432,6 @@ class Package extends AppModel {
 		$package['Package']['last_pushed_at'] = substr(str_replace('T', ' ', $repo['Repository']['pushed_at']), 0, 20);
 
 		$this->create();
-		return $this->save($package);
-	}
-
-	public function fixRepositoryUrl($package = null) {
-		if (!$package) return false;
-
-		if (!is_array($package)) {
-			$package = $this->find('first', array(
-				'conditions' => array("{$this->alias}.{$this->primaryKey}" => $package),
-				'contain' => array('Maintainer' => array('fields' => 'username')),
-				'fields' => array('name', 'repository_url')
-			));
-		}
-		if (!$package) return false;
-
-		$package[$this->alias]['repository_url']	= array();
-		$package[$this->alias]['repository_url'][]	  = "git://github.com";
-		$package[$this->alias]['repository_url'][]	  = $package['Maintainer']['username'];
-		$package[$this->alias]['repository_url'][]	  = $package[$this->alias]['name'];
-		$package[$this->alias]['repository_url']	= implode("/", $package[$this->alias]['repository_url']);
-		$package[$this->alias]['repository_url']   .= '.git';
 		return $this->save($package);
 	}
 
