@@ -3,28 +3,38 @@
 App::uses('Permit', 'Sanction.Controller/Component');
 
 Permit::access(
+	array('prefix' => 'admin'),
+	array('auth' => array('group' => 'admin')),
+	array('element' => 'flash/error', 'redirect' => array('controller' => 'packages', 'action' => 'index')));
+
+Permit::access(
 	array('controller' => 'github'),
 	array('auth' => array('group' => 'admin')),
-	array('redirect' => array('controller' => 'packages', 'action' => 'index')));
+	array('element' => 'flash/error', 'redirect' => array('controller' => 'packages', 'action' => 'index')));
 
 Permit::access(
 	array('controller' => array('maintainers', 'packages'), 'action' => array('add', 'edit', 'delete')),
 	array('auth' => array('group' => 'admin')),
-	array('redirect' => array('action' => 'index')));
+	array('element' => 'flash/error', 'redirect' => array('action' => 'index')));
 
 Permit::access(
 	array('plugin' => 'settings'),
 	array('auth' => array('group' => 'admin')),
-	array('redirect' => array('controller' => 'packages', 'action' => 'index')));
+	array('element' => 'flash/error', 'redirect' => array('controller' => 'packages', 'action' => 'index')));
 
 Permit::access(
 	array('controller' => 'users', 'action' => array('change_password', 'dashboard', 'logout')),
 	array('auth' => true),
-	array('redirect' => array('controller' => 'users', 'action' => 'login')));
+	array('element' => 'flash/error', 'redirect' => array('controller' => 'users', 'action' => 'login')));
+
+Permit::access(
+	array('controller' => 'packages', 'action' => array('rate')),
+	array('auth' => true),
+	array('element' => 'flash/error', 'redirect' => array('controller' => 'users', 'action' => 'login')));
 
 Permit::access(
 	array('controller' => 'users', 'action' => array('forgot_password', 'login', 'reset_password')),
 	array('auth' => false),
-	array('redirect' => array('controller' => 'users', 'action' => 'dashboard')));
+	array('element' => 'flash/error', 'redirect' => array('controller' => 'users', 'action' => 'dashboard')));
 
 ?>

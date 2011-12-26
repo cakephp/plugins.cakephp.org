@@ -18,7 +18,7 @@ class AppController extends Controller {
 		'RequestHandler',
 		'Sanction.Permit' => array(
 			'check' => 'role',
-			'path' => 'PkgUser.PkgUser'
+			'path' => 'Auth.User'
 		),
 		'Session',
 		'Settings.Settings',
@@ -44,7 +44,7 @@ class AppController extends Controller {
 		'Resource',
 		'Sanction.Clearance' => array(
 			'check' => 'role',
-			'path' => 'PkgUser.PkgUser'
+			'path' => 'Auth.User'
 		),
 		'Session',
 		'Sham.Sham',
@@ -88,6 +88,7 @@ class AppController extends Controller {
  * @return void
  */
 	public function beforeFilter() {
+		parent::beforeFilter();
 		$this->_setupTheme();
 		$this->_setupAuth();
 		$this->_beforeFilterAuth();
@@ -137,18 +138,23 @@ class AppController extends Controller {
 	protected function _setupAuth() {
 		$this->Auth->authorize = 'controller';
 		$this->Auth->fields = array('username' => 'email', 'password' => 'passwd');
-		$this->Auth->loginAction = array('plugin' => null, 'admin' => false, 'controller' => 'pkg_users', 'action' => 'login');
+		$this->Auth->loginAction = array(
+			'plugin' => null,
+			'admin' => false,
+			'controller' => 'users',
+			'action' => 'login'
+		);
 		$this->Auth->loginRedirect = '/';
 		$this->Auth->logoutRedirect = '/';
 		$this->Auth->authError = __('Sorry, but you need to be logged in to access this location.');
 		$this->Auth->loginError = __('Invalid credentials. Please try again or create an account.');
 		$this->Auth->autoRedirect = false;
-		$this->Auth->userModel = 'PkgUser';
+		$this->Auth->userModel = 'User';
 		$this->Auth->authenticate = null;
 		$this->Auth->sessionKey = 'Auth.User';
 		$this->Auth->userScope = array(
-			'PkgUser.email_authenticated' => 1,
-			'PkgUser.active' => 1
+			'User.email_authenticated' => 1,
+			'User.active' => 1
 		);
 	}
 
@@ -162,23 +168,21 @@ class AppController extends Controller {
 		$this->Cookie->name = 'rememberMe';
 		$cookie = $this->Cookie->read('User');
 		if (!empty($cookie) && !$this->Auth->user()) {
-			$data['PkgUser'][$this->Auth->fields['username']] = $cookie[$this->Auth->fields['username']];
-			$data['PkgUser'][$this->Auth->fields['password']] = $cookie[$this->Auth->fields['password']];
+			$data['User'][$this->Auth->fields['username']] = $cookie[$this->Auth->fields['username']];
+			$data['User'][$this->Auth->fields['password']] = $cookie[$this->Auth->fields['password']];
 			$this->Auth->login($data);
 		}
 	}
 
 /**
- * isAuthorized Auth callback
+ * Dummy isAuthorized Auth callback
  *
- * @return boolean Whether the user is authorized to access the current page or not
+ * Sanction.Permit handles permissions for us
+ *
+ * @return boolean true
  */
 	public function isAuthorized() {
-		$authorized = true;
-		if (isset($this->request->params['prefix']) && $this->request->params['prefix'] == 'admin') {
-			$authorized = $this->Auth->user('role') === 'admin';
-		}
-		return $authorized;
+		return true;
 	}
 
 /**
@@ -314,7 +318,7 @@ class AppController extends Controller {
  */
 	public function beforeRender() {
 		if ($userData = $this->Auth->user()) {
-			$this->set('userData', $userData['PkgUser']);
+			$this->set('userData', $userData['User']);
 		}
 
 		$pageId = "{$this->request->params['controller']}";

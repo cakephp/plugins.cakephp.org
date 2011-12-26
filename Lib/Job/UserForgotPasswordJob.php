@@ -7,26 +7,26 @@ App::uses('BaseEmail', 'Job');
  * @package default
  * @todo Update this to send emails using the Users plugin
  */
-class ForgotPasswordJob extends BaseEmail {
+class UserForgotPasswordJob extends BaseEmail {
 
-	public function __construct($maintainer, $ipaddress) {
-		parent::__construct(null, compact('maintainer', 'ipaddress'));
+	public function __construct($user, $ipaddress) {
+		parent::__construct(null, compact('user', 'ipaddress'));
 	}
 
 	public function build() {
 		$vars = $this->getVars();
 		parent::build();
 
-		$this->loadModel('Maintainer');
-		$activationKey = $this->Maintainer->changeActivationKey($vars['maintainer']['id']);
+		$this->loadModel('User');
+		$activationKey = $this->User->changeActivationKey($vars['user']);
 
-		$this->_email = $vars['maintainer']['email'];
+		$this->_email = $vars['user']['email'];
 		$this->updateVars(array(
 			'subject' => '[CakePackages] ' . __('Reset Password'),
 			'template' => 'forgot_password',
 			'variables' => array(
-				'ipaddress',
-				'username' => $vars['maintainer']['username'],
+				'ipaddress' => $vars['ipaddress'],
+				'username' => $vars['user']['username'],
 				'activationKey' => $activationKey
 			),
 		));

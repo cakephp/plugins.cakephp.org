@@ -10,13 +10,13 @@
  */
 ?>
 <div class="users view">
-<h2><?php echo $user['PkgUser']['username'];?> <?php #echo $this->Html->link(__('View Full Profile'), '#', array('class' => 'full-profile'))?></h2>
+<h2><?php echo $user['User']['username'];?> <?php #echo $this->Html->link(__('View Full Profile'), '#', array('class' => 'full-profile'))?></h2>
 	<div class='picture'>
-		<?php echo $this->Gravatar->image($user['PkgUser']['email'], array('size' => '60', 'class' => 'avatar')); ?>
+		<?php echo $this->Gravatar->image($user['User']['email'], array('size' => '60', 'class' => 'avatar')); ?>
 	</div>
 	<p class="subheading">
 		<?php __('Registered') ?> 
-		<time><?php echo $this->Time->niceShort($user['PkgUser']['created']); ?><time>
+		<time><?php echo $this->Time->niceShort($user['User']['created']); ?><time>
 	</p>
 	<div class="details">
 		<ul>
@@ -30,7 +30,7 @@
 						'controller' => 'videos',
 						'action' => 'requestForUser'),
 					array(
-						'pass' => array($user['PkgUser']['id'])));
+						'pass' => array($user['User']['id'])));
 			?>
 		</div>
 		<div id="liked">
@@ -41,7 +41,7 @@
 						'controller' => 'videos',
 						'action' => 'liked'),
 					array(
-						'pass' => array($user['PkgUser']['id'], true)));
+						'pass' => array($user['User']['id'], true)));
 				ClassRegistry::addObject('view', $this);
 			?>
 		</div>
@@ -64,8 +64,8 @@
 	$metaTags = array();
 	$metaTags = implode(', ', array_flip(array_flip($metaTags)));
 
-	$this->Html->meta(array('name' => 'title', 'content' => 'CakePHP User profile for ' . $user['PkgUser']['username']), null, array('inline' => false));
-	$this->Html->meta(array('name' => 'description', 'content' => 'CakePHP User profile for ' . $user['PkgUser']['username']), null, array('inline' => false));
+	$this->Html->meta(array('name' => 'title', 'content' => 'CakePHP User profile for ' . $user['User']['username']), null, array('inline' => false));
+	$this->Html->meta(array('name' => 'description', 'content' => 'CakePHP User profile for ' . $user['User']['username']), null, array('inline' => false));
 	$this->Html->meta(array('name' => 'keywords', 'content' => $metaTags), null, array('inline' => false));
 	$this->Html->meta(array('name' => 'abstract', 'content' => 'cakephp packages development programming framework mvc'), null, array('inline' => false));
 	$this->Html->meta(array('name' => 'copyright', 'content' => 'Copyright ' . ((date('Y') > 2010) ? '2010-' . date('Y') : '2010') . ' Cake Software Foundation, Inc.'), null, array('inline' => false));
