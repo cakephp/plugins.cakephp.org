@@ -145,20 +145,3 @@
 	font-weight: bold;
 	line-height: 22px;
 }
-
-/* Package Submit */
-.packages-suggest .content label {
-	display: block;
-	margin-bottom: 6px;
-}
-.packages-suggest .content input[type="text"] {
-	border: 1px solid #CCC;
-	color: #666;
-	display: block;
-	font-family: Monaco, "Courier New", "DejaVu Sans Mono", "Bitstream Vera Sans Mono",monospace;
-	font-size: 11px;
-	height: 16px;
-	margin-bottom: 10px;
-	padding: 5px;
-	width: 330px;
-}

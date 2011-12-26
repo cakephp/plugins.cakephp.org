@@ -15,3 +15,31 @@ input[type="submit"] {
 	text-decoration: none;
 	text-transform: capitalize;
 }
+/* Package Submit */
+.page-form .content label {
+	display: block;
+	margin-bottom: 6px;
+}
+.page-form .content input[type="submit"] {
+	margin-right: 10px;
+	margin-top: 10px;
+}
+.page-form .content input[type="text"],
+.page-form .content input[type="password"] {
+	border: 1px solid #CCC;
+	color: #666;
+	display: block;
+	font-family: Monaco, "Courier New", "DejaVu Sans Mono", "Bitstream Vera Sans Mono",monospace;
+	font-size: 11px;
+	height: 16px;
+	margin-bottom: 10px;
+	padding: 5px;
+	width: 330px;
+}
+.page-form .content .checkbox label {
+	float: left;
+}
+.page-form .content .checkbox input {
+	float: left;
+	margin-right: 10px;
+}

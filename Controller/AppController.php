@@ -316,5 +316,9 @@ class AppController extends Controller {
 		if ($userData = $this->Auth->user()) {
 			$this->set('userData', $userData['PkgUser']);
 		}
+
+		$pageId = "{$this->request->params['controller']}";
+		$pageClass = "{$this->request->params['controller']}-{$this->request->params['action']}";
+		$this->set(compact('pageId', 'pageClass'));
 	}
 }

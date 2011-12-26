@@ -26,7 +26,7 @@
 
 </head>
 
-<body class="<?php echo $this->request->params['controller'] . '-' . $this->request->params['action'] ?>" id="<?php echo $this->request->params['controller']; ?>">
+<body class="<?php echo $pageClass; ?>" id="<?php echo $pageId; ?>">
 
 
 	<div class="wrapper">
