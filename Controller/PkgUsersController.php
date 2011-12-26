@@ -9,7 +9,7 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('UsersController', 'Users.Controller')
+App::uses('UsersController', 'Users.Controller');
 
 /**
  * Packages app specific User controller
@@ -18,6 +18,8 @@ App::uses('UsersController', 'Users.Controller')
  * @subpackage cakepackages.controller
  */
 class PkgUsersController extends UsersController {
+
+	public $name = 'PkgUsers';
 
 /**
  * Helpers
@@ -152,7 +154,7 @@ class PkgUsersController extends UsersController {
 				$file = APP . 'View' . DS . $this->viewPath . DS . $action . '.ctp';
 
 				if (!file_exists($file)) {
-					$file = App::pluginPath('users') . 'views' . DS . 'users' . DS . $action . '.ctp';
+					$file = App::pluginPath('Users') . 'View' . DS . 'Users' . DS . $action . '.ctp';
 				}
 			}
 		}
