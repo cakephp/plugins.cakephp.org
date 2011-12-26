@@ -78,15 +78,7 @@ class PkgUser extends User {
  */
 	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
-
-		$rules = array(
-			'mandatory' => array(
-				'rule' => 'notEmpty',
-				'message' => __d('packages', 'This field is required.'),
-				'required' => true,
-				'last' => true
-			)
-		);
+		$this->useDbConfig = Configure::read('Environment.name') . '_' . $this->useDbConfig;
 	}
 
 /**

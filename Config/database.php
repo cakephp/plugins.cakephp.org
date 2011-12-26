@@ -11,18 +11,15 @@ class DATABASE_CONFIG {
 		'encoding'      => 'utf8',
 	);
 
+	public $test = array(
+		'database'      => 'test',
+	);
+
 	public $development = array(
 		'datasource'    => 'Database/MysqlLog',
 		'login'         => 'user',
 		'password'      => 'password',
 		'database'      => 'cakepackages',
-	);
-	
-	public $cakeusers = array(
-		'datasource'    => 'Database/Mysql',
-		'login'         => 'user',
-		'password'      => 'password',
-		'database'      => 'cakeusers',
 	);
 
 	public $staging = array(
@@ -37,8 +34,17 @@ class DATABASE_CONFIG {
 		'database'      => 'cakepackages',
 	);
 
-	public $test = array(
-		'database'      => 'test',
+	public $test_cakeusers = array(
+	);
+
+	public $development_cakeusers = array(
+	);
+
+	public $staging_cakeusers = array(
+	);
+
+	public $production_cakeusers = array(
+		'database'      => 'cakeusers',
 	);
 
 	public $github = array(
@@ -50,7 +56,16 @@ class DATABASE_CONFIG {
 	);
 
 	protected $_skip = array(
-		'_skip', 'default', 'github'
+		'_skip', 'default', 'github', '_environments',
+		'test_cakeusers', 'development_cakeusers',
+		'staging_cakeusers', 'production_cakeusers',
+	);
+
+	protected $_environments = array(
+		'development'   => array('development_cakeusers'),
+		'staging'       => array('staging_cakeusers'),
+		'production'    => array('production_cakeusers'),
+		'test'          => array('test_cakeusers'),
 	);
 
 /**
@@ -64,16 +79,23 @@ class DATABASE_CONFIG {
 		// once Environment has decided where we at, it will write the name into Configure.
 		if ($environment = Configure::read('Environment.name')) {
 
-			// now i am gonna test if theres a property of the same name
-			if (isset($this->{$environment})) {
+			// Require that the environment have a database configuration
+			if (!isset($this->{$environment})) {
+				throw new RuntimeException(sprintf('Missing Database Configuration %s', $environment));
+			}
 
-				// if so, i then merge any options into $default.
-				$this->default = array_merge($this->default, $this->{$environment});
+			// Merge environment into defaults
+			$this->default = array_merge($this->default, $this->{$environment});
+
+			// Merge environment with the environment-specific configurations
+			if (isset($this->_environments[$environment])) {
+				foreach ($this->_environments[$environment] as $name) {
+					$this->$name = array_merge($this->default, $this->$name);
+				}
 			}
 		}
 
 		// if everything above went smooth, $this->default now has the correct login info.
-		// Since we are using $default i dont need to change anything else in my app.
 		foreach (get_object_vars($this) as $name => $config) {
 			if (in_array($name, $this->_skip)) {
 				continue;
