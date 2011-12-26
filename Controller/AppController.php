@@ -74,7 +74,9 @@ class AppController extends Controller {
  */
 	public function __construct($request = null, $response = null) {
 		if (Configure::read('debug')) {
-			$this->components['DebugKit.Toolbar'] = array('panels' => array('Sanction.Permit'));
+			$this->components['DebugKit.Toolbar'] = array(
+				'panels' => array('Sanction.Permit', 'Configure'
+			));
 		}
 
 		parent::__construct($request, $response);
