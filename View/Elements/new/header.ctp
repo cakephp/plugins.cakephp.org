@@ -10,6 +10,11 @@
 				<li>
 					<?php echo $this->Html->link('Suggest', array('controller' => 'packages', 'action' => 'suggest')); ?>
 				</li>
+				<?php if (!empty($userData)) : ?>
+					<li>
+						<?php echo $this->Html->link('Logout', array('controller' => 'users', 'action' => 'logout')); ?>
+					</li>
+				<?php endif; ?>
 			</ul>
 		</nav>
 
