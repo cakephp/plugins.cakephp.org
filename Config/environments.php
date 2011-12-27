@@ -24,6 +24,9 @@ Environment::configure('production',
 		'Routing.prefixes'        => array('one'),
 		'Security.salt'           => 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi',
 		'Security.cipherSeed'     => '76859309657453542496749683645',
+
+		// Feature flags
+		'Feature.auth_required'   => false,
 	),
 	function() {
 		error_reporting(0);
@@ -97,6 +100,9 @@ Environment::configure('staging',
 		'Security.cipherSeed'     => '76859309657453542496749683645',
 		'Acl.classname'           => 'DbAcl',
 		'Acl.database'            => 'default',
+
+		// Feature flags
+		'Feature.auth_required'   => true,
 	),
 	function() {
 		date_default_timezone_set('UTC');
@@ -132,6 +138,9 @@ Environment::configure('development',
 		'Security.cipherSeed'     => '76859364557429242496749683650',
 		'Recaptcha.publicKey'     => '6LeyksQSAAAAAJdkmQB7vBtsP9kYY75rE1ebY7B5',
 		'Recaptcha.privateKey'    => '6LeyksQSAAAAAEOJpZmWFHoBzgpSBtVlbDCDy6Uv',
+
+		// Feature flags
+		'Feature.auth_required'   => true,
 	),
 	function() {
 		if (!defined('FULL_BASE_URL')) {

@@ -42,15 +42,17 @@
 	</section>
 
 	<aside class="package-sidebar">
-		<div class="vote">
-			<h3>Vote</h3>
-			<?php echo $this->Html->link('Like', array(
-				'controller' => 'packages', 'action' => 'rate', $package['Package']['id'], 'up'
-			), array('class' => 'vote')); ?>
-			<?php echo $this->Html->link('Dislike', array(
-				'controller' => 'packages', 'action' => 'rate', $package['Package']['id'], 'down'
-			), array('class' => 'vote')); ?>
-		</div>
+		<?php if (Configure::read('Feature.auth_required')) : ?>
+			<div class="vote">
+				<h3>Vote</h3>
+				<?php echo $this->Html->link('Like', array(
+					'controller' => 'packages', 'action' => 'rate', $package['Package']['id'], 'up'
+				), array('class' => 'vote')); ?>
+				<?php echo $this->Html->link('Dislike', array(
+					'controller' => 'packages', 'action' => 'rate', $package['Package']['id'], 'down'
+				), array('class' => 'vote')); ?>
+			</div>
+		<?php endif; ?>
 		<div class="stats">
 			<h3>Project Stats</h3>
 			<p><strong>Watchers:</strong>&nbsp;<?php echo $package['Package']['watchers']; ?></p>
