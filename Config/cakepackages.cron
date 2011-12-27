@@ -23,4 +23,4 @@ PATH=/usr/local/bin:/usr/bin:/bin
 0 4 * * *        deploy cd $APP_PATH && ../cake/console/cake packages existenceCheck -env=production -app $APP_PATH
 
 # Update package attributes where possible
-0 6 * * *        deploy cd $APP_PATH && ../cake/console/cake packages addMissingAttributes -env=production -app $APP_PATH
+0 6 * * *        deploy cd $APP_PATH && ../cake/console/cake packages update_attributes -env=production -app $APP_PATH

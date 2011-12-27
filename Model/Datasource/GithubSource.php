@@ -1,7 +1,21 @@
 <?php
+App::uses('DataSource', 'Model/Datasource');
 App::uses('HttpSocket', 'Network/Http');
 
 class GithubSource extends DataSource {
+
+/**
+ * Holds a list of sources (tables) contained in the DataSource
+ *
+ * @var array
+ */
+	protected $_sources = array(
+		'githubs',
+		'issues',
+		'repositories',
+		'users',
+	);
+
 
 	public $_schema = array(
 		'githubs' => array(),
@@ -64,7 +78,7 @@ class GithubSource extends DataSource {
  * @param Object $model Model object to describe
  * @return array empty array
  */
-	function describe(&$model) {
+	function describe($model) {
 		$table = Inflector::tableize($model->alias);
 		if (isset($this->_schema[$table])) {
 			return $this->_schema[$table];
@@ -77,11 +91,11 @@ class GithubSource extends DataSource {
  *
  * @return array Array of sources from github
  */
-	function listSources() {
-		return array_keys($this->_schema);
+	public function listSources($data = null) {
+		return $this->_sources;
 	}
 
-	function read($model, $queryData = array()) {
+	public function read(Model $model, $queryData = array()) {
 		if (!$model->findQueryType) {
 			return array();
 		}
@@ -104,7 +118,7 @@ class GithubSource extends DataSource {
 		return $response;
 	}
 
-	function _readRequest($path, $query) {
+	public function _readRequest($path, $query) {
 		switch ($path) {
 			case 'user/show/following' :
 				return 'user/show/' . $query . '/following';
@@ -143,7 +157,7 @@ class GithubSource extends DataSource {
  * @return void
  * @author Jose Diaz-Gonzalez
  */
-	function query() {
+	public function query() {
 		$queryArgs = func_get_args();
 		$method    = $queryArgs[0];
 		$arguments = $queryArgs[1];
@@ -172,7 +186,7 @@ class GithubSource extends DataSource {
  * @param string $var
  * @return void
  */
-	function _cachedResponse($request, $var = null) {
+	protected function _cachedResponse($request, $var = null) {
 		$hash = md5(serialize(array($request, $var)));
 		$response = array();
 
@@ -206,7 +220,7 @@ class GithubSource extends DataSource {
  * @param array $data Data to be formatted
  * @return array
  */
-	function _formatResponse($data) {
+	protected function _formatResponse($data) {
 		if (!$data) {
 			return array();
 		}

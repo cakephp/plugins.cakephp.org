@@ -48,7 +48,7 @@ class DATABASE_CONFIG {
 	);
 
 	public $github = array(
-		'datasource'    => 'Datasource/Github',
+		'datasource'    => 'GithubSource',
 		'host'          => 'github.com',
 		'login'         => null,
 		'password'      => null,

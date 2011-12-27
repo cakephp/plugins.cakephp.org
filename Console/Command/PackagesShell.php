@@ -35,12 +35,12 @@ class PackagesShell extends AppShell {
 		while (empty($this->command)) {
 			$this->out("Packages Shell");
 			$this->hr();
-			$this->out("[A]dd missing Attributes");
 			$this->out("[C]haracterize Packages");
 			$this->out("[E]xistence Check");
 			$this->out("[F]ix Repository Urls");
 			$this->out("[G]it Clone Repositories");
 			$this->out("[R]eset Characteristics");
+			$this->out("[U]pdate Attributes");
 			$this->out("[Q]uit");
 			$temp = $this->in("What command would you like to perform?", $validCommands, 'i');
 			if (in_array(strtolower($temp), $validCommands)) {
@@ -51,9 +51,6 @@ class PackagesShell extends AppShell {
 		}
 
 		switch ($this->command) {
-			case 'a' :
-				$this->addMissingAttributes();
-				break;
 			case 'c' :
 				$this->characterize();
 				break;
@@ -69,6 +66,9 @@ class PackagesShell extends AppShell {
 			case 'r' :
 				$this->resetCharacteristics();
 				break;
+			case 'u' :
+				$this->update_attributes();
+				break;
 			case 'q' :
 				$this->out(__("Exit"));
 				$this->_stop();
@@ -82,7 +82,7 @@ class PackagesShell extends AppShell {
  * @return void
  * @author Jose Diaz-Gonzalez
  **/
-	public function addMissingAttributes() {
+	public function update_attributes() {
 		$packages = $this->Package->find('all', array(
 			'contain' => array('Maintainer' => array('id', 'username')),
 			'fields' => array('id', 'name'),

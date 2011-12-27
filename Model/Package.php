@@ -438,7 +438,9 @@ class Package extends AppModel {
 			'username' => $package['Maintainer']['username'],
 			'repo' => $package['Package']['name']
 		));
-		if (empty($repo) || !isset($repo['Repository'])) return false;
+		if (empty($repo) || !isset($repo['Repository'])) {
+			return false;
+		}
 
 		// Detect homepage
 		$homepage = (string) $repo['Repository']['url'];
