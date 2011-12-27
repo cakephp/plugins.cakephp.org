@@ -2,6 +2,17 @@
 	<div class="container">
 		<h1><?php echo $this->Html->link(__('Package Indexer'), '/'); ?></h1>
 
+		<nav class="main-nav">
+			<ul>
+				<li>
+					<?php echo $this->Html->link('Packages', array('controller' => 'packages', 'action' => 'index')); ?>
+				</li>
+				<li>
+					<?php echo $this->Html->link('Suggest', array('controller' => 'packages', 'action' => 'suggest')); ?>
+				</li>
+			</ul>
+		</nav>
+
 		<?php
 			echo $this->Form->create(false, array(
 				'url' => array(

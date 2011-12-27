@@ -41,19 +41,30 @@
 		</div>
 	</section>
 
-	<aside class="stats">
-		<h3>Project Stats</h3>
-		<p><strong>Watchers:</strong>&nbsp;<?php echo $package['Package']['watchers']; ?></p>
-		<p><strong>Issues:</strong>&nbsp;<?php echo $package['Package']['open_issues']; ?></p>
-		<p><strong>Forks:</strong>&nbsp;<?php echo $package['Package']['forks']; ?></p>
-		<p><strong>Maintainer:</strong>&nbsp;<?php echo $this->Resource->maintainer(
-				$package['Maintainer']['username'],
-				$package['Maintainer']['name']
-			); ?>
-		</p>
-		<p><strong>Last Updated:</strong> 
-			<?php echo $this->Time->format('Y-m-d', $package['Package']['last_pushed_at']); ?>
-		</p>
+	<aside class="package-sidebar">
+		<div class="vote">
+			<h3>Vote</h3>
+			<?php echo $this->Html->link('Like', array(
+				'controller' => 'packages', 'action' => 'rate', $package['Package']['id'], 'up'
+			), array('class' => 'vote')); ?>
+			<?php echo $this->Html->link('Dislike', array(
+				'controller' => 'packages', 'action' => 'rate', $package['Package']['id'], 'down'
+			), array('class' => 'vote')); ?>
+		</div>
+		<div class="stats">
+			<h3>Project Stats</h3>
+			<p><strong>Watchers:</strong>&nbsp;<?php echo $package['Package']['watchers']; ?></p>
+			<p><strong>Issues:</strong>&nbsp;<?php echo $package['Package']['open_issues']; ?></p>
+			<p><strong>Forks:</strong>&nbsp;<?php echo $package['Package']['forks']; ?></p>
+			<p><strong>Maintainer:</strong>&nbsp;<?php echo $this->Resource->maintainer(
+					$package['Maintainer']['username'],
+					$package['Maintainer']['name']
+				); ?>
+			</p>
+			<p><strong>Last Updated:</strong> 
+				<?php echo $this->Time->format('Y-m-d', $package['Package']['last_pushed_at']); ?>
+			</p>
+		</div>
 	</aside>
 </div>
 

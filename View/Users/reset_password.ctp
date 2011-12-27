@@ -1,4 +1,4 @@
-<?php $this->set('pageClass', $pageClass . ' page-form'); ?>
+<?php $this->set('bodyClass', $bodyClass . ' page-form'); ?>
 <h2>Reset your password</h2>
 
 <?php echo $this->Session->flash(); ?>

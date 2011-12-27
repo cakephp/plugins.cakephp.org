@@ -11,6 +11,11 @@ class Package extends AppModel {
 	public $belongsTo = array('Maintainer');
 
 	public $actsAs = array(
+		'Ratings.Ratable' => array(
+			'calculation' => 'sum',
+			'modelClass' => 'Package',
+			'update' => true,
+		),
 		'Softdeletable',
 	);
 
@@ -33,12 +38,10 @@ class Package extends AppModel {
 	public $findMethods = array(
 		'autocomplete'      => true,
 		'download'          => true,
-		'edit'              => true,
 		'index'             => true,
 		'latest'            => true,
 		'listformaintainer' => true,
-		'random'            => true,
-		'randomids'         => true,
+		'rate'              => true,
 		'repoclone'         => true,
 		'view'              => true,
 	);
@@ -217,6 +220,37 @@ class Package extends AppModel {
 		}
 	}
 
+/**
+ * Find a ratable package
+ *
+ * @param string $state 
+ * @param array $query 
+ * @param array $results 
+ * @return array
+ * @todo Require that the user not own the package being rated
+ */
+	public function _findRate($state, $query, $results = array()) {
+		if ($state == 'before') {
+			if (empty($query['id'])) {
+				throw new InvalidArgumentException(__('Invalid package'));
+			}
+			if (empty($query['user_id'])) {
+				throw new InvalidArgumentException(__('User not logged in'));
+			}
+
+			$query['conditions'] = array(
+				"{$this->alias}.{$this->primaryKey}" => $query['id'],
+			);
+			$query['limit'] = 1;
+			return $query;
+		} elseif ($state == 'after') {
+			if (empty($results[0])) {
+				throw new OutOfBoundsException(__('Invalid package'));
+			}
+			return $results[0];
+		}
+	}
+
 	public function _findRepoclone($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query[0])) {
@@ -360,6 +394,39 @@ class Package extends AppModel {
 		$package[$this->alias]['repository_url']	= implode("/", $package[$this->alias]['repository_url']);
 		$package[$this->alias]['repository_url']   .= '.git';
 		return $this->save($package);
+	}
+
+/**
+ * Actually rates a package
+ *
+ * @param int $id Package ID
+ * @param int $user_id ID referencing a specific User
+ * @param string $rating either "up" or "down"
+ * @return boolean
+ */
+	public function ratePackage($id = null, $user_id = null, $rating = null) {
+		if (!$id && $this->id) {
+			$id = $this->id;
+		}
+
+		if (!$id || !$user_id || !$rating) {
+			return false;
+		}
+
+		$rating = strtolower((string)$rating);
+		$possibleRatings = array('up' => 1, 'down' => -1);
+		if (!in_array($rating, array_keys($possibleRatings))) {
+			return false;
+		}
+
+		$rating = $possibleRatings[$rating];
+		try {
+			$package = $this->find('rate', compact('id', 'user_id'));
+		} catch (Exception $e) {
+			return false;
+		}
+
+		return $this->saveRating($id, $user_id, $rating);
 	}
 
 	public function updateAttributes($package) {

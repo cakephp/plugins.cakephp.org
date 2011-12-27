@@ -17,7 +17,6 @@ class AppController extends Controller {
 		'Cookie',
 		'RequestHandler',
 		'Sanction.Permit' => array(
-			'check' => 'role',
 			'path' => 'Auth.User'
 		),
 		'Session',
@@ -43,7 +42,6 @@ class AppController extends Controller {
 		'Js',
 		'Resource',
 		'Sanction.Clearance' => array(
-			'check' => 'role',
 			'path' => 'Auth.User'
 		),
 		'Session',
@@ -136,8 +134,7 @@ class AppController extends Controller {
  * @return void
  */
 	protected function _setupAuth() {
-		$this->Auth->authorize = 'controller';
-		$this->Auth->fields = array('username' => 'email', 'password' => 'passwd');
+		$this->Auth->authorize = array('Controller');
 		$this->Auth->loginAction = array(
 			'plugin' => null,
 			'admin' => false,
@@ -146,15 +143,16 @@ class AppController extends Controller {
 		);
 		$this->Auth->loginRedirect = '/';
 		$this->Auth->logoutRedirect = '/';
-		$this->Auth->authError = __('Sorry, but you need to be logged in to access this location.');
-		$this->Auth->loginError = __('Invalid credentials. Please try again or create an account.');
-		$this->Auth->autoRedirect = false;
-		$this->Auth->userModel = 'User';
-		$this->Auth->authenticate = null;
-		$this->Auth->sessionKey = 'Auth.User';
-		$this->Auth->userScope = array(
-			'User.email_authenticated' => 1,
-			'User.active' => 1
+		$this->Auth->authenticate = array(
+			'all' => array(
+				'fields' => array('username' => 'email', 'password' => 'passwd'),
+				'userModel' => 'User',
+				'scope' => array(
+					'User.email_authenticated' => 1,
+					'User.active' => 1,
+				),
+			),
+			'Form',
 		);
 	}
 
@@ -314,15 +312,15 @@ class AppController extends Controller {
 /**
  * Sets the currently logged in user as a view variable
  *
+ * Also sets the body class and id
+ *
  * @return void
  */
 	public function beforeRender() {
-		if ($userData = $this->Auth->user()) {
-			$this->set('userData', $userData['User']);
-		}
-
-		$pageId = "{$this->request->params['controller']}";
-		$pageClass = "{$this->request->params['controller']}-{$this->request->params['action']}";
-		$this->set(compact('pageId', 'pageClass'));
+		$userData = $this->Auth->user();
+		$bodyId = "{$this->request->params['controller']}";
+		$bodyClass = "{$this->request->params['controller']}-{$this->request->params['action']}";
+		$this->set(compact('bodyId', 'bodyClass', 'userData'));
 	}
+
 }

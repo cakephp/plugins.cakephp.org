@@ -1,6 +1,8 @@
 <?php
 class PackagesController extends AppController {
 
+	public $helpers = array('Ratings.Rating');
+
 /**
  * Default page for entire application
  */
@@ -88,6 +90,31 @@ class PackagesController extends AppController {
 		}
 
 		$this->redirect($download_url);
+	}
+
+/**
+ * This action takes the rating of an package and processes it
+ *
+ * @param string $id video id
+ * @param string "up" or "down"
+ * @return void
+ * @access public
+ */
+	public function rate($id = null, $direction = null) {
+		$status = 400;
+		$message = __d('packages', 'Unable to vote on this package');
+		if ($this->Package->ratePackage($id, $this->Auth->user('id'), $direction)) {
+			$status = 200;
+			$message = __d('packages', 'Your vote was successfully recorded.');
+		}
+
+		if ($this->RequestHandler->prefers('json')) {
+			$this->RequestHandler->renderAs($this, 'json');
+			$this->set(compact('message', 'status'));
+		} else {
+			$this->Session->setFlash($message, 'flash/' . ($status == 200 ? 'success' : 'error'));
+			$this->redirect($this->referer('/', true));
+		}
 	}
 
 	public function suggest() {

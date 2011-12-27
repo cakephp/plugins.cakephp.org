@@ -428,7 +428,7 @@ class User extends AppModel {
  */
 	public function loggedIn() {
 		$this->id = AuthComponent::user('id');
-		return $this->User->saveField('last_login', date('Y-m-d H:i:s'));
+		return $this->saveField('last_login', date('Y-m-d H:i:s'));
 	}
 
 /**

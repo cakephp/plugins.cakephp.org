@@ -10,11 +10,31 @@ body {
 body.minimal {
 	min-width: 600px;
 }
+.minimal header h1 a {
+	height: 70px;
+	line-height: 70px;
+}
+.minimal header nav {
+	display: block;
+	text-align: center;
+	width: 270px;
+}
+.minimal header form {
+	margin-top: 10px;
+}
 .minimal .container {
 	width: 600px;
 }
+.minimal.packages-view .package {
+	width: 430px;
+}
 .minimal#packages .packages article {
 	width: 280px;
+}
+.minimal.page-form .content .info-sidebar {
+	margin-top: 20px;
+	position: static;
+	width: auto;
 }
 
 body.mobile {
@@ -23,15 +43,25 @@ body.mobile {
 .mobile .container {
 	width: 320px;
 }
-.mobile h1 {
+.mobile header {
+	height: 160px;
+}
+.mobile header h1 {
 	margin: 0;
 	text-align: center;
 	width: 100%;
 }
-.mobile h1 a {
+.mobile header h1 a {
 	height: 35px;
 	line-height: 35px;
 	text-align: center;
+}
+.mobile nav {
+	display: block;
+	margin-top: 15px;
+	position: static;
+	text-align: center;
+	top: 0;
 }
 .mobile header form {
 	margin-top: 10px;
@@ -68,4 +98,9 @@ body.mobile {
 	float: none;
 	margin-top: 10px;
 	position: static;
+}
+.mobile.page-form .content .info-sidebar {
+	margin-top: 20px;
+	position: static;
+	width: auto;
 }

@@ -26,7 +26,7 @@
 
 </head>
 
-<body class="<?php echo $pageClass; ?>" id="<?php echo $pageId; ?>">
+<body class="<?php echo $bodyClass; ?>" id="<?php echo $bodyId; ?>">
 
 
 	<div class="wrapper">

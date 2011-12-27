@@ -132,19 +132,22 @@
 	list-style: square;
 	margin-left: 16px;
 }
-.packages-view .stats {
+.packages-view .package-sidebar {
 	float: right;
 	position: absolute;
 	right: 10px;
 	width: 160px;
 }
-.packages-view .stats p {
+.packages-view .package-sidebar p {
 	margin-bottom: 2px;
 }
-.packages-view .stats strong {
+.packages-view .package-sidebar strong {
 	color: #444;
 	font-family: sans-serif;
 	font-size: 13px;
 	font-weight: bold;
 	line-height: 22px;
+}
+.packages-view .package-sidebar .vote {
+	margin-bottom: 20px;
 }
