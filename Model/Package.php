@@ -675,8 +675,10 @@ class Package extends AppModel {
 
 		if (!empty($result['feed']['entry'])) {
 			$result = array($result['feed']['entry']);
-			if (!empty($result[0])) {
-				$result = array_slice($result[0], 0, $options['limit'], true);
+			if (empty($result[0])) {
+			  $result = array($result);
+			} else {
+				$result = array_slice($result, 0, $options['limit'], true);
 			}
 
 			foreach ($result as $item) {
