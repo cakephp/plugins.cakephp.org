@@ -32,7 +32,10 @@
 	font-weight: normal;
 	font-style: normal;
 }
-body, h1, h2, h3, h4, h5, h6, a {
+body {
+	font-family: Helvetica, Arial, sans-serif;
+}
+h1, h2, h3, h4, h5, h6 {
 	font-family: 'MuseoSlab500', Arial, Helvetica, sans-serif;
 }
 h2 {
