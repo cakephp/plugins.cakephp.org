@@ -1,6 +1,7 @@
 /* Maintainer View */
 .maintainers-view .content h2 {
-	padding-bottom: 27px;
+	border: none;
+	padding-bottom: 0;
 }
 .maintainers-view .content img {
 	margin-bottom: -15px;
