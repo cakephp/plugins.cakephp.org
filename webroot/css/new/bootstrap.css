@@ -36,7 +36,7 @@ body {
 	font-family: Helvetica, Arial, sans-serif;
 }
 h1, h2, h3, h4, h5, h6 {
-	font-family: 'MuseoSlab500', Arial, Helvetica, sans-serif;
+	font-family: 'MuseoSlab500', Helvetica, Arial, sans-serif;
 }
 h2 {
 	border-bottom: 2px dotted #bb9066;
@@ -50,7 +50,7 @@ h3 {
 	color: #476371;
 	font-size: 18px;
 	line-height: 18px;
-	padding-bottom: 9px;
+	padding-bottom: 5px;
 }
 h4 {
 	color: #1B252C;

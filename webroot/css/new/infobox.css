@@ -24,7 +24,7 @@
 	margin-bottom: 10px;
 }
 .sidebar .infobox input[type="text"] {
-	background: #ffffff url('../img/input_bg.jpg') repeat-x;
+	background: #ffffff url('/img/input_bg.jpg') repeat-x;
 	border: 1px solid #ababab;
 	margin-bottom: 10px;
 	padding: 5px 1px;
