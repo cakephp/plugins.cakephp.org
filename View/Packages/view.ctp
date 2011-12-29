@@ -24,15 +24,15 @@
 			<?php echo $this->Resource->clone_url($package['Maintainer']['username'], $package['Package']['name']); ?>
 		</div>
 
-		<?php if (!empty($rss) && is_array($rss)) : ?>
+		<?php if (!empty($package['Rss']) && is_array($package['Rss'])) : ?>
 		<div class="rss">
 			<h3><?php echo __('Recent Activity'); ?></h3>
 			<ul>
-				<?php foreach ($rss as $entry) : ?>
+				<?php foreach ($package['Rss'] as $entry) : ?>
 					<li>
 						<?php echo $this->Html->link(
-							$this->Time->format('Y-m-d', $entry['Entry']['updated']) . ' ' . $entry['Entry']['title'],
-							$entry['Entry']['link'], array('target' => '_blank', 'rel' => 'nofollow')
+							$this->Time->format('Y-m-d', $entry['updated']) . ' ' . $entry['title'],
+							$entry['link'], array('target' => '_blank', 'rel' => 'nofollow', 'escape' => false)
 						); ?>
 					</li>
 				<?php endforeach; ?>

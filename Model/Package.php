@@ -288,6 +288,7 @@ class Package extends AppModel {
 			if (empty($results[0])) {
 				throw new OutOfBoundsException(__('Invalid package'));
 			}
+			list($results[0]['Rss'], $results[0]['Cache']) = $this->rss($results[0]);
 			return $results[0];
 		}
 	}
@@ -716,7 +717,7 @@ class Package extends AppModel {
 					$item['avatar'] = '';
 				}
 
-				$items[] = array('Entry' => $item);
+				$items[] = $item;
 			}
 		}
 

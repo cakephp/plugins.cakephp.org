@@ -62,8 +62,7 @@ class PackagesController extends AppController {
 		}
 
 		$disqus = $this->Package->disqus($package);
-		list($rss, $cache) = $this->Package->rss($package);
-		$this->set(compact('cache', 'disqus', 'package', 'rss'));
+		$this->set(compact('disqus', 'package'));
 	}
 
 /**
