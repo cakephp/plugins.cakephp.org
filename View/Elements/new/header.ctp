@@ -1,6 +1,6 @@
 <header>
 	<div class="container">
-		<h1><?php echo $this->Html->link(__('Package Indexer'), '/'); ?></h1>
+		<h1><?php echo $this->Html->link($siteTitle, '/'); ?></h1>
 
 		<nav class="main-nav">
 			<ul>

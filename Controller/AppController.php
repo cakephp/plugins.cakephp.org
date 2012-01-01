@@ -20,7 +20,6 @@ class AppController extends Controller {
 			'path' => 'Auth.User'
 		),
 		'Session',
-		'Settings.Settings',
 		'Sham.Sham' => array(
 			'autoRun' => false,
 		),
@@ -317,10 +316,14 @@ class AppController extends Controller {
  * @return void
  */
 	public function beforeRender() {
-		$userData = $this->Auth->user();
 		$bodyId = "{$this->request->params['controller']}";
 		$bodyClass = "{$this->request->params['controller']}-{$this->request->params['action']}";
-		$this->set(compact('bodyId', 'bodyClass', 'userData'));
+		$siteTitle = Configure::read('Settings.SiteTitle');
+		if (!$siteTitle) {
+			$siteTitle = __('Package Indexer');
+		}
+		$userData = $this->Auth->user();
+		$this->set(compact('bodyId', 'bodyClass', 'siteTitle', 'userData'));
 	}
 
 }

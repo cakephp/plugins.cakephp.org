@@ -72,7 +72,7 @@ Environment::configure('staging',
 	array(
 		// Site specific items
 		'UrlCache.pageFiles'      => true,
-		'Settings.SiteTitle'      => 'cakepackages',
+		'Settings.SiteTitle'      => 'Package Indexer',
 		'Settings.FULL_BASE_URL'  => 'http://staging.cakepackages.com',
 
 		'Disqus.disqus_shortname' => 'cakepackages',
@@ -118,7 +118,7 @@ Environment::configure('development',
 	true,
 	array(
 		'UrlCache.pageFiles'      => true,
-		'Settings.SiteTitle'      => 'CakePackages',
+		'Settings.SiteTitle'      => 'Package Indexer',
 		'Settings.FULL_BASE_URL'  => 'http://cakepackages.dev',
 
 		'Disqus.disqus_shortname' => 'cakepackages',
