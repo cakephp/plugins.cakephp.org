@@ -1,5 +1,5 @@
 <?php
-class Detail extends AppModel {
+class UserDetail extends AppModel {
 
 /**
  * Detailed list of belongsTo associations.

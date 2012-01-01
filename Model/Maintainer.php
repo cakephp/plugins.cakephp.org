@@ -20,6 +20,14 @@ class Maintainer extends AppModel {
 	public $displayField = 'username';
 
 /**
+ * Detailed list of belongsTo associations.
+ *
+ * @var array
+ * @link http://book.cakephp.org/2.0/en/models/associations-linking-models-together.html#belongsto
+ */
+	public $belongsTo = array('User');
+
+/**
  * Detailed list of hasMany associations.
  *
  * @var array

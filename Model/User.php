@@ -32,13 +32,25 @@ class User extends AppModel {
 	);
 
 /**
- * hasMany associations
+ * Detailed list of hasMany associations.
  *
  * @var array
+ * @link http://book.cakephp.org/2.0/en/models/associations-linking-models-together.html#hasmany
  */
 	public $hasMany = array(
 		'UserDetail',
 	);
+
+/**
+ * Detailed list of hasOne associations.
+ *
+ * @var array
+ * @link http://book.cakephp.org/2.0/en/models/associations-linking-models-together.html#hasone
+ */
+	public $hasOne = array(
+		'Maintainer',
+	);
+
 /**
  * Validation parameters
  *
