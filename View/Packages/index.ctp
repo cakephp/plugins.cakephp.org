@@ -47,4 +47,15 @@
 	</section>
 </div>
 
-<?php echo $this->element('new/paging'); ?>
+<?php
+$this->Paginator->options(array(
+	'url' => $this->passedArgs
+));
+?>
+<?php if ($this->Paginator->hasNext() || $this->Paginator->hasPrev()): ?>
+	<div class="paging">
+		<?php echo $this->Paginator->prev('prev', array(), null, array('class' => 'disabled'));?>
+		<?php echo $this->Paginator->numbers(array('separator' => ' ', 'modulus' => 8));?>
+		<?php echo $this->Paginator->next('next', array(), null, array('class' => 'disabled'));?>
+	</div>
+<?php endif; ?>
