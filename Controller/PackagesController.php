@@ -23,29 +23,29 @@ class PackagesController extends AppController {
  */
 	public function index() {
 		if ($this->request->is('post')) {
-			$clean = $this->Package->cleanParams($this->request->data, false);
-			$this->redirect($clean);
+			list($data, $query) = $this->Package->cleanParams($this->request->data, array(
+				'rinse' => false,
+				'allowed' => $this->Package->allowedFilters,
+			));
+			$this->redirect($data);
 		}
 
-		$allowed = array('with', 'since', 'query', 'watchers');
-		$this->request->data = $this->Package->cleanParams(
-			$this->request->params['named'],
-			compact('allowed')
+		list($this->request->data, $query) = $this->Package->cleanParams(
+			$this->request->params['named'], array(
+				'allowed' => $this->Package->allowedFilters,
+				'coalesce' => true,
+			)
 		);
 		$this->paginate = array(
 			'index',
-			'named' => $this->request->data,
 			'limit' => 20,
+			'named' => $this->request->data,
 		);
+		$this->request->data['query'] = $query;
 
-		if (empty($this->request->params['named']['sort'])) {
-			$this->request->params['named']['sort'] = 'rating';
-		}
-
-		$merge = $this->Package->cleanParams($this->request->data, false);
 		$packages = $this->paginate();
 		$tabs = $this->Package->tabs;
-		$this->set(compact('merge', 'packages', 'tabs'));
+		$this->set(compact('packages', 'tabs'));
 	}
 
 /**

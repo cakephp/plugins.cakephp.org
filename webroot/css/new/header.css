@@ -79,13 +79,21 @@ header form input {
 	height: 30px;
 }
 header form input[type=text] {
-	border: 1px solid #4c4c4c;
-	margin-right: 5px;
+	border: 1px solid #4C4C4C;
+	color: #333;
+	float: left;
+	font-size: 12px;
 	padding: 0 5px;
+	margin-right: 5px;
+	width: 210px;
+	-khtml-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
 	-moz-box-shadow: 1px 1px 1px #537076;
 	-webkit-box-shadow: 1px 1px 1px #537076;
 	box-shadow: 1px 1px 1px #537076;
-	width: 210px;
+	border-image: initial;
 }
 header form input[type=text]:hover,
 header form input[type=text]:focus {

@@ -44,7 +44,7 @@ body.mobile {
 	width: 320px;
 }
 .mobile header {
-	height: 160px;
+	height: 110px;
 }
 .mobile header h1 {
 	margin: 0;
@@ -57,8 +57,8 @@ body.mobile {
 	text-align: center;
 }
 .mobile nav {
-	display: block;
-	margin-top: 15px;
+	display: none;
+	margin-top: 0;
 	position: static;
 	text-align: center;
 	top: 0;
@@ -66,6 +66,9 @@ body.mobile {
 .mobile header form {
 	margin-top: 10px;
 	position: static;
+}
+.mobile.packages-index .search {
+	display: none;
 }
 .mobile.packages-view .summary p {
 	float: none;
@@ -93,6 +96,7 @@ body.mobile {
 .mobile#packages .packages {
 	float: none;
 	margin-right: 0;
+	min-height: 125px;
 }
 .mobile#packages .sidebar {
 	float: none;

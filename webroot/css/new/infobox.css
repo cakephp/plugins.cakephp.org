@@ -19,6 +19,7 @@
 	font-size: 14px;
 	font-weight: bold;
 	margin-bottom: 12px;
+	padding-bottom: 0;
 }
 .sidebar .infobox p {
 	margin-bottom: 10px;
@@ -34,4 +35,34 @@
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
 	border-image: initial;
+}
+.sidebar .infobox.transparent {
+	background: none;
+	border: none;
+	color: #333;
+	margin: 0 auto 20px auto;
+	padding: 0;
+	text-align: left;
+	width: 300px;
+}
+.sidebar .infobox.transparent h3 {
+	background-color: #D9E4E5;
+	padding: 5px 0 5px 5px;
+	width: 305px;
+}
+.sidebar .infobox.transparent p {
+	color: #333;
+	font-size: 13px;
+	line-height: 18px;
+	width: 310px;
+}
+.sidebar .infobox.transparent table {
+	border-spacing: 2px;
+	font-size: 13px;
+	width: 310px;
+}
+.sidebar .infobox.transparent .code {
+	background: #EEE;
+	font-family: Monaco,"Courier New","DejaVu Sans Mono","Bitstream Vera Sans Mono",monospace;
+	padding-bottom: 3px;
 }

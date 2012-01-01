@@ -19,6 +19,12 @@ class Package extends AppModel {
 		'Softdeletable',
 	);
 
+	public $allowedFilters = array(
+		'collaborators', 'contains', 'contributors',
+		'forks', 'has', 'open_issues', 'query',
+		'since', 'watchers', 'with'
+	);
+
 	public $validTypes = array(
 		'model', 'controller', 'view',
 		'behavior', 'component', 'helper',
@@ -124,11 +130,23 @@ class Package extends AppModel {
 	public function _findIndex($state, $query, $results = array()) {
 		if ($state == 'before') {
 			$query['named'] = array_merge(array(
-				'query' => null,
-				'since' => null,
-				'watchers' => null,
-				'with' => null,
+				'collaborators' => null,
+				'contains'      => array(),
+				'contributors'  => null,
+				'forks'         => null,
+				'has'           => array(),
+				'open_issues'   => null,
+				'query'         => null,
+				'since'         => null,
+				'watchers'      => null,
+				'with'          => array(),
 			), $query['named']);
+
+			$query['named']['has'] = array_merge(
+				(array) $query['named']['with'],
+				(array) $query['named']['contains'],
+				(array) $query['named']['has']
+			);
 
 			$query['conditions'] = array("{$this->alias}.deleted" => false);
 			$query['contain'] = array('Maintainer' => array('id','username', 'name'));
@@ -139,7 +157,32 @@ class Package extends AppModel {
 
 			$query['order'][] = array("{$this->alias}.created DESC");
 
-			if ($query['named']['query']) {
+			if ($query['named']['collaborators'] !== null) {
+				$query['conditions']["{$this->alias}.collaborators >="] = (int) $query['named']['collaborators'];
+			}
+
+			if ($query['named']['contributors'] !== null) {
+				$query['conditions']["{$this->alias}.contributors >="] = (int) $query['named']['contributors'];
+			}
+
+			if ($query['named']['forks'] !== null) {
+				$query['conditions']["{$this->alias}.forks >="] = (int) $query['named']['forks'];
+			}
+
+			if (!empty($query['named']['has'])) {
+				foreach ($query['named']['has'] as $has) {
+					$has = inflector::singularize(strtolower($has));
+					if (in_array($has, $this->validTypes)) {
+						$query['conditions']["{$this->alias}.contains_{$has}"] = true;
+					}
+				}
+			}
+
+			if ($query['named']['open_issues'] !== null) {
+				$query['conditions']["{$this->alias}.open_issues <="] = (int) $query['named']['open_issues'];
+			}
+
+			if ($query['named']['query'] !== null) {
 				$query['conditions'][]['OR'] = array(
 					"{$this->alias}.name LIKE" => '%' . $query['named']['query'] . '%',
 					"{$this->alias}.description LIKE" => '%' . $query['named']['query'] . '%',
@@ -147,21 +190,13 @@ class Package extends AppModel {
 				);
 			}
 
-			if ($query['named']['since']) {
+			if ($query['named']['since'] !== null) {
 				$time = date('Y-m-d H:i:s', strtotime($query['named']['since']));
 				$query['conditions']["{$this->alias}.last_pushed_at >"] = $time;
 			}
 
-			if ($query['named']['watchers']) {
-				$query['conditions']["{$this->alias}.watchers >"] = $query['named']['watchers'];
-			}
-
-			if ($query['named']['with']) {
-				$query['named']['with'] = Inflector::singularize($query['named']['with']);
-			}
-
-			if (in_array($query['named']['with'], $this->validTypes)) {
-				$query['conditions']["{$this->alias}.contains_{$query['named']['with']}"] = true;
+			if ($query['named']['watchers'] !== null) {
+				$query['conditions']["{$this->alias}.watchers >="] = (int) $query['named']['watchers'];
 			}
 
 			if (!empty($query['operation'])) {
@@ -531,42 +566,127 @@ class Package extends AppModel {
 	}
 
 	public function cleanParams($named, $options = array()) {
+		$coalesce = '';
+
 		if (empty($named)) {
-			return array();
+			return array(array(), $coalesce);
 		}
 		if (is_bool($options)) {
 			$options = array('rinse' => $options);
 		}
 
 		$options = array_merge(array(
-			'rinse' => true,
 			'allowed' => array(),
+			'coalesce' => false,
+			'rinse' => true,
 		), $options);
 
 		if ($options['rinse']) {
 			$search = '+';
-			$replace = ' ';
+			$separator = ' ';
 		} else {
 			$search = ' ';
-			$replace = '+';
+			$separator = '+';
 		}
 
 		if (!empty($options['allowed'])) {
 			$named = array_intersect_key($named, array_combine($options['allowed'], $options['allowed']));
 		}
 
+		if (isset($named['query']) && is_string($named['query']) && strlen($named['query'])) {
+			$named['query'] = preg_split('/\s+(?=[a-zA-Z0-0\s\":])/', $named['query']);
+		}
+
 		foreach ($named as $key => $value) {
 			if (is_array($value)) {
 				$values = array();
 				foreach ($value as $v) {
-					$values[] = str_replace($search, $replace, Sanitize::clean($v));
+					$values[] = str_replace($search, $separator, Sanitize::clean($v));
 				}
 				$named[$key] = $values;
 			} else {
-				$named[$key] = str_replace($search, $replace, Sanitize::clean($value));
+				$named[$key] = str_replace($search, $separator, Sanitize::clean($value));
 			}
 		}
-		return $named;
+
+		if (isset($named['query'])) {
+			$query = '';
+			foreach ((array)$named['query'] as $q) {
+				if (strstr($q, ':') === false) {
+					$query .= $separator . trim($q);
+					continue;
+				}
+
+				$pieces = explode(':', $q, 2);
+				$pieces[0] = trim($pieces[0]);
+				if (!in_array($pieces[0], $options['allowed'])) {
+					$query .= $separator . $q;
+					continue;
+				}
+
+				if ($pieces[0] == 'query') {
+					$query = trim($pieces[1]) . $separator . trim($query);
+					continue;
+				}
+
+				if (isset($named[$pieces[0]]) && $pieces[0] == 'has') {
+					if (is_array($named[$pieces[0]])) {
+						$named[$pieces[0]][] = $pieces[1];
+					} else {
+						$named[$pieces[0]] = array(
+							$named[$pieces[0]],
+							$pieces[1]
+						);
+					}
+				} else {
+					$named[$pieces[0]] = $pieces[1];
+				}
+			}
+			if (strlen($query) && $query[0] == $separator) {
+				$query = substr($query, 1);
+			}
+			$named['query'] = trim($query);
+		}
+
+		if ($options['coalesce']) {
+			foreach ($named as $key => $value) {
+				if ($key == 'query') {
+					continue;
+				}
+
+				if (is_array($value)) {
+					foreach ($value as $v) {
+						$coalesce .= "{$separator}{$key}:{$v}";
+					}
+				} else {
+					$coalesce .= "{$separator}{$key}:{$value}";
+				}
+			}
+			if (strlen($coalesce) && $coalesce[0] == $separator) {
+				$coalesce = substr($coalesce, 1);
+			}
+
+			if (isset($named['query'])) {
+				$coalesce = "{$coalesce}{$separator}" . trim($named['query']);
+			}
+			if (strlen($coalesce) && $coalesce[0] == $separator) {
+				$coalesce = substr($coalesce, 1);
+			}
+		}
+
+		$clean = array();
+		foreach ($named as $key => $value) {
+			if (is_array($value)) {
+				$clean[$key] = $value;
+			}
+
+			if (is_string($value) && strlen($value)) {
+				$clean[$key] = $value;
+			}
+		}
+		$named = $clean;
+
+		return array($named, $coalesce);
 	}
 
 	public function suggest($data) {
