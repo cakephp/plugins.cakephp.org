@@ -1,7 +1,8 @@
 <?php
-App::uses('Sanitize', 'Utility');
 App::uses('Characterizer', 'Lib');
+App::uses('DebugTimer', 'DebugKit.Lib');
 App::uses('HttpSocket', 'Network/Http');
+App::uses('Sanitize', 'Utility');
 App::uses('Xml', 'Utility');
 
 class Package extends AppModel {
@@ -318,12 +319,17 @@ class Package extends AppModel {
 			);
 			$query['contain'] = array('Maintainer' => array($this->displayField, 'username'));
 			$query['limit'] = 1;
+
+			DebugTimer::start('app.Package::find#view', __d('app', 'Package::find(\'view\')'));
 			return $query;
 		} elseif ($state == 'after') {
+			DebugTimer::stop('app.Package::find#view');
 			if (empty($results[0])) {
 				throw new OutOfBoundsException(__('Invalid package'));
 			}
+			DebugTimer::start('app.Package::rss', __d('app', 'Package::rss()'));
 			list($results[0]['Rss'], $results[0]['Cache']) = $this->rss($results[0]);
+			DebugTimer::stop('app.Package::rss');
 			return $results[0];
 		}
 	}
@@ -768,11 +774,11 @@ class Package extends AppModel {
 		}
 
 		if (!$options['key']) {
-			$options['key'] = MiCache::key(md5($options['uri']));
+			$options['key'] = md5($options['uri']);
 		}
 
 		$items = array();
-		if (($items = MiCache::read($options['key'])) !== false) {
+		if (($items = Cache::read($options['key'])) !== false) {
 			return array($items, $options['cache']);
 		}
 
@@ -841,7 +847,7 @@ class Package extends AppModel {
 			}
 		}
 
-		MiCache::write($options['key'], $items);
+		Cache::write($options['key'], $items);
 		return array($items, $options['cache']);
 	}
 
