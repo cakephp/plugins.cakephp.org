@@ -43,7 +43,7 @@
 
 	<section class="sidebar">
 		<?php echo $this->element('search-legend'); ?>
-		<?php echo $this->element('nesuggest'); ?>
+		<?php echo $this->element('suggest'); ?>
 	</section>
 </div>
 
