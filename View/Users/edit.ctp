@@ -15,26 +15,26 @@
 <fieldset>
 	<legend><?php __d('spactare', 'Personal information'); ?></legend>
 	<?php
-		echo $this->Form->input('Detail.firstname', array(
+		echo $this->Form->input('UserDetail.firstname', array(
 			'label' => __d('spactare', 'First Name')));
-		echo $this->Form->input('Detail.middlename', array(
+		echo $this->Form->input('UserDetail.middlename', array(
 			'label' => __d('spactare', 'Middle Name')));
-		echo $this->Form->input('Detail.lastname', array(
+		echo $this->Form->input('UserDetail.lastname', array(
 			'label' => __d('spactare', 'Last Name')));
-		echo $this->Form->input('Detail.birthday', array(
+		echo $this->Form->input('UserDetail.birthday', array(
 			'label' => __d('spactare', 'Birthday'),
 			'type' => 'date',
 			'empty' => true,
 			'minYear' => date('Y') - 100,
 			'maxYear' => date('Y')));
 		echo $this->element('users/country_list', array(
-			'fieldName' => 'Detail.country'));
-		echo $this->Form->input('Detail.language', array(
+			'fieldName' => 'UserDetail.country'));
+		echo $this->Form->input('UserDetail.language', array(
 			'label' => __d('spactare', 'Language'),
 			'type' => 'select',
 			'empty' => true,
 			'options' => $languages));
-		echo $this->Form->input('Detail.biography', array(
+		echo $this->Form->input('UserDetail.biography', array(
 			'label' => __d('spactare', 'Biography'),
 			'type' => 'textarea'));
 	?>
@@ -43,11 +43,11 @@
 	<legend><?php __d('spactare', 'Your Gravatar'); ?></legend>
 		<p>
 		<?php
-			$gravatarEmail = (empty($this->data['Detail']['gravatar_email'])) ? $this->data[$model]['email'] : $this->data['Detail']['gravatar_email'];
+			$gravatarEmail = (empty($this->data['UserDetail']['gravatar_email'])) ? $this->data[$model]['email'] : $this->data['UserDetail']['gravatar_email'];
 			echo $gravatar->image($gravatarEmail);
 		?>
 		</p>
-	<?php if (empty($this->data['Detail']['gravatar_email'])) : ?>
+	<?php if (empty($this->data['UserDetail']['gravatar_email'])) : ?>
 		<p class="error-message">
 			<?php printf(__d('spactare', 'If you want to use an email address different from "%s", please fill the input below'), $gravatarEmail); ?>
 		</p>
@@ -59,7 +59,7 @@
 			echo $this->Html->link(__d('spactare', 'Click here for more info.'), 'http://www.gravatar.com/');
 		?>
 	</p>
-	<?php echo $this->Form->input('Detail.gravatar_email', array(
+	<?php echo $this->Form->input('UserDetail.gravatar_email', array(
 			'label' => __d('spactare', 'Your gravatar email address'),
 			'default' => $this->data[$model]['email']));?>
 </fieldset>

@@ -37,7 +37,7 @@ class User extends AppModel {
  * @var array
  */
 	public $hasMany = array(
-		'Detail',
+		'UserDetail',
 	);
 /**
  * Validation parameters
@@ -276,10 +276,10 @@ class User extends AppModel {
  */
 	public function afterFind($results, $primary = false) {
 		foreach ($results as &$row) {
-			if (isset($row['Detail']) && (is_array($row))) {
-				$detail = $this->Detail->getSection($row[$this->alias]['id'], $this->alias);
-				$row['Detail'] = !empty($detail['User']) ? $detail['User'] : array();
-				$row[$this->alias] = array_merge($row[$this->alias], $row['Detail']);
+			if (isset($row['UserDetail']) && (is_array($row))) {
+				$detail = $this->UserDetail->getSection($row[$this->alias]['id'], $this->alias);
+				$row['UserDetail'] = !empty($detail['User']) ? $detail['User'] : array();
+				$row[$this->alias] = array_merge($row[$this->alias], $row['UserDetail']);
 
 				$names = array('firstname' => '', 'lastname' => '');
 				foreach ($names as $key => $value) {

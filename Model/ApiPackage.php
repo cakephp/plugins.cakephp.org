@@ -18,14 +18,6 @@ class ApiPackage extends AppModel {
 	public $belongsTo = array('Maintainer');
 
 /**
- * Detailed list of hasOne associations.
- *
- * @var array
- * @link http://book.cakephp.org/view/1041/hasOne
- */
-	public $hasOne = array('Source');
-
-/**
  * Custom database table name, or null/false if no table association is desired.
  *
  * @var string
@@ -69,24 +61,6 @@ class ApiPackage extends AppModel {
 				$contains['Maintainer'] = array('username', 'name');
 			}
 
-			if (isset($query['request']['type'])) {
-				$query['conditions']['Source.type'] = $query['request']['type'];
-				$query['conditions']['Source.deleted'] = false;
-				$contains['Source'] = array('name', 'type', 'path', 'default', 'official');
-
-				if (isset($query['request']['source'])) {
-					$query['conditions']['Source.name'] = $query['request']['source'];
-				} else {
-					$query['conditions']['Source.default'] = $query['request']['type'];
-				}
-			} elseif (isset($query['request']['source'])) {
-				$query['conditions']['Source.name'] = $query['request']['source'];
-				$query['conditions']['Source.deleted'] = false;
-				$contains['Source'] = array('name', 'type', 'path', 'default', 'official');
-			} else {
-				$contains['Source'] = array('name', 'type', 'path', 'default', 'official');
-			}
-
 			if (!empty($contains)) {
 				$query['contain'] = $contains;
 			}
@@ -99,8 +73,6 @@ class ApiPackage extends AppModel {
 			}
 
 			foreach ($results as &$result) {
-				$result['Source']['default'] = (bool) $result['Source']['default'];
-				$result['Source']['official'] = (bool) $result['Source']['official'];
 				$result['Package'] = $result[$this->alias];
 				unset($result[$this->alias], $result['Maintainer']['id']);
 			}

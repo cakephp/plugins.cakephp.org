@@ -292,7 +292,7 @@ class UsersController extends AppController {
  */
 	public function edit() {
 		if (!empty($this->request->data)) {
-			if ($this->User->Detail->saveSection($this->Auth->user('id'), $this->request->data, 'User')) {
+			if ($this->User->UserDetail->saveSection($this->Auth->user('id'), $this->request->data, 'User')) {
 				$this->Session->setFlash(__('Profile saved.'), 'flash/success');
 			} else {
 				$this->Session->setFlash(__('Could not save your profile.'), 'flash/error');
@@ -300,7 +300,7 @@ class UsersController extends AppController {
 		} else {
 			$this->request->data = $this->User->find('first', array(
 				'conditions' => array($this->User->alias . '.id' => $this->Auth->user('id')),
-				'contain' => array('Detail')
+				'contain' => array('UserDetail')
 			));
 		}
 		$this->set('title_for_layout', __('Edit account information'));

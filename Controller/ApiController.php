@@ -28,28 +28,6 @@ class ApiController extends AppController {
 	}
 
 /**
- * Provides search functionality across the SearchIndex
- *
- * @param string $query
- */
-	public function one_search($query = null) {
-		if (!$query) {
-			return $this->set('results', $this->status[400]);
-		}
-
-		$this->loadModel('ApiSearchIndex');
-		$results = $this->ApiSearchIndex->getSearch($query);
-		if (!$results) $results = array();
-
-		$results = array_merge(array(
-			'count'   => count($results),
-			'results' => $results
-		), $this->status[200]);
-
-		return $this->set(compact('results'));
-	}
-
-/**
  * Returns a set of packages that may match an install query
  */
 	public function one_install() {
