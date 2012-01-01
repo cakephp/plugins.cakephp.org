@@ -11,6 +11,7 @@ Environment::configure('production',
 		'UrlCache.pageFiles'      => true,
 		'Settings.SiteTitle'      => 'cakepackages',
 		'Settings.FULL_BASE_URL'  => 'http://cakepackages.com',
+		'Settings.theme'          => 'Csf',
 
 		'Disqus.disqus_shortname' => 'cakepackages',
 		'Disqus.disqus_developer' => 0,

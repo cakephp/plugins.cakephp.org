@@ -144,6 +144,10 @@ namespace :link do
     if plugin_dir
       run "rm -rf #{deploy_to}/Plugin && ln -s #{cake_folder}/#{plugin_dir} #{deploy_to}/Plugin"
     end
+
+    if deploy_env == :production
+      run "cd #{current_release} && git clone git@github.com:cakephp/theme-packages.git View/Themed/Csf"
+    end
   end
 
   desc <<-DESC
