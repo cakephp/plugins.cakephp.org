@@ -76,6 +76,11 @@ class AppController extends Controller {
 			));
 		}
 
+		if (Configure::read('Settings.theme')) {
+			$this->theme = Configure::read('Settings.theme');
+			$this->viewClass = 'Theme';
+		}
+
 		parent::__construct($request, $response);
 	}
 

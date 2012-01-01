@@ -42,7 +42,7 @@
 	<?php if (!empty($maintainer['Package'])):?>
 		<?php foreach ($maintainer['Package'] as $package): ?>
 			<article>
-				<?php echo $this->element('new/preview', array(
+				<?php echo $this->element('preview', array(
 					'package' => $package,
 					'maintainer' => $maintainer['Maintainer'],
 					'showMaintainer' => false,

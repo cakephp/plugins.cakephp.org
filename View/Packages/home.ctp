@@ -23,7 +23,7 @@
 		<h2><?php echo __('Latest CakePHP code'); ?></h2>
 		<?php foreach ($packages as $package) : ?>
 			<article>
-				<?php echo $this->element('new/preview', array(
+				<?php echo $this->element('preview', array(
 					'package' => $package['Package'],
 					'maintainer' => $package['Maintainer'],
 				)); ?>
@@ -32,6 +32,6 @@
 	</section>
 
 	<section class="sidebar">
-		<?php echo $this->element('new/suggest'); ?>
+		<?php echo $this->element('suggest'); ?>
 	</section>
 </div>

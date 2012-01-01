@@ -1,5 +1,5 @@
 header {
-	background-color: #427183;
+	background-color: #376475;
 	height: 110px;
 	padding-top: 5px;
 	width: 100%;
@@ -36,7 +36,7 @@ header nav ul li {
 	position: relative;
 }
 header nav ul li a {
-	background: #1B404A;
+	background: #2e5969;
 	border: 1px solid #0F2D37;
 	color: white;
 	font-size: 14px;

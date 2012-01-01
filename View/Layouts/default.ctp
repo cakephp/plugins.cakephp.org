@@ -4,6 +4,9 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<?php echo $this->Sham->out(null, array('skip' => array('charset'))); ?>
 	<?php echo $this->AssetCompress->css('default'); ?>
+	<?php if ($this->theme) : ?>
+		<?php echo $this->AssetCompress->css('theme'); ?>
+	<?php endif; ?>
 	<title>
 		<?php echo __('CakePHP Packages -') . $title_for_layout; ?>
 	</title>

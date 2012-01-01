@@ -28,11 +28,11 @@
 <div class="clearfix columns">
 	<section class="packages">
 		<?php if (empty($packages)) : ?>
-			<?php echo $this->element('new/no-results'); ?>
+			<?php echo $this->element('no-results'); ?>
 		<?php else : ?>
 			<?php foreach ($packages as $package) : ?>
 				<article>
-					<?php echo $this->element('new/preview', array(
+					<?php echo $this->element('preview', array(
 						'package' => $package['Package'],
 						'maintainer' => $package['Maintainer'],
 					)); ?>
@@ -42,8 +42,8 @@
 	</section>
 
 	<section class="sidebar">
-		<?php echo $this->element('new/search-legend'); ?>
-		<?php echo $this->element('new/suggest'); ?>
+		<?php echo $this->element('search-legend'); ?>
+		<?php echo $this->element('nesuggest'); ?>
 	</section>
 </div>
 
