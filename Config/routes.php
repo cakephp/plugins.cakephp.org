@@ -46,8 +46,6 @@
 	Router::connect('/dashboard', array('controller' => 'users', 'action' => 'dashboard'));
 	Router::connect('/package/*', array('controller' => 'packages', 'action' => 'view'));
 	Router::connect('/maintainer/*', array('controller' => 'maintainers', 'action' => 'view'));
-	Router::connect('/posts/*', array('plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'index'));
-	Router::connect('/post/*', array('plugin' => 'blog', 'controller' => 'blog_posts', 'action' => 'view'));
 
 	App::uses('PageRoute', 'PageRoute.Routing/Route');
 	Router::connect('/:page', array('controller' => 'pages', 'action' => 'display'),
