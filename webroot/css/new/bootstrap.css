@@ -37,6 +37,7 @@ body {
 }
 h1, h2, h3, h4, h5, h6 {
 	font-family: 'MuseoSlab500', Helvetica, Arial, sans-serif;
+	font-weight: normal;
 }
 h2 {
 	border-bottom: 2px dotted #bb9066;
