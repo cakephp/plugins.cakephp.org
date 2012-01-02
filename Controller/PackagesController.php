@@ -120,7 +120,7 @@ class PackagesController extends AppController {
 		if (!empty($this->request->data['Package'])) {
 			if ($this->Package->suggest($this->request->data['Package'])) {
 				$this->Session->setFlash('Thanks, your submission will be reviewed shortly!', 'flash/success');
-				unset($this->request->data['Package']);
+				$this->redirect($this->referer(array('controller' => 'packages', 'action' => 'suggest'), true));
 			} else{
 				$this->Session->setFlash('There was some sort of error...', 'flash/error');
 			}

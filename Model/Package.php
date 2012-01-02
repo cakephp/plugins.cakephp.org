@@ -327,6 +327,7 @@ class Package extends AppModel {
 			if (empty($results[0])) {
 				throw new OutOfBoundsException(__('Invalid package'));
 			}
+
 			DebugTimer::start('app.Package::rss', __d('app', 'Package::rss()'));
 			list($results[0]['Rss'], $results[0]['Cache']) = $this->rss($results[0]);
 			DebugTimer::stop('app.Package::rss');
@@ -758,11 +759,13 @@ class Package extends AppModel {
 
 	public function rss($package, $options = array()) {
 		$options = array_merge(array(
+			'allowed' => array('id', 'link', 'title', 'updated'),
 			'cache' => null,
 			'limit' => 4,
 			'key' => null,
 			'uri' => null,
 		), $options);
+		$options['allowed'] = array_combine($options['allowed'], $options['allowed']);
 
 		if (!is_array($options['cache'])) {
 			$options['cache'] = array(
@@ -846,6 +849,10 @@ class Package extends AppModel {
 					unset($item['media:thumbnail']);
 				} else {
 					$item['avatar'] = '';
+				}
+
+				if (is_array($options['allowed'])) {
+					$item = array_intersect_key($item, $options['allowed']);
 				}
 
 				$items[] = $item;

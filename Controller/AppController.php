@@ -323,12 +323,7 @@ class AppController extends Controller {
 	public function beforeRender() {
 		$bodyId = "{$this->request->params['controller']}";
 		$bodyClass = "{$this->request->params['controller']}-{$this->request->params['action']}";
-		$siteTitle = Configure::read('Settings.SiteTitle');
-		if (!$siteTitle) {
-			$siteTitle = __('Package Indexer');
-		}
-		$userData = $this->Auth->user();
-		$this->set(compact('bodyId', 'bodyClass', 'siteTitle', 'userData'));
+		$this->set(compact('bodyId', 'bodyClass'));
 	}
 
 }

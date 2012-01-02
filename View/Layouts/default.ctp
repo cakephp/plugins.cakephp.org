@@ -35,6 +35,8 @@
 	<div class="wrapper">
 		<header>
 			<div class="container">
+				<?php $siteTitle = Configure::read('Settings.SiteTitle'); ?>
+				<?php if (!$siteTitle) $siteTitle = __('Package Indexer'); ?>
 				<h1><?php echo $this->Html->link($siteTitle, '/'); ?></h1>
 
 				<nav class="main-nav">
@@ -45,7 +47,7 @@
 						<li>
 							<?php echo $this->Html->link('Suggest', array('controller' => 'packages', 'action' => 'suggest')); ?>
 						</li>
-						<?php if (!empty($userData)) : ?>
+						<?php if ($this->Session->read('Auth.User')) : ?>
 							<li>
 								<?php echo $this->Html->link('Logout', array('controller' => 'users', 'action' => 'logout')); ?>
 							</li>
@@ -104,6 +106,7 @@
 	</script>
 	<?php echo $this->AssetCompress->script('default'); ?>
 	<script type="text/javascript">
+		<?php $userData = $this->Session->read('Auth.User'); ?>
 		var App = App || {};
 		App.basePath = "<?php echo $this->webroot; ?>";
 		App.user = <?php echo empty($userData) ? '{}' : json_encode(array('username' => $userData['username'], 'slug' =>  $userData['slug'])); ?>;
