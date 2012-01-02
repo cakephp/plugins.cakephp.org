@@ -103,6 +103,7 @@
 	font-size: 16px;
 	line-height: 24px;
 	margin: 0 0 30px 0;
+	min-height: 40px;
 	overflow: hidden;
 	padding: 30px;
 	text-shadow: 0 1px 1px white;
@@ -112,6 +113,7 @@
 }
 .packages-view .summary p {
 	float: left;
+	margin-bottom: 0;
 	margin-right: 240px;
 }
 .packages-view .summary p.button {
@@ -121,7 +123,7 @@
 	display: block;
 	float: right;
 	line-height: 1.4em;
-	margin: -8px 0 0 0;
+	margin: 0;
 	padding: 0;
 	position: absolute;
 	right: 30px;
@@ -157,15 +159,24 @@
 .packages-view .package h3 {
 	padding-bottom: 7px;
 }
-.packages-view .package h4 {
+.packages-view .data {
+	border: 0;
+	border-collapse: collapse;
+	border-spacing: 0;
+	width: 100%;
+}
+.packages-view .data tr {
+	height: 26px;
+	line-height: 20px;
+}
+.packages-view .data tr .name {
+	color: #444;
 	display: inline-block;
 	font-family: Helvetica, Arial, sans-serif;
-	font-size: 12px;
+	font-size: 13px;
+	font-weight: bold;
 	margin-right: 10px;
-	width: 70px;
-	zoom:1;
-	*display: inline;
-	_height: 20px;
+	width: 86px;
 }
 .packages-view .package input {
 	border: 1px solid #CCC;
@@ -175,10 +186,7 @@
 	font-size: 11px;
 	height: 16px;
 	padding: 3px 0 2px 5px;
-	width: 295px;
-}
-.packages-view .package .rss {
-	margin-top: 10px;
+	width: 350px;
 }
 .packages-view .package ul {
 	line-height: 22px;
@@ -188,7 +196,7 @@
 .packages-view .package-sidebar {
 	float: right;
 	position: absolute;
-	right: 10px;
+	right: 0px;
 	width: 200px;
 }
 .packages-view .package-sidebar p {
@@ -202,6 +210,12 @@
 	font-weight: bold;
 	line-height: 22px;
 }
-.packages-view .package-sidebar .vote {
+.packages-view .package-section {
 	margin-bottom: 20px;
+}
+.packages-view #dsq-content #dsq-global-toolbar {
+	margin: -1em 0 0 0 !important;
+}
+.packages-view .dsq-reply {
+	margin-top: 0.5em !important;
 }

@@ -12,20 +12,35 @@
 
 <div class="package-info clearfix">
 	<section class="package">
-		<h3>Installation</h3>
+		<div class="package-section">
+			<h3>Important Links</h3>
 
-		<div>
-			<h4>Github URL</h4>
-			<?php echo $this->Resource->github_url($package['Maintainer']['username'], $package['Package']['name']); ?>
-		</div>
-
-		<div>
-			<h4>Clone Url</h4>
-			<?php echo $this->Resource->clone_url($package['Maintainer']['username'], $package['Package']['name']); ?>
+			<table class="data">
+				<tbody>
+					<tr>
+						<td class="name">Github Url:</td>
+						<td class="mobile-block">
+							<?php echo $this->Resource->github_url(
+								$package['Maintainer']['username'],
+								$package['Package']['name']
+							); ?>
+						</td>
+					</tr>
+					<tr>
+						<td class="name">Clone Url:</td>
+						<td class="mobile-block">
+							<?php echo $this->Resource->clone_url(
+								$package['Maintainer']['username'],
+								$package['Package']['name']
+							); ?>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 
 		<?php if (!empty($package['Rss']) && is_array($package['Rss'])) : ?>
-		<div class="rss">
+		<div class="rss package-section">
 			<h3><?php echo __('Recent Activity'); ?></h3>
 			<ul>
 				<?php foreach ($package['Rss'] as $entry) : ?>
@@ -43,7 +58,7 @@
 
 	<aside class="package-sidebar">
 		<?php if (Configure::read('Feature.auth_required')) : ?>
-			<div class="vote">
+			<div class="vote package-section">
 				<h3>Vote</h3>
 				<?php echo $this->Html->link('Like', array(
 					'controller' => 'packages', 'action' => 'rate', $package['Package']['id'], 'up'
@@ -53,19 +68,39 @@
 				), array('class' => 'vote')); ?>
 			</div>
 		<?php endif; ?>
-		<div class="stats">
+		<div class="stats package-section">
 			<h3>Project Stats</h3>
-			<p><strong>Watchers:</strong>&nbsp;<?php echo $package['Package']['watchers']; ?></p>
-			<p><strong>Issues:</strong>&nbsp;<?php echo $package['Package']['open_issues']; ?></p>
-			<p><strong>Forks:</strong>&nbsp;<?php echo $package['Package']['forks']; ?></p>
-			<p><strong>Maintainer:</strong>&nbsp;<?php echo $this->Resource->maintainer(
-					$package['Maintainer']['username'],
-					$package['Maintainer']['name']
-				); ?>
-			</p>
-			<p><strong>Last Updated:</strong> 
-				<?php echo $this->Time->format('Y-m-d', $package['Package']['last_pushed_at']); ?>
-			</p>
+			<table class="data">
+				<tbody>
+					<tr>
+						<td class="name">Watchers:</td>
+						<td>&nbsp;<?php echo $package['Package']['watchers'] ?></td>
+					</tr>
+					<tr>
+						<td class="name">Issues:</td>
+						<td>&nbsp;<?php echo $package['Package']['open_issues'] ?></td>
+					</tr>
+					<tr>
+						<td class="name">Forks:</td>
+						<td>&nbsp;<?php echo $package['Package']['forks'] ?></td>
+					</tr>
+					<tr>
+						<td class="name">Maintainers:</td>
+						<td>
+							&nbsp;<?php echo $this->Resource->maintainer(
+								$package['Maintainer']['username'],
+								$package['Maintainer']['name']
+							); ?>
+						</td>
+					</tr>
+					<tr>
+						<td class="name">Last Updated:</td>
+						<td>
+							&nbsp;<?php echo $this->Time->format('Y-m-d', $package['Package']['last_pushed_at']); ?>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 	</aside>
 </div>

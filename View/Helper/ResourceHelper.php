@@ -12,14 +12,13 @@ class ResourceHelper extends AppHelper {
 
 	public function github_url($maintainer, $name) {
 		$link = "https://github.com/{$maintainer}/{$name}";
-		return $this->Html->tag('span', $this->Html->link($link, $link, array(
+		return $this->Html->link($link, $link, array(
 			'target' => '_blank'
-		)), array('class' => 'mobile-block'));
+		));
 	}
 
 	public function clone_url($maintainer, $name) {
 		return $this->Form->input('clone', array(
-			'class' => 'mobile-block',
 			'div' => false,
 			'label' => false,
 			'value' => "git://github.com/{$maintainer}/{$name}.git"
@@ -61,23 +60,14 @@ class ResourceHelper extends AppHelper {
 	}
 
 	public function description($text) {
-		if (!strlen(trim($text))) {
-			return;
+		$text = trim($text);
+		if (!strlen($text)) {
+			$text = 'No description available';
 		}
 
-		$hash = sha1($text);
-		if (($record = Cache::read('package.description.' . $hash)) !== false) {
-			return $record;
-		}
-
-		$text = ereg_replace(
-			"[[:alpha:]]+://[^<>[:space:]]+[[:alnum:]/]",
-			"<a href=\"\\0\">link</a>",
-			$text
-		);
-		$text = $this->Text->truncate($text, 100, array('html' => true));
-		Cache::write('package.description.' . $hash, $text);
-		return $this->Html->tag('p', $text);
+		return $this->Html->tag('p', $this->Text->truncate(
+			$this->Text->autoLink($text), 100, array('html' => true)
+		));
 	}
 
 	public function license($tags = null) {

@@ -10,6 +10,11 @@ body {
 body.minimal {
 	min-width: 600px;
 }
+.minimal header h1 {
+	margin-right: 0;
+	text-align: center;
+	width: 270px;
+}
 .minimal header h1 a {
 	height: 70px;
 	line-height: 70px;
@@ -27,6 +32,9 @@ body.minimal {
 }
 .minimal.packages-view .package {
 	width: 390px;
+}
+.minimal.packages-view .package input {
+	width: 272px;
 }
 .minimal#packages .packages article {
 	width: 280px;
@@ -89,9 +97,11 @@ body.mobile {
 	float: none;
 	margin-right: 0;
 }
+.mobile.packages-view .package input {
+	width: 220px;
+}
 .mobile .mobile-block {
-	display: block;
-	margin-bottom: 4px;
+	padding-bottom: 6px;
 }
 .mobile#packages .packages {
 	float: none;
