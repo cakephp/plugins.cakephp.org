@@ -584,15 +584,18 @@ class Package extends AppModel {
 		$options = array_merge(array(
 			'allowed' => array(),
 			'coalesce' => false,
-			'rinse' => true,
+			'rinse' => array(
+				'search' => ' ',
+				'replace' => ' ',
+			),
+			'trim' => " \t\n\r\0\x0B+\"",
 		), $options);
 
-		if ($options['rinse']) {
-			$search = '+';
-			$separator = ' ';
-		} else {
-			$search = ' ';
-			$separator = '+';
+		if ($options['rinse'] === true) {
+			$options['rinse'] = array(
+				'search' => '+',
+				'replace' => ' ',
+			);
 		}
 
 		if (!empty($options['allowed'])) {
@@ -600,58 +603,57 @@ class Package extends AppModel {
 		}
 
 		if (isset($named['query']) && is_string($named['query']) && strlen($named['query'])) {
-			$named['query'] = preg_split('/\s+(?=[a-zA-Z0-0\s\":])/', $named['query']);
+			$named['query'] = str_replace('\'', '"', $named['query']);
+			preg_match_all('/\s*(\w+):\s*("[^"]*"|[^"\s]+)/', $named['query'], $matches, PREG_SET_ORDER);
+
+			$query = preg_replace('/\s*(\w+):\s*("[^"]*"|[^"\s]+)/', '', $named['query']);
+			if ($query === null) {
+				$query = '';
+			}
+
+			$query = ' ' . trim($query, $options['trim']);
+			foreach ($matches as $k => $value) {
+				$key = strtolower($value[1]);
+				if (!in_array($key, $options['allowed'])) {
+					$query .= $key . ':' . $value[2];
+					continue;
+				}
+
+				if (isset($named[$key]) && $key == 'has') {
+					if (is_array($named[$key])) {
+						$named[$key][] = trim($value[2], $options['trim']);
+					} elseif (isset($named[$key])) {
+						$named[$key] = array(
+							$named[$key],
+							trim($value[2], $options['trim'])
+						);
+					}
+				} else {
+					$named[$key] = trim($value[2], $options['trim']);
+				}
+			}
+
+			$named['query'] = trim($query, $options['trim']);
 		}
 
 		foreach ($named as $key => $value) {
 			if (is_array($value)) {
 				$values = array();
 				foreach ($value as $v) {
-					$values[] = str_replace($search, $separator, Sanitize::clean($v));
+					$values[] = str_replace(
+						$options['rinse']['search'],
+						$options['rinse']['replace'],
+						Sanitize::clean($v)
+					);
 				}
 				$named[$key] = $values;
 			} else {
-				$named[$key] = str_replace($search, $separator, Sanitize::clean($value));
+				$named[$key] = str_replace(
+					$options['rinse']['search'],
+					$options['rinse']['replace'],
+					Sanitize::clean($value)
+				);
 			}
-		}
-
-		if (isset($named['query'])) {
-			$query = '';
-			foreach ((array)$named['query'] as $q) {
-				if (strstr($q, ':') === false) {
-					$query .= $separator . trim($q);
-					continue;
-				}
-
-				$pieces = explode(':', $q, 2);
-				$pieces[0] = trim($pieces[0]);
-				if (!in_array($pieces[0], $options['allowed'])) {
-					$query .= $separator . $q;
-					continue;
-				}
-
-				if ($pieces[0] == 'query') {
-					$query = trim($pieces[1]) . $separator . trim($query);
-					continue;
-				}
-
-				if (isset($named[$pieces[0]]) && $pieces[0] == 'has') {
-					if (is_array($named[$pieces[0]])) {
-						$named[$pieces[0]][] = $pieces[1];
-					} else {
-						$named[$pieces[0]] = array(
-							$named[$pieces[0]],
-							$pieces[1]
-						);
-					}
-				} else {
-					$named[$pieces[0]] = $pieces[1];
-				}
-			}
-			if (strlen($query) && $query[0] == $separator) {
-				$query = substr($query, 1);
-			}
-			$named['query'] = trim($query);
 		}
 
 		if ($options['coalesce']) {
@@ -662,21 +664,24 @@ class Package extends AppModel {
 
 				if (is_array($value)) {
 					foreach ($value as $v) {
-						$coalesce .= "{$separator}{$key}:{$v}";
+						if (strstr($v, ' ') !== false) {
+							$coalesce .= " {$key}:\"{$v}\"";
+						} else {
+							$coalesce .= " {$key}:{$v}";
+						}
 					}
 				} else {
-					$coalesce .= "{$separator}{$key}:{$value}";
+					if (strstr($value, ' ') !== false) {
+						$coalesce .= " {$key}:\"{$value}\"";
+					} else {
+						$coalesce .= " {$key}:{$value}";
+					}
 				}
 			}
-			if (strlen($coalesce) && $coalesce[0] == $separator) {
-				$coalesce = substr($coalesce, 1);
-			}
 
+			$coalesce = trim($coalesce, $options['trim']);
 			if (isset($named['query'])) {
-				$coalesce = "{$coalesce}{$separator}" . trim($named['query']);
-			}
-			if (strlen($coalesce) && $coalesce[0] == $separator) {
-				$coalesce = substr($coalesce, 1);
+				$coalesce = trim($named['query'], $options['trim']) . ' ' . $coalesce;
 			}
 		}
 

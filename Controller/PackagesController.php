@@ -27,11 +27,11 @@ class PackagesController extends AppController {
 				'rinse' => false,
 				'allowed' => $this->Package->allowedFilters,
 			));
-			$this->redirect($data);
+			$this->redirect(array('?' => $data, 'escape' => false));
 		}
 
 		list($this->request->data, $query) = $this->Package->cleanParams(
-			$this->request->params['named'], array(
+			$this->request->query, array(
 				'allowed' => $this->Package->allowedFilters,
 				'coalesce' => true,
 			)
