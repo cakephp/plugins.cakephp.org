@@ -145,8 +145,10 @@ namespace :link do
       run "rm -rf #{deploy_to}/Plugin && ln -s #{cake_folder}/#{plugin_dir} #{deploy_to}/Plugin"
     end
 
-    if deploy_env == :production
+    begin
       run "cd #{current_release} && git clone git@github.com:cakephp/theme-packages.git View/Themed/Csf"
+    rescue
+      puts "**** Could not clone CSF theme, likely a permissions issue"
     end
   end
 

@@ -75,6 +75,7 @@ Environment::configure('staging',
 		'UrlCache.pageFiles'      => true,
 		'Settings.SiteTitle'      => 'Package Indexer',
 		'Settings.FULL_BASE_URL'  => 'http://staging.cakepackages.com',
+		'Settings.theme'          => 'Csf',
 
 		'Disqus.disqus_shortname' => 'cakepackages',
 		'Disqus.disqus_developer' => 1,
