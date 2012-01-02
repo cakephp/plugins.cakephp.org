@@ -151,7 +151,7 @@
 }
 .packages-view .package {
 	float: left;
-	margin-right: 190px;
+	margin-right: 210px;
 	width: 100%;
 }
 .packages-view .package h3 {
@@ -175,7 +175,7 @@
 	font-size: 11px;
 	height: 16px;
 	padding: 3px 0 2px 5px;
-	width: 320px;
+	width: 295px;
 }
 .packages-view .package .rss {
 	margin-top: 10px;

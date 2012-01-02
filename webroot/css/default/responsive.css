@@ -26,7 +26,7 @@ body.minimal {
 	width: 600px;
 }
 .minimal.packages-view .package {
-	width: 430px;
+	width: 390px;
 }
 .minimal#packages .packages article {
 	width: 280px;
@@ -107,4 +107,12 @@ body.mobile {
 	margin-top: 20px;
 	position: static;
 	width: auto;
+}
+.mobile.packages-view .package-sidebar {
+	float: none;
+	position: static;
+	right: auto;
+}
+.mobile.packages-view .package-sidebar .vote {
+	margin-top: 10px;
 }
