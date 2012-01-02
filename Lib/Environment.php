@@ -91,8 +91,10 @@ class Environment {
 
 		if (Configure::read('debug')) {
 			App::uses('CakeLog', 'Log');
-			CakeLog::write(LOG_INFO, $current);
-			Configure::write('Environment.setup', true);
+			if (class_exists('CakeLog')) {
+				CakeLog::write(LOG_INFO, $current);
+				Configure::write('Environment.setup', true);
+			}
 		}
 	}
 
@@ -101,13 +103,7 @@ class Environment {
 			return false;
 		}
 
-		foreach ($_SERVER['argv'] as $arg) {
-			if (substr($arg, 0, 5) == '-env=') {
-				return substr($arg, 5) == $environment;
-			}
-		}
-
-		return false;
+		return (isset($_SERVER['CAKE_ENV']) && $_SERVER['CAKE_ENV'] == $environment);
 	}
 
 	protected function _match($params) {
