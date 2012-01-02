@@ -29,7 +29,7 @@
 
 </head>
 
-<body class="<?php echo $bodyClass; ?>" id="<?php echo $bodyId; ?>">
+<body class="<?php echo $_bodyClass; ?>" id="<?php echo $_bodyId; ?>">
 
 
 	<div class="wrapper">

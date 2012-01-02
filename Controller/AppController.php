@@ -23,6 +23,7 @@ class AppController extends Controller {
 		'Sham.Sham' => array(
 			'autoRun' => false,
 		),
+		'Webservice.Webservice',
 	);
 
 /**
@@ -63,6 +64,27 @@ class AppController extends Controller {
  * @var int
  */
 	public $paginationMaxLimit = 25;
+
+/**
+ * Blacklist all actions by default
+ *
+ * @var array
+ */
+	public $webserviceBlacklist = array('*');
+
+/**
+ * Blacklist some variables from webservice output
+ *
+ * @var array
+ */
+	public $webserviceBlacklistVars = array('_meta', '_bodyId', '_bodyClass');
+
+/**
+ * Include the session flash messages in webservice output
+ *
+ * @var string
+ **/
+	public $webserviceSessionFlash = true;
 
 /**
  * Object constructor - Adds the Debugkit panel if in development mode
@@ -321,9 +343,9 @@ class AppController extends Controller {
  * @return void
  */
 	public function beforeRender() {
-		$bodyId = "{$this->request->params['controller']}";
-		$bodyClass = "{$this->request->params['controller']}-{$this->request->params['action']}";
-		$this->set(compact('bodyId', 'bodyClass'));
+		$_bodyId = "{$this->request->params['controller']}";
+		$_bodyClass = "{$this->request->params['controller']}-{$this->request->params['action']}";
+		$this->set(compact('_bodyId', '_bodyClass'));
 	}
 
 }

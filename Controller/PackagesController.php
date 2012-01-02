@@ -3,6 +3,10 @@ class PackagesController extends AppController {
 
 	public $helpers = array('Ratings.Rating');
 
+	public $webserviceBlacklist = array(
+		'home', 'index', 'view', 'download', 'rate'
+	);
+
 /**
  * Default page for entire application
  */
@@ -125,16 +129,6 @@ class PackagesController extends AppController {
 				$this->Session->setFlash('There was some sort of error...', 'flash/error');
 			}
 		}
-	}
-
-/**
- * Provides a jquery autocomplete response
- */
-	public function autocomplete() {
-		$term = (isset($this->request->params['url']['term'])) ? $this->request->params['url']['term'] : '';
-		$this->set('results', $this->Package->find('autocomplete', array('term' => $term)));
-		$this->layout = 'ajax';
-		Configure::write('debug', 0);
 	}
 
 /**

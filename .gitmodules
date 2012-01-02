@@ -37,3 +37,6 @@
 [submodule "Plugin/Sham"]
 	path = Plugin/Sham
 	url = git://github.com/josegonzalez/sham.git
+[submodule "Plugin/Webservice"]
+	path = Plugin/Webservice
+	url = git@github.com:josegonzalez/webservice_plugin.git
