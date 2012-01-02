@@ -3,6 +3,7 @@
 	<h3>Missing a package from Github?</h3>
 	<p>Let us know about it!</p>
 	<?php echo $this->Form->create('Package', array(
+		'url' => array('controller' => 'packages', 'action' => 'suggest'),
 		'inputDefaults' => array('label' => false)
 	)); ?>
 		<?php echo $this->Form->input('Package.username', array('placeholder' => 'Username')); ?>
