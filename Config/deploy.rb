@@ -260,23 +260,23 @@ end
 namespace :asset do
   desc 'Clears assets'
   task :clear do
-    run "CAKE_ENV=#{deploy_env} cd #{deploy_to}/#{current_dir} && ../lib/Cake/Console/cake -app #{deploy_to}/#{current_dir} asset_compress clear"
+    run "cd #{deploy_to}/#{current_dir} && CAKE_ENV=#{deploy_env} ../lib/Cake/Console/cake -app #{deploy_to}/#{current_dir} AssetCompress.asset_compress clear"
   end
 
   desc 'Builds all assets'
   task :build do
-    run "CAKE_ENV=#{deploy_env} cd #{deploy_to}/#{current_dir} && ../lib/Cake/Console/cake -app #{deploy_to}/#{current_dir} asset_compress build"
+    run "cd #{deploy_to}/#{current_dir} && CAKE_ENV=#{deploy_env} ../lib/Cake/Console/cake -app #{deploy_to}/#{current_dir} AssetCompress.asset_compress build"
   end
 
   desc 'Builds ini assets'
   task :build_ini do
-    run "CAKE_ENV=#{deploy_env} cd #{deploy_to}/#{current_dir} && ../lib/Cake/Console/cake -app #{deploy_to}/#{current_dir} asset_compress build_ini"
+    run "cd #{deploy_to}/#{current_dir} && CAKE_ENV=#{deploy_env} ../lib/Cake/Console/cake -app #{deploy_to}/#{current_dir} AssetCompress.asset_compress build_ini"
   end
 
   desc 'Rebuilds assets'
   task :rebuild do
-    run "CAKE_ENV=#{deploy_env} cd #{deploy_to}/#{current_dir} && ../lib/Cake/Console/cake -app #{deploy_to}/#{current_dir} asset_compress clear"
-    run "CAKE_ENV=#{deploy_env} cd #{deploy_to}/#{current_dir} && ../lib/Cake/Console/cake -app #{deploy_to}/#{current_dir} asset_compress build"
+    run "cd #{deploy_to}/#{current_dir} && CAKE_ENV=#{deploy_env} ../lib/Cake/Console/cake -app #{deploy_to}/#{current_dir} AssetCompress.asset_compress clear"
+    run "cd #{deploy_to}/#{current_dir} && CAKE_ENV=#{deploy_env} ../lib/Cake/Console/cake -app #{deploy_to}/#{current_dir} AssetCompress.asset_compress build"
   end
 end
 
@@ -284,12 +284,12 @@ end
 namespace :migrate do
   desc 'Run CakeDC Migrations'
   task :all do
-    run "CAKE_ENV=#{deploy_env} cd #{deploy_to}/#{current_dir} && ../lib/Cake/Console/cake -app #{deploy_to}/#{current_dir} migration run all"
+    run "cd #{deploy_to}/#{current_dir} && CAKE_ENV=#{deploy_env} ../lib/Cake/Console/cake -app #{deploy_to}/#{current_dir} Migrations.migration run all"
   end
 
   desc 'Gets the status of CakeDC Migrations'
   task :status do
-    run "CAKE_ENV=#{deploy_env} cd #{deploy_to}/#{current_dir} && ../lib/Cake/Console/cake -app #{deploy_to}/#{current_dir} migration status"
+    run "cd #{deploy_to}/#{current_dir} && CAKE_ENV=#{deploy_env} ../lib/Cake/Console/cake -app #{deploy_to}/#{current_dir} Migrations.migration status"
   end
 end
 
