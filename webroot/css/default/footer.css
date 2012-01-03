@@ -12,5 +12,6 @@ footer .container {
 	margin-top: 10px;
 }
 footer .copyright {
+	line-height: 18px;
 	text-align: right;
 }
