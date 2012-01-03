@@ -24,11 +24,11 @@
 }
 .message.success {
 	background-color: #69a95f;
-	color: white;
+	color: #ffffff;
 }
 .message.error {
-	background-color: #ffdddd;
-	color: #000000;
+	background-color: #c43c35;
+	color: #ffffff;
 }
 .message.warning {
 	background-color: #ffffc0;

@@ -23,7 +23,6 @@ class AppController extends Controller {
 		'Sham.Sham' => array(
 			'autoRun' => false,
 		),
-		'Webservice.Webservice',
 	);
 
 /**
@@ -66,25 +65,18 @@ class AppController extends Controller {
 	public $paginationMaxLimit = 25;
 
 /**
- * Blacklist all actions by default
- *
- * @var array
- */
-	public $webserviceBlacklist = array('*');
-
-/**
  * Blacklist some variables from webservice output
  *
  * @var array
  */
-	public $webserviceBlacklistVars = array('_meta', '_bodyId', '_bodyClass');
+	public $_blacklistVars = array('_meta', '_bodyId', '_bodyClass');
 
 /**
- * Include the session flash messages in webservice output
+ * Whitelist of actions allowing ajax support
  *
  * @var string
- **/
-	public $webserviceSessionFlash = true;
+ */
+	protected $_ajax = array();
 
 /**
  * Object constructor - Adds the Debugkit panel if in development mode
@@ -257,46 +249,6 @@ class AppController extends Controller {
 	}
 
 /**
- * Convenience method to perform both a flash and a redirect in one call
- *
- * @param string $message Message to display on redirect
- * @param mixed $url A string or array-based URL pointing to another location within the app,
- *     or an absolute URL
- * @return void
- */
-	protected function _flashAndRedirect($message = null, $redirectTo = array()) {
-		$status = null;
-		$exit = true;
-		$element = 'flash/error';
-
-		if (is_array($redirectTo)) {
-			if (isset($redirectTo['status'])) $status = $redirectTo['status'];
-			if (isset($redirectTo['exit'])) $exit = $redirectTo['exit'];
-			if (isset($redirectTo['message'])) $message = $redirectTo['message'];
-			if (isset($redirectTo['element'])) $element = $redirectTo['element'];
-			if (isset($redirectTo['redirectTo'])) {
-				$redirectTo = $redirectTo['redirectTo'];
-			} else {
-				$redirectTo = array();
-			}
-		}
-
-		if ($message === null) {
-			$message = __('Access Error');
-		}
-
-		if (is_array($redirectTo)) {
-			$redirectTo = array_merge($this->redirectTo, $redirectTo);
-		}
-
-		if ($message !== false) {
-			$this->Session->setFlash($message, $element);
-		}
-
-		$this->redirect($redirectTo, $status, $exit);
-	}
-
-/**
  * Redirect to some url if a given piece of information evaluates to false
  *
  * @param mixed $data Data to evaluate
@@ -343,9 +295,85 @@ class AppController extends Controller {
  * @return void
  */
 	public function beforeRender() {
+		if (in_array($this->action, $this->_ajax) && $this->_is('ajax', 'post')) {
+			$this->_respondAs('ajax');
+		}
+
 		$_bodyId = "{$this->request->params['controller']}";
 		$_bodyClass = "{$this->request->params['controller']}-{$this->request->params['action']}";
 		$this->set(compact('_bodyId', '_bodyClass'));
+	}
+
+	public function redirect($url, $status = null, $exit = true) {
+		if (in_array($this->action, $this->_ajax) && $this->_is('ajax', 'post')) {
+			$url = Router::url($url, true);
+			if (!empty($status)) {
+				$codes = $this->httpCodes();
+
+				if (is_string($status)) {
+					$codes = array_flip($codes);
+				}
+
+				if (isset($codes[$status])) {
+					$code = $msg = $codes[$status];
+					if (is_numeric($status)) {
+						$code = $status;
+					}
+					if (is_string($status)) {
+						$msg = $status;
+					}
+					$status = "HTTP/1.1 {$code} {$msg}";
+				} else {
+					$status = null;
+				}
+			}
+
+			$this->set('_redirect', compact('url', 'status', 'exit'));
+			return $this->_respondAs('ajax');
+		}
+		return parent::redirect($url, $status, $exit);
+	}
+
+	protected function _is() {
+		$args = func_get_args();
+		if (is_array($args[0])) {
+			$args = $args[0];
+		}
+
+		foreach ($args as $arg) {
+			if (!$this->RequestHandler->{'is' . ucfirst($arg)}()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	protected function _respondAs($type) {
+		if ($type == 'ajax') {
+			$this->viewClass = 'Ajax';
+			$_session = $this->Session->read('Message.flash');
+			$this->Session->delete('Message.flash');
+			if (empty($_session)) {
+				return true;
+			}
+
+			list($_status, $_message) = array('success', '');
+			if (!empty($_session['message'])) {
+				$_message = $_session['message'];
+			}
+
+			if (!empty($_session['params']['class'])) {
+				$_status = $_session['params']['class'];
+			} elseif (strstr($_session['element'], '/') !== false) {
+				$_status = substr(strstr($_session['element'], '/'), 1);
+			}
+
+			if (empty($_status)) {
+				$_status = 'success';
+			}
+
+			$this->set(compact('_message', '_status'));
+		}
 	}
 
 }

@@ -678,6 +678,7 @@ class Package extends AppModel {
 
 	public function suggest($data) {
 		if (empty($data['username'])) {
+			$this->invalidate('username', 'Username cannot be empty');
 			return false;
 		}
 

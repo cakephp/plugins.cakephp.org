@@ -31,7 +31,6 @@
 
 <body class="<?php echo $_bodyClass; ?>" id="<?php echo $_bodyId; ?>">
 
-
 	<div class="wrapper">
 		<header>
 			<div class="container">

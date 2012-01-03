@@ -32,4 +32,10 @@
 		});
 	}
 
+	// Form processing
+	$('.PackageSuggestForm').live('submit', function (e) {
+		e.preventDefault();
+		$(this).cakephpAjax(e, {selector: '.' + $(e.target).attr('class')});
+	});
+
 })(jQuery);

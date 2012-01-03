@@ -118,10 +118,7 @@ class UsersController extends AppController {
 				$this->Auth->loginRedirect = '/';
 			}
 
-			$this->Session->setFlash(
-				sprintf(__("%s, you have successfully logged in"), $this->Auth->user('username')),
-				'flash/success'
-			);
+			$this->Session->setFlash(sprintf(__("%s, you have successfully logged in"), $this->Auth->user('username')), 'flash/success');
 			if (!empty($this->request->data)) {
 				$data = $this->request->data[$this->modelClass];
 				$this->_setCookie();
@@ -152,7 +149,7 @@ class UsersController extends AppController {
 		$this->Session->destroy();
 		$this->Cookie->destroy();
 		$this->Session->setFlash(sprintf(
-			__('%s you have successfully logged out'),
+			__('%s, you have successfully logged out'),
 			$user[$this->{$this->modelClass}->displayField]
 		), 'flash/info');
 		$this->redirect($this->Auth->logout());
@@ -171,11 +168,7 @@ class UsersController extends AppController {
 			} else {
 				unset($this->request->data[$this->modelClass]['password']);
 				unset($this->request->data[$this->modelClass]['temppassword']);
-				$this->Session->setFlash(
-					__('Your account could not be created. Please, try again.'),
-					'flash/error',
-					array('class' => 'message warning')
-				);
+				$this->Session->flash(__('Your account could not be created. Please, try again.'), 'flash/error');
 			}
 		}
 	}
@@ -194,14 +187,14 @@ class UsersController extends AppController {
 		if (!empty($this->data)) {
 			try {
 				if ($this->User->forgotPassword($this->data)) {
-					$this->Session->setFlash(__('An email has been sent with instructions for resetting your password'), 'flash/info');
+					$this->Session->setFlash(__('An email has been sent with instructions for resetting your password'), 'flash/success');
 					$this->redirect(array('controller' => 'users', 'action' => 'login'));
 				} else {
-					$this->Session->setFlash(__('Error resetting password'), 'flash/error');
+					$this->Session->flash(__('Error resetting password'), 'flash/error');
 				}
-
 			} catch (Exception $e) {
-				$this->_flashAndRedirect($e->getMessage(), array('controller' => 'users', 'action' => 'forgot_password'));
+				$this->Session->flash($e->getMessage(), 'flash/error');
+				$this->redirect(array('controller' => 'users', 'action' => 'forgot_password'));
 			}
 		}
 	}
@@ -220,7 +213,7 @@ class UsersController extends AppController {
 		try {
 			$user = $this->User->find('resetPassword', $token);
 		} catch (Exception $e) {
-			$this->Session->setFlash(__('Invalid password reset token, try again.'), 'flash/error');
+			$this->Session->flash(__('Invalid password reset token, try again.'), 'flash/error');
 			$this->redirect(array('action' => 'forgot_password'));
 		}
 
@@ -229,7 +222,7 @@ class UsersController extends AppController {
 				$this->Session->setFlash(__('Password changed, you can now login with your new password.'), 'flash/success');
 				$this->redirect($this->Auth->loginAction);
 			} else {
-				$this->Session->setFlash(__('Unable to update password, please try again.'), 'flash/error');
+				$this->Session->flash(__('Unable to update password, please try again.'), 'flash/error');
 			}
 		}
 
@@ -249,7 +242,7 @@ class UsersController extends AppController {
 			$this->Session->setFlash(__('Your e-mail has been validated!'), 'flash/success');
 			return $this->redirect(array('action' => 'login'));
 		} catch (RuntimeException $e) {
-			$this->Session->setFlash($e->getMessage(), 'flash/error');
+			$this->Session->flash($e->getMessage(), 'flash/error');
 			return $this->redirect('/');
 		}
 	}
@@ -295,7 +288,7 @@ class UsersController extends AppController {
 			if ($this->User->UserDetail->saveSection($this->Auth->user('id'), $this->request->data, 'User')) {
 				$this->Session->setFlash(__('Profile saved.'), 'flash/success');
 			} else {
-				$this->Session->setFlash(__('Could not save your profile.'), 'flash/error');
+				$this->Session->flash(__('Could not save your profile.'), 'flash/error');
 			}
 		} else {
 			$this->request->data = $this->User->find('first', array(

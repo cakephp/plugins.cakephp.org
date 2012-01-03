@@ -67,15 +67,16 @@
 	outline: 5px auto -webkit-focus-ring-color;
 }
 .packages-index .no-results {
-	background: #FFFAD9;
+	background: #FDF5D9;
+	border: 1px #FCEEC1 solid;
 	float: left;
 	min-height: 48px;
 	position: relative;
 	padding: 20px 20px 20px 100px;
-	-khtml-border-radius: 3px;
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
+	-khtml-border-radius: 6px;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
 }
 .packages-index .no-results h3 {
 	color: #000;

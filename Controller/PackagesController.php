@@ -3,8 +3,8 @@ class PackagesController extends AppController {
 
 	public $helpers = array('Ratings.Rating');
 
-	public $webserviceBlacklist = array(
-		'home', 'index', 'view', 'download', 'rate'
+	public $_ajax = array(
+		'suggest'
 	);
 
 /**
@@ -62,7 +62,8 @@ class PackagesController extends AppController {
 		try {
 			$package = $this->Package->find('view', compact('maintainer', 'package'));
 		} catch (Exception $e) {
-			$this->_flashAndRedirect($e->getMessage());
+			$this->Session->flash($e->getMessage(), 'flash/error');
+			$this->redirect($this->redirectTo);
 		}
 
 		$disqus = $this->Package->disqus($package);
@@ -77,7 +78,7 @@ class PackagesController extends AppController {
  */
 	public function download($id = null) {
 		if (!$id) {
-			$this->Session->setFlash('Invalid Package download');
+			$this->Session->setFlash('Invalid Package download', 'flash/error');
 			$this->redirect($this->referer('/', true));
 		}
 
@@ -88,7 +89,7 @@ class PackagesController extends AppController {
 
 		$download_url = $this->Package->find('download', compact('id', 'branch'));
 		if (!$download_url) {
-			$this->Session->setFlash('Invalid Package download');
+			$this->Session->setFlash('Invalid Package download', 'flash/error');
 			$this->redirect($this->referer('/', true));
 		}
 
