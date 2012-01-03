@@ -45,9 +45,8 @@
 				<?php echo $this->element('preview', array(
 					'package' => $package,
 					'maintainer' => $maintainer['Maintainer'],
-					'showMaintainer' => false,
-					'showReadMoreLink' => false,
 					'showDate' => false,
+					'showMaintainer' => false,
 				)); ?>
 			</article>
 		<?php endforeach; ?>

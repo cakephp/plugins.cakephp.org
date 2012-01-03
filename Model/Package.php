@@ -125,9 +125,10 @@ class Package extends AppModel {
 
 			$query['conditions'] = array("{$this->alias}.deleted" => false);
 			$query['contain'] = array('Maintainer' => array('id','username', 'name'));
-			$query['fields'] = array_diff(
-				array_keys($this->schema()),
-				array('deleted', 'modified', 'repository_url', 'homepage', 'tags', 'bakery_article')
+			$query['fields'] = array(
+				$this->primaryKey, 'maintainer_id', 'name', 'description',
+				'open_issues', 'forks', 'watchers', 'collaborators', 'contributors',
+				'created_at', 'last_pushed_at', 'created'
 			);
 
 			$query['order'][] = array("{$this->alias}.created DESC");

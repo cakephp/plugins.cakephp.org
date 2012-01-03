@@ -13,6 +13,9 @@
 .content .packages article {
 	margin-bottom: 30px;
 }
+.content .packages h3 {
+	padding-bottom: 0;
+}
 .content .packages h3 a {
 	color: #476371;
 	font-size: 18px;
@@ -20,22 +23,23 @@
 .content .packages .info {
 	font-size: 12px;
 }
-.content .packages .info p {
+.content .packages .info .description {
 	font-size: 12px;
-	margin: 0 0 6px 0;
+	margin: 5px 0 7px 0;
+}
+.content .packages .info .details {
+	color: #666666;
+	font-size: 11px;
 }
 .content .packages .info .author {
 	color: #000000;
 	font-weight: bold;
+	margin-right: 20px;
 }
 .content .packages .info .author:hover {
 	color: #666666;
 }
-.content .packages .info .read-more {
-	color: #476371;
-	font-family: 'MuseoSlab500', Helvetica, Arial, sans-serif;
-	font-size: 14px;
-}
+
 /* Package Index */
 .packages-index .search {
 	margin-bottom: 20px;
@@ -89,6 +93,7 @@
 	top: 20px;
 	left: 30px;
 }
+
 /* Package View */
 .packages-view {
 	font-size: 12px;
