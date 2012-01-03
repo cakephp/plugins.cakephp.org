@@ -176,12 +176,11 @@
 }
 .packages-view .data tr .name {
 	color: #444;
-	display: inline-block;
 	font-family: Helvetica, Arial, sans-serif;
 	font-size: 13px;
 	font-weight: bold;
 	margin-right: 10px;
-	width: 86px;
+	width: 90px;
 }
 .packages-view .package input {
 	border: 1px solid #CCC;

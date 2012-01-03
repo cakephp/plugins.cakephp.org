@@ -7,6 +7,45 @@ body {
 	position: relative;
 }
 
+@media screen and (max-width: 980px) {
+	body {
+		min-width: 600px;
+	}
+	header h1 {
+		margin-right: 0;
+		text-align: center;
+		width: 270px;
+	}
+	header h1 a {
+		height: 70px;
+		line-height: 70px;
+	}
+	header nav {
+		display: block;
+		text-align: center;
+		width: 270px;
+	}
+	header form {
+		margin-top: 10px;
+	}
+	.container {
+		width: 600px;
+	}
+	.packages-view .package {
+		width: 390px;
+	}
+	.packages-view .package input {
+		width: 272px;
+	}
+	#packages .packages article {
+		width: 280px;
+	}
+	.page-form .content .info-sidebar {
+		margin-top: 20px;
+		position: static;
+		width: auto;
+	}
+}
 body.minimal {
 	min-width: 600px;
 }
@@ -45,6 +84,96 @@ body.minimal {
 	width: auto;
 }
 
+@media screen and (max-width: 600px) {
+	body {
+		min-width: 320px;
+	}
+	.container {
+		width: 320px;
+	}
+	header {
+		height: 110px;
+	}
+	header h1 {
+		margin: 0;
+		text-align: center;
+		width: 100%;
+	}
+	header h1 a {
+		height: 35px;
+		line-height: 35px;
+		text-align: center;
+	}
+	header nav {
+		display: none;
+		margin-top: 0;
+		position: static;
+		text-align: center;
+		top: 0;
+	}
+	header form {
+		margin-top: 10px;
+		position: static;
+	}
+	.packages-index .search {
+		display: none;
+	}
+	.packages-view h2 {
+		text-align: center;
+	}
+	.packages-view .summary p {
+		float: none;
+		margin-bottom: 10px;
+		margin-right: 0;
+		text-align: center;
+	}
+	.packages-view .summary p.button {
+		position: static;
+		float: none;
+		right: 0;
+		margin: 0 auto;
+	}
+	.packages-view .stats {
+		float: none;
+		margin-top: 10px;
+		position: static;
+	}
+	.packages-view .package {
+		float: none;
+		margin-right: 0;
+		width: 320px;
+	}
+	.packages-view .package input {
+		width: 220px;
+	}
+	.mobile-block {
+		padding-bottom: 6px;
+	}
+	#packages .packages {
+		float: none;
+		margin-right: 0;
+		min-height: 125px;
+	}
+	#packages .sidebar {
+		float: none;
+		margin-top: 10px;
+		position: static;
+	}
+	.page-form .content .info-sidebar {
+		margin-top: 20px;
+		position: static;
+		width: auto;
+	}
+	.packages-view .package-sidebar {
+		float: none;
+		position: static;
+		right: auto;
+		width: 100%;
+	}
+	.packages-view .package-sidebar .vote {
+		margin-top: 10px;
+	}
+}
 body.mobile {
 	min-width: 320px;
 }
@@ -64,7 +193,7 @@ body.mobile {
 	line-height: 35px;
 	text-align: center;
 }
-.mobile nav {
+.mobile header nav {
 	display: none;
 	margin-top: 0;
 	position: static;
@@ -78,9 +207,14 @@ body.mobile {
 .mobile.packages-index .search {
 	display: none;
 }
+.mobile.packages-view h2 {
+	text-align: center;
+}
 .mobile.packages-view .summary p {
 	float: none;
+	margin-bottom: 10px;
 	margin-right: 0;
+	text-align: center;
 }
 .mobile.packages-view .summary p.button {
 	position: static;
@@ -96,6 +230,7 @@ body.mobile {
 .mobile.packages-view .package {
 	float: none;
 	margin-right: 0;
+	width: 320px;
 }
 .mobile.packages-view .package input {
 	width: 220px;
@@ -122,6 +257,7 @@ body.mobile {
 	float: none;
 	position: static;
 	right: auto;
+	width: 100%;
 }
 .mobile.packages-view .package-sidebar .vote {
 	margin-top: 10px;
