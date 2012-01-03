@@ -43,23 +43,24 @@
 	margin: 0 auto 20px auto;
 	padding: 0;
 	text-align: left;
-	width: 300px;
+	width: 315px;
 }
 .sidebar .infobox.transparent h3 {
 	background-color: #D9E4E5;
 	padding: 5px 0 5px 5px;
-	width: 305px;
 }
 .sidebar .infobox.transparent p {
 	color: #333;
 	font-size: 13px;
 	line-height: 18px;
-	width: 310px;
+	margin: 0 auto;
+	width: 305px;
 }
 .sidebar .infobox.transparent table {
 	border-spacing: 2px;
 	font-size: 13px;
-	width: 310px;
+	margin: 0 auto;
+	width: 305px;
 }
 .sidebar .infobox.transparent .code {
 	background: #EEE;
