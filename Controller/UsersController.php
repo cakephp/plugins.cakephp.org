@@ -39,11 +39,6 @@ class UsersController extends AppController {
  * @var array
  */
 	public $components = array(
-		'Auth',
-		'Session',
-		'Email',
-		'Cookie',
-		'Search.Prg',
 		'Recaptcha.Recaptcha' => array(
 			'actions' => array('register'),
 		),
@@ -242,7 +237,7 @@ class UsersController extends AppController {
 			$this->Session->setFlash(__('Your e-mail has been validated!'), 'flash/success');
 			return $this->redirect(array('action' => 'login'));
 		} catch (RuntimeException $e) {
-			$this->Session->flash($e->getMessage(), 'flash/error');
+			$this->Session->setFlash($e->getMessage(), 'flash/error');
 			return $this->redirect('/');
 		}
 	}
