@@ -305,7 +305,7 @@ class AppController extends Controller {
 	}
 
 	public function redirect($url, $status = null, $exit = true) {
-		if (in_array($this->action, $this->_ajax) && $this->_is('ajax', 'post')) {
+		if (in_array($this->action, $this->_ajax) && $this->_is('ajax')) {
 			$url = Router::url($url, true);
 			if (!empty($status)) {
 				$codes = $this->httpCodes();
@@ -331,6 +331,7 @@ class AppController extends Controller {
 			$this->set('_redirect', compact('url', 'status', 'exit'));
 			return $this->_respondAs('ajax');
 		}
+
 		return parent::redirect($url, $status, $exit);
 	}
 
