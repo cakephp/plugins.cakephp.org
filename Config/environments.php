@@ -26,6 +26,12 @@ Environment::configure('production',
 		'Security.salt'           => 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi',
 		'Security.cipherSeed'     => '76859309657453542496749683645',
 
+		'Favorites'               => array(
+			'types'                  => array('bookmark' => 'Package'),
+			'defaultTexts'           => array('bookmark' => __('Bookmark')),
+			'modelCategories'        => array('Package'),
+		),
+
 		// Feature flags
 		'Feature.auth_required'   => false,
 	),
@@ -103,6 +109,12 @@ Environment::configure('staging',
 		'Acl.classname'           => 'DbAcl',
 		'Acl.database'            => 'default',
 
+		'Favorites'               => array(
+			'types'                  => array('bookmark' => 'Package'),
+			'defaultTexts'           => array('bookmark' => __('Bookmark')),
+			'modelCategories'        => array('Package'),
+		),
+
 		// Feature flags
 		'Feature.auth_required'   => true,
 	),
@@ -140,6 +152,12 @@ Environment::configure('development',
 		'Security.cipherSeed'     => '76859364557429242496749683650',
 		'Recaptcha.publicKey'     => '6LeyksQSAAAAAJdkmQB7vBtsP9kYY75rE1ebY7B5',
 		'Recaptcha.privateKey'    => '6LeyksQSAAAAAEOJpZmWFHoBzgpSBtVlbDCDy6Uv',
+
+		'Favorites'               => array(
+			'types'                  => array('bookmark' => 'Package'),
+			'defaultTexts'           => array('bookmark' => __('Bookmark')),
+			'modelCategories'        => array('Package'),
+		),
 
 		// Feature flags
 		'Feature.auth_required'   => true,
