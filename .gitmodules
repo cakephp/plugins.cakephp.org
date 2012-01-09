@@ -37,3 +37,6 @@
 [submodule "Plugin/Sham"]
 	path = Plugin/Sham
 	url = git://github.com/josegonzalez/sham.git
+[submodule "Plugin/Favorites"]
+	path = Plugin/Favorites
+	url = git://github.com/josegonzalez/favorites.git
