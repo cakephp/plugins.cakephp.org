@@ -37,34 +37,34 @@ h2. Todo
 
 * Documentation
 * -Set Default retry on CakeDjjob to be at least 1, so adding new packages/maintainers doesn't fail randomly-
-* Integrate with GitHub's OAuth implementation for user accounts
+* Increase visibility across the web through social integration
+** Integrate with GitHub's OAuth implementation for user accounts
 * Push user accounts and a user dashboard
 ** Possible dashboard aggregating both code and community resources useful to that person?
 * Integrate a "risingcake.com":risingcake.com like news dashboard
-* Fix RSS Sanitization such that characters that should be escaped are escaped properly
+* -Fix RSS Sanitization such that characters that should be escaped are escaped properly-
 * Integrate a project's readme
 * More robust application/plugin distinction, as well as checking both standards and to see if something that should be a plugin is
 * Full Plugin Installer API. Docs to come
 * -Allow users to submit new packages for inclusion in the index-
 ** Possible DDOS issue? (Should be handled at the server-level)
-* More robust filtering
-** May need to look into alternative searching systems, such as ElasticSearch or Sphinx
+* -More robust filtering-
+** -May need to look into alternative searching systems, such as ElasticSearch or Sphinx- (punting on this till later)
 ** Allow filtering by maintainer?
 *** -For now just appended Maintainer.username to like query-
-* Allow rating/commenting on packages
+* -Allow rating/commenting on packages- (liking/bookmarking are better than rating)
 * Allow users to submit tags for a package
 * -Fix issue where packages that should be disabled are passing that check-
 * -Add support for organizations-
-* Add support for CodaSet/Google Code/SourceForge/BitBucket/OTHER_NAME_HERE
+* Add support for -CodaSet-/Google Code/SourceForge/BitBucket/OTHER_NAME_HERE
 * Unit tests
-* Increase visibility across the web through social integration
 * -Minify assets for new design-
 * -Add shell tasks to cron where necessary-
 * Update maintainer/package views
 * Infinite pagination of packages
 ** BackboneJS?
-* Remove csf theme submodule
-** Better deployment strategy for dealing with official CSF dependencies
+* -Remove csf theme submodule- (re-added, made it more subtle)
+** -Better deployment strategy for dealing with official CSF dependencies- easy-squeezy
 
 h2. License
 
