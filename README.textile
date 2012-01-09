@@ -68,7 +68,7 @@ h2. Todo
 
 h2. License
 
-Copyright (c) 2011 Jose Diaz-Gonzalez
+Copyright (c) 2009-2012 Jose Diaz-Gonzalez
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
