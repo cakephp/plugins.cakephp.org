@@ -35,7 +35,35 @@
 	// Form processing
 	$('.PackageSuggestForm').live('submit', function (e) {
 		e.preventDefault();
-		$(this).cakephpAjax(e, {selector: '.' + $(e.target).attr('class')});
+		$(this).cakephpAjax(e, {selector: '.' + $(e.delegateTarget).attr('class')});
+	});
+
+	$('.ajax-toggle').click(function (e) {
+		e.preventDefault();
+		var el = $(e.delegateTarget);
+
+		$.ajax({
+			dataType: 'json',
+			url: el.attr('href'),
+			success: function (data, textStatus, jqXHR) {
+				$('.content').flash({ message: data.message, status: data.status });
+
+				if (el.hasClass('is_activated')) {
+					el.removeClass('is_activated');
+				} else {
+					el.addClass('is_activated');
+				}
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				var data = {};
+				try {
+					data = $.parseJSON(jqXHR.responseText);
+				} catch (e) {
+					data = { message: "Server error, please try again in a bit", status: "error" };
+				}
+				$('.content').flash({ message: data.message, status: data.status });
+			}
+		});
 	});
 
 })(jQuery);

@@ -1,10 +1,14 @@
 <?php
 class PackagesController extends AppController {
 
-	public $helpers = array('Ratings.Rating');
+	public $helpers = array(
+		'Ratings.Rating',
+	);
 
 	public $_ajax = array(
-		'suggest'
+		'like',
+		'bookmark',
+		'suggest',
 	);
 
 /**
@@ -60,7 +64,8 @@ class PackagesController extends AppController {
  */
 	public function view($maintainer = null, $package = null) {
 		try {
-			$package = $this->Package->find('view', compact('maintainer', 'package'));
+			$user_id = AuthComponent::user('id');
+			$package = $this->Package->find('view', compact('maintainer', 'package', 'user_id'));
 		} catch (Exception $e) {
 			$this->Session->flash($e->getMessage(), 'flash/error');
 			$this->redirect($this->redirectTo);
@@ -97,28 +102,51 @@ class PackagesController extends AppController {
 	}
 
 /**
- * This action takes the rating of an package and processes it
+ * This action takes likes/dislikes a package for the currently logged in user
  *
- * @param string $id video id
- * @param string "up" or "down"
+ * @param string $id package id
  * @return void
- * @access public
  */
-	public function rate($id = null, $direction = null) {
-		$status = 400;
-		$message = __d('packages', 'Unable to vote on this package');
-		if ($this->Package->ratePackage($id, $this->Auth->user('id'), $direction)) {
+	public function like($id = null) {
+		try {
+			$result = $this->Package->ratePackage($id, $this->Auth->user('id'), 'like');
 			$status = 200;
-			$message = __d('packages', 'Your vote was successfully recorded.');
+			if ($result) {
+				$message = __d('packages', 'Thanks for liking this package.');
+			} else {
+				$message = __d('packages', 'Package preference removed.');
+			}
+		} catch (Exception $e) {
+			$status = $e->getCode();
+			$message = $e->getMessage();
 		}
 
-		if ($this->RequestHandler->prefers('json')) {
-			$this->RequestHandler->renderAs($this, 'json');
-			$this->set(compact('message', 'status'));
-		} else {
-			$this->Session->setFlash($message, 'flash/' . ($status == 200 ? 'success' : 'error'));
-			$this->redirect($this->referer('/', true));
+		$this->Session->setFlash($message, 'flash/' . ($status == 200 ? 'success' : ($status >= 600 ? 'info' : 'error')));
+		$this->redirect($this->referer('/', true));
+	}
+
+/**
+ * This action bookmarks/unbookmarks a package for the currently logged in user
+ *
+ * @param int $id package id
+ * @return void
+ */
+	public function bookmark($id = null) {
+		try {
+			$result = $this->Package->favoritePackage($id, $this->Auth->user('id'), 'bookmark');
+			$status = 200;
+			if ($result) {
+				$message = __d('packages', 'Package bookmarked.');
+			} else {
+				$message = __d('packages', 'Bookmark removed.');
+			}
+		} catch (Exception $e) {
+			$status = $e->getCode();
+			$message = $e->getMessage();
 		}
+
+		$this->Session->setFlash($message, 'flash/' . ($status == 200 ? 'success' : ($status >= 600 ? 'info' : 'error')));
+		$this->redirect($this->referer('/', true));
 	}
 
 	public function suggest() {

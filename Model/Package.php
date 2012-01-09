@@ -12,6 +12,7 @@ class Package extends AppModel {
 	public $belongsTo = array('Maintainer');
 
 	public $actsAs = array(
+		'Favorites.Favorite',
 		'Ratings.Ratable' => array(
 			'calculation' => 'sum',
 			'modelClass' => 'Package',
@@ -43,7 +44,7 @@ class Package extends AppModel {
 	public $SearchIndex = null;
 
 	public $findMethods = array(
-		'autocomplete'      => true,
+		'bookmark'          => true,
 		'download'          => true,
 		'index'             => true,
 		'latest'            => true,
@@ -79,6 +80,73 @@ class Package extends AppModel {
 			'updated'    => array('text' => __('Date Updated'), 'sort' => 'last_pushed_at'),
 		);
 	}
+
+/**
+ * Find a ratable package
+ *
+ * @param string $state
+ * @param array $query
+ * @param array $results
+ * @return array
+ * @todo Require that the user not own the package being rated
+ */
+	public function _findBookmark($state, $query, $results = array()) {
+		if ($state == 'before') {
+			if (empty($query['id'])) {
+				throw new NotFoundException(__("Cannot like a non-existent package"));
+			}
+			if (empty($query['user_id'])) {
+				throw new UnauthorizedException(__("You must be logged in in order to rate packages"));
+			}
+
+			$query['conditions'] = array(
+				"{$this->alias}.{$this->primaryKey}" => $query['id'],
+			);
+			$query['limit'] = 1;
+
+			$query['fields'] = array('id');
+			if (!empty($query['fields'])) {
+				$query['fields'] = array_merge(
+					$this->getDataSource()->fields($this, null, $query['fields']),
+					$this->Rating->getDataSource()->fields($this->Favorite)
+				);
+			} else {
+				$query['fields'] = array_merge(
+					$this->getDataSource()->fields($this),
+					$this->Rating->getDataSource()->fields($this->Favorite)
+				);
+			}
+
+			$this->unbindModel(array(
+				'hasMany' => array('Favorites.Favorite'),
+			));
+			$query['joins'] = array(
+				array(
+					'alias' => 'Favorite',
+					'table' => 'favorites',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'Favorite.model' => 'Package',
+						'Favorite.type' => 'bookmark',
+						'Favorite.foreign_key' => $query['id'],
+						'Favorite.user_id' => $query['user_id'],
+					),
+				),
+			);
+			return $query;
+		} elseif ($state == 'after') {
+			if (empty($results[0])) {
+				throw new NotFoundException(__("Cannot like a non-existent package"));
+			}
+
+			if (empty($results[0]['Favorite']['id'])) {
+				$results[0]['Favorite'] = false;
+			}
+
+			return $results[0];
+		}
+	}
+
 
 	public function _findDownload($state, $query, $results = array()) {
 		if ($state == 'before') {
@@ -234,30 +302,64 @@ class Package extends AppModel {
 /**
  * Find a ratable package
  *
- * @param string $state 
- * @param array $query 
- * @param array $results 
+ * @param string $state
+ * @param array $query
+ * @param array $results
  * @return array
  * @todo Require that the user not own the package being rated
  */
 	public function _findRate($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query['id'])) {
-				throw new InvalidArgumentException(__('Invalid package'));
+				throw new NotFoundException(__("Cannot like a non-existent package"));
 			}
 			if (empty($query['user_id'])) {
-				throw new InvalidArgumentException(__('User not logged in'));
+				throw new UnauthorizedException(__("You must be logged in in order to rate packages"));
 			}
 
 			$query['conditions'] = array(
 				"{$this->alias}.{$this->primaryKey}" => $query['id'],
 			);
 			$query['limit'] = 1;
+
+			$query['fields'] = array('id');
+			if (!empty($query['fields'])) {
+				$query['fields'] = array_merge(
+					$this->getDataSource()->fields($this, null, $query['fields']),
+					$this->Rating->getDataSource()->fields($this->Rating)
+				);
+			} else {
+				$query['fields'] = array_merge(
+					$this->getDataSource()->fields($this),
+					$this->Rating->getDataSource()->fields($this->Rating)
+				);
+			}
+
+			$this->unbindModel(array(
+				'hasMany' => array('Ratings.Rating'),
+			));
+			$query['joins'] = array(
+				array(
+					'alias' => 'Rating',
+					'table' => 'ratings',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'Rating.model' => 'Package',
+						'Rating.foreign_key' => $query['id'],
+						'Rating.user_id' => $query['user_id'],
+					),
+				)
+			);
 			return $query;
 		} elseif ($state == 'after') {
 			if (empty($results[0])) {
-				throw new OutOfBoundsException(__('Invalid package'));
+				throw new NotFoundException(__("Cannot like a non-existent package"));
 			}
+
+			if (empty($results[0]['Rating']['id'])) {
+				$results[0]['Rating'] = false;
+			}
+
 			return $results[0];
 		}
 	}
@@ -276,7 +378,7 @@ class Package extends AppModel {
 			return $query;
 		} elseif ($state == 'after') {
 			if (empty($results[0])) {
-				throw new OutOfBoundsException(__('Invalid package'));
+				throw new NotFoundException(__('Invalid package'));
 			}
 			return $results[0];
 		}
@@ -295,12 +397,65 @@ class Package extends AppModel {
 			$query['contain'] = array('Maintainer' => array($this->displayField, 'username'));
 			$query['limit'] = 1;
 
+			// Join additional records if necessary
+			if ($query['user_id']) {
+				if (!empty($query['fields'])) {
+					$query['fields'] = array_merge(
+						$this->getDataSource()->fields($this, null, $query['fields']),
+						$this->Rating->getDataSource()->fields($this->Rating),
+						$this->Rating->getDataSource()->fields($this->Favorite)
+					);
+				} else {
+					$query['fields'] = array_merge(
+						$this->getDataSource()->fields($this),
+						$this->Rating->getDataSource()->fields($this->Rating),
+						$this->Rating->getDataSource()->fields($this->Favorite)
+					);
+				}
+
+				$this->unbindModel(array(
+					'hasMany' => array('Ratings.Rating', 'Favorites.Favorite'),
+				));
+
+				$query['joins'] = array(
+					array(
+						'alias' => 'Favorite',
+						'table' => 'favorites',
+						'type' => 'LEFT',
+						'conditions' => array(
+							'`Favorite`.`foreign_key` = `Package`.`id`',
+							'Favorite.model' => 'Package',
+							'Favorite.type' => 'bookmark',
+							'Favorite.user_id' => $query['user_id'],
+						),
+					),
+					array(
+						'alias' => 'Rating',
+						'table' => 'ratings',
+						'type' => 'LEFT',
+						'conditions' => array(
+							'`Rating`.`foreign_key` = `Package`.`id`',
+							'Rating.model' => 'Package',
+							'Rating.user_id' => $query['user_id'],
+						),
+					),
+				);
+			}
+
 			DebugTimer::start('app.Package::find#view', __d('app', 'Package::find(\'view\')'));
 			return $query;
 		} elseif ($state == 'after') {
 			DebugTimer::stop('app.Package::find#view');
 			if (empty($results[0])) {
-				throw new OutOfBoundsException(__('Invalid package'));
+				throw new NotFoundException(__('Invalid package'));
+			}
+
+			if (empty($results[0]['Favorite']['id'])) {
+				$results[0]['Favorite'] = false;
+			}
+
+			if (empty($results[0]['Rating']['id'])) {
+				$results[0]['Rating'] = false;
 			}
 
 			DebugTimer::start('app.Package::rss', __d('app', 'Package::rss()'));
@@ -422,29 +577,72 @@ class Package extends AppModel {
  * @param string $rating either "up" or "down"
  * @return boolean
  */
-	public function ratePackage($id = null, $user_id = null, $rating = null) {
+	public function ratePackage($id = null, $user_id = null) {
 		if (!$id && $this->id) {
 			$id = $this->id;
 		}
 
-		if (!$id || !$user_id || !$rating) {
-			return false;
+		if (!$id) {
+			throw new NotFoundException(__("Cannot like a non-existent package"));
 		}
 
-		$rating = strtolower((string)$rating);
-		$possibleRatings = array('up' => 1, 'down' => -1);
-		if (!in_array($rating, array_keys($possibleRatings))) {
-			return false;
+		if (!$user_id) {
+			throw new UnauthorizedException(__("You must be logged in in order to like packages"));
 		}
 
-		$rating = $possibleRatings[$rating];
-		try {
-			$package = $this->find('rate', compact('id', 'user_id'));
-		} catch (Exception $e) {
-			return false;
+		$action = 'like';
+		$package = $this->find('rate', compact('id', 'user_id'));
+
+		if ($package['Rating']) {
+			$action = 'dislike';
+			$result = $this->removeRating($id, $user_id);
+			if ($result !== false) {
+				return false;
+			}
+		} else {
+			$result = $this->saveRating($id, $user_id, 1);
+			if ($result) {
+				return true;
+			}
 		}
 
-		return $this->saveRating($id, $user_id, $rating);
+		throw new BadRequestException(__("Unable to %s package", $action));
+	}
+
+	public function favoritePackage($id = null, $user_id = null) {
+		if (!$id && $this->id) {
+			$id = $this->id;
+		}
+
+		if (!$id) {
+			throw new NotFoundException(__("Cannot %s a non-existent package", $action));
+		}
+
+		if (!$user_id) {
+			throw new UnauthorizedException(__("You must be logged in in order to %s packages", $action));
+		}
+
+		$action = 'add';
+		$package = $this->find('bookmark', compact('id', 'user_id'));
+		if ($package['Favorite']) {
+			$action = 'remove';
+			$result = $this->Favorite->deleteAll(array(
+				'Favorite.user_id' => $user_id,
+				'Favorite.model' => $this->name,
+				'Favorite.type' => 'bookmark',
+				'Favorite.foreign_key' => $id,
+			), false, false);
+			if ($result !== false) {
+				return false;
+			}
+		} else {
+			$result = $this->saveFavorite($user_id, $this->name, 'bookmark', $id);
+			if ($result) {
+				return true;
+			}
+		}
+
+		throw new BadRequestException(__("Unable to %s bookmark", $action));
 	}
 
 	public function updateAttributes($package) {

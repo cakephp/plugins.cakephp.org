@@ -1,4 +1,27 @@
-<h2><?php echo $package['Package']['name']; ?></h2>
+<?
+$likeActive = '';
+if ($package['Rating'] && $package['Rating']['value'] == 1) {
+	$likeActive = 'is_activated';
+}
+
+?>
+
+<section class="page-title clearfix">
+	<h2><?php echo $package['Package']['name']; ?></h2>
+
+	<ul class="activity button-group">
+	    <li>
+			<?php echo $this->Html->link('Like', array(
+				'controller' => 'packages', 'action' => 'like', $package['Package']['id']
+			), array('class' => 'ajax-toggle button primary pill icon like is_like ' . $likeActive)); ?>
+		</li>
+	    <li>
+			<?php echo $this->Html->link('Bookmark', array(
+				'controller' => 'packages', 'action' => 'bookmark', $package['Package']['id']
+			), array('class' => 'ajax-toggle button primary pill icon tag is_tag ' . ($package['Favorite'] ? 'is_activated' : ''))); ?>
+		</li>
+	</ul>
+</section>
 
 <section class="summary clearfix">
 	<?php echo $this->Resource->description($package['Package']['description']); ?>
@@ -57,17 +80,6 @@
 	</section>
 
 	<aside class="package-sidebar">
-		<?php if (Configure::read('Feature.auth_required')) : ?>
-			<div class="vote package-section">
-				<h3>Vote</h3>
-				<?php echo $this->Html->link('Like', array(
-					'controller' => 'packages', 'action' => 'rate', $package['Package']['id'], 'up'
-				), array('class' => 'vote')); ?>
-				<?php echo $this->Html->link('Dislike', array(
-					'controller' => 'packages', 'action' => 'rate', $package['Package']['id'], 'down'
-				), array('class' => 'vote')); ?>
-			</div>
-		<?php endif; ?>
 		<div class="stats package-section">
 			<h3>Project Stats</h3>
 			<table class="data">

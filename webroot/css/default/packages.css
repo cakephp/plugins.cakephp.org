@@ -99,9 +99,13 @@
 .packages-view {
 	font-size: 12px;
 }
-.packages-view h2 {
+.packages-view .page-title h2 {
 	border-bottom: none;
+	float: left;
 	padding-bottom: 0;
+}
+.packages-view .page-title .activity {
+	float: right;
 }
 .packages-view .summary {
 	background: #EEE;
