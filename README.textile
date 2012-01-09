@@ -1,19 +1,19 @@
 h1. CakePackages
 
-A self-contained application that automatically tracks cakephp developer's open source code repositories, including applications and plugins
+A self-contained application that tracks CakePHP developer's open source code repositories, including applications and plugins. Includes some social integration features
 
 h2. Background
 
-After constantly searching for CakePHP code, I realized a lot of it existed on Github. And, in fact, the core code is on GitHub. So it seemed natural to create a site to index all this code.
+After constantly searching for CakePHP code, I realized a lot of it existed on Github. And, in fact, the core code is now on GitHub. So it seemed natural to create a site to index all this code.
 
-Since I was unemployed, bored, and miserable, I decided to focus all my energy on creating just such a thing. That was over a year ago (March 1st seems to be my first commit, although I know I was working on it before then...), and the codebase has been through at least two redesigns and countless code iterations. I've learned a thing or two in the process, and have even gotten a job as a result of it.
+Since I was unemployed/bored/miserable/drunk, I decided to focus all my energy on creating just such a thing. That was over a year ago (March 1st seems to be my first commit, although I know I was working on it before then...), and the codebase has been through at least two redesigns and countless code iterations. I've learned a thing or two in the process, and have even gotten a job as a result of it.
 
-This is an unofficial project. I do not foresee it becoming official for various reasons, some of which are private. Therefore, I do not expect it to get the traffic it deserves, or the developer manpower it needs. So it's a labor of love, on top of my already busy schedule. Please understand that when commenting on that.
+This is apparently now an official project. However, because there are other official projects, this is still mostly a one-man show, so feel free to contribute back to the codebase through code, design, and feedback.
 
 h2. Requirements
 
 * PHP 5.3+ .
-* CakePHP 1.3.10+
+* CakePHP 2.x
 * GIT for version control
 * "God":https://github.com/mojombo/god for running DJJob in the background on a server
 
@@ -31,7 +31,7 @@ _[GIT Clone]_
 
 h2. Usage
 
-You'll want to run the migrations for both cakepackages and the plugins. I've also included a schema.php file, as well as a slightly out of date sql dump
+You'll want to run the migrations for both cakepackages and the plugins. I've also included a schema.php file. SQL Dump with dummy data to come.
 
 h2. Todo
 
@@ -60,7 +60,7 @@ h2. Todo
 * Unit tests
 * -Minify assets for new design-
 * -Add shell tasks to cron where necessary-
-* Update maintainer/package views
+* -Update maintainer/package views-
 * Infinite pagination of packages
 ** BackboneJS?
 * -Remove csf theme submodule- (re-added, made it more subtle)
