@@ -19,7 +19,7 @@ class NewPackageJob extends CakeJob {
 			$maintainer = $this->Maintainer->find('view', $this->username);
 		} catch (InvalidArgumentException $e) {
 			return $this->out($e->getMessage());
-		} catch (OutOfBoundsException $e) {
+		} catch (NotFoundException $e) {
 			$maintainer = $this->createMaintainer();
 			if (!$maintainer) {
 				return $this->out($e->getMessage());

@@ -157,7 +157,7 @@ class UserDetail extends AppModel {
 			return $query;
 		} elseif ($state == 'after') {
 			if (empty($results[0])) {
-				throw new OutOfBoundsException(__('The detail does not exist'));
+				throw new NotFoundException(__('The detail does not exist'));
 			}
 			return $results[0];
 		}

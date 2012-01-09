@@ -186,7 +186,7 @@ class User extends AppModel {
 			return $query;
 		} elseif ($state == 'after') {
 			if (empty($results[0])) {
-				throw new OutOfBoundsException(__('User does not exist'));
+				throw new NotFoundException(__('User does not exist'));
 			}
 			return $results[0];
 		}
@@ -209,7 +209,7 @@ class User extends AppModel {
 			return $query;
 		} elseif ($state == 'after') {
 			if (empty($results[0])) {
-				throw new OutOfBoundsException(__('User does not exist'));
+				throw new NotFoundException(__('User does not exist'));
 			}
 			return $results[0];
 		}
@@ -232,7 +232,7 @@ class User extends AppModel {
 			return $query;
 		} elseif ($state == 'after') {
 			if (empty($results[0])) {
-				throw new OutOfBoundsException(__('User does not exist'));
+				throw new NotFoundException(__('User does not exist'));
 			}
 			return $results[0];
 		}
@@ -254,7 +254,7 @@ class User extends AppModel {
 			return $query;
 		} elseif ($state == 'after') {
 			if (empty($results[0])) {
-				throw new OutOfBoundsException(__('User does not exist'));
+				throw new NotFoundException(__('User does not exist'));
 			}
 			return $results[0];
 		}
@@ -273,7 +273,7 @@ class User extends AppModel {
 			return $query;
 		} elseif ($state == 'after') {
 			if (empty($results[0])) {
-				throw new OutOfBoundsException(__('User does not exist'));
+				throw new NotFoundException(__('User does not exist'));
 			}
 			return $results[0];
 		}

@@ -96,7 +96,7 @@ class Maintainer extends AppModel {
 			return $query;
 		} elseif ($state == 'after') {
 			if (empty($results[0])) {
-				throw new OutOfBoundsException(__('Nonexistent user'));
+				throw new NotFoundException(__('Nonexistent user'));
 			}
 			return $results[0];
 		}
@@ -146,7 +146,7 @@ class Maintainer extends AppModel {
 			}
 
 			if (empty($user_id)) {
-				throw new OutOfBoundsException(__('Invalid maintainer'));
+				throw new InvalidArgumentException(__('Invalid maintainer'));
 			}
 
 			$query['contain'] = false;
@@ -155,7 +155,7 @@ class Maintainer extends AppModel {
 			return $query;
 		} elseif ($state == 'after') {
 			if (empty($results[0])) {
-				throw new OutOfBoundsException(__('Invalid user'));
+				throw new NotFoundException(__('Invalid user'));
 			}
 			return $results[0];
 		}
@@ -181,7 +181,7 @@ class Maintainer extends AppModel {
 			return $query;
 		} elseif ($state == 'after') {
 			if (empty($results[0])) {
-				throw new OutOfBoundsException(__('Invalid maintainer'));
+				throw new NotFoundException(__('Invalid maintainer'));
 			}
 			return $results[0];
 		}
@@ -211,7 +211,7 @@ class Maintainer extends AppModel {
 			return $query;
 		} elseif ($state == 'after') {
 			if (empty($results[0])) {
-				throw new OutOfBoundsException(__('Invalid maintainer'));
+				throw new NotFoundException(__('Invalid maintainer'));
 			}
 
 			$url = $results[0]['Maintainer']['url'];
