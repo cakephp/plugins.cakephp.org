@@ -48,6 +48,10 @@
 			success: function (data, textStatus, jqXHR) {
 				$('.content').flash({ message: data.message, status: data.status });
 
+				if (data.status != 'success') {
+					return;
+				}
+
 				if (el.hasClass('is_activated')) {
 					el.removeClass('is_activated');
 				} else {
