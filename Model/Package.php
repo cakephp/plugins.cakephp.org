@@ -615,11 +615,11 @@ class Package extends AppModel {
 		}
 
 		if (!$id) {
-			throw new NotFoundException(__("Cannot %s a non-existent package", $action));
+			throw new NotFoundException(__("Cannot bookmark a non-existent package"));
 		}
 
 		if (!$user_id) {
-			throw new UnauthorizedException(__("You must be logged in in order to %s packages", $action));
+			throw new UnauthorizedException(__("You must be logged in in order to bookmark packages"));
 		}
 
 		$action = 'add';
