@@ -150,7 +150,7 @@ class PackagesController extends AppController {
 	}
 
 	public function suggest() {
-		if (!empty($this->request->data['Package'])) {
+		if ($this->_isFromForm('Package')) {
 			if ($this->Package->suggest($this->request->data['Package'])) {
 				$this->Session->setFlash('Thanks, your submission will be reviewed shortly!', 'flash/success');
 				$this->redirect($this->referer(array('controller' => 'packages', 'action' => 'suggest'), true));
@@ -158,6 +158,23 @@ class PackagesController extends AppController {
 				$this->Session->setFlash('There was some sort of error...', 'flash/error');
 			}
 		}
+	}
+
+	public function admin_categorize($id = null) {
+		$user_id = $this->Auth->user('id');
+
+		if ($this->_isFromForm('Package')) {
+			try {
+				$id = $this->Package->categorizePackage($this->request->data);
+				$this->Session->setFlash(__('Categorized package #%d', $id), 'flash/success');
+			} catch (Exception $e) {
+				$this->Session->setFlash($e->getMessage(), 'flash/error');
+			}
+		}
+
+		$categories = $this->Package->categories($user_id);
+		$package = $this->Package->find('uncategorized', compact('id', 'user_id'));
+		$this->set(compact('categories', 'package'));
 	}
 
 /**

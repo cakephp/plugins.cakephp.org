@@ -22,7 +22,7 @@ Environment::configure('production',
 		'Email.from'              => 'info@cakepackages.com',
 
 		'debug'                   => 0,
-		'Routing.prefixes'        => array('one'),
+		'Routing.prefixes'        => array('admin', 'one'),
 		'Security.salt'           => 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi',
 		'Security.cipherSeed'     => '76859309657453542496749683645',
 
@@ -30,6 +30,9 @@ Environment::configure('production',
 			'types'                  => array('bookmark' => 'Package'),
 			'defaultTexts'           => array('bookmark' => __('Bookmark')),
 			'modelCategories'        => array('Package'),
+		),
+		'Category.sluggable'      => array(
+			'separator'              => '-',
 		),
 
 		// Feature flags
@@ -97,7 +100,7 @@ Environment::configure('staging',
 		'log'                     => true,
 		'App.encoding'            => 'UTF-8',
 		'Cache.disable'           => true,
-		'Routing.prefixes'        => array('one'),
+		'Routing.prefixes'        => array('admin', 'one'),
 		'Session.save'            => 'php',
 		'Session.cookie'          => 'CAKEPHP',
 		'Session.timeout'         => '120',
@@ -113,6 +116,9 @@ Environment::configure('staging',
 			'types'                  => array('bookmark' => 'Package'),
 			'defaultTexts'           => array('bookmark' => __('Bookmark')),
 			'modelCategories'        => array('Package'),
+		),
+		'Category.sluggable'      => array(
+			'separator'              => '-',
 		),
 
 		// Feature flags
@@ -147,7 +153,7 @@ Environment::configure('development',
 
 		'debug'                   => 2,
 		'Cache.disable'           => true,
-		'Routing.prefixes'        => array('one'),
+		'Routing.prefixes'        => array('admin', 'one'),
 		'Security.salt'           => 'AYcG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9ab',
 		'Security.cipherSeed'     => '76859364557429242496749683650',
 		'Recaptcha.publicKey'     => '6LeyksQSAAAAAJdkmQB7vBtsP9kYY75rE1ebY7B5',
@@ -157,6 +163,9 @@ Environment::configure('development',
 			'types'                  => array('bookmark' => 'Package'),
 			'defaultTexts'           => array('bookmark' => __('Bookmark')),
 			'modelCategories'        => array('Package'),
+		),
+		'Category.sluggable'      => array(
+			'separator'              => '-',
 		),
 
 		// Feature flags

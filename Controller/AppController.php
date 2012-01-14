@@ -377,4 +377,18 @@ class AppController extends Controller {
 		}
 	}
 
+	protected function _isFromForm($name = null) {
+		$isPost = $this->request->is('post');
+		$isPut = $this->request->is('put');
+		if (!$isPost && !$isPut) {
+			return false;
+		}
+
+		if (!$name) {
+			return $isPost;
+		}
+
+		return $this->request->data($name) !== null;
+	}
+
 }

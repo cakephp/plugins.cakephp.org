@@ -4,7 +4,7 @@ App::uses('Permit', 'Sanction.Controller/Component');
 
 $element = 'flash/error';
 $message = __('Access denied.');
-$redirect = $loggedInRedirect = array('controller' => 'packages', 'action' => 'home');
+$redirect = $loggedInRedirect = array('admin' => false, 'controller' => 'packages', 'action' => 'home');
 if (Configure::read('Feature.auth_required')) {
 	$message = __('Sorry, but you need to be logged in to access this location.');
 	$redirect = array('controller' => 'users', 'action' => 'login');
@@ -12,18 +12,18 @@ if (Configure::read('Feature.auth_required')) {
 
 Permit::access(
 	array('prefix' => 'admin'),
-	array('auth' => array('group' => 'admin')),
+	array('auth' => array('is_admin' => 1)),
 	array(
 		'element' => $element,
 		'message' => __('Sorry, but you need to be an administrator to access this location.'),
-		'redirect' => array('controller' => 'packages', 'action' => 'home'),
+		'redirect' => array('admin' => false, 'controller' => 'packages', 'action' => 'home'),
 	)
 );
 
 // Block access to every plugin in case people try to cut around application logic
 Permit::access(
-	array('plugin' => array('favorites', 'ratings')),
-	array('auth' => array('group' => 'admin')),
+	array('plugin' => array('favorites', 'ratings', 'categories', 'settings')),
+	array('auth' => array('is_admin' => 1)),
 	array(
 		'element' => $element,
 		'message' => __('Sorry, but you need to be an administrator to access this location.'),
@@ -33,7 +33,7 @@ Permit::access(
 
 Permit::access(
 	array('controller' => 'github'),
-	array('auth' => array('group' => 'admin')),
+	array('auth' => array('is_admin' => 1)),
 	array(
 		'element' => $element,
 		'message' => __('Sorry, but you need to be an administrator to access this location.'),
@@ -43,17 +43,7 @@ Permit::access(
 
 Permit::access(
 	array('controller' => array('maintainers', 'packages'), 'action' => array('add', 'edit', 'delete')),
-	array('auth' => array('group' => 'admin')),
-	array(
-		'element' => $element,
-		'message' => __('Sorry, but you need to be an administrator to access this location.'),
-		'redirect' => array('controller' => 'packages', 'action' => 'home'),
-	)
-);
-
-Permit::access(
-	array('plugin' => 'settings'),
-	array('auth' => array('group' => 'admin')),
+	array('auth' => array('is_admin' => 1)),
 	array(
 		'element' => $element,
 		'message' => __('Sorry, but you need to be an administrator to access this location.'),

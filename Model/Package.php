@@ -9,8 +9,6 @@ class Package extends AppModel {
 
 	public $name = 'Package';
 
-	public $belongsTo = array('Maintainer');
-
 	public $actsAs = array(
 		'Favorites.Favorite',
 		'Ratings.Ratable' => array(
@@ -21,13 +19,66 @@ class Package extends AppModel {
 		'Softdeletable',
 	);
 
-	public $allowedFilters = array(
+	public $belongsTo = array(
+		'Category' => array(
+            'className' => 'Categories.Category',
+            'foreignKey' => 'category_id'
+        ),
+		'Maintainer'
+	);
+
+	public $findMethods = array(
+		'bookmark'          => true,
+		'category'          => true,
+		'download'          => true,
+		'index'             => true,
+		'latest'            => true,
+		'listformaintainer' => true,
+		'rate'              => true,
+		'repoclone'         => true,
+		'uncategorized'     => true,
+		'view'              => true,
+	);
+
+	public $_allowedFilters = array(
 		'collaborators', 'contains', 'contributors',
 		'forks', 'has', 'open_issues', 'query',
 		'since', 'watchers', 'with'
 	);
 
-	public $validTypes = array(
+	public $_categories = array(
+		'Admin Interface',
+		'Anti-spam',
+		'API Creation',
+		'Application',
+		'Asset Handling',
+		'Authentication',
+		'Authorization',
+		'Caching',
+		'Configuration',
+		'Deployment',
+		'Developer Tools',
+		'Datasources',
+		'Email',
+		'Error Handling',
+		'File Managers/Uploading',
+		'Forms',
+		'Internationalization',
+		'Plugin Appplication',
+		'Navigation',
+		'Payment Processing',
+		'Routing',
+		'Search',
+		'Security',
+		'Social',
+		'Third-party Apis',
+		'User Management',
+		'Utility',
+		'View',
+		'WYSIWYG editors',
+	);
+
+	public $_validTypes = array(
 		'model', 'controller', 'view',
 		'behavior', 'component', 'helper',
 		'shell', 'theme', 'datasource',
@@ -35,24 +86,11 @@ class Package extends AppModel {
 		'app', 'config', 'resource',
 	);
 
-	public $folder = null;
+	public $_Folder = null;
 
-	public $Github = null;
+	public $_Github = null;
 
-	public $HttpSocket = null;
-
-	public $SearchIndex = null;
-
-	public $findMethods = array(
-		'bookmark'          => true,
-		'download'          => true,
-		'index'             => true,
-		'latest'            => true,
-		'listformaintainer' => true,
-		'rate'              => true,
-		'repoclone'         => true,
-		'view'              => true,
-	);
+	public $_HttpSocket = null;
 
 	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
@@ -92,7 +130,7 @@ class Package extends AppModel {
  */
 	public function _findBookmark($state, $query, $results = array()) {
 		if ($state == 'before') {
-			if (empty($query['id'])) {
+			if (empty($query[$this->primaryKey])) {
 				throw new NotFoundException(__("Cannot like a non-existent package"));
 			}
 			if (empty($query['user_id'])) {
@@ -100,11 +138,11 @@ class Package extends AppModel {
 			}
 
 			$query['conditions'] = array(
-				"{$this->alias}.{$this->primaryKey}" => $query['id'],
+				"{$this->alias}.{$this->primaryKey}" => $query[$this->primaryKey],
 			);
 			$query['limit'] = 1;
 
-			$query['fields'] = array('id');
+			$query['fields'] = array($this->primaryKey);
 			if (!empty($query['fields'])) {
 				$query['fields'] = array_merge(
 					$this->getDataSource()->fields($this, null, $query['fields']),
@@ -147,6 +185,21 @@ class Package extends AppModel {
 		}
 	}
 
+	public function _findCategory($state, $query, $results = array()) {
+		if ($state == 'before') {
+			$query['conditions'] = array(
+				"{$this->alias}.{$this->primaryKey}" => $query[$this->primaryKey],
+			);
+			$query['fields'] = array($this->primaryKey, 'category_id', 'name', 'description');
+			$query['limit'] = 1;
+			return $query;
+		} elseif ($state == 'after') {
+			if (empty($results[0])) {
+				throw new NotFoundException(__('Invalid package'));
+			}
+			return $results[0];
+		}
+	}
 
 	public function _findDownload($state, $query, $results = array()) {
 		if ($state == 'before') {
@@ -154,7 +207,7 @@ class Package extends AppModel {
 				"{$this->alias}.{$this->primaryKey}" => $query[$this->primaryKey],
 			);
 			$query['contain'] = array('Maintainer' => array('username'));
-			$query['fields'] = array('id', 'name');
+			$query['fields'] = array($this->primaryKey, 'name');
 			$query['limit'] = 1;
 			return $query;
 		} elseif ($state == 'after') {
@@ -216,7 +269,7 @@ class Package extends AppModel {
 			if (!empty($query['named']['has'])) {
 				foreach ($query['named']['has'] as $has) {
 					$has = inflector::singularize(strtolower($has));
-					if (in_array($has, $this->validTypes)) {
+					if (in_array($has, $this->_validTypes)) {
 						$query['conditions']["{$this->alias}.contains_{$has}"] = true;
 					}
 				}
@@ -310,19 +363,20 @@ class Package extends AppModel {
  */
 	public function _findRate($state, $query, $results = array()) {
 		if ($state == 'before') {
-			if (empty($query['id'])) {
+			if (empty($query[$this->primaryKey])) {
 				throw new NotFoundException(__("Cannot like a non-existent package"));
 			}
+
 			if (empty($query['user_id'])) {
 				throw new UnauthorizedException(__("You must be logged in in order to rate packages"));
 			}
 
 			$query['conditions'] = array(
-				"{$this->alias}.{$this->primaryKey}" => $query['id'],
+				"{$this->alias}.{$this->primaryKey}" => $query[$this->primaryKey],
 			);
 			$query['limit'] = 1;
 
-			$query['fields'] = array('id');
+			$query['fields'] = array($this->primaryKey);
 			if (!empty($query['fields'])) {
 				$query['fields'] = array_merge(
 					$this->getDataSource()->fields($this, null, $query['fields']),
@@ -353,7 +407,7 @@ class Package extends AppModel {
 			return $query;
 		} elseif ($state == 'after') {
 			if (empty($results[0])) {
-				throw new NotFoundException(__("Cannot like a non-existent package"));
+				throw new NotFoundException(__("Cannot rate a non-existent package"));
 			}
 
 			if (empty($results[0]['Rating']['id'])) {
@@ -372,13 +426,36 @@ class Package extends AppModel {
 
 			$query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $query[0]);
 			$query['contain'] = array('Maintainer.username');
-			$query['fields'] = array('id', 'name', 'repository_url');
+			$query['fields'] = array($this->primaryKey, 'name', 'repository_url');
 			$query['limit'] = 1;
 			$query['order'] = array("{$this->alias}.{$this->primaryKey} ASC");
 			return $query;
 		} elseif ($state == 'after') {
 			if (empty($results[0])) {
 				throw new NotFoundException(__('Invalid package'));
+			}
+			return $results[0];
+		}
+	}
+
+	public function _findUncategorized($state, $query, $results = array()) {
+		if ($state == 'before') {
+			if (empty($query['user_id'])) {
+				throw new UnauthorizedException(__("You must be logged in in order to rate packages"));
+			}
+
+			$query['conditions'] = array("{$this->alias}.category_id" => null);
+			if (!empty($query[$this->primaryKey])) {
+				$query['conditions']["{$this->alias}.{$this->primaryKey} <>"] = $query[$this->primaryKey];
+			}
+
+			$query['contain'] = array('Maintainer');
+			$query['limit'] = 1;
+			$query['order'] = array("{$this->alias}.{$this->primaryKey} ASC");
+			return $query;
+		} elseif ($state == 'after') {
+			if (empty($results[0])) {
+				throw new NotFoundException(__('No more uncategorized packages'));
 			}
 			return $results[0];
 		}
@@ -475,8 +552,8 @@ class Package extends AppModel {
 			return false;
 		}
 
-		if (!$this->folder) {
-			$this->folder = new Folder();
+		if (!$this->_Folder) {
+			$this->_Folder = new Folder();
 		}
 
 		$path = rtrim(trim(TMP), DS);
@@ -487,17 +564,17 @@ class Package extends AppModel {
 		);
 
 		foreach ($appends as $append) {
-			$this->folder->cd($path);
-			$read = $this->folder->read();
+			$this->_Folder->cd($path);
+			$read = $this->_Folder->read();
 
 			if (!in_array($append, $read['0'])) {
-				$this->folder->create($path . DS . $append);
+				$this->Folder->create($path . DS . $append);
 			}
 			$path = $path . DS . $append;
 		}
 
-		$this->folder->cd($path);
-		$read = $this->folder->read();
+		$this->_Folder->cd($path);
+		$read = $this->_Folder->read();
 
 		if (!in_array($package['Package']['name'], $read['0'])) {
 			if (($paths = Configure::read('paths')) !== false) {
@@ -525,7 +602,7 @@ class Package extends AppModel {
 			return false;
 		}
 
-		return array($package['Package']['id'], $path . DS . $package['Package']['name']);
+		return array($package[$this->alias][$this->primaryKey], $path . DS . $package[$this->alias][$this->displayField]);
 	}
 
 	public function broken($id) {
@@ -544,7 +621,7 @@ class Package extends AppModel {
 		$data = $characterizer->classify();
 		$this->create(false);
 		return $this->save(array('Package' => array_merge(
-			$data, array('id' => $package_id, 'deleted' => false)
+			$data, array($this->primaryKey => $package_id, 'deleted' => false)
 		)));
 	}
 
@@ -570,45 +647,57 @@ class Package extends AppModel {
 	}
 
 /**
- * Actually rates a package
+ * Categorizes a package. Packages can only be in a single category
  *
- * @param int $id Package ID
- * @param int $user_id ID referencing a specific User
- * @param string $rating either "up" or "down"
  * @return boolean
- */
-	public function ratePackage($id = null, $user_id = null) {
+ **/
+	public function categorizePackage($data = array()) {
+		if (empty($data[$this->alias])) {
+			throw new NotFoundException(__("Cannot bookmark a non-existent package"));
+		}
+
+		$id = null;
+		$category_id = null;
+
+		if (!empty($data[$this->alias][$this->primaryKey])) {
+			$id = $data[$this->alias][$this->primaryKey];
+		}
+
+		if (!empty($data[$this->alias]['category_id'])) {
+			$category_id = $data[$this->alias]['category_id'];
+		}		
+
 		if (!$id && $this->id) {
 			$id = $this->id;
 		}
 
 		if (!$id) {
-			throw new NotFoundException(__("Cannot like a non-existent package"));
+			throw new NotFoundException(__("Cannot bookmark a non-existent package"));
 		}
 
-		if (!$user_id) {
-			throw new UnauthorizedException(__("You must be logged in in order to like packages"));
+		if (!$category_id) {
+			throw new UnauthorizedException(__("Invalid category"));
 		}
 
-		$action = 'like';
-		$package = $this->find('rate', compact('id', 'user_id'));
-
-		if ($package['Rating']) {
-			$action = 'dislike';
-			$result = $this->removeRating($id, $user_id);
-			if ($result !== false) {
-				return false;
-			}
+		$package = $this->find('category', compact('id'));
+		if ($package['Package']['category_id'] == $category_id) {
+			return $id;
 		} else {
-			$result = $this->saveRating($id, $user_id, 1);
-			if ($result) {
-				return true;
-			}
-		}
+			$this->id = $id;
+	        if ($this->saveField('category_id', $category_id)) {
+	        	return $id;
+	        }
+	    }
 
-		throw new BadRequestException(__("Unable to %s package", $action));
+	    throw new BadRequestException(__("Unable to categorize package #%d", $id));
 	}
-
+/**
+ * Favorites a package for the specified user
+ *
+ * @param int $id Package ID
+ * @param int $user_id ID referencing a specific User
+ * @return boolean
+ **/
 	public function favoritePackage($id = null, $user_id = null) {
 		if (!$id && $this->id) {
 			$id = $this->id;
@@ -645,12 +734,51 @@ class Package extends AppModel {
 		throw new BadRequestException(__("Unable to %s bookmark", $action));
 	}
 
-	public function updateAttributes($package) {
-		if (!$this->Github) {
-			$this->Github = ClassRegistry::init('Github');
+/**
+ * Actually rates a package
+ *
+ * @param int $id Package ID
+ * @param int $user_id ID referencing a specific User
+ * @param string $rating either "up" or "down"
+ * @return boolean
+ */
+	public function ratePackage($id = null, $user_id = null) {
+		if (!$id && $this->id) {
+			$id = $this->id;
 		}
 
-		$repo = $this->Github->find('reposShowSingle', array(
+		if (!$id) {
+			throw new NotFoundException(__("Cannot like a non-existent package"));
+		}
+
+		if (!$user_id) {
+			throw new UnauthorizedException(__("You must be logged in in order to like packages"));
+		}
+
+		$action = 'like';
+		$package = $this->find('rate', compact('id', 'user_id'));
+		if ($package['Rating']) {
+			$action = 'dislike';
+			$result = $this->removeRating($id, $user_id);
+			if ($result !== false) {
+				return false;
+			}
+		} else {
+			$result = $this->saveRating($id, $user_id, 1);
+			if ($result) {
+				return true;
+			}
+		}
+
+		throw new BadRequestException(__("Unable to %s package", $action));
+	}
+
+	public function updateAttributes($package) {
+		if (!$this->_Github) {
+			$this->_Github = ClassRegistry::init('Github');
+		}
+
+		$repo = $this->_Github->find('reposShowSingle', array(
 			'username' => $package['Maintainer']['username'],
 			'repo' => $package['Package']['name']
 		));
@@ -678,7 +806,7 @@ class Package extends AppModel {
 
 		// Detect total contributors
 		$contribs = 1;
-		$contributors = $this->Github->find('reposShowContributors', array(
+		$contributors = $this->_Github->find('reposShowContributors', array(
 			'username' => $package['Maintainer']['username'], 'repo' => $package['Package']['name']
 		));
 		if (!empty($contributors)) {
@@ -686,7 +814,7 @@ class Package extends AppModel {
 		}
 
 		$collabs = 1;
-		$collaborators = $this->Github->find('reposShowCollaborators', array(
+		$collaborators = $this->_Github->find('reposShowCollaborators', array(
 			'username' => $package['Maintainer']['username'], 'repo' => $package['Package']['name']
 		));
 
@@ -733,11 +861,11 @@ class Package extends AppModel {
 			return false;
 		}
 
-		if (!$this->Github) {
-			$this->Github = ClassRegistry::init('Github');
+		if (!$this->_Github) {
+			$this->_Github = ClassRegistry::init('Github');
 		}
 
-		$response = $this->Github->find('reposShowSingle', array(
+		$response = $this->_Github->find('reposShowSingle', array(
 			'username' => $package['Maintainer']['username'],
 			'repo' => $package[$this->alias]['name']
 		));
@@ -874,6 +1002,48 @@ class Package extends AppModel {
 		return array($named, $coalesce);
 	}
 
+	public function categories($user_id = null) {
+		$categories = $this->Category->find('list', array(
+			'order' => array('Category.name')
+		));
+		if (count($categories) == count($this->_categories)) {
+			return $categories;
+		}
+
+		$unset = array();
+		foreach ($categories as $id => $name) {
+			if (in_array($name, $this->_categories)) {
+				$unset[] = $name;
+			}
+		}
+
+		$create = array_diff($this->_categories, $unset);
+		if (empty($create)) {
+			return $categories;
+		}
+
+		if (!$user_id) {
+			throw new UnauthorizedException(__("You must be logged in in order to rate packages"));			
+		}
+
+		$data = array();
+		foreach ($create as $name) {
+			$data[]['Category'] = compact('user_id', 'name');
+		}
+
+		$result = $this->Category->saveAll($data);
+		if (!$result) {
+			throw new OutOfBoundsException("Unable to create missing categories");
+		}
+
+		$categories = $this->Category->find('list');
+		if (count($categories) == count($this->_categories)) {
+			return $categories;
+		}
+
+		throw new RuntimeException("Something went wrong with creating all the required categories");
+	}
+
 	public function suggest($data) {
 		if (empty($data['username'])) {
 			$this->invalidate('username', 'Username cannot be empty');
@@ -921,7 +1091,7 @@ class Package extends AppModel {
 		$keywords[] = 'cakephp package';
 		$keywords[] = 'cakephp';
 
-		foreach ($this->validTypes as $type) {
+		foreach ($this->_validTypes as $type) {
 			if (isset($package['Package']['contains_' . $type]) && $package['Package']['contains_' . $type] == 1) {
 				$keywords[] = $type;
 			}
@@ -964,12 +1134,16 @@ class Package extends AppModel {
 			return array($items, $options['cache']);
 		}
 
-		if (!$this->_HttpSocket()) {
+		if (!$this->_HttpSocket) {
+			$this->_HttpSocket = new HttpSocket();
+		}
+
+		if (!$this->_HttpSocket) {
 			return array($items, $options['cache']);
 		}
 
-		$result = $this->HttpSocket->request(array('uri' => $options['uri']));
-		$code = $this->HttpSocket->response['status']['code'];
+		$result = $this->_HttpSocket->request(array('uri' => $options['uri']));
+		$code = $this->_HttpSocket->response['status']['code'];
 		$isError = is_array($result) && isset($result['Html']);
 
 		if ($code != 404  && $result && !$isError) {
@@ -1053,14 +1227,6 @@ class Package extends AppModel {
 				$package['Package']['name']
 			), true),
 		);
-	}
-
-	protected function _HttpSocket() {
-		if ($this->HttpSocket) {
-			return $this->HttpSocket;
-		}
-
-		return $this->HttpSocket = new HttpSocket();
 	}
 
 }

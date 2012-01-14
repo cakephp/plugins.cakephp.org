@@ -228,3 +228,10 @@
 .packages-view .dsq-reply {
 	margin-top: 0.5em !important;
 }
+.packages-admin_categorize form {
+	display: inline-block;
+	margin: 5px 5px 5px 0;
+}
+.packages-admin_categorize .page-title {
+	margin-bottom: 10px;
+}
