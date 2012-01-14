@@ -904,6 +904,11 @@ class Package extends AppModel {
 			$named = array_intersect_key($named, array_combine($options['allowed'], $options['allowed']));
 		}
 
+		// HACK: nginx does not play nice with the query string
+		if (isset($named['q'])) {
+			unset($named['q']);
+		}
+
 		if (isset($named['query']) && is_string($named['query']) && strlen($named['query'])) {
 			$named['query'] = str_replace('\'', '"', $named['query']);
 			preg_match_all('/\s*(\w+):\s*("[^"]*"|[^"\s]+)/', $named['query'], $matches, PREG_SET_ORDER);
