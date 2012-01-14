@@ -77,6 +77,7 @@ class Package extends AppModel {
 		'Routing',
 		'Search',
 		'Security',
+		'SEO',
 		'Skeleton',
 		'Social',
 		'Testing',
