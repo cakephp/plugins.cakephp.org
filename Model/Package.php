@@ -67,6 +67,7 @@ class Package extends AppModel {
 		'File Managers/Uploading',
 		'Forms',
 		'Internationalization',
+		'Maps',
 		'Messaging',
 		'Model',
 		'Navigation',
