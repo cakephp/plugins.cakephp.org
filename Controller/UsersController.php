@@ -145,7 +145,7 @@ class UsersController extends AppController {
 		$this->Cookie->destroy();
 		$this->Session->setFlash(sprintf(
 			__('%s, you have successfully logged out'),
-			$user[$this->{$this->modelClass}->displayField]
+			$user['username']
 		), 'flash/info');
 		$this->redirect($this->Auth->logout());
 	}
