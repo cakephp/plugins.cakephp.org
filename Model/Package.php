@@ -21,9 +21,9 @@ class Package extends AppModel {
 
 	public $belongsTo = array(
 		'Category' => array(
-            'className' => 'Categories.Category',
-            'foreignKey' => 'category_id'
-        ),
+			'className' => 'Categories.Category',
+			'foreignKey' => 'category_id'
+			),
 		'Maintainer'
 	);
 
@@ -66,7 +66,9 @@ class Package extends AppModel {
 		'Internationalization',
 		'Plugin Appplication',
 		'Navigation',
+		'Other/Unknown',
 		'Payment Processing',
+		'Personal',
 		'Routing',
 		'Search',
 		'Security',
