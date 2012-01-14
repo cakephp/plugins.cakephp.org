@@ -51,7 +51,7 @@ class GithubController extends AppController {
 		try {
 			$existing = $this->Maintainer->find('existing', $username);
 		} catch (Exception $e) {
-			$this->Session->flash($e->getMessage(), 'flash/error');
+			$this->Session->setFlash($e->getMessage(), 'flash/error');
 			$this->redirect($this->redirectTo);
 		}
 
@@ -78,7 +78,7 @@ class GithubController extends AppController {
 			$this->redirect(array('action' => 'view', $username));
 		}
 
-		$this->Session->flash(sprintf(__('Code for %s not saved!'), $package), 'flash/error');
+		$this->Session->setFlash(sprintf(__('Code for %s not saved!'), $package), 'flash/error');
 		$this->redirect(array('action' => 'view', $username));
 	}
 

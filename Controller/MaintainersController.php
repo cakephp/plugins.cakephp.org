@@ -19,7 +19,7 @@ class MaintainersController extends AppController {
 		try {
 			$this->set('maintainer', $maintainer = $this->Maintainer->find('view', $username));
 		} catch (Exception $e) {
-			$this->Session->flash($e->getMessage(), 'flash/error');
+			$this->Session->setFlash($e->getMessage(), 'flash/error');
 			$this->redirect($this->redirectTo);
 		}
 	}

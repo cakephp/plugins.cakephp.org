@@ -67,7 +67,7 @@ class PackagesController extends AppController {
 			$user_id = AuthComponent::user('id');
 			$package = $this->Package->find('view', compact('maintainer', 'package', 'user_id'));
 		} catch (Exception $e) {
-			$this->Session->flash($e->getMessage(), 'flash/error');
+			$this->Session->setFlash($e->getMessage(), 'flash/error');
 			$this->redirect($this->redirectTo);
 		}
 

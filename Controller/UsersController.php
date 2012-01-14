@@ -163,7 +163,7 @@ class UsersController extends AppController {
 			} else {
 				unset($this->request->data[$this->modelClass]['password']);
 				unset($this->request->data[$this->modelClass]['temppassword']);
-				$this->Session->flash(__('Your account could not be created. Please, try again.'), 'flash/error');
+				$this->Session->setFlash(__('Your account could not be created. Please, try again.'), 'flash/error');
 			}
 		}
 	}
@@ -185,10 +185,10 @@ class UsersController extends AppController {
 					$this->Session->setFlash(__('An email has been sent with instructions for resetting your password'), 'flash/success');
 					$this->redirect(array('controller' => 'users', 'action' => 'login'));
 				} else {
-					$this->Session->flash(__('Error resetting password'), 'flash/error');
+					$this->Session->setFlash(__('Error resetting password'), 'flash/error');
 				}
 			} catch (Exception $e) {
-				$this->Session->flash($e->getMessage(), 'flash/error');
+				$this->Session->setFlash($e->getMessage(), 'flash/error');
 				$this->redirect(array('controller' => 'users', 'action' => 'forgot_password'));
 			}
 		}
@@ -208,7 +208,7 @@ class UsersController extends AppController {
 		try {
 			$user = $this->User->find('resetPassword', $token);
 		} catch (Exception $e) {
-			$this->Session->flash(__('Invalid password reset token, try again.'), 'flash/error');
+			$this->Session->setFlash(__('Invalid password reset token, try again.'), 'flash/error');
 			$this->redirect(array('action' => 'forgot_password'));
 		}
 
@@ -217,7 +217,7 @@ class UsersController extends AppController {
 				$this->Session->setFlash(__('Password changed, you can now login with your new password.'), 'flash/success');
 				$this->redirect($this->Auth->loginAction);
 			} else {
-				$this->Session->flash(__('Unable to update password, please try again.'), 'flash/error');
+				$this->Session->setFlash(__('Unable to update password, please try again.'), 'flash/error');
 			}
 		}
 
@@ -283,7 +283,7 @@ class UsersController extends AppController {
 			if ($this->User->UserDetail->saveSection($this->Auth->user('id'), $this->request->data, 'User')) {
 				$this->Session->setFlash(__('Profile saved.'), 'flash/success');
 			} else {
-				$this->Session->flash(__('Could not save your profile.'), 'flash/error');
+				$this->Session->setFlash(__('Could not save your profile.'), 'flash/error');
 			}
 		} else {
 			$this->request->data = $this->User->find('first', array(
