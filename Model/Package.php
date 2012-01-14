@@ -56,6 +56,7 @@ class Package extends AppModel {
 		'Authorization',
 		'Background Processing',
 		'Caching',
+		'Categorization',
 		'Configuration',
 		'Controller',
 		'Deployment',
