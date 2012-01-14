@@ -39,7 +39,7 @@
 	url = git://github.com/josegonzalez/sham.git
 [submodule "Plugin/Favorites"]
 	path = Plugin/Favorites
-	url = git://github.com/josegonzalez/favorites.git
+	url = git://github.com/CakeDC/favorites.git
 [submodule "Plugin/Categories"]
 	path = Plugin/Categories
-	url = git://github.com/CakeDC/categories.git
+	url = git://github.com/josegonzalez/categories.git

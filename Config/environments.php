@@ -31,8 +31,8 @@ Environment::configure('production',
 			'defaultTexts'           => array('bookmark' => __('Bookmark')),
 			'modelCategories'        => array('Package'),
 		),
-		'Category.sluggable'      => array(
-			'separator'              => '-',
+		'Category'                => array(
+			'sluggable'              => array('separator' => '-'),
 		),
 
 		// Feature flags
@@ -117,8 +117,8 @@ Environment::configure('staging',
 			'defaultTexts'           => array('bookmark' => __('Bookmark')),
 			'modelCategories'        => array('Package'),
 		),
-		'Category.sluggable'      => array(
-			'separator'              => '-',
+		'Category'                => array(
+			'sluggable'              => array('separator' => '-'),
 		),
 
 		// Feature flags
@@ -156,6 +156,7 @@ Environment::configure('development',
 		'Routing.prefixes'        => array('admin', 'one'),
 		'Security.salt'           => 'AYcG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9ab',
 		'Security.cipherSeed'     => '76859364557429242496749683650',
+
 		'Recaptcha.publicKey'     => '6LeyksQSAAAAAJdkmQB7vBtsP9kYY75rE1ebY7B5',
 		'Recaptcha.privateKey'    => '6LeyksQSAAAAAEOJpZmWFHoBzgpSBtVlbDCDy6Uv',
 
@@ -164,8 +165,8 @@ Environment::configure('development',
 			'defaultTexts'           => array('bookmark' => __('Bookmark')),
 			'modelCategories'        => array('Package'),
 		),
-		'Category.sluggable'      => array(
-			'separator'              => '-',
+		'Category'                => array(
+			'sluggable'              => array('separator' => '-'),
 		),
 
 		// Feature flags
