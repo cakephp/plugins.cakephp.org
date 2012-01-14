@@ -62,6 +62,7 @@ class Package extends AppModel {
 		'Deployment',
 		'Developer Tools',
 		'Datasources',
+		'Example',
 		'Email',
 		'Error Handling',
 		'File Managers/Uploading',
