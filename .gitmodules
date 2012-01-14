@@ -40,3 +40,6 @@
 [submodule "Plugin/Favorites"]
 	path = Plugin/Favorites
 	url = git://github.com/josegonzalez/favorites.git
+[submodule "Plugin/Categories"]
+	path = Plugin/Categories
+	url = git://github.com/CakeDC/categories.git
