@@ -172,6 +172,11 @@ class AppController extends Controller {
 			),
 			'Form',
 		);
+
+		// HACK: nginx does not play nice with the query string
+		if (isset($this->request->query['q'])) {
+			unset($this->request->query['q'])
+		}
 	}
 
 /**
