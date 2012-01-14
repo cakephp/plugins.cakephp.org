@@ -33,14 +33,14 @@ class PackagesController extends AppController {
 		if ($this->request->is('post')) {
 			list($data, $query) = $this->Package->cleanParams($this->request->data, array(
 				'rinse' => false,
-				'allowed' => $this->Package->allowedFilters,
+				'allowed' => $this->Package->_allowedFilters,
 			));
 			$this->redirect(array('?' => $data, 'escape' => false));
 		}
 
 		list($this->request->data, $query) = $this->Package->cleanParams(
 			$this->request->query, array(
-				'allowed' => $this->Package->allowedFilters,
+				'allowed' => $this->Package->_allowedFilters,
 				'coalesce' => true,
 			)
 		);
@@ -52,8 +52,7 @@ class PackagesController extends AppController {
 		$this->request->data['query'] = $query;
 
 		$packages = $this->paginate();
-		$tabs = $this->Package->tabs;
-		$this->set(compact('packages', 'tabs'));
+		$this->set(compact('packages'));
 	}
 
 /**
