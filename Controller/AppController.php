@@ -175,7 +175,7 @@ class AppController extends Controller {
 
 		// HACK: nginx does not play nice with the query string
 		if (isset($this->request->query['q'])) {
-			unset($this->request->query['q'])
+			unset($this->request->query['q']);
 		}
 	}
 
