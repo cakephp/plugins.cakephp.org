@@ -54,6 +54,7 @@ class Package extends AppModel {
 		'Asset Handling',
 		'Authentication',
 		'Authorization',
+		'Background Processing',
 		'Caching',
 		'Configuration',
 		'Deployment',
