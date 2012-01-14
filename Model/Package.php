@@ -73,6 +73,7 @@ class Package extends AppModel {
 		'Search',
 		'Security',
 		'Social',
+		'Testing',
 		'Third-party Apis',
 		'User Management',
 		'Utility',
@@ -1043,7 +1044,9 @@ class Package extends AppModel {
 			throw new OutOfBoundsException("Unable to create missing categories");
 		}
 
-		$categories = $this->Category->find('list');
+		$categories = $this->Category->find('list', array(
+			'order' => array('Category.name')
+		));
 		if (count($categories) == count($this->_categories)) {
 			return $categories;
 		}
