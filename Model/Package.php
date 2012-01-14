@@ -72,6 +72,7 @@ class Package extends AppModel {
 		'Routing',
 		'Search',
 		'Security',
+		'Skeleton',
 		'Social',
 		'Testing',
 		'Third-party Apis',
