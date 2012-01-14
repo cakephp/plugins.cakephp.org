@@ -23,9 +23,9 @@ class DATABASE_CONFIG {
 	);
 
 	public $staging = array(
-		'login'         => 'cakepackages_staging',
+		'login'         => 'cakepackages_sta',
 		'password'      => 'cakepackages_sta',
-		'database'      => 'cakepackages_sta',
+		'database'      => 'cakepackages_staging',
 	);
 
 	public $production = array(
