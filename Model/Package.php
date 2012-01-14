@@ -73,6 +73,7 @@ class Package extends AppModel {
 		'Payment Processing',
 		'Plugin Application',
 		'Personal',
+		'Reporting',
 		'Routing',
 		'Search',
 		'Security',
