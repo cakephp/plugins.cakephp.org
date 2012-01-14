@@ -9,23 +9,7 @@ form .error-message {
 	-webkit-border-radius: 6px;
 	border-radius: 6px;
 }
-input[type="submit"] {
-	width: auto;
-	padding: 7px 8px;
-	color: #5E5E5E;
-	background: #ECECEC;
-	background: -webkit-gradient(linear, left top, left bottom, from(white), to(#D7D7D7));
-	background: -moz-linear-gradient(top, white, #D7D7D7);
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-	-moz-box-shadow: 0px 1px 2px #888;
-	-webkit-box-shadow: 0px 1px 2px #888;
-	box-shadow: 0px 1px 2px #888;
-	border: 1px #D4D4D4 solid;
-	text-decoration: none;
-	text-transform: capitalize;
-}
+
 /* Page Forms */
 .page-form .content label {
 	display: block;

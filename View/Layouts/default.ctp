@@ -65,7 +65,10 @@
 						'inputDefaults' => array('div' => false, 'label' => false),
 					));
 					echo $this->Form->input('query', array('placeholder' => 'search (ex. upload has:behavior)'));
-					echo $this->Form->submit(__('search'), array('div' => false));
+					echo $this->Form->button(__('search'), array(
+						'class' => 'button big icon search',
+						'div' => false,
+					));
 					echo $this->Form->end();
 				?>
 			</div>

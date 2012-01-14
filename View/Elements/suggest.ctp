@@ -9,7 +9,12 @@
 	)); ?>
 		<?php echo $this->Form->input('Package.username', array('placeholder' => 'github username')); ?>
 		<?php echo $this->Form->input('Package.repository', array('placeholder' => 'repository')); ?>
-		<?php echo $this->Form->submit('Suggest!'); ?>
+		<?php
+			echo $this->Form->button(__('Suggest!'), array(
+				'class' => 'button solid-green',
+				'div' => false,
+			));
+		?>
 	<?php echo $this->Form->end(); ?>
 
 </div>

@@ -83,6 +83,9 @@ http://github.com/todc/css3-github-buttons
     margin: 0 0.75em 0 -0.25em; 
     background: url("/img/css3-buttons/gh-icons.png") 0 99px no-repeat;
 }
+.button.icon.big::before {
+    margin: 2px 0.75em 0 -0.25em; 
+}
 .button.icon.is_activated:before {
     background: url("/img/css3-buttons/gh-icons-activated.png") 0 99px no-repeat;
 }

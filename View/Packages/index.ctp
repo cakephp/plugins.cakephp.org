@@ -19,7 +19,12 @@
 				'placeholder' => __('search (ex. debug watchers:5 forks:8 has:component)')
 			));
 		?>
-		<?php echo $this->Form->submit(__('Search'), array('div' => false));?>
+		<?php
+			echo $this->Form->button(__('Search'), array(
+				'class' => 'button big icon search',
+				'div' => false,
+			));
+		?>
 		<?php echo $this->Form->end();?>
 	</div>
 </section>
