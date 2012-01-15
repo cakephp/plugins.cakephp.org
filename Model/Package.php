@@ -23,7 +23,7 @@ class Package extends AppModel {
 		'Category' => array(
 			'className' => 'Categories.Category',
 			'foreignKey' => 'category_id'
-			),
+		),
 		'Maintainer'
 	);
 
@@ -487,19 +487,46 @@ class Package extends AppModel {
 			$query['contain'] = array('Maintainer' => array($this->displayField, 'username'));
 			$query['limit'] = 1;
 
+			if (!empty($query['fields'])) {
+				$query['fields'] = array_merge(
+					$this->getDataSource()->fields($this, null, $query['fields']),
+					$this->Category->getDataSource()->fields($this->Category)
+				);
+			} else {
+				$query['fields'] = array_merge(
+					$this->getDataSource()->fields($this),
+					$this->Category->getDataSource()->fields($this->Category)
+				);
+			}
+
+			$this->unbindModel(array(
+				'belongsTo' => array('Categories.Category'),
+			));
+
+			$query['joins'] = array(
+				array(
+					'alias' => 'Category',
+					'table' => 'categories',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'`Category`.`id` = `Package`.`category_id`'
+					),
+				),
+			);
+
 			// Join additional records if necessary
 			if ($query['user_id']) {
 				if (!empty($query['fields'])) {
 					$query['fields'] = array_merge(
 						$this->getDataSource()->fields($this, null, $query['fields']),
 						$this->Rating->getDataSource()->fields($this->Rating),
-						$this->Rating->getDataSource()->fields($this->Favorite)
+						$this->Favorite->getDataSource()->fields($this->Favorite)
 					);
 				} else {
 					$query['fields'] = array_merge(
 						$this->getDataSource()->fields($this),
 						$this->Rating->getDataSource()->fields($this->Rating),
-						$this->Rating->getDataSource()->fields($this->Favorite)
+						$this->Favorite->getDataSource()->fields($this->Favorite)
 					);
 				}
 
@@ -507,27 +534,25 @@ class Package extends AppModel {
 					'hasMany' => array('Ratings.Rating', 'Favorites.Favorite'),
 				));
 
-				$query['joins'] = array(
-					array(
-						'alias' => 'Favorite',
-						'table' => 'favorites',
-						'type' => 'LEFT',
-						'conditions' => array(
-							'`Favorite`.`foreign_key` = `Package`.`id`',
-							'Favorite.model' => 'Package',
-							'Favorite.type' => 'bookmark',
-							'Favorite.user_id' => $query['user_id'],
-						),
+				$query['joins'][] = array(
+					'alias' => 'Favorite',
+					'table' => 'favorites',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'`Favorite`.`foreign_key` = `Package`.`id`',
+						'Favorite.model' => 'Package',
+						'Favorite.type' => 'bookmark',
+						'Favorite.user_id' => $query['user_id'],
 					),
-					array(
-						'alias' => 'Rating',
-						'table' => 'ratings',
-						'type' => 'LEFT',
-						'conditions' => array(
-							'`Rating`.`foreign_key` = `Package`.`id`',
-							'Rating.model' => 'Package',
-							'Rating.user_id' => $query['user_id'],
-						),
+				);
+				$query['joins'][] = array(
+					'alias' => 'Rating',
+					'table' => 'ratings',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'`Rating`.`foreign_key` = `Package`.`id`',
+						'Rating.model' => 'Package',
+						'Rating.user_id' => $query['user_id'],
 					),
 				);
 			}
