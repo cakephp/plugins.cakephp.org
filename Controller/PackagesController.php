@@ -172,7 +172,11 @@ class PackagesController extends AppController {
 		}
 
 		$categories = $this->Package->categories($user_id);
-		$package = $this->Package->find('uncategorized', compact('id', 'user_id'));
+		try {
+			$package = $this->Package->find('uncategorized', compact('id', 'user_id'));
+		} catch (Exception $e) {
+			$this->Session->setFlash($e->getMessage(), 'flash/error');
+		}
 		$this->set(compact('categories', 'package'));
 	}
 

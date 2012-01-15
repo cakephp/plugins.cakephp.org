@@ -1,3 +1,8 @@
+<?php
+	if (empty($package)) {
+		return;
+	}
+?>
 <section class="page-title clearfix">
 	<h2><?php echo $package['Package']['name']; ?></h2>
 	<?php echo $this->Resource->description($package['Package']['description']); ?>
