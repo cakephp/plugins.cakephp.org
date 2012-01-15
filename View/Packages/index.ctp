@@ -75,5 +75,11 @@ $this->Paginator->options(array(
 		<?php echo $this->Paginator->prev('prev', array(), null, array('class' => 'disabled'));?>
 		<?php echo $this->Paginator->numbers(array('separator' => ' ', 'modulus' => 8));?>
 		<?php echo $this->Paginator->next('next', array(), null, array('class' => 'disabled'));?>
+		<p>
+			<?php echo $this->Paginator->counter(array(
+					'format' => __d('categories', 'Showing packages %start%-%end% of %count%'),
+				));
+			?>
+		</p>
 	</div>
 <?php endif; ?>
