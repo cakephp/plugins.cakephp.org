@@ -198,6 +198,19 @@ class AppController extends Controller {
 	}
 
 /**
+ * Internally redirects one action to another. Does not perform another HTTP request unlike Controller::redirect()
+ *
+ * @param string $action The new action to be 'redirected' to
+ * @param mixed  Any other parameters passed to this method will be passed as
+ *    parameters to the new action.
+ * @return mixed Returns the return value of the called action
+ */
+	public function setAction($action) {
+		$this->request->params['action'] = $action;
+		return parent::setAction($action);
+	}
+	
+/**
  * Setup Theme
  *
  * @return boolean True if theme set, false otherwise
