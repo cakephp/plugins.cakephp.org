@@ -115,6 +115,9 @@ body.minimal {
 		margin-top: 10px;
 		position: static;
 	}
+	.packages-index header form .search {
+		display: inline-block;
+	}
 	.packages-index .search {
 		display: none;
 	}
@@ -208,6 +211,9 @@ body.mobile {
 .mobile header form {
 	margin-top: 10px;
 	position: static;
+}
+.mobile.packages-index header form .search {
+	display: inline-block;
 }
 .mobile.packages-index .search {
 	display: none;
