@@ -39,25 +39,23 @@ if (empty($package['description'])) {
 		<?php if ($hasDetails) : ?>
 			<div class="details">
 
-				<?php
-					if ($showMaintainer) {
-						echo 'by ' . $this->Html->link($maintainer['username'], array(
+				<?php if ($showMaintainer) : ?>
+					<strong>By:</strong> <?php echo $this->Html->link($maintainer['username'], array(
 							'controller' => 'maintainers',
 							'action' => 'view',
 							$maintainer['username']
-						), array('class' => 'author'));
-					}
-				?>
+						), array('class' => 'author')); ?>
+				<?php endif; ?>
 
 				<?php if ($showDate) : ?>
 					<span class="date">
-						added on <?php echo $this->Time->format('Y-m-d', $package['created']); ?>
+						<strong>Added On:</strong> <?php echo $this->Time->format('Y-m-d', $package['created']); ?>
 					</span>
 				<?php endif; ?>
 
 				<?php if ($showLastPushedAt) : ?>
 					<span class="date">
-						last updated at <?php echo $this->Time->format('Y-m-d', $package['last_pushed_at']); ?>
+						<strong>Last Updated At:</strong> <?php echo $this->Time->format('Y-m-d', $package['last_pushed_at']); ?>
 					</span>
 				<?php endif; ?>
 

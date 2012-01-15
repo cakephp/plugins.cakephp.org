@@ -1,6 +1,6 @@
 <div class="infobox transparent">
 
-	<h3>Packages</h3>
+	<h3>Package Search Tips</h3>
 	<p>Package search will look through our repository of CakePHP code and try to find things that are most similar to your query. You can also filter the results by:</p>
 
 	<table border="0" cellspacing="0" cellpadding="0">

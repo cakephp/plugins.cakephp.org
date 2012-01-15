@@ -1,10 +1,23 @@
-<?php
-	if (!empty($this->request->data['query'])) {
-		$title = 'Results for <span>' . $this->request->data['query'] . '</span>';
-	} else {
-		$title = __('Available CakePHP packages');
-	}
-?>
+<section class="contribute">
+	<div class="bubble-top bubble-border">
+		<h2 class="header">Use and Share Open Source CakePHP Code</h2>
+	</div>
+	<div class="bubble-bottom clearfix">
+		<article>
+			Signup
+		</article>
+		<article>
+			Create a Package
+		</article>
+		<article>
+			Install Plugins
+		</article>
+		<article>
+			Follow Repositories
+		</article>
+	</div>
+</section>
+
 <section class="search">
 	<?php if (!empty($packages)) : ?>
 		<h2><?php echo $title; ?></h2>
@@ -28,7 +41,6 @@
 		<?php echo $this->Form->end();?>
 	</div>
 </section>
-
 
 <div class="clearfix columns">
 	<section class="packages">

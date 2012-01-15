@@ -79,6 +79,13 @@ class AppController extends Controller {
 	protected $_ajax = array();
 
 /**
+ * Original action executed before being modified by Controller::setAction()
+ *
+ * @var string
+ **/
+	protected $_originalAction = null;
+
+/**
  * Object constructor - Adds the Debugkit panel if in development mode
  *
  * @return void
@@ -121,6 +128,73 @@ class AppController extends Controller {
 			);
 		}
 
+		$this->_originalAction = $this->request->params['action'];
+	}
+
+/**
+ * Sets the currently logged in user as a view variable
+ *
+ * Also sets the body class and id
+ *
+ * @return void
+ */
+	public function beforeRender() {
+		$isAjaxable = in_array($this->action, $this->_ajax);
+		$isAjaxPost = $this->request->is('ajax') && $this->request->is('post');
+		if ($isAjaxable && $isAjaxPost) {
+			$this->_respondAs('ajax');
+		}
+
+		$action = $this->request->params['action'];
+		if (!empty($this->request->action)) {
+			$action = $this->request->action;
+		}
+
+		$_bodyId = "{$this->request->params['controller']}";
+		$_bodyClass = "{$this->request->params['controller']}-{$action}";
+		$this->set(compact('_bodyId', '_bodyClass'));
+	}
+
+/**
+ * Redirects to given $url, after turning off $this->autoRender.
+ * Script execution is halted after the redirect.
+ *
+ * @param mixed $url A string or array-based URL pointing to another location within the app,
+ *     or an absolute URL
+ * @param integer $status Optional HTTP status code (eg: 404)
+ * @param boolean $exit If true, exit() will be called after the redirect
+ * @return mixed void if $exit = false. Terminates script if $exit = true
+ * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::redirect
+ */
+	public function redirect($url, $status = null, $exit = true) {
+		if (in_array($this->action, $this->_ajax) && $this->request->is('ajax')) {
+			$url = Router::url($url, true);
+			if (!empty($status)) {
+				$codes = $this->httpCodes();
+
+				if (is_string($status)) {
+					$codes = array_flip($codes);
+				}
+
+				if (isset($codes[$status])) {
+					$code = $msg = $codes[$status];
+					if (is_numeric($status)) {
+						$code = $status;
+					}
+					if (is_string($status)) {
+						$msg = $status;
+					}
+					$status = "HTTP/1.1 {$code} {$msg}";
+				} else {
+					$status = null;
+				}
+			}
+
+			$this->set('_redirect', compact('url', 'status', 'exit'));
+			return $this->_respondAs('ajax');
+		}
+
+		return parent::redirect($url, $status, $exit);
 	}
 
 /**
@@ -290,68 +364,6 @@ class AppController extends Controller {
 
 			$this->redirect($redirectTo, $status, $exit);
 		}
-	}
-
-/**
- * Sets the currently logged in user as a view variable
- *
- * Also sets the body class and id
- *
- * @return void
- */
-	public function beforeRender() {
-		if (in_array($this->action, $this->_ajax) && $this->_is('ajax', 'post')) {
-			$this->_respondAs('ajax');
-		}
-
-		$_bodyId = "{$this->request->params['controller']}";
-		$_bodyClass = "{$this->request->params['controller']}-{$this->request->params['action']}";
-		$this->set(compact('_bodyId', '_bodyClass'));
-	}
-
-	public function redirect($url, $status = null, $exit = true) {
-		if (in_array($this->action, $this->_ajax) && $this->_is('ajax')) {
-			$url = Router::url($url, true);
-			if (!empty($status)) {
-				$codes = $this->httpCodes();
-
-				if (is_string($status)) {
-					$codes = array_flip($codes);
-				}
-
-				if (isset($codes[$status])) {
-					$code = $msg = $codes[$status];
-					if (is_numeric($status)) {
-						$code = $status;
-					}
-					if (is_string($status)) {
-						$msg = $status;
-					}
-					$status = "HTTP/1.1 {$code} {$msg}";
-				} else {
-					$status = null;
-				}
-			}
-
-			$this->set('_redirect', compact('url', 'status', 'exit'));
-			return $this->_respondAs('ajax');
-		}
-
-		return parent::redirect($url, $status, $exit);
-	}
-
-	protected function _is() {
-		$args = func_get_args();
-		if (is_array($args[0])) {
-			$args = $args[0];
-		}
-
-		foreach ($args as $arg) {
-			if (!$this->RequestHandler->{'is' . ucfirst($arg)}()) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	protected function _respondAs($type) {

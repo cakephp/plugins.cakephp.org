@@ -12,6 +12,10 @@
 }
 .content .packages article {
 	margin-bottom: 30px;
+	padding: 10px;
+}
+.content .packages article:hover {
+	background: #eeeeee;
 }
 .content .packages h3 {
 	padding-bottom: 0;
@@ -21,19 +25,31 @@
 	font-size: 18px;
 }
 .content .packages .info {
+	color: #555555;
 	font-size: 12px;
+}
+.content .packages .info a {
+	color: #555555;
+}
+.content .packages .info strong {
+	font-weight: bold;
+	margin-right: 4px;
 }
 .content .packages .info .description {
 	font-size: 12px;
 	margin: 5px 0 7px 0;
+	opacity: 1;
 }
 .content .packages .info .details {
 	color: #666666;
 	font-size: 11px;
+	opacity: .6;
+}
+.content .packages article:active .info .details,
+.content .packages article:hover .info .details {
+	opacity: 1;
 }
 .content .packages .info .author {
-	color: #000000;
-	font-weight: bold;
 	margin-right: 20px;
 }
 .content .packages .info .author:hover {
@@ -42,7 +58,7 @@
 
 /* Package Index */
 .packages-index .search {
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 }
 .packages-index .search form {
 	text-align: center;

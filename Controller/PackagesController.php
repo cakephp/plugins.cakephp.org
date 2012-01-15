@@ -15,12 +15,7 @@ class PackagesController extends AppController {
  * Default page for entire application
  */
 	public function home() {
-		$sortClass = null;
-		if (empty($this->request->params['named']['sort'])) {
-			$sortClass = 'class="ui-tabs-selected"';
-		}
-		$packages = $this->Package->find('latest');
-		$this->set(compact('packages', 'sortClass'));
+		return $this->setAction('index');
 	}
 
 /**
@@ -44,15 +39,26 @@ class PackagesController extends AppController {
 				'coalesce' => true,
 			)
 		);
+
 		$this->paginate = array(
-			'index',
+			'type' => 'index',
 			'limit' => 20,
-			'named' => $this->request->data,
+			'named' => $this->request->data
 		);
+
 		$this->request->data['query'] = $query;
 
+		if ($this->_originalAction == 'home') {
+			$title = __('Latest CakePHP Packages');
+		} else {
+			$title = __('Available CakePHP packages');
+			if (!empty($this->request->data['query'])) {
+				$title = 'Results for <span>' . $this->request->data['query'] . '</span>';
+			}
+		}
+
 		$packages = $this->paginate();
-		$this->set(compact('packages'));
+		$this->set(compact('packages', 'title'));
 	}
 
 /**
