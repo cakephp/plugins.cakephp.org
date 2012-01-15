@@ -4,7 +4,12 @@ App::uses('Permit', 'Sanction.Controller/Component');
 
 $element = 'flash/error';
 $message = __('Access denied.');
-$redirect = $loggedInRedirect = array('admin' => false, 'controller' => 'packages', 'action' => 'home');
+$adminMessage = __('Sorry, but you need to be an administrator to access this location.');
+$redirect = $adminRedirect = $logoutRedirect = array(
+	'admin' => false,
+	'controller' => 'packages',
+	'action' => 'home'
+);
 if (Configure::read('Feature.auth_required')) {
 	$message = __('Sorry, but you need to be logged in to access this location.');
 	$redirect = array('controller' => 'users', 'action' => 'login');
@@ -15,8 +20,8 @@ Permit::access(
 	array('auth' => array('is_admin' => 1)),
 	array(
 		'element' => $element,
-		'message' => __('Sorry, but you need to be an administrator to access this location.'),
-		'redirect' => array('admin' => false, 'controller' => 'packages', 'action' => 'home'),
+		'message' => $adminMessage,
+		'redirect' => $adminRedirect,
 	)
 );
 
@@ -26,8 +31,8 @@ Permit::access(
 	array('auth' => array('is_admin' => 1)),
 	array(
 		'element' => $element,
-		'message' => __('Sorry, but you need to be an administrator to access this location.'),
-		'redirect' => array('controller' => 'packages', 'action' => 'home'),
+		'message' => $adminMessage,
+		'redirect' => $adminRedirect,
 	)
 );
 
@@ -36,18 +41,8 @@ Permit::access(
 	array('auth' => array('is_admin' => 1)),
 	array(
 		'element' => $element,
-		'message' => __('Sorry, but you need to be an administrator to access this location.'),
-		'redirect' => array('controller' => 'packages', 'action' => 'home'),
-	)
-);
-
-Permit::access(
-	array('controller' => array('maintainers', 'packages'), 'action' => array('add', 'edit', 'delete')),
-	array('auth' => array('is_admin' => 1)),
-	array(
-		'element' => $element,
-		'message' => __('Sorry, but you need to be an administrator to access this location.'),
-		'redirect' => array('controller' => 'packages', 'action' => 'home'),
+		'message' => $adminMessage,
+		'redirect' => $adminRedirect,
 	)
 );
 
@@ -69,6 +64,6 @@ Permit::access(
 	array(
 		'element' => $element,
 		'message' => __('Sorry, but you need to be logged out to access this location.'),
-		'redirect' => $loggedInRedirect,
+		'redirect' => $logoutRedirect,
 	)
 );
