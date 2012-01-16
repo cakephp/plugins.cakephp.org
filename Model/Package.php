@@ -284,7 +284,7 @@ class Package extends AppModel {
 					$query['named']['direction'] = 'desc';
 				}
 
-				if ($query['named']['direction'] != 'asc' || $query['named']['direction'] != 'desc') {
+				if ($query['named']['direction'] != 'asc' && $query['named']['direction'] != 'desc') {
 					$query['named']['direction'] = 'desc';
 				}
 				$direction = $query['named']['direction'];
