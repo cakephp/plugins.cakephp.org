@@ -53,24 +53,6 @@
 						<?php endif; ?>
 					</ul>
 				</nav>
-
-				<?php
-					echo $this->Form->create(false, array(
-						'url' => array(
-							'admin' => false,
-							'plugin' => null,
-							'controller' => 'packages',
-							'action' => 'index'
-						),
-						'inputDefaults' => array('div' => false, 'label' => false),
-					));
-					echo $this->Form->input('query', array('placeholder' => 'search (ex. upload has:behavior)'));
-					echo $this->Form->button(__('search'), array(
-						'class' => 'button big icon search',
-						'div' => false,
-					));
-					echo $this->Form->end();
-				?>
 			</div>
 		</header>
 		<div class="content container">

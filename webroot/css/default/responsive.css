@@ -20,11 +20,6 @@ body {
 		height: 70px;
 		line-height: 70px;
 	}
-	header nav {
-		display: block;
-		text-align: center;
-		width: 270px;
-	}
 	header form {
 		margin-top: 10px;
 	}
@@ -61,11 +56,6 @@ body.minimal {
 	height: 70px;
 	line-height: 70px;
 }
-.minimal header nav {
-	display: block;
-	text-align: center;
-	width: 270px;
-}
 .minimal header form {
 	margin-top: 10px;
 }
@@ -98,7 +88,7 @@ body.minimal {
 		width: 320px;
 	}
 	header {
-		height: 110px;
+		height: 85px;
 	}
 	header h1 {
 		margin: 0;
@@ -111,21 +101,15 @@ body.minimal {
 		text-align: center;
 	}
 	header nav {
-		display: none;
-		margin-top: 0;
+		margin-top: 12px;
 		position: static;
+		right: auto;
 		text-align: center;
-		top: 0;
+		top: auto;
+		width: 100%;
 	}
-	header form {
-		margin-top: 10px;
-		position: static;
-	}
-	.packages-index header form .search {
-		display: inline-block;
-	}
-	.packages-index .search {
-		display: none;
+	.packages-index .search form .query {
+		width: 188px;
 	}
 	.packages-view .page-title {
 		text-align: center;
@@ -176,6 +160,9 @@ body.minimal {
 		margin-top: 10px;
 		position: static;
 	}
+	#packages .packages article {
+		width: 100%;
+	}
 	.page-form .content .info-sidebar {
 		margin-top: 20px;
 		position: static;
@@ -195,7 +182,7 @@ body.mobile {
 	width: 320px;
 }
 .mobile header {
-	height: 110px;
+	height: 85px;
 }
 .mobile header h1 {
 	margin: 0;
@@ -208,21 +195,15 @@ body.mobile {
 	text-align: center;
 }
 .mobile header nav {
-	display: none;
-	margin-top: 0;
+	margin-top: 12px;
 	position: static;
+	right: auto;
 	text-align: center;
-	top: 0;
+	top: auto;
+	width: 100%;
 }
-.mobile header form {
-	margin-top: 10px;
-	position: static;
-}
-.mobile.packages-index header form .search {
-	display: inline-block;
-}
-.mobile.packages-index .search {
-	display: none;
+.mobile.packages-index .search form .query {
+	width: 188px;
 }
 .mobile.packages-view .page-title {
 	text-align: center;
@@ -272,6 +253,9 @@ body.mobile {
 	float: none;
 	margin-top: 10px;
 	position: static;
+}
+.mobile#packages .packages article {
+	width: 100%;
 }
 .mobile.page-form .content .info-sidebar {
 	margin-top: 20px;

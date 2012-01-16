@@ -1,6 +1,6 @@
 header {
 	background-color: #376475;
-	height: 110px;
+	height: 70px;
 	padding-top: 5px;
 	width: 100%;
 }
@@ -17,7 +17,7 @@ header h1 a {
 	color: #fff;
 	display: inline-block;
 	height: 105px;
-	line-height: 105px;
+	line-height: 74px;
 	text-decoration: none;
 	text-shadow:1px 1px 2px #000;
 }
@@ -28,8 +28,9 @@ header nav {
 	display: inline-block;
 	height: 28px;
 	line-height: 25px;
-	position: relative;
-	top: -5px;
+	position: absolute;
+	top: 22px;
+	right: 0;
 }
 header nav ul li {
 	display: inline-block;
@@ -52,50 +53,4 @@ header nav ul li a {
 	-webkit-box-shadow: 1px 1px 1px #888;
 	box-shadow: 1px 1px 1px #888;
 	border-image: initial;
-}
-header form {
-	background: #2e5969;
-	border: 1px solid #0f2d37;
-	color: #fff;
-	display: inline-block;
-	height: 30px;
-	float: right;
-	margin: 25px 0 3px 0px;
-	padding: 10px;
-	position: absolute;
-	text-decoration: none;
-	text-shadow:1px 1px 2px #000;
-	top: 0;
-	right: 0;
-	width: 290px;
-	-webkit-border-radius:5px;
-	-moz-border-radius:5px;
-	border-radius: 5px;
-	-moz-box-shadow: 1px 1px 1px #888;
-	-webkit-box-shadow: 1px 1px 1px #888;
-	box-shadow: 1px 1px 1px #888;
-}
-header form input {
-	height: 30px;
-}
-header form input[type=text] {
-	border: 1px solid #4C4C4C;
-	color: #333;
-	float: left;
-	font-size: 12px;
-	padding: 0 5px;
-	margin-right: 5px;
-	width: 180px;
-	-khtml-border-radius: 3px;
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-	-moz-box-shadow: 1px 1px 1px #537076;
-	-webkit-box-shadow: 1px 1px 1px #537076;
-	box-shadow: 1px 1px 1px #537076;
-	border-image: initial;
-}
-header form input[type=text]:hover,
-header form input[type=text]:focus {
-	border-color: #ccc;
 }

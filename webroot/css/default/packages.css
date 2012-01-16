@@ -66,11 +66,9 @@
 .packages-index .search form .query {
 	background: white url('/img/search-icon-small.png') 5px 3px no-repeat;
 	border: 1px solid #DDD;
-	border-top: 1px solid #CDCDCD;
-	box-shadow: 0 1px 0 #f1f1f1,inset 0 1px 1px #e0e0e0;
 	color: #333;
 	font-size: 12px;
-	padding: 7px 6px 5px 25px;
+	padding: 7px 6px 7px 25px;
 	width: 500px;
 	-khtml-border-radius: 3px;
 	-moz-border-radius: 3px;
@@ -78,9 +76,9 @@
 	border-radius: 3px;
 	border-image: initial;
 }
+.packages-index .search .query:hover,
 .packages-index .search .query:focus {
-	outline-offset: -2px;
-	outline: 5px auto -webkit-focus-ring-color;
+	border-color: #aaa;
 }
 .packages-index .no-results {
 	background: #FDF5D9;
