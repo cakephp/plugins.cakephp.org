@@ -162,7 +162,7 @@ body.minimal {
 		position: static;
 	}
 	#packages .packages article {
-		width: 100%;
+		width: 94%;
 	}
 	.page-form .content .info-sidebar {
 		margin-top: 20px;
@@ -257,7 +257,7 @@ body.mobile {
 	position: static;
 }
 .mobile#packages .packages article {
-	width: 100%;
+	width: 94%;
 }
 .mobile.page-form .content .info-sidebar {
 	margin-top: 20px;
