@@ -81,7 +81,7 @@
 	border-color: #aaa;
 }
 .packages-index .search .search-details {
-	color: #cccccc;
+	color: #999999;
 	font-size: 12px;
 	height: 24px;
 }
@@ -93,6 +93,7 @@
 }
 .packages-index .search .search-details .sort-group a {
 	color: #476371;
+	padding-left: 8px;
 }
 .packages-index .search .search-details .sort-group .active {
 	font-weight: bold;

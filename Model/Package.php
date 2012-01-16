@@ -100,7 +100,6 @@ class Package extends AppModel {
 		'created' => 'Created',
 		'forks' => 'Forks',
 		'last_pushed_at' => 'Last Pushed',
-		'open_issues' => 'Open Issues',
 		'watchers' => 'Watchers'
 	);
 
