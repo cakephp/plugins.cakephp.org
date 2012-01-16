@@ -10,6 +10,7 @@ body {
 @media screen and (max-width: 980px) {
 	body {
 		min-width: 600px;
+		overflow-x: hidden;
 	}
 	header h1 {
 		margin-right: 0;
@@ -29,11 +30,17 @@ body {
 	.packages-index .search form .query {
 		width: 466px;
 	}
+	.packages-index .no-results {
+		width: 155px;
+	}
 	.packages-view .package {
 		width: 390px;
 	}
 	.packages-view .package input {
 		width: 272px;
+	}
+	#packages .packages {
+		margin-right: 315px;
 	}
 	#packages .packages article {
 		width: 260px;
@@ -46,6 +53,7 @@ body {
 }
 body.minimal {
 	min-width: 600px;
+	overflow-x: hidden;
 }
 .minimal header h1 {
 	margin-right: 0;
@@ -65,11 +73,17 @@ body.minimal {
 .minimal.packages-index .search form .query {
 	width: 466px;
 }
+.minimal.packages-index .no-results {
+	width: 155px;
+}
 .minimal.packages-view .package {
 	width: 390px;
 }
 .minimal.packages-view .package input {
 	width: 272px;
+}
+.minimal#packages .packages {
+	margin-right: 315px;
 }
 .minimal#packages .packages article {
 	width: 260px;
@@ -111,6 +125,18 @@ body.minimal {
 	}
 	.packages-index .search form .query {
 		width: 188px;
+	}
+	.packages-index .search .search-details .total {
+		display: none;
+		text-align: right;
+	}
+	.packages-index .search .search-details .sort-group {
+		float: none;
+		margin-top: 4px;
+		text-align: right;
+	}
+	.packages-index .no-results {
+		width: auto;
 	}
 	.packages-view .page-title {
 		text-align: center;
@@ -154,15 +180,19 @@ body.minimal {
 	#packages .packages {
 		float: none;
 		margin-right: 0;
-		min-height: 125px;
+		min-height: 180px;
 	}
 	#packages .sidebar {
 		float: none;
 		margin-top: 10px;
 		position: static;
+		width: 320px;
 	}
 	#packages .packages article {
 		width: 94%;
+	}
+	.sidebar .infobox.transparent {
+		width: 320px;
 	}
 	.page-form .content .info-sidebar {
 		margin-top: 20px;
@@ -207,6 +237,16 @@ body.mobile {
 .mobile.packages-index .search form .query {
 	width: 188px;
 }
+.mobile.packages-index .search .search-details .total {
+	float: none;
+}
+.mobile.packages-index .search .search-details .sort-group {
+	float: none;
+	margin-top: 4px;
+}
+.mobile.packages-index .no-results {
+	width: auto;
+}
 .mobile.packages-view .page-title {
 	text-align: center;
 }
@@ -249,15 +289,19 @@ body.mobile {
 .mobile#packages .packages {
 	float: none;
 	margin-right: 0;
-	min-height: 125px;
+	min-height: 180px;
 }
 .mobile#packages .sidebar {
 	float: none;
 	margin-top: 10px;
 	position: static;
+	width: 320px;
 }
 .mobile#packages .packages article {
 	width: 94%;
+}
+.mobile .sidebar .infobox.transparent {
+	width: 320px;
 }
 .mobile.page-form .content .info-sidebar {
 	margin-top: 20px;

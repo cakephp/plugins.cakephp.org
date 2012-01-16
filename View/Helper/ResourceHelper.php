@@ -1,7 +1,7 @@
 <?php
 class ResourceHelper extends AppHelper {
 
-	public $helpers = array('Form', 'Html', 'Text', 'Time');
+	public $helpers = array('Form', 'Html', 'Paginator', 'Text', 'Time');
 
 	public function package($name, $maintainer) {
 		return $this->Html->link($name,
@@ -72,6 +72,38 @@ class ResourceHelper extends AppHelper {
 
 	public function license($tags = null) {
 		return $this->Html->tag('p', 'MIT License');
+	}
+
+	public function sort($query) {
+		list($order, $direction) = explode(' ', $query['order'][0][0]);
+		list($model, $sortField) = explode('.', $order);
+
+		if ($direction == 'asc') {
+			$direction = 'desc';
+		} else {
+			$direction = 'asc';
+		}
+
+		$output = array();
+		foreach (Package::$_validShownOrders as $sort => $name) {
+			if ($sort == $sortField) {
+				$output[] = $this->Paginator->link($name, array(
+					'?' => array_merge(
+						(array) $this->_View->request->query,
+						compact('sort', 'direction')
+					),
+				), array('class' => 'active ' . $direction));
+			} else {
+				$output[] = $this->Paginator->link($name, array(
+					'?' => array_merge(
+						(array) $this->_View->request->query,
+						array('sort' => $sort, 'direction' => 'desc')
+					),
+				));
+			}
+		}
+
+		return implode(' ', $output);
 	}
 
 }

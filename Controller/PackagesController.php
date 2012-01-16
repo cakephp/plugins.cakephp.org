@@ -47,6 +47,7 @@ class PackagesController extends AppController {
 		);
 
 		$this->request->data['query'] = $query;
+		$parsedQuery = $this->Package->_findIndex('before', $this->paginate);
 
 		if ($this->_originalAction == 'home') {
 			$title = __('Latest CakePHP Packages');
@@ -58,7 +59,8 @@ class PackagesController extends AppController {
 		}
 
 		$packages = $this->paginate();
-		$this->set(compact('packages', 'title'));
+		$count = $this->Package->find('count');
+		$this->set(compact('count', 'packages', 'parsedQuery', 'title'));
 	}
 
 /**

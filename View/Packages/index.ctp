@@ -39,6 +39,17 @@
 			));
 		?>
 		<?php echo $this->Form->end();?>
+		<div class="search-details clearfix">
+			<span class="total"><?php echo $count; ?> Packages</span>
+
+			<div class="sort-group">
+				<strong>Sort: </strong>
+				<?php echo $this->Resource->sort($parsedQuery); ?>
+				<!-- <a class="active" href="#sort-name">Name</a>
+				<a href="#sort-installs">Installs</a>
+				<a href="#sort-lastmodified">Last Modified</a> -->
+			</div>
+		</div>
 	</div>
 </section>
 

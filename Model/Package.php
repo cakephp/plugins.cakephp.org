@@ -41,8 +41,8 @@ class Package extends AppModel {
 
 	public $_allowedFilters = array(
 		'collaborators', 'contains', 'contributors',
-		'forks', 'has', 'open_issues', 'query',
-		'since', 'watchers', 'with'
+		'direction', 'forks', 'has', 'open_issues',
+		'query', 'sort', 'since', 'watchers', 'with'
 	);
 
 	public $_categories = array(
@@ -88,6 +88,20 @@ class Package extends AppModel {
 		'Utility',
 		'View',
 		'WYSIWYG editors',
+	);
+
+	static $_validOrders = array(
+		'collaborators', 'contributors',
+		'created', 'forks', 'last_pushed_at',
+		'open_issues', 'watchers'
+	);
+
+	static $_validShownOrders = array(
+		'created' => 'Created',
+		'forks' => 'Forks',
+		'last_pushed_at' => 'Last Pushed',
+		'open_issues' => 'Open Issues',
+		'watchers' => 'Watchers'
 	);
 
 	public $_validTypes = array(
@@ -264,7 +278,28 @@ class Package extends AppModel {
 				'created_at', 'last_pushed_at', 'created'
 			);
 
-			$query['order'][] = array("{$this->alias}.created DESC");
+			$direction = 'desc';
+			if (!empty($query['named']['direction'])) {
+				$query['named']['direction'] = strtolower((string) $query['named']['direction']);
+				if ($query['named']['direction'] == 'dsc' || $query['named']['direction'] == 'des') {
+					$query['named']['direction'] = 'desc';
+				}
+
+				if ($query['named']['direction'] != 'asc' || $query['named']['direction'] != 'desc') {
+					$query['named']['direction'] = 'desc';
+				}
+				$direction = $query['named']['direction'];
+			}
+
+			$sortField = 'created';
+			if (!empty($query['named']['sort'])) {
+				$query['named']['sort'] = strtolower($query['named']['sort']);
+				if (in_array($query['named']['sort'], Package::$_validOrders)) {
+					$sortField = $query['named']['sort'];
+				}
+			}
+
+			$query['order'] = array(array("{$this->alias}.{$sortField} {$direction}"));
 
 			if ($query['named']['collaborators'] !== null) {
 				$query['conditions']["{$this->alias}.collaborators >="] = (int) $query['named']['collaborators'];
@@ -933,7 +968,7 @@ class Package extends AppModel {
 			foreach ($matches as $k => $value) {
 				$key = strtolower($value[1]);
 				if (!in_array($key, $options['allowed'])) {
-					$query .= $key . ':' . $value[2];
+					$query .= ' ' . $key . ':' . $value[2];
 					continue;
 				}
 
