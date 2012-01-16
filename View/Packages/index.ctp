@@ -40,7 +40,11 @@
 			?>
 		<?php echo $this->Form->end();?>
 		<div class="search-details clearfix">
-			<span class="total"><?php echo $count; ?> Packages</span>
+			<span class="total"><?php echo $count; ?> Packages (<?php
+				echo $this->Paginator->counter(array(
+					'format' => __('Showing of %start%-%end% of %count% search results'),
+				)); ?>)
+			</span>
 
 			<div class="sort-group">
 				<strong>Sort: </strong>
