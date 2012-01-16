@@ -43,28 +43,24 @@ class PackagesController extends AppController {
 		);
 
 		$this->paginate = array(
+			'paramType' => 'querystring',
 			'type' => 'index',
 			'limit' => 20,
 			'named' => $this->request->data
 		);
-
-		$this->request->data['query'] = $query;
-
-		if ($this->_originalAction == 'home') {
-			$title = __('Latest CakePHP Packages');
-		} else {
-			$title = __('Available CakePHP packages');
-			if (!empty($this->request->data['query'])) {
-				$title = 'Results for <span>' . $this->request->data['query'] . '</span>';
-			}
-		}
 
 		$order = $this->Package->_findIndex('before', $this->paginate);
 		$order = $order['order'][0][0];
 
 		$packages = $this->paginate();
 		$count = $this->Package->find('count');
-		$this->set(compact('count', 'order', 'packages', 'title'));
+		$next = $this->Package->getNextPage(array_merge(
+			(array) $this->request->query,
+			(array) $this->request->data
+		), $this->request->params['paging']['Package']['nextPage']);
+
+		$this->request->data['query'] = $query;
+		$this->set(compact('count', 'next', 'order', 'packages', 'title'));
 	}
 
 /**
@@ -193,30 +189,39 @@ class PackagesController extends AppController {
 	}
 
 /**
- * Sets seo information for the homepage
- */
-	public function _seoHome() {
-		$this->Sham->loadBySlug('packages/home');
-
-		$this->Sham->setMeta('title', 'CakePackages: Open source CakePHP Plugins and Applications');
-		$this->Sham->setMeta('description', 'CakePHP Package Index - Search for reusable, open source CakePHP plugins and applications, tutorials and code snippets on CakePackages');
-		$this->Sham->setMeta('keywords', 'cakephp package, cakephp, plugins, php, open source code, tutorials');
-		$this->Sham->setMeta('canonical', '/', array('escape' => false));
-	}
-
-/**
- * Sets SEO information for any of the package search pages
+ * Sets SEO information for any
+ * of the package search pages,
+ * as well as the home page
  */
 	public function _seoIndex() {
-		$this->Sham->loadBySlug('packages');
+		if ($this->_originalAction == 'home') {
+			$this->Sham->loadBySlug('packages/home');
+			$title = __('Latest CakePHP Packages');
+			$this->Sham->setMeta('title', 'CakePackages: Open source CakePHP Plugins and Applications');
+			$this->Sham->setMeta('keywords', 'cakephp package, cakephp, plugins, php, open source code, tutorials');
+			$this->Sham->setMeta('canonical', '/', array('escape' => false));
+		} else {
+			$this->Sham->loadBySlug('packages');
+			$title = __('Available CakePHP packages');
 
-		$this->Sham->setMeta('title', 'CakePHP Plugin and Application Search | CakePackages');
-		$this->Sham->setMeta('description', 'CakePHP Package Index - Search for reusable, open source CakePHP plugins and applications, tutorials and code snippets');
-		$this->Sham->setMeta('keywords', 'package search index, cakephp package, cakephp, plugins, php, open source code, tutorials');
-		$this->Sham->setMeta('canonical', '/packages/', array('escape' => false));
-		if (!in_array($this->request->here, array('/packages', '/packages/'))) {
-			$this->Sham->setMeta('robots', 'noindex, follow');
+			if (!empty($this->request->data['query'])) {
+				$title = 'Results for <span>' . $this->request->data['query'] . '</span>';
+				$this->Sham->setMeta('title', 'CakePHP Plugin and Application Search | CakePackages');
+				$this->Sham->setMeta('keywords', 'package search index, cakephp package, cakephp, plugins, php, open source code, tutorials');
+			} else {
+				$this->Sham->setMeta('title', 'CakePackages: Open source CakePHP Plugins and Applications');
+				$this->Sham->setMeta('keywords', 'cakephp package, cakephp, plugins, php, open source code, tutorials');
+			}
+
+			$this->Sham->setMeta('canonical', '/packages/', array('escape' => false));
+			if (!in_array($this->request->here, array('/packages', '/packages/'))) {
+				$this->Sham->setMeta('robots', 'noindex, follow');
+			}
+
+			$this->Sham->setMeta('description', 'CakePHP Package Index - Search for reusable, open source CakePHP plugins and applications, tutorials and code snippets on CakePackages');
 		}
+
+		$this->set(compact('title'));
 	}
 
 /**

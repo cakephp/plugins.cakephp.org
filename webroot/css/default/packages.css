@@ -104,6 +104,35 @@
 .packages-index .search .search-details .sort-group .desc:after {
 	content: ' ▲';
 }
+.packages-index .end-pagination {
+	color: #91a2aa;
+	display: block;
+	font-size: 12px;
+	padding: 10px;
+	text-align: center;
+	width: 100%;
+}
+.packages-index .loading {
+	display: block;
+	margin: 0 auto 10px auto;
+}
+.packages-index .next-page a {
+	border: 1px solid #91a2aa;
+	color: #91a2aa;
+	display: block;
+	font-size: 12px;
+	padding: 10px;
+	text-align: center;
+	width: 100%;
+	-khtml-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+}
+.packages-index .next-page a:active,
+.packages-index .next-page a:hover {
+	color: #D54E21
+}
 .packages-index .no-results {
 	background: #FDF5D9;
 	border: 1px #FCEEC1 solid;

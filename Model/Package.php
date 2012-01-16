@@ -1289,4 +1289,20 @@ class Package extends AppModel {
 		);
 	}
 
+	public function getNextPage($params, $next) {
+		if ($next === false) {
+			return false;
+		}
+
+		$params = (array) $params;
+
+		if (empty($params['page'])) {
+			$params['page'] = 2;
+		} else {
+			$params['page'] = (int) $params['page'] + 1;
+		}
+
+		return $params;
+	}
+
 }
