@@ -22,11 +22,6 @@ $title = $this->Html->link($this->Text->truncate($package['name'], 35), array(
 	$maintainer['username'], $package['name']
 ), array('title' => $package['name']));
 
-$package['description'] = trim($package['description']);
-if (empty($package['description'])) {
-	$package['description'] = 'No description available';
-}
-
 ?>
 <div class="preview">
 	<h3><?php echo $title; ?></h3>

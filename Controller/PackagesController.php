@@ -6,8 +6,10 @@ class PackagesController extends AppController {
 	);
 
 	public $_ajax = array(
-		'like',
 		'bookmark',
+		'home',
+		'index',
+		'like',
 		'suggest',
 	);
 
@@ -47,7 +49,6 @@ class PackagesController extends AppController {
 		);
 
 		$this->request->data['query'] = $query;
-		$parsedQuery = $this->Package->_findIndex('before', $this->paginate);
 
 		if ($this->_originalAction == 'home') {
 			$title = __('Latest CakePHP Packages');
@@ -58,9 +59,12 @@ class PackagesController extends AppController {
 			}
 		}
 
+		$order = $this->Package->_findIndex('before', $this->paginate);
+		$order = $order['order'][0][0];
+
 		$packages = $this->paginate();
 		$count = $this->Package->find('count');
-		$this->set(compact('count', 'packages', 'parsedQuery', 'title'));
+		$this->set(compact('count', 'order', 'packages', 'title'));
 	}
 
 /**

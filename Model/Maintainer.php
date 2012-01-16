@@ -231,6 +231,14 @@ class Maintainer extends AppModel {
 				$results[0][$this->alias]['package_count'] = count($results[0]['Package']);
 			}
 
+			
+			foreach ($results as $i => $result) {
+				$results[$i]['Package']['description'] = trim($results[$i]['Package']['description']);
+				if (empty($results[$i]['Package']['description'])) {
+					$results[$i]['Package']['description'] = 'No description available';
+				}
+			}
+
 			return $results[0];
 		}
 	}

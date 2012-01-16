@@ -140,8 +140,8 @@ class AppController extends Controller {
  */
 	public function beforeRender() {
 		$isAjaxable = in_array($this->action, $this->_ajax);
-		$isAjaxPost = $this->request->is('ajax') && $this->request->is('post');
-		if ($isAjaxable && $isAjaxPost) {
+		$isAjax = $this->request->is('ajax');
+		if ($isAjaxable && $isAjax) {
 			$this->_respondAs('ajax');
 		}
 

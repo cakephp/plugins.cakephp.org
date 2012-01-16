@@ -61,10 +61,6 @@ class ResourceHelper extends AppHelper {
 
 	public function description($text) {
 		$text = trim($text);
-		if (!strlen($text)) {
-			$text = 'No description available';
-		}
-
 		return $this->Html->tag('p', $this->Text->truncate(
 			$this->Text->autoLink($text), 100, array('html' => true)
 		));
@@ -74,8 +70,8 @@ class ResourceHelper extends AppHelper {
 		return $this->Html->tag('p', 'MIT License');
 	}
 
-	public function sort($query) {
-		list($order, $direction) = explode(' ', $query['order'][0][0]);
+	public function sort($order) {
+		list($order, $direction) = explode(' ', $order);
 		list($model, $sortField) = explode('.', $order);
 
 		if ($direction == 'asc') {

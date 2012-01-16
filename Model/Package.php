@@ -350,6 +350,14 @@ class Package extends AppModel {
 			if (!empty($query['operation'])) {
 				return $this->_findCount($state, $query, $results);
 			}
+
+			foreach ($results as $i => $result) {
+				$results[$i]['Package']['description'] = trim($results[$i]['Package']['description']);
+				if (empty($results[$i]['Package']['description'])) {
+					$results[$i]['Package']['description'] = 'No description available';
+				}
+			}
+
 			return $results;
 		}
 	}
