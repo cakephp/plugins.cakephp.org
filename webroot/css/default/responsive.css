@@ -83,6 +83,7 @@ body.minimal {
 @media screen and (max-width: 600px) {
 	body {
 		min-width: 320px;
+		overflow-x: hidden;
 	}
 	.container {
 		width: 320px;
@@ -177,6 +178,7 @@ body.minimal {
 }
 body.mobile {
 	min-width: 320px;
+	overflow-x: hidden;
 }
 .mobile .container {
 	width: 320px;
