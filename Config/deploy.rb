@@ -146,7 +146,12 @@ namespace :link do
     end
 
     begin
-      run "cd #{current_release} && git clone git@github.com:cakephp/theme-packages.git View/Themed/Csf"
+      run [
+        "cd #{current_release}",
+        "git clone git@github.com:cakephp/theme-packages.git View/Themed/Csf",
+        "mkdir #{current_release}/webroot/theme",
+        "ln -s #{current_release}/View/Themed/Csf/webroot #{current_release}/webroot/theme/Csf"
+      ].join(' && ')
     rescue
       puts "**** Could not clone CSF theme, likely a permissions issue"
     end
