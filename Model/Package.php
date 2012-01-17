@@ -119,7 +119,6 @@ class Package extends AppModel {
 
 	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
-		$this->order = "`{$this->alias}`.`last_pushed_at` asc";
 		$this->validate = array(
 			'maintainer_id' => array(
 				'numeric' => array(
@@ -502,7 +501,6 @@ class Package extends AppModel {
 
 			$query['conditions'] = array(
 				"{$this->alias}.{$this->displayField}" => $query['package'],
-				'Maintainer.username' => $query['maintainer'],
 			);
 			$query['contain'] = array('Maintainer' => array($this->displayField, 'username'));
 			$query['limit'] = 1;
@@ -576,12 +574,13 @@ class Package extends AppModel {
 					),
 				);
 			}
-
-			DebugTimer::start('app.Package::find#view', __d('app', 'Package::find(\'view\')'));
 			return $query;
 		} elseif ($state == 'after') {
-			DebugTimer::stop('app.Package::find#view');
-			if (empty($results[0])) {
+			if (empty($results[0]) || empty($results[0]['Maintainer'])) {
+				throw new NotFoundException(__('Invalid package'));
+			}
+
+			if ($results[0]['Maintainer']['username'] !== $query['maintainer']) {
 				throw new NotFoundException(__('Invalid package'));
 			}
 

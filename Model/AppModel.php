@@ -7,6 +7,7 @@
  * @package	   app
  */
 
+App::uses('DebugKitDebugger', 'DebugKit.Lib');
 class AppModel extends Model {
 
 /**
@@ -31,6 +32,21 @@ class AppModel extends Model {
  * @link http://book.cakephp.org/view/1057/Model-Attributes#recursive-1063
  */
 	public $recursive = -1;
+
+/**
+ * Queries the datasource and returns a result set array.
+ *
+ * @param string $type Type of find operation (all / first / count / neighbors / list / threaded)
+ * @param array $query Option fields (conditions / fields / joins / limit / offset / order / page / group / callbacks)
+ * @return array Array of records
+ * @link http://book.cakephp.org/2.0/en/models/deleting-data.html#deleteall
+ */
+	public function find($type = 'first', $query = array()) {
+		DebugKitDebugger::startTimer($this->name . '::find(' . $type . ')');
+		$results = parent::find($type, $query);
+		DebugKitDebugger::stopTimer($this->name . '::find(' . $type . ')');
+		return $results;
+	}
 
 /**
  * Custom Model::paginateCount() method to support custom model find pagination
