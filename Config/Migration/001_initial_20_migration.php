@@ -34,10 +34,10 @@ class M4f00d72c6c7c4a169e82485675f6eb26 extends CakeMigration {
 					'gravatar_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 32, 'collate' => 'utf8_general_ci', 'comment' => '', 'charset' => 'utf8'),
 					'indexes' => array(
 						'PRIMARY' => array('column' => 'id', 'unique' => 1),
-						'twitter_username' => array('column' => 'twitter_username', 'unique' => 0),
-						'alias' => array('column' => 'alias', 'unique' => 0),
-						'username' => array('column' => 'username', 'unique' => 0),
+						'username' => array('column' => 'username', 'unique' => 1),
 						'name' => array('column' => 'name', 'unique' => 0),
+						'activation_key' => array('column' => 'activation_key', 'unique' => 0),
+						'user_id' => array('column' => 'user_id', 'unique' => 0),
 					),
 					'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
 				),
