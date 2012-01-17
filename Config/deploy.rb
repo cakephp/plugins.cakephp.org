@@ -102,7 +102,7 @@ namespace :deploy do
   DESC
   task :finalize_update do
     before 'deploy:symlink', 'link:core', 'link:plugins', 'link:config', 'link:tmp', 'misc:rm_test', 'misc:submodule'
-    after 'deploy:symlink', 'link:cron'
+    after 'deploy:symlink', 'link:cron', 'asset:rebuild'
   end
 
   desc <<-DESC
