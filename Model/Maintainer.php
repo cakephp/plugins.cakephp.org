@@ -205,6 +205,10 @@ class Maintainer extends AppModel {
 			$query['contain'] = array('Package' => array(
 				'conditions' => array('Package.deleted' => 0),
 				'order' => array('Package.last_pushed_at desc'),
+				'fields' => array(
+					$this->Package->primaryKey, 'maintainer_id',
+					'name', 'description', 'last_pushed_at'
+				),
 			));
 			$query['conditions'] = array("{$this->alias}.{$this->displayField}" => $query[0]);
 			$query['limit'] = 1;
@@ -232,10 +236,12 @@ class Maintainer extends AppModel {
 				$results[0][$this->alias]['package_count'] = count($results[0]['Package']);
 			}
 
-			foreach ($results[0]['Package'] as $i => $result) {
-				$results[0]['Package'][$i]['description'] = trim($results[0]['Package'][$i]['description']);
-				if (empty($results[0]['Package'][$i]['description'])) {
-					$results[0]['Package'][$i]['description'] = 'No description available';
+			if (!empty($results[0]['Package'])) {
+				foreach ($results[0]['Package'] as $i => $result) {
+					$results[0]['Package'][$i]['description'] = trim($results[0]['Package'][$i]['description']);
+					if (empty($results[0]['Package'][$i]['description'])) {
+						$results[0]['Package'][$i]['description'] = 'No description available';
+					}
 				}
 			}
 
