@@ -1,4 +1,6 @@
 <?php
+App::uses('View', 'View');
+
 /**
  * LazyHelperView
  *
@@ -100,8 +102,9 @@ class LazyHelperView extends View {
 				$this->_helpers[$helperName]['settings']
 			);
 		}
-	}
 
+		return parent::__get($helperName);
+	}
 
 /**
  * Return all possible paths to find view files in order
