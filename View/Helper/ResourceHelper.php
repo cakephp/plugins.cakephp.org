@@ -39,21 +39,14 @@ class ResourceHelper extends AppHelper {
 		);
 	}
 
-	public function maintainer_name($username, $name) {
-		if (strlen($name)) {
-			return sprintf("%s (%s)", $username, $name);
-		}
-		return $username;
-	}
-
 	public function gravatar($username, $gravatar_id = null) {
 		if (!$gravatar_id) {
 			return '';
 		}
 
 		$format = 'https://secure.gravatar.com/avatar/';
-		return $this->Html->image(sprintf($format, $gravatar_id), array(
-			'alt' => sprintf('Gravatar for %s', $username),
+		return $this->Html->image('https://secure.gravatar.com/avatar/' . $gravatar_id, array(
+			'alt' => 'Gravatar for ' . $username,
 			'class' => 'gravatar',
 			'width' => 50
 		));

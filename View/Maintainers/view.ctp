@@ -3,10 +3,15 @@
 		$maintainer['Maintainer']['username'],
 		$maintainer['Maintainer']['gravatar_id']
 	); ?>
-	<span><?php echo $this->Resource->maintainer_name(
-		$maintainer['Maintainer']['username'],
-		$maintainer['Maintainer']['name']
-	); ?></span>
+	<span>
+		<?php
+			if (strlen($maintainer['Maintainer']['name'])) {
+				echo $maintainer['Maintainer']['username'] . '(' . $maintainer['Maintainer']['name'] . ')';
+			} else {
+				echo $maintainer['Maintainer']['username'];
+			}
+		?>
+	</span>
 </h2>
 
 <?php if ($maintainer['Maintainer']['has_summary']): ?>
