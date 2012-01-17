@@ -38,16 +38,11 @@ class AppController extends Controller {
 		'AssetCompress.AssetCompress',
 		'Form',
 		'Html',
-		'Js',
 		'Resource',
-		'Sanction.Clearance' => array(
-			'path' => 'Auth.User'
-		),
 		'Session',
 		'Sham.Sham',
 		'Text',
 		'Time',
-		'Utils.Gravatar',
 	);
 
 /**
@@ -97,9 +92,9 @@ class AppController extends Controller {
 			));
 		}
 
+		$this->viewClass = 'LazyHelper';
 		if (Configure::read('Settings.theme')) {
 			$this->theme = Configure::read('Settings.theme');
-			$this->viewClass = 'Theme';
 		}
 
 		parent::__construct($request, $response);
