@@ -224,6 +224,7 @@ class Maintainer extends AppModel {
 			foreach ($summaryFields as $field) {
 				if (!empty($results[0][$this->alias][$field])) {
 					$results[0][$this->alias]['has_summary'] = true;
+					break;
 				}
 			}
 
