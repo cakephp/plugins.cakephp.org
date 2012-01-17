@@ -1,8 +1,3 @@
-<?php $this->Clearance->settings = array(
-	'check' => 'group',
-	'path' => 'Maintainer.Maintainer'
-); ?>
-
 <h2>
 	Maintainer
 </h2>
@@ -64,7 +59,7 @@
 						<?php echo $this->Html->link($repository['Repository']['name'], "http://github.com/{$user['User']['login']}/{$repository['Repository']['name']}"); ?>
 					</td>
 					<td class="actions">
-						<?php echo $this->Clearance->link(__('Add'), array(
+						<?php echo $this->Html->link(__('Add'), array(
 							'action' => 'add_package', $user['User']['login'], $repository['Repository']['name'])); ?>
 					</td>
 				</tr>

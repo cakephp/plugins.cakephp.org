@@ -70,6 +70,3 @@
 	$this->Html->meta(array('name' => 'abstract', 'content' => 'cakephp packages development programming framework mvc'), null, array('inline' => false));
 	$this->Html->meta(array('name' => 'copyright', 'content' => 'Copyright ' . ((date('Y') > 2010) ? '2010-' . date('Y') : '2010') . ' Cake Software Foundation, Inc.'), null, array('inline' => false));
 ?>
-<?php
-	$this->Js->buffer('$(".details").tabs()');
-?>

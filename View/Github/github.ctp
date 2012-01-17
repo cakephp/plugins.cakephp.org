@@ -5,7 +5,7 @@
 <?php echo $this->Session->flash(); ?>
 
 <article class="meta-data">
-	<?php echo $this->Clearance->link(sprintf(__('Add %s'), __('Maintainer')), array('action' => 'add_maintainer', $user['User']['login'])); ?>
+	<?php echo $this->Html->link(sprintf(__('Add %s'), __('Maintainer')), array('action' => 'add_maintainer', $user['User']['login'])); ?>
 
 	<div class="meta-maintainer border-radius">
 		<dl><?php $i = 0; $class = ' class="altrow"';?>
