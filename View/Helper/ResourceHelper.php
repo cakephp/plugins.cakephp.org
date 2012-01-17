@@ -48,7 +48,8 @@ class ResourceHelper extends AppHelper {
 		return $this->Html->image('https://secure.gravatar.com/avatar/' . $gravatar_id, array(
 			'alt' => 'Gravatar for ' . $username,
 			'class' => 'gravatar',
-			'width' => 50
+			'height' => 50,
+			'width' => 50,
 		));
 	}
 
