@@ -78,7 +78,6 @@ class M4f00d72c6c7c4a169e82485675f6eb26 extends CakeMigration {
 					'deleted' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'collate' => NULL, 'comment' => ''),
 					'indexes' => array(
 						'PRIMARY' => array('column' => 'id', 'unique' => 1),
-						'maintainer_id' => array('column' => 'maintainer_id', 'unique' => 0),
 						'deleted' => array('column' => array('deleted', 'maintainer_id'), 'unique' => 0),
 						'view' => array('column' => array('deleted', 'name', 'maintainer_id', 'category_id'), 'unique' => 0),
 					),

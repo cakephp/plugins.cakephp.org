@@ -1,5 +1,5 @@
 <?php 
-/* generated on: 2012-01-16 23:59:29 : 1326758369 */
+/* generated on: 2012-01-17 00:55:36 : 1326761736 */
 class AppSchema extends CakeSchema {
 
 	public function before($event = array()) {
@@ -31,7 +31,7 @@ class AppSchema extends CakeSchema {
 	);
 	public $packages = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary', 'collate' => NULL, 'comment' => ''),
-		'maintainer_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index', 'collate' => NULL, 'comment' => ''),
+		'maintainer_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'collate' => NULL, 'comment' => ''),
 		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'comment' => '', 'charset' => 'utf8'),
 		'repository_url' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'comment' => '', 'charset' => 'utf8'),
 		'bakery_article' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'comment' => '', 'charset' => 'utf8'),
@@ -64,7 +64,7 @@ class AppSchema extends CakeSchema {
 		'contains_config' => array('type' => 'boolean', 'null' => false, 'default' => NULL, 'collate' => NULL, 'comment' => ''),
 		'contains_app' => array('type' => 'boolean', 'null' => false, 'default' => NULL, 'collate' => NULL, 'comment' => ''),
 		'deleted' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'key' => 'index', 'collate' => NULL, 'comment' => ''),
-		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'maintainer_id' => array('column' => 'maintainer_id', 'unique' => 0), 'deleted' => array('column' => array('deleted', 'maintainer_id'), 'unique' => 0), 'view' => array('column' => array('deleted', 'name', 'maintainer_id', 'category_id'), 'unique' => 0)),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'view' => array('column' => array('deleted', 'name', 'maintainer_id', 'category_id'), 'unique' => 0), 'deleted' => array('column' => array('deleted', 'maintainer_id', 'last_pushed_at'), 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 	public $user_details = array(
