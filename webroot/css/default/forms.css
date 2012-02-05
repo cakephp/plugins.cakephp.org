@@ -1,3 +1,28 @@
+form {
+	font-size: 11px;
+}
+form input {
+	background: white;
+	border: 1px solid #DDD;
+	color: #333;
+	padding: 5px 6px 5px 25px;
+	width: 90%;
+	-khtml-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	border-image: initial;
+}
+form input:hover,
+form input:focus {
+	border-color: #aaa;
+}
+form .button {
+	margin-top: 5px;
+}
+form .after-button {
+	margin-left: 10px;
+}
 form .error-message {
 	color: white;
 	font-size: 14px;
@@ -8,6 +33,22 @@ form .error-message {
 	-moz-border-radius: 6px;
 	-webkit-border-radius: 6px;
 	border-radius: 6px;
+}
+
+form input.user {
+	background: white url('/img/icons/user-icon.png') 3px 3px no-repeat;
+}
+form input.email {
+	background: white url('/img/icons/email-icon.png') 3px 3px no-repeat;
+}
+form input.github {
+	background: white url('/img/icons/github-icon.png') 3px 3px no-repeat;
+}
+form input.password {
+	background: white url('/img/icons/password-icon.png') 3px 3px no-repeat;
+}
+form input.repository {
+	background: white url('/img/icons/repository-icon.png') 3px 3px no-repeat;
 }
 
 /* Page Forms */
@@ -21,22 +62,20 @@ form .error-message {
 }
 .page-form .content input[type="text"],
 .page-form .content input[type="password"] {
-	border: 1px solid #CCC;
-	color: #666;
-	display: block;
-	font-family: Monaco, "Courier New", "DejaVu Sans Mono", "Bitstream Vera Sans Mono",monospace;
-	font-size: 11px;
-	height: 16px;
+	font-size: 12px;
+	height: 15px;
 	margin-bottom: 10px;
-	padding: 5px;
 	width: 330px;
 }
 .page-form .content .checkbox label {
 	float: left;
+	font-size: 12px;
+	margin-top: 3px;
 }
 .page-form .content .checkbox input {
 	float: left;
 	margin-right: 10px;
+	width: 12px;
 }
 .page-form .content .info-sidebar {
 	position: absolute;

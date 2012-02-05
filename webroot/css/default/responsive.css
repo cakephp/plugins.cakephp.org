@@ -39,11 +39,15 @@ body {
 	.packages-view .package input {
 		width: 272px;
 	}
-	#packages .packages {
+	.wrapper .columns .main-content {
 		margin-right: 315px;
 	}
-	#packages .packages article {
+	.wrapper .columns .main-content article {
 		width: 260px;
+	}
+	.page-form .content input[type="text"],
+	.page-form .content input[type="password"] {
+		width: 80%;
 	}
 	.page-form .content .info-sidebar {
 		margin-top: 20px;
@@ -82,11 +86,15 @@ body.minimal {
 .minimal.packages-view .package input {
 	width: 272px;
 }
-.minimal#packages .packages {
+.minimal .wrapper .columns .main-content {
 	margin-right: 315px;
 }
-.minimal#packages .packages article {
+.minimal .wrapper .columns .main-content article {
 	width: 260px;
+}
+.minimal.page-form .content input[type="text"],
+.minimal.page-form .content input[type="password"] {
+	width: 80%;
 }
 .minimal.page-form .content .info-sidebar {
 	margin-top: 20px;
@@ -177,19 +185,23 @@ body.minimal {
 	.mobile-block {
 		padding-bottom: 6px;
 	}
-	#packages .packages {
+	.wrapper .columns .main-content {
 		float: none;
 		margin-right: 0;
 		min-height: 180px;
 	}
-	#packages .sidebar {
+	.wrapper .columns .sidebar {
 		float: none;
 		margin-top: 10px;
 		position: static;
 		width: 320px;
 	}
-	#packages .packages article {
+	.wrapper .columns .main-content article {
 		width: 94%;
+	}
+	.page-form .content input[type="text"],
+	.page-form .content input[type="password"] {
+		width: 90%;
 	}
 	.sidebar .infobox.transparent {
 		width: 320px;
@@ -286,19 +298,23 @@ body.mobile {
 .mobile .mobile-block {
 	padding-bottom: 6px;
 }
-.mobile#packages .packages {
+.mobile .wrapper .columns .main-content {
 	float: none;
 	margin-right: 0;
 	min-height: 180px;
 }
-.mobile#packages .sidebar {
+.mobile .wrapper .columns .sidebar {
 	float: none;
 	margin-top: 10px;
 	position: static;
 	width: 320px;
 }
-.mobile#packages .packages article {
+.mobile .wrapper .columns .main-content article {
 	width: 94%;
+}
+.mobile.page-form .content input[type="text"],
+.mobile.page-form .content input[type="password"] {
+	width: 90%
 }
 .mobile .sidebar .infobox.transparent {
 	width: 320px;

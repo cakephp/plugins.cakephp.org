@@ -1,5 +1,6 @@
 header {
-	background-color: #376475;
+	background: #376475 url('/img/background-dark.png') repeat fixed;
+	border-bottom: 3px white solid;
 	height: 70px;
 	padding-top: 5px;
 	width: 100%;
@@ -53,4 +54,7 @@ header nav ul li a {
 	-webkit-box-shadow: 1px 1px 1px #888;
 	box-shadow: 1px 1px 1px #888;
 	border-image: initial;
+}
+.header-bottom {
+	border-top: 1px #C5C5C5 solid;
 }

@@ -1,8 +1,8 @@
 /* ==========================================================
- * bootstrap-alerts.js v1.3.0
+ * bootstrap-alert.js v2.0.0
  * http://twitter.github.com/bootstrap/javascript.html#alerts
  * ==========================================================
- * Copyright 2011 Twitter, Inc.
+ * Copyright 2012 Twitter, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,56 +20,46 @@
 
 !function( $ ){
 
-  /* CSS TRANSITION SUPPORT (https://gist.github.com/373874)
-   * ======================================================= */
-
-   var transitionEnd
-
-   $(document).ready(function () {
-
-     $.support.transition = (function () {
-       var thisBody = document.body || document.documentElement
-         , thisStyle = thisBody.style
-         , support = thisStyle.transition !== undefined || thisStyle.WebkitTransition !== undefined || thisStyle.MozTransition !== undefined || thisStyle.MsTransition !== undefined || thisStyle.OTransition !== undefined
-       return support
-     })()
-
-     // set CSS transition event type
-     if ( $.support.transition ) {
-       transitionEnd = "TransitionEnd"
-       if ( $.browser.webkit ) {
-       	transitionEnd = "webkitTransitionEnd"
-       } else if ( $.browser.mozilla ) {
-       	transitionEnd = "transitionend"
-       } else if ( $.browser.opera ) {
-       	transitionEnd = "oTransitionEnd"
-       }
-     }
-
-   })
+  "use strict"
 
  /* ALERT CLASS DEFINITION
   * ====================== */
 
-  var Alert = function ( content, selector ) {
-    this.$element = $(content)
-      .delegate(selector || '.close', 'click', this.close)
-  }
+  var dismiss = '[data-dismiss="alert"]'
+    , Alert = function ( el ) {
+        $(el).on('click', dismiss, this.close)
+      }
 
   Alert.prototype = {
 
-    close: function (e) {
-      var $element = $(this).parent('.alert-message')
+    constructor: Alert
 
-      e && e.preventDefault()
-      $element.removeClass('in')
+  , close: function ( e ) {
+      var $this = $(this)
+        , selector = $this.attr('data-target')
+        , $parent
 
-      function removeElement () {
-        $element.remove()
+      if (!selector) {
+        selector = $this.attr('href')
+        selector = selector && selector.replace(/.*(?=#[^\s]*$)/, '') //strip for ie7
       }
 
-      $.support.transition && $element.hasClass('fade') ?
-        $element.bind(transitionEnd, removeElement) :
+      $parent = $(selector)
+      $parent.trigger('close')
+
+      e && e.preventDefault()
+
+      $parent.length || ($parent = $this.hasClass('alert') ? $this : $this.parent())
+
+      $parent.removeClass('in')
+
+      function removeElement() {
+        $parent.remove()
+        $parent.trigger('closed')
+      }
+
+      $.support.transition && $parent.hasClass('fade') ?
+        $parent.on($.support.transition.end, removeElement) :
         removeElement()
     }
 
@@ -79,30 +69,23 @@
  /* ALERT PLUGIN DEFINITION
   * ======================= */
 
-  $.fn.alert = function ( options ) {
-
-    if ( options === true ) {
-      return this.data('alert')
-    }
-
-
-
+  $.fn.alert = function ( option ) {
     return this.each(function () {
       var $this = $(this)
-
-      if ( typeof options == 'string' && typeof Alert.prototype[options] === 'function') {
-        return $this.data('alert')[options]()
-      }
-
-      if (typeof options == 'string')
-        $(this).data('alert', new Alert( this , options ))
-      else
-        $(this).data('alert', new Alert( this ))
+        , data = $this.data('alert')
+      if (!data) $this.data('alert', (data = new Alert(this)))
+      if (typeof option == 'string') data[option].call($this)
     })
   }
 
-  $(document).ready(function () {
-    new Alert($('body'), '.alert-message[data-alert] .close')
+  $.fn.alert.Constructor = Alert
+
+
+ /* ALERT DATA-API
+  * ============== */
+
+  $(function () {
+    $('body').on('click.alert.data-api', dismiss, Alert.prototype.close)
   })
 
-}( window.jQuery || window.ender );
+}( window.jQuery );

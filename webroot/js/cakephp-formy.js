@@ -20,7 +20,7 @@
 		var template = function (flash) {
 					return [
 						'<div class="alert-message fade in ' + flash.status + '" style="display:none">',
-							'<a class="close-alert" href="#">×</a>',
+							'<a class="close close-alert" data-dismiss="alert" href="#">×</a>',
 							'<p>' + flash.message + '</p>',
 						'</div>'
 					].join("\n");
@@ -39,7 +39,7 @@
 
 			el.parent().find('.alert-message').remove();
 			el.prepend(alert);
-			alert.alert('.close-alert').fadeIn();
+			alert.alert().fadeIn();
 		});
 	};
 
@@ -84,28 +84,28 @@
 					$this.flash({status: 'error', message: response.message});
 					return false;
 				}
-			
+
 				if (response.status !== 'success') {
 					$this.flash({status: response.status, message: response.message});
 					$this.validationErrors(response.validationErrors);
 					return false;
 				}
-			
+
 				if ($this.hasClass('is-modal') || settings.isModal)
 					$this.closest('.modal').modal('hide');
 
 				$(settings.selector).flash({status: 'success', message: response.message});
-			
+
 				if (typeof settings.success === 'function')
 					settings.success($(e.target).serializeArray(), response);
-			
+
 				return true;
 			}, 'json').error( function (jqXHR, textStatus, err) {
 				finish();
 
 				if (typeof settings.error === 'function')
 					settings.error($this, settings);
-			
+
 				return $this.flash({status: 'error', message: err});
 			});
 		});

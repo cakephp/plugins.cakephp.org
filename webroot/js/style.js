@@ -61,12 +61,17 @@
 	// Form processing
 	$('.PackageSuggestForm').live('submit', function (e) {
 		e.preventDefault();
-		$(this).cakephpAjax(e, {selector: '.' + $(e.delegateTarget).attr('class')});
+		$(this).cakephpAjax(e, {
+			selector: '.' + $(e.target).attr('class'),
+			success: function(data, response) {
+				$(e.target).find('.github').val('');
+			}
+		});
 	});
 
 	$('.ajax-toggle').click(function (e) {
 		e.preventDefault();
-		var el = $(e.delegateTarget);
+		var el = $(e.target);
 
 		$.ajax({
 			dataType: 'json',

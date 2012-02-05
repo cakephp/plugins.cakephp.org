@@ -58,7 +58,7 @@
 </section>
 
 <div class="clearfix columns">
-	<section class="packages">
+	<section class="packages main-content">
 
 		<?php if (empty($packages)) : ?>
 			<?php echo $this->element('no-results'); ?>

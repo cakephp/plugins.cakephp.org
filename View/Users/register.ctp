@@ -3,40 +3,42 @@
 
 <?php echo $this->Session->flash(); ?>
 <div class="clearfix columns">
-	<article>
-		<p class="description">Use your login from any of the Official CakePHP websites</p>
-		<p class="description">
-			<?php echo $this->Html->link(__('Have an account?'), array('action' => 'login')); ?>
-		</p>
+	<section class="main-content">
+		<p class="description">Register for an account to any Official CakePHP website</p>
 		<?php
-			echo $this->Form->create('User');
+			echo $this->Form->create('User', array(
+				'class' => 'UserRegisterForm',
+				'url' => array('controller' => 'users', 'action' => 'register'),
+				'inputDefaults' => array('label' => false),
+			));
 
 			echo $this->Form->input('username', array(
+				'class' => 'user',
 				'error' => array(
 					'unique_username' => __('Please select a username that is not already in use'),
 					'username_min' => __('Must be at least 3 characters'),
 					'alpha' => __('Username must contain numbers and letters only'),
-					'required' => __('Please choose username'),
+					'required' => __('Please enter a username'),
 				),
 				'placeholder' => __('desired username'),
 			));
 			echo $this->Form->input('email', array(
+				'class' => 'email',
 				'error' => array(
 					'isValid' => __('Must be a valid email address'),
 					'isUnique' => __('An account with that email already exists')
 				),
-				'label' => __('E-mail (used as login)'),
-				'placeholder' => __('email address'),
+				'placeholder' => __('email address (used as login)'),
 			));
 			echo $this->Form->input('passwd', array(
+				'class' => 'password',
 				'error' => __('Must be at least 5 characters long'),
-				'label' => __('Password'),
 				'placeholder' => __('password'),
 				'type' => 'password',
 			));
 			echo $this->Form->input('temppassword', array(
+				'class' => 'password',
 				'error' => __('Passwords must match'),
-				'label' => __('Password (confirm)'),
 				'placeholder' => __('confirm password'),
 				'type' => 'password',
 			));
@@ -50,25 +52,32 @@
 				echo $this->Recaptcha->display();
 			}
 
-			echo $this->Form->submit(__('Register'), array(
-				'div' => 'submit forgot',
-				'after' => $this->Html->link(__('Have an account?'), array('action' => 'login'))
+			echo $this->Form->button(__('Register'), array(
+				'class' => 'button solid-green',
+				'div' => false,
 			));
+
+			echo $this->Html->link(__('Have an account?'), array('action' => 'login'), array(
+				'class' => 'after-button'
+			));
+
 			echo '<br />';
 			echo $this->Form->end();
 		?>
-	</article>
+	</section>
 
-	<div class="info-sidebar">
-		<h3><?php echo __('Already registered?'); ?></h3>
-		<p><?php
-			echo sprintf(
-				__('If you are already registered in any of the CakePHP community sites, you just need to %s using your email address and password'),
-			$this->Html->link('login', array('controller' => 'users', 'action' => 'login')));
-		?></p>
-		<h3><?php echo __('What happens after registration?'); ?></h3>
-		<p><?php echo __('We will send you a confirmation email to activate your account'); ?></p>
-		<p><?php echo __('After activating your account you will be part of the most awesome community of php developers!'); ?></p>
-	</div>
+	<section class="sidebar">
+		<div class="infobox">
+			<h3><?php echo __('Already registered?'); ?></h3>
+			<p><?php
+				echo sprintf(
+					__('If you are already registered in any of the CakePHP community sites, you just need to %s using your email address and password'),
+				$this->Html->link('login', array('controller' => 'users', 'action' => 'login')));
+			?></p>
+			<h3><?php echo __('What happens after registration?'); ?></h3>
+			<p><?php echo __('We will send you a confirmation email to activate your account'); ?></p>
+			<p><?php echo __('After activating your account you will be part of the most awesome community of php developers!'); ?></p>
+		</div>
+	</section>
 
 </div>

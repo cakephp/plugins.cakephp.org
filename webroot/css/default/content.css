@@ -56,3 +56,16 @@
 	min-height: 20px;
 	width: 25%;
 }
+.wrapper .container .main-content {
+	float: left;
+	margin-right: 355px;
+}
+.wrapper .container .sidebar {
+	float: right;
+	position: absolute;
+	right: 0px;
+	width: 315px;
+}
+#packages .packages {
+	min-height: 500px;
+}
