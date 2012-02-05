@@ -1104,34 +1104,32 @@ class Package extends AppModel {
 	}
 
 	public function suggest($data) {
-		if (empty($data['username'])) {
-			$this->invalidate('username', 'Username cannot be empty');
+		if (empty($data['github'])) {
 			return false;
 		}
 
-		// If the repository is empty, they may have submitted a url
-		if (empty($data['repository'])) {
-			$pieces = explode('/', str_replace(array(
-				'http://github.com/',
-				'https://github.com/',
-				'github.com/'
-				), '', $data['username']
-			));
-
-			if (count($pieces) < 2) {
+		if (!preg_match('/(?:\/|\:)([\w-]+\/[\w-]+)/', $data['github'], $matches)) {
+			if (!preg_match('/([\w-]+\/[\w-]+)/', $data['github'], $matches)) {
 				return false;
 			}
-
-			$data['username'] = $pieces[0];
-			$data['repository'] = $pieces[1];
 		}
 
-		$job = $this->load('SuggestPackageJob', $data['username'], $data['repository']);
+		$pieces = explode('/', $matches[1]);
+		if (count($pieces) < 2) {
+			return false;
+		}
+
+		list($username, $repository) = $pieces;
+		$job = $this->load('SuggestPackageJob', $username, $repository);
 		if (!$job) {
 			return false;
 		}
 
-		return $this->enqueue($job);
+		if (!$this->enqueue($job)) {
+			return false;
+		}
+
+		return $pieces;
 	}
 
 	public function seoView($package) {

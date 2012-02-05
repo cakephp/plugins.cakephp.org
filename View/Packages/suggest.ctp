@@ -7,19 +7,21 @@
 	<p class="description">Use this form to suggest new packages from GitHub:</p>
 
 	<?php
-		echo $this->Form->create('Package');
-
-		echo $this->Form->input('Package.username', array(
-			'label' => __('Github Username'),
-			'placeholder' => __('username'),
-			'type' => 'text'
-		));
-		echo $this->Form->input('Package.repository', array(
-			'label' => __('Github Repository name'),
-			'placeholder' => __('repository')
+		echo $this->Form->create('Package', array(
+			'class' => 'PackageSuggestForm',
+			'url' => array('controller' => 'packages', 'action' => 'suggest'),
+			'inputDefaults' => array('label' => false),
 		));
 
-		echo $this->Form->submit(__('Submit Github Repository'), array('div' => 'submit forgot'));
+		echo $this->Form->input('Package.github', array(
+			'class' => 'github',
+			'placeholder' => __('github repository url'),
+		));
+
+		echo $this->Form->button(__('Suggest!'), array(
+			'class' => 'button solid-green',
+			'div' => false,
+		));
 		echo '<br />';
 
 		echo $this->Form->end();

@@ -158,12 +158,15 @@ class PackagesController extends AppController {
 
 	public function suggest() {
 		if ($this->_isFromForm('Package')) {
-			if ($this->Package->suggest($this->request->data['Package'])) {
-				$this->Session->setFlash('Thanks, your submission will be reviewed shortly!', 'flash/success');
-				$this->redirect($this->referer(array('controller' => 'packages', 'action' => 'suggest'), true));
-			} else{
-				$this->Session->setFlash('There was some sort of error...', 'flash/error');
+			$result = $this->Package->suggest($this->request->data['Package']);
+			if (!$result) {
+				return $this->Session->setFlash('There was some sort of error...', 'flash/error');
 			}
+
+			$this->Session->setFlash(
+				__('Thanks, your submission of <i>%s/%s</i> will be reviewed shortly!', $result[0], $result[1]
+			), 'flash/success');
+			$this->redirect($this->referer(array('controller' => 'packages', 'action' => 'suggest'), true));
 		}
 	}
 
