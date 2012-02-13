@@ -21,6 +21,7 @@
 	margin: 0 0 15px 0
 }
 .sidebar .infobox table {
+	border-spacing: 2px;
 	font-size: 11px;
 	margin: 0;
 	width: 100%;
