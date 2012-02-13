@@ -6,12 +6,14 @@ form input {
 	border: 1px solid #DDD;
 	color: #333;
 	padding: 5px 6px 5px 25px;
-	width: 90%;
+	width: 88%;
+	-webkit-border-radius: 3px;
 	-khtml-border-radius: 3px;
 	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
+	-o-border-radius: 3px;
 	border-radius: 3px;
-	border-image: initial;
+  /* behavior: url(/css/border-radius.htc); */
+	/* Background images and border-radius.htc don't play nice */
 }
 form input:hover,
 form input:focus {
@@ -29,12 +31,13 @@ form .error-message {
 	background: #c43c35;
 	margin-bottom: 6px;
 	padding: 6px;
+	-webkit-border-radius: 6px;
 	-khtml-border-radius: 6px;
 	-moz-border-radius: 6px;
-	-webkit-border-radius: 6px;
+	-o-border-radius: 6px;
 	border-radius: 6px;
+	behavior: url(/css/border-radius.htc);
 }
-
 form input.user {
 	background: white url('/img/icons/user-icon.png') 3px 3px no-repeat;
 }

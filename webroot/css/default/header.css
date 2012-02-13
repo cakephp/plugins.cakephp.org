@@ -1,24 +1,23 @@
 header {
-	background: #376475 url('/img/background-dark.png') repeat fixed;
+	background-color: #376475;
+	background-image: url('/img/background-dark.png');
+	background-repeat: repeat;
+	background-attachment: fixed;
 	border-bottom: 3px white solid;
-	height: 70px;
+	font-family: 'MuseoSlab500', Helvetica, Arial, sans-serif;
+	height: 45px;
 	padding-top: 5px;
 	width: 100%;
 }
 header h1 {
-	font-size: 32px;
-	font-weight: normal;
 	display: inline-block;
 	margin-right: 20px;
 	margin-top:0;
-	top: 30px;
 	position: static;
 }
 header h1 a {
 	color: #fff;
 	display: inline-block;
-	height: 105px;
-	line-height: 74px;
 	text-decoration: none;
 	text-shadow:1px 1px 2px #000;
 }
@@ -30,7 +29,11 @@ header nav {
 	height: 28px;
 	line-height: 25px;
 	position: absolute;
-	top: 22px;
+}
+header nav.left-nav {
+	left: 0;
+}
+header nav.right-nav {
 	right: 0;
 }
 header nav ul li {
@@ -38,22 +41,14 @@ header nav ul li {
 	position: relative;
 }
 header nav ul li a {
-	background: #2e5969;
-	border: 1px solid #0F2D37;
 	color: white;
+	display: inline-block;
 	font-size: 14px;
-	font-weight: bold;
+	font-weight: normal;
+	line-height: 30px;
 	padding: 5px;
 	text-decoration: none;
 	text-shadow: 1px 1px 2px black;
-	-khtml-border-radius: 5px;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	border-radius: 5px;
-	-moz-box-shadow: 1px 1px 1px #888;
-	-webkit-box-shadow: 1px 1px 1px #888;
-	box-shadow: 1px 1px 1px #888;
-	border-image: initial;
 }
 .header-bottom {
 	border-top: 1px #C5C5C5 solid;

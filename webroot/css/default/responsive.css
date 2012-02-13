@@ -27,6 +27,9 @@ body {
 	.container {
 		width: 600px;
 	}
+	.content .packages .article {
+		width: 250px;
+	}
 	.packages-index .search form .query {
 		width: 466px;
 	}
@@ -73,6 +76,9 @@ body.minimal {
 }
 .minimal .container {
 	width: 600px;
+}
+.minimal .content .packages .article {
+	width: 250px;
 }
 .minimal.packages-index .search form .query {
 	width: 466px;
@@ -203,7 +209,7 @@ body.minimal {
 	.page-form .content input[type="password"] {
 		width: 90%;
 	}
-	.sidebar .infobox.transparent {
+	.sidebar .infobox {
 		width: 320px;
 	}
 	.page-form .content .info-sidebar {
@@ -316,7 +322,7 @@ body.mobile {
 .mobile.page-form .content input[type="password"] {
 	width: 90%
 }
-.mobile .sidebar .infobox.transparent {
+.mobile .sidebar .infobox {
 	width: 320px;
 }
 .mobile.page-form .content .info-sidebar {

@@ -3,7 +3,7 @@
 	<h3>Package Search Tips</h3>
 	<p>Package search will look through our repository of CakePHP code and try to find things that are most similar to your query. You can also filter the results by:</p>
 
-	<table border="0" cellspacing="0" cellpadding="0">
+	<table border="0" cellspacing="2" cellpadding="0">
 		<tr>
 			<td>max # of open issues</td>
 			<td class="code">open_issues:</td>

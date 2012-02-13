@@ -1,19 +1,40 @@
 /* Package Preview */
-.content .packages article {
+.content .packages .article {
 	background: white;
 	color: #333;
+	display: block;
 	font-size: 18px;
 	margin-bottom: 30px;
 	padding: 10px;
-	width: auto;
+	width: 610px;
 	-webkit-box-shadow: 0 2px 5px rgba(0,0,0,.25);
+	-khtml-box-shadow: 0 2px 5px rgba(0,0,0,.25);
 	-moz-box-shadow: 0 2px 5px rgba(0,0,0,.25);
+	-o-box-shadow: 0 2px 5px rgba(0,0,0,.25);
 	box-shadow: 0 2px 5px rgba(0,0,0,.25);
+	-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(color=#dddddd,direction=0,strength=1),
+          progid:DXImageTransform.Microsoft.Shadow(color=#dddddd,direction=100,strength=2),
+          progid:DXImageTransform.Microsoft.Shadow(color=#dddddd,direction=180,strength=3),
+          progid:DXImageTransform.Microsoft.Shadow(color=#dddddd,direction=260,strength=2)"; /* IE8+ */  
+	filter: progid:DXImageTransform.Microsoft.Shadow(color=#dddddd,direction=0,strength=1),
+          progid:DXImageTransform.Microsoft.Shadow(color=#dddddd,direction=100,strength=2),
+          progid:DXImageTransform.Microsoft.Shadow(color=#dddddd,direction=180,strength=3),
+          progid:DXImageTransform.Microsoft.Shadow(color=#dddddd,direction=260,strength=2); /* IE7 and lower */
 }
-.content .packages article:hover {
+.content .packages .article:hover {
 	-webkit-box-shadow: 0 2px 5px rgba(0,0,0,.35);
+	-khtml-box-shadow: 0 2px 5px rgba(0,0,0,.35);
 	-moz-box-shadow: 0 2px 5px rgba(0,0,0,.35);
+	-o-box-shadow: 0 2px 5px rgba(0,0,0,.35);
 	box-shadow: 0 2px 5px rgba(0,0,0,.35);
+	-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=0,strength=1),
+          progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=100,strength=2),
+          progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=180,strength=3),
+          progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=260,strength=2)"; /* IE8+ */  
+	filter: progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=0,strength=1),
+          progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=100,strength=2),
+          progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=180,strength=3),
+          progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=260,strength=2); /* IE7 and lower */
 }
 .content .packages h3 {
 	padding-bottom: 0;
@@ -42,8 +63,8 @@
 	color: #666666;
 	font-size: 11px;
 }
-.content .packages article:active .info .details,
-.content .packages article:hover .info .details {
+.content .packages .article:active .info .details,
+.content .packages .article:hover .info .details {
 	opacity: 1;
 }
 .content .packages .info .author {
@@ -63,6 +84,8 @@
 .packages-index .search form .query {
 	background: white url('/img/icons/search-icon.png') 5px 3px no-repeat;
 	font-size: 12px;
+	height: 15px;
+	margin: 0;
 	padding: 7px 6px 7px 25px;
 	width: 828px;
 }
@@ -114,10 +137,12 @@
 	font-size: 12px;
 	padding: 10px;
 	text-align: center;
+	-webkit-border-radius: 5px;
 	-khtml-border-radius: 5px;
 	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
+	-o-border-radius: 5px;
 	border-radius: 5px;
+	behavior: url(/css/border-radius.htc);
 }
 .packages-index .next-page a:active,
 .packages-index .next-page a:hover {
@@ -130,10 +155,12 @@
 	min-height: 48px;
 	position: relative;
 	padding: 20px 20px 20px 100px;
+	-webkit-border-radius: 6px;
 	-khtml-border-radius: 6px;
 	-moz-border-radius: 6px;
-	-webkit-border-radius: 6px;
+	-o-border-radius: 6px;
 	border-radius: 6px;
+	behavior: url(/css/border-radius.htc);
 }
 .packages-index .no-results h3 {
 	color: #000;
@@ -175,7 +202,9 @@
 	padding: 30px;
 	text-shadow: 0 1px 1px white;
 	-webkit-box-shadow: inset 0 0px 42px 0px rgba( 100, 100, 100, 0.1 );
+	-khtml-box-shadow: inset 0 0px 42px 0px rgba( 100, 100, 100, 0.1 );
 	-moz-box-shadow: inset 0 0px 42px 0px rgba( 100, 100, 100, 0.1 );
+	-o-box-shadow: inset 0 0px 42px 0px rgba( 100, 100, 100, 0.1 );
 	box-shadow: inset 0 0px 42px 0px rgba( 100, 100, 100, 0.1 );
 }
 .packages-view .summary p {
@@ -196,15 +225,16 @@
 	right: 30px;
 	text-align: center;
 	width: 182px;
+	-webkit-border-radius: 3px;
 	-khtml-border-radius: 3px;
 	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
+	-o-border-radius: 3px;
 	border-radius: 3px;
+	behavior: url(/css/border-radius.htc);
 	-khtml-box-sizing: content-box;
 	-moz-box-sizing: content-box;
 	-webkit-box-sizing: content-box;
 	box-sizing: content-box;
-	border-image: initial;
 }
 .packages-view .summary p.button a {
 	color: white;

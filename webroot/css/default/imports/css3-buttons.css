@@ -1,93 +1,95 @@
 /* ------------------------------------------
 CSS3 GITHUB BUTTONS (Tim O'Donnell)
-Licensed under Unlicense 
+Licensed under Unlicense
 http://github.com/todc/css3-github-buttons
 ------------------------------------------ */
 
 
 /* ------------------------------------------------------------------ BUTTON */
 
-.button { 
-    position: relative; 
-    overflow: visible; 
-    display: inline-block; 
-    padding: 0.5em 1em; 
-    border: 1px solid #d4d4d4; 
-    margin: 0;
-    text-decoration: none; 
-    text-shadow: 1px 1px 0 #fff; 
-    font:11px/normal sans-serif; 
-    color: #333; 
-    white-space: nowrap; 
-    cursor: pointer; 
-    outline: none; 
-    background-color: #ececec;
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f4f4f4), to(#ececec));
-    background-image: -moz-linear-gradient(#f4f4f4, #ececec);
-    background-image: -o-linear-gradient(#f4f4f4, #ececec);
-    background-image: linear-gradient(#f4f4f4, #ececec);
-    -webkit-background-clip: padding;
-    -moz-background-clip: padding;
-    -o-background-clip: padding-box; 
-    /*background-clip: padding-box;*/ /* commented out due to Opera 11.10 bug */
-    -webkit-border-radius: 0.2em; 
-    -moz-border-radius: 0.2em; 
-    border-radius: 0.2em; 
-    /* IE hacks */
-    zoom: 1; 
-    *display: inline; 
+.button {
+	position: relative;
+	overflow: visible;
+	display: inline-block;
+	padding: 0.5em 1em;
+	border: 1px solid #d4d4d4;
+	margin: 0;
+	text-decoration: none;
+	text-shadow: 1px 1px 0 #fff;
+	font:11px/normal sans-serif;
+	color: #333;
+	white-space: nowrap;
+	cursor: pointer;
+	outline: none;
+	background-color: #ececec;
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f4f4f4), to(#ececec));
+	background-image: -moz-linear-gradient(#f4f4f4, #ececec);
+	background-image: -o-linear-gradient(#f4f4f4, #ececec);
+	background-image: linear-gradient(#f4f4f4, #ececec);
+	-webkit-background-clip: padding;
+	-moz-background-clip: padding;
+	-o-background-clip: padding-box;
+	/*background-clip: padding-box;*/ /* commented out due to Opera 11.10 bug */
+	-webkit-border-radius: 0.2em;
+	-khtml-border-radius: 0.2em;
+	-moz-border-radius: 0.2em;
+	-o-border-radius: 0.2em;
+	border-radius: 0.2em;
+	/* IE hacks */
+	zoom: 1;
+	*display: inline;
 }
 
 .button:hover,
 .button:focus,
 .button:active,
 .button.active {
-    border-color: #3072b3;
-    border-bottom-color: #2a65a0;
-    text-decoration: none; 
-    text-shadow: -1px -1px 0 rgba(0,0,0,0.3); 
-    color: #fff; 
-    background-color: #3C8DDE;
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#599bdc), to(#3072b3));
-    background-image: -moz-linear-gradient(#599bdc, #3072b3);
-    background-image: -o-linear-gradient(#599bdc, #3072b3);
-    background-image: linear-gradient(#599bdc, #3072b3);
+	border-color: #3072b3;
+	border-bottom-color: #2a65a0;
+	text-decoration: none;
+	text-shadow: -1px -1px 0 rgba(0,0,0,0.3);
+	color: #fff;
+	background-color: #3C8DDE;
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#599bdc), to(#3072b3));
+	background-image: -moz-linear-gradient(#599bdc, #3072b3);
+	background-image: -o-linear-gradient(#599bdc, #3072b3);
+	background-image: linear-gradient(#599bdc, #3072b3);
 }
 
 .button:active,
 .button.active {
-    border-color: #2a65a0;
-    border-bottom-color: #3884CF;
-    background-color: #3072b3;
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#3072b3), to(#599bdc));
-    background-image: -moz-linear-gradient(#3072b3, #599bdc);
-    background-image: -o-linear-gradient(#3072b3, #599bdc);
-    background-image: linear-gradient(#3072b3, #599bdc);
+	border-color: #2a65a0;
+	border-bottom-color: #3884CF;
+	background-color: #3072b3;
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#3072b3), to(#599bdc));
+	background-image: -moz-linear-gradient(#3072b3, #599bdc);
+	background-image: -o-linear-gradient(#3072b3, #599bdc);
+	background-image: linear-gradient(#3072b3, #599bdc);
 }
 
 /* overrides extra padding on button elements in Firefox */
 .button::-moz-focus-inner {
-    padding: 0;
-    border: 0;
+	padding: 0;
+	border: 0;
 }
 
 /* ................................................................... Icons */
 
 .button.icon:before {
-    content: "";
-    position: relative; 
-    top: 0; 
-    float:left;
-    width: 12px; 
-    height: 12px; 
-    margin: 0 0.75em 0 -0.25em; 
-    background: url("/img/css3-buttons/gh-icons.png") 0 99px no-repeat;
+	content: "";
+	position: relative;
+	top: 0;
+	float:left;
+	width: 12px;
+	height: 12px;
+	margin: 0 0.75em 0 -0.25em;
+	background: url("/img/css3-buttons/gh-icons.png") 0 99px no-repeat;
 }
 .button.icon.big::before {
-    margin: 2px 0.75em 0 -0.25em; 
+	margin: 2px 0.75em 0 -0.25em;
 }
 .button.icon.is_activated:before {
-    background: url("/img/css3-buttons/gh-icons-activated.png") 0 99px no-repeat;
+	background: url("/img/css3-buttons/gh-icons-activated.png") 0 99px no-repeat;
 }
 
 .button.arrowup.icon:before { background-position: 0 0; }
@@ -251,14 +253,14 @@ http://github.com/todc/css3-github-buttons
 /* ................................................................. Primary */
 
 .button.primary, .button.bold {
-    font-weight: bold;
+	font-weight: bold;
 }
 
 /* ..................................................................... Red */
 
 .button.red,
 .button.danger {
-    color: #900;
+	color: #900;
 }
 
 .button.red:hover,
@@ -266,154 +268,158 @@ http://github.com/todc/css3-github-buttons
 .button.red:active,
 .button.danger:hover,
 .button.danger:focus,
-.button.danger:active {     
-    border-color: #b53f3a;
-    border-bottom-color: #a0302a;
-    color: #fff; 
-    background-color: #dc5f59;
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#dc5f59), to(#b33630));
-    background-image: -moz-linear-gradient(#dc5f59, #b33630);
-    background-image: -o-linear-gradient(#dc5f59, #b33630);
-    background-image: linear-gradient(#dc5f59, #b33630);
+.button.danger:active {
+	border-color: #b53f3a;
+	border-bottom-color: #a0302a;
+	color: #fff;
+	background-color: #dc5f59;
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#dc5f59), to(#b33630));
+	background-image: -moz-linear-gradient(#dc5f59, #b33630);
+	background-image: -o-linear-gradient(#dc5f59, #b33630);
+	background-image: linear-gradient(#dc5f59, #b33630);
 }
 
 .button.red:active,
 .button.red.active,
 .button.danger:active,
-.button.danger.active {   
-    border-color: #a0302a;
-    border-bottom-color: #bf4843;
-    background-color: #b33630;
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#b33630), to(#dc5f59));
-    background-image: -moz-linear-gradient(#b33630, #dc5f59);
-    background-image: -o-linear-gradient(#b33630, #dc5f59);
-    background-image: linear-gradient(#b33630, #dc5f59);
+.button.danger.active {
+	border-color: #a0302a;
+	border-bottom-color: #bf4843;
+	background-color: #b33630;
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#b33630), to(#dc5f59));
+	background-image: -moz-linear-gradient(#b33630, #dc5f59);
+	background-image: -o-linear-gradient(#b33630, #dc5f59);
+	background-image: linear-gradient(#b33630, #dc5f59);
 }
 
 /* ................................................................... Green */
 
 .button.green {
-    color: #187b0b;
+	color: #187b0b;
 }
 
 .button.green:hover,
 .button.green:focus,
-.button.green:active {     
-    border-color: #3FB53A;
-    border-bottom-color: #30A02A;
-    color: #fff; 
-    background-color: #5FDC59;
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#36b725), to(#298c1c));
-    background-image: -moz-linear-gradient(#36b725, #298c1c);
-    background-image: -o-linear-gradient(#36b725, #298c1c);
-    background-image: linear-gradient(#36b725, #298c1c);
+.button.green:active {
+	border-color: #3FB53A;
+	border-bottom-color: #30A02A;
+	color: #fff;
+	background-color: #5FDC59;
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#36b725), to(#298c1c));
+	background-image: -moz-linear-gradient(#36b725, #298c1c);
+	background-image: -o-linear-gradient(#36b725, #298c1c);
+	background-image: linear-gradient(#36b725, #298c1c);
 }
 
 .button.green:active,
-.button.green.active {   
-    border-color: #30A02A;
-    border-bottom-color: #3FB53A;
-    background-color: #36B330;
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#298c1c), to(#36b725));
-    background-image: -moz-linear-gradient(#298c1c, #36b725);
-    background-image: -o-linear-gradient(#298c1c, #36b725);
-    background-image: linear-gradient(#298c1c, #36b725);
+.button.green.active {
+	border-color: #30A02A;
+	border-bottom-color: #3FB53A;
+	background-color: #36B330;
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#298c1c), to(#36b725));
+	background-image: -moz-linear-gradient(#298c1c, #36b725);
+	background-image: -o-linear-gradient(#298c1c, #36b725);
+	background-image: linear-gradient(#298c1c, #36b725);
 }
 
 /* ............................................................. Green Solid */
 
 .button.solid-green {
-  border:1px solid #d4d4d4;
-  text-shadow:-1px -1px 0 rgba(0, 0, 0, 0.3);
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  -moz-background-clip: padding;
-  -webkit-background-clip: padding-box;
-  background-clip: padding-box;
-  border: 1px solid #4a993e;
-  background-color: #36b725;
-  background-image: -moz-linear-gradient(top, #36b725, #298c1c); 
-  background-image: -ms-linear-gradient(top, #36b725, #298c1c); 
-  background-image: -o-linear-gradient(top, #36b725, #298c1c); 
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#36b725), to(#298c1c)); 
-  background-image: -webkit-linear-gradient(top, #36b725, #298c1c); 
-  background-image: linear-gradient(top, #36b725, #298c1c);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#36b725', EndColorStr='#298c1c');
-  font-weight: bold;
-  color: #fff;
+	border:1px solid #d4d4d4;
+	text-shadow:-1px -1px 0 rgba(0, 0, 0, 0.3);
+	-webkit-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-o-border-radius: 3px;
+	border-radius: 3px;
+	-moz-background-clip: padding;
+	-webkit-background-clip: padding-box;
+	background-clip: padding-box;
+	border: 1px solid #4a993e;
+	background-color: #36b725;
+	background-image: -moz-linear-gradient(top, #36b725, #298c1c);
+	background-image: -ms-linear-gradient(top, #36b725, #298c1c);
+	background-image: -o-linear-gradient(top, #36b725, #298c1c);
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#36b725), to(#298c1c));
+	background-image: -webkit-linear-gradient(top, #36b725, #298c1c);
+	background-image: linear-gradient(top, #36b725, #298c1c);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#36b725', EndColorStr='#298c1c');
+	font-weight: bold;
+	color: #fff;
 }
 
 .button.solid-green:hover {
-  border: 1px solid #468f3b;
-  background-color: #32ab22;
-  background-image: -moz-linear-gradient(top, #32ab22, #257d19); 
-  background-image: -ms-linear-gradient(top, #32ab22, #257d19); 
-  background-image: -o-linear-gradient(top, #32ab22, #257d19); 
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#32ab22), to(#257d19)); 
-  background-image: -webkit-linear-gradient(top, #32ab22, #257d19); 
-  background-image: linear-gradient(top, #32ab22, #257d19);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#32ab22', EndColorStr='#257d19');
+	border: 1px solid #468f3b;
+	background-color: #32ab22;
+	background-image: -moz-linear-gradient(top, #32ab22, #257d19);
+	background-image: -ms-linear-gradient(top, #32ab22, #257d19);
+	background-image: -o-linear-gradient(top, #32ab22, #257d19);
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#32ab22), to(#257d19));
+	background-image: -webkit-linear-gradient(top, #32ab22, #257d19);
+	background-image: linear-gradient(top, #32ab22, #257d19);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#32ab22', EndColorStr='#257d19');
 }
 
 .button.solid-green:active {
-  /*text-shadow:1px 1px 0 rgba(0, 0, 0, 0.3);*/
-  border: 1px solid #468f3b;
-  background-color: #32ab22;
-  background-image: -moz-linear-gradient(top, #257d19, #32ab22); 
-  background-image: -ms-linear-gradient(top, #257d19, #32ab22); 
-  background-image: -o-linear-gradient(top, #257d19, #32ab22); 
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#257d19), to(#32ab22)); 
-  background-image: -webkit-linear-gradient(top, #257d19, #32ab22); 
-  background-image: linear-gradient(top, #257d19, #32ab22);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#257d19', EndColorStr='#32ab22');
+	/*text-shadow:1px 1px 0 rgba(0, 0, 0, 0.3);*/
+	border: 1px solid #468f3b;
+	background-color: #32ab22;
+	background-image: -moz-linear-gradient(top, #257d19, #32ab22);
+	background-image: -ms-linear-gradient(top, #257d19, #32ab22);
+	background-image: -o-linear-gradient(top, #257d19, #32ab22);
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#257d19), to(#32ab22));
+	background-image: -webkit-linear-gradient(top, #257d19, #32ab22);
+	background-image: linear-gradient(top, #257d19, #32ab22);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#257d19', EndColorStr='#32ab22');
 }
 
 .button.solid-red {
-  text-shadow:-1px -1px 0 rgba(0, 0, 0, 0.3);
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  -moz-background-clip: padding;
-  -webkit-background-clip: padding-box;
-  background-clip: padding-box;
-  border: 1px solid #BF4843;
-  background-color: #b33630;
-  background-image: -moz-linear-gradient(top, #ed6f6a, #c44741); 
-  background-image: -ms-linear-gradient(top, #ed6f6a, #c44741); 
-  background-image: -o-linear-gradient(top, #ed6f6a, #c44741); 
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#ed6f6a), to(#c44741)); 
-  background-image: -webkit-linear-gradient(top, #ed6f6a, #c44741); 
-  background-image: linear-gradient(top, #ed6f6a, #c44741);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#ed6f6a', EndColorStr='#c44741');
-  font-weight: bold;
-  color: #fff;
+	text-shadow:-1px -1px 0 rgba(0, 0, 0, 0.3);
+	-webkit-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-o-border-radius: 3px;
+	border-radius: 3px;
+	-moz-background-clip: padding;
+	-webkit-background-clip: padding-box;
+	background-clip: padding-box;
+	border: 1px solid #BF4843;
+	background-color: #b33630;
+	background-image: -moz-linear-gradient(top, #ed6f6a, #c44741);
+	background-image: -ms-linear-gradient(top, #ed6f6a, #c44741);
+	background-image: -o-linear-gradient(top, #ed6f6a, #c44741);
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#ed6f6a), to(#c44741));
+	background-image: -webkit-linear-gradient(top, #ed6f6a, #c44741);
+	background-image: linear-gradient(top, #ed6f6a, #c44741);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#ed6f6a', EndColorStr='#c44741');
+	font-weight: bold;
+	color: #fff;
 }
 
 .button.solid-red:hover {
-  border: 1px solid #BF4843;
-  background-color: #b33630;
-  background-image: -moz-linear-gradient(top, #dc5f59, #b33630); 
-  background-image: -ms-linear-gradient(top, #dc5f59, #b33630); 
-  background-image: -o-linear-gradient(top, #dc5f59, #b33630); 
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#dc5f59), to(#b33630)); 
-  background-image: -webkit-linear-gradient(top, #dc5f59, #b33630); 
-  background-image: linear-gradient(top, #dc5f59, #b33630);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#dc5f59', EndColorStr='#b33630');
-  font-weight: bold;
-  color: #fff;
+	border: 1px solid #BF4843;
+	background-color: #b33630;
+	background-image: -moz-linear-gradient(top, #dc5f59, #b33630);
+	background-image: -ms-linear-gradient(top, #dc5f59, #b33630);
+	background-image: -o-linear-gradient(top, #dc5f59, #b33630);
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#dc5f59), to(#b33630));
+	background-image: -webkit-linear-gradient(top, #dc5f59, #b33630);
+	background-image: linear-gradient(top, #dc5f59, #b33630);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#dc5f59', EndColorStr='#b33630');
+	font-weight: bold;
+	color: #fff;
 }
 
 .button.solid-red:active {
-  border: 1px solid #BF4843;
-  background-color: #b33630;
-  background-image: -moz-linear-gradient(top, #b33630, #dc5f59); 
-  background-image: -ms-linear-gradient(top, #b33630, #dc5f59); 
-  background-image: -o-linear-gradient(top, #b33630, #dc5f59); 
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#b33630), to(#dc5f59)); 
-  background-image: -webkit-linear-gradient(top, #b33630, #dc5f59); 
-  background-image: linear-gradient(top, #b33630, #dc5f59);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#b33630', EndColorStr='#dc5f59');
+	border: 1px solid #BF4843;
+	background-color: #b33630;
+	background-image: -moz-linear-gradient(top, #b33630, #dc5f59);
+	background-image: -ms-linear-gradient(top, #b33630, #dc5f59);
+	background-image: -o-linear-gradient(top, #b33630, #dc5f59);
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#b33630), to(#dc5f59));
+	background-image: -webkit-linear-gradient(top, #b33630, #dc5f59);
+	background-image: linear-gradient(top, #b33630, #dc5f59);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#b33630', EndColorStr='#dc5f59');
 }
 
 .button.disabled,
@@ -429,27 +435,29 @@ http://github.com/todc/css3-github-buttons
 /* ............................................................... Icon-only */
 
 .button.no-text:before {
-  margin: 0 -0.2em 0 0.1em;
+	margin: 0 -0.2em 0 0.1em;
 }
 
 /* .................................................................... Pill */
 
 .button.pill {
-    -webkit-border-radius: 50em; 
-    -moz-border-radius: 50em; 
-    border-radius: 50em; 
+	-webkit-border-radius: 50em;
+	-khtml-border-radius: 50em;
+	-moz-border-radius: 50em;
+	-o-border-radius: 50em;
+	border-radius: 50em;
 }
 
 /* ................................................................. Disable */
 
 .button.disable {
-    opacity: 0.5;
+	opacity: 0.5;
 }
 
 /* ..................................................................... Big */
 
 .button.big {
-    font-size: 14px; 
+	font-size: 14px;
 }
 
 .button.big.icon:before { top: 0; }
@@ -460,82 +468,92 @@ http://github.com/todc/css3-github-buttons
 /* ................................................................ Standard */
 
 .button-group {
-    display: inline-block;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    /* IE hacks */
-    zoom: 1; 
-    *display: inline; 
+	display: inline-block;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	/* IE hacks */
+	zoom: 1;
+	*display: inline;
 }
 
 .button + .button,
 .button + .button-group,
 .button-group + .button,
 .button-group + .button-group {
-    margin-left: 15px;
+	margin-left: 15px;
 }
 
 .button-group li {
-    float: left;
-    padding: 0;
-    margin: 0;
+	float: left;
+	padding: 0;
+	margin: 0;
 }
 
 .button-group .button {
-    float: left;
-    margin-left: -1px; 
+	float: left;
+	margin-left: -1px;
 }
 
 .button-group > .button:not(:first-child):not(:last-child),
-.button-group li:not(:first-child):not(:last-child) .button { 
-    -webkit-border-radius: 0; 
-    -moz-border-radius: 0; 
-    border-radius: 0; 
+.button-group li:not(:first-child):not(:last-child) .button {
+	-webkit-border-radius: 0;
+	-khtml-border-radius: 0;
+	-moz-border-radius: 0;
+	-o-border-radius: 0;
+	border-radius: 0;
 }
 
 .button-group > .button:first-child,
-.button-group li:first-child .button { 
-    margin-left: 0; 
-    -webkit-border-top-right-radius: 0; 
-    -webkit-border-bottom-right-radius: 0; 
-    -moz-border-radius-topright: 0; 
-    -moz-border-radius-bottomright: 0; 
-    border-top-right-radius: 0; 
-    border-bottom-right-radius: 0; 
+.button-group li:first-child .button {
+	margin-left: 0;
+	-webkit-border-top-right-radius: 0;
+	-webkit-border-bottom-right-radius: 0;
+	-khtml-border-top-right-radius: 0;
+	-khtml-border-bottom-right-radius: 0;
+	-moz-border-radius-topright: 0;
+	-moz-border-radius-bottomright: 0;
+	-o-border-top-right-radius: 0;
+	-o-border-bottom-right-radius: 0;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
 }
 
 .button-group > .button:last-child,
-.button-group li:last-child > .button { 
-    -webkit-border-top-left-radius: 0; 
-    -webkit-border-bottom-left-radius: 0; 
-    -moz-border-radius-topleft: 0; 
-    -moz-border-radius-bottomleft: 0; 
-    border-top-left-radius: 0; 
-    border-bottom-left-radius: 0; 
+.button-group li:last-child > .button {
+	-webkit-border-top-left-radius: 0;
+	-webkit-border-bottom-left-radius: 0;
+	-khtml-border-top-left-radius: 0;
+	-khtml-border-bottom-left-radius: 0;
+	-moz-border-radius-topleft: 0;
+	-moz-border-radius-bottomleft: 0;
+	-o-border-top-left-radius: 0;
+	-o-border-bottom-left-radius: 0;
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
 }
 
 /* ................................................................... Minor */
 
 .button-group.minor-group .button {
-    border: 1px solid #d4d4d4; 
-    text-shadow: none;
-    background-image: none;
-    background-color: #fff;
+	border: 1px solid #d4d4d4;
+	text-shadow: none;
+	background-image: none;
+	background-color: #fff;
 }
 
 .button-group.minor-group .button:hover,
 .button-group.minor-group .button:focus {
-    background-color: #599bdc;
+	background-color: #599bdc;
 }
 
 .button-group.minor-group .button:active,
 .button-group.minor-group .button.active {
-    background-color: #3072b3;
+	background-color: #3072b3;
 }
 
 .button-group.minor-group .button.icon:before {
-    opacity: 0.8;
+	opacity: 0.8;
 }
 
 /* -------------------------------------------------------- BUTTON CONTAINER */
@@ -543,5 +561,5 @@ http://github.com/todc/css3-github-buttons
 
 .button-container .button,
 .button-container .button-group {
-    vertical-align: top;
+	vertical-align: top;
 }

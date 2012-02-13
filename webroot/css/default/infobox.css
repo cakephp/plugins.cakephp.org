@@ -5,7 +5,6 @@
 	margin: 0 auto 20px auto;
 	padding: 0;
 	text-align: left;
-	width: 315px;
 }
 .sidebar .infobox h3 {
 	border-bottom: 2px #DDD solid;
@@ -22,7 +21,6 @@
 	margin: 0 0 15px 0
 }
 .sidebar .infobox table {
-	border-spacing: 2px;
 	font-size: 11px;
 	margin: 0;
 	width: 100%;

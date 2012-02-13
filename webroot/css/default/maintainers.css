@@ -16,7 +16,9 @@
 	padding: 30px;
 	text-shadow: 0 1px 1px white;
 	-webkit-box-shadow: inset 0 0px 42px 0px rgba( 100, 100, 100, 0.1 );
+	-khtml-box-shadow: inset 0 0px 42px 0px rgba( 100, 100, 100, 0.1 );
 	-moz-box-shadow: inset 0 0px 42px 0px rgba( 100, 100, 100, 0.1 );
+	-o-box-shadow: inset 0 0px 42px 0px rgba( 100, 100, 100, 0.1 );
 	box-shadow: inset 0 0px 42px 0px rgba( 100, 100, 100, 0.1 );
 }
 .maintainers-view .summary p {
