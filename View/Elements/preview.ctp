@@ -23,39 +23,41 @@ $title = $this->Html->link($this->Text->truncate($package['name'], 35), array(
 ), array('title' => $package['name']));
 
 ?>
-<div class="preview">
-	<h3><?php echo $title; ?></h3>
-	<div class="info">
-		<?php if ($showDescription) : ?>
-			<p class="description"><?php echo h($package['description']) ?></p>
-		<?php endif; ?>
+<div class="article">
+	<div class="preview">
+		<h3><?php echo $title; ?></h3>
+		<div class="info">
+			<?php if ($showDescription) : ?>
+				<p class="description"><?php echo h($package['description']) ?></p>
+			<?php endif; ?>
 
 
-		<?php if ($hasDetails) : ?>
-			<div class="details">
+			<?php if ($hasDetails) : ?>
+				<div class="details">
 
-				<?php if ($showMaintainer) : ?>
-					<strong>By:</strong> <?php echo $this->Html->link($maintainer['username'], array(
-							'controller' => 'maintainers',
-							'action' => 'view',
-							$maintainer['username']
-						), array('class' => 'author')); ?>
-				<?php endif; ?>
+					<?php if ($showMaintainer) : ?>
+						<strong>By:</strong> <?php echo $this->Html->link($maintainer['username'], array(
+								'controller' => 'maintainers',
+								'action' => 'view',
+								$maintainer['username']
+							), array('class' => 'author')); ?>
+					<?php endif; ?>
 
-				<?php if ($showDate) : ?>
-					<span class="date">
-						<strong>Added On:</strong> <?php echo $this->Time->format('Y-m-d', $package['created']); ?>
-					</span>
-				<?php endif; ?>
+					<?php if ($showDate) : ?>
+						<span class="date">
+							<strong>Added On:</strong> <?php echo $this->Time->format('Y-m-d', $package['created']); ?>
+						</span>
+					<?php endif; ?>
 
-				<?php if ($showLastPushedAt) : ?>
-					<span class="date">
-						<strong>Last Updated At:</strong> <?php echo $this->Time->format('Y-m-d', $package['last_pushed_at']); ?>
-					</span>
-				<?php endif; ?>
+					<?php if ($showLastPushedAt) : ?>
+						<span class="date">
+							<strong>Last Updated At:</strong> <?php echo $this->Time->format('Y-m-d', $package['last_pushed_at']); ?>
+						</span>
+					<?php endif; ?>
 
-			</div>
-		<?php endif; ?>
+				</div>
+			<?php endif; ?>
 
+		</div>
 	</div>
 </div>

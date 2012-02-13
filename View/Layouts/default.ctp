@@ -26,7 +26,6 @@
 			theme : 'clean'
 		};
 	</script>
-
 </head>
 
 <body class="<?php echo $_bodyClass; ?>" id="<?php echo $_bodyId; ?>">
@@ -34,11 +33,16 @@
 	<div class="wrapper">
 		<header>
 			<div class="container">
-				<?php $siteTitle = Configure::read('Settings.SiteTitle'); ?>
-				<?php if (!$siteTitle) $siteTitle = __('Package Indexer'); ?>
-				<h1><?php echo $this->Html->link($siteTitle, '/'); ?></h1>
-
-				<nav class="main-nav">
+				<nav class="left-nav">
+					<ul>
+						<li>
+							<?php $siteTitle = Configure::read('Settings.SiteTitle'); ?>
+							<?php if (!$siteTitle) $siteTitle = __('Package Indexer'); ?>
+							<h1><?php echo $this->Html->link($siteTitle, '/'); ?></h1>
+						</li>
+					</ul>
+				</nav>
+				<nav class="right-nav">
 					<ul>
 						<li>
 							<?php echo $this->Html->link('Packages', array('controller' => 'packages', 'action' => 'index')); ?>
