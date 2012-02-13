@@ -137,6 +137,9 @@ body.minimal {
 		top: auto;
 		width: 100%;
 	}
+	.content .packages .article {
+		width: 300px;
+	}
 	.packages-index .search form .query {
 		width: 188px;
 	}
@@ -251,6 +254,9 @@ body.mobile {
 	text-align: center;
 	top: auto;
 	width: 100%;
+}
+.mobile .content .packages .article {
+	width: 300px;
 }
 .mobile.packages-index .search form .query {
 	width: 188px;
