@@ -29,6 +29,10 @@ _[GIT Clone]_
 
 <pre><code>git clone git://github.com/josegonzalez/cakepackages.git cakepackages</code></pre>
 
+If using git clone to download be sure to update the submodules after you clone with the command:
+
+<pre><code>cd cakepackages && git submodule update --init</code></pre>
+
 h2. Usage
 
 You'll want to run the migrations for both cakepackages and the plugins. I've also included a schema.php file. SQL Dump with dummy data to come.
