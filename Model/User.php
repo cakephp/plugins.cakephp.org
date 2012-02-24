@@ -342,6 +342,24 @@ class User extends AppModel {
 	}
 
 /**
+ * Validation method to compare two fields
+ *
+ * @param mixed $field1 Array or string, if array the first key is used as fieldname
+ * @param string $field2 Second fieldname
+ * @return boolean True on success
+ */
+	public function compareFields($field1, $field2) {
+		if (is_array($field1)) {
+			$field1 = key($field1);
+		}
+		if (isset($this->data[$this->alias][$field1]) && isset($this->data[$this->alias][$field2]) && 
+			$this->data[$this->alias][$field1] == $this->data[$this->alias][$field2]) {
+			return true;
+		}
+		return false;
+	}
+
+/**
  * Changes the current user's activation key
  *
  * @param int $id record's primaryKey
