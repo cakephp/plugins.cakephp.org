@@ -85,7 +85,7 @@ class PackagesController extends AppController {
 /**
  * Redirects to proper download url
  *
- * @param int $id 
+ * @param int $id
  * @todo Track downloads for packages
  */
 	public function download($id = null) {
