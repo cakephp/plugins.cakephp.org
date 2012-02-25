@@ -245,7 +245,7 @@ class User extends AppModel {
 			}
 
 			$query['conditions'] = array(
-				"{$this->alias}.email_token" => $token,
+				"{$this->alias}.email_token" => $query['token'],
 			);
 			$query['fields'] = array(
 				'id', 'email', 'email_token_expires', 'role'
@@ -267,7 +267,7 @@ class User extends AppModel {
 			}
 
 			$query['conditions'] = array(
-				"{$this->alias}.slug" => $slug,
+				"{$this->alias}.slug" => $query['slug'],
 			);
 			$query['limit'] = 1;
 			return $query;
