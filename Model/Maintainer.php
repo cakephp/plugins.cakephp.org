@@ -263,6 +263,12 @@ class Maintainer extends AppModel {
 		return true;
 	}
 
+/**
+ * Returns SEO for a maintainer
+ *
+ * @param array $maintainer
+ * @return array
+ */
 	public function seoView($maintainer) {
 		if ($maintainer['Maintainer']['name']) {
 			$name = $maintainer['Maintainer']['name'];

@@ -47,10 +47,12 @@ class ApiPackage extends AppModel {
  */
 	public function _findInstall($state, $query, $results = array()) {
 		if ($state == 'before') {
-			$query['conditions'] = array(
-				$this->alias . '.name LIKE' => $query['request']['package'],
-				$this->alias . '.deleted' => false,
-			);
+			if (!empty($query['request']['package'])) {
+				$query['conditions'] = array(
+					$this->alias . '.name LIKE' => $query['request']['package'],
+					$this->alias . '.deleted' => false,
+				);
+			}
 
 			$query['fields'] = array('name', 'description', 'last_pushed_at');
 
