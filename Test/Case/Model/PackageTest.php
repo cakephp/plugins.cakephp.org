@@ -248,11 +248,15 @@ class PackageTestCase extends CakeTestCase {
  * testCategories method
  *
  * @return void
- * @todo Check if Package->_categories should be updated. The end count check is
- * causing it to fail.
  */
 	public function testCategories() {
-		//$result = $this->Package->categories(1);
+		$result = $this->Package->categories(1);
+		$this->assertEquals(44, sizeof($result));
+		$this->assertTrue(in_array('Company News', $result));
+		$this->assertTrue(in_array('Uncategorized', $result));
+		$result = $this->Package->categories();
+		$this->assertEquals(44, sizeof($result));
+		$this->assertEquals(44, sizeof($this->Package->_categories));
 	}
 /**
  * testSuggest method

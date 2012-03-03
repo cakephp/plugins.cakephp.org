@@ -1126,44 +1126,23 @@ class Package extends AppModel {
 		$categories = $this->Category->find('list', array(
 			'order' => array('Category.name')
 		));
-		if (count($categories) == count($this->_categories)) {
-			return $categories;
-		}
-
-		$unset = array();
-		foreach ($categories as $id => $name) {
-			if (in_array($name, $this->_categories)) {
-				$unset[] = $name;
+		$diff = array_diff($this->_categories, $categories);
+		if (!empty($diff)) {
+			if (!$user_id) {
+				throw new UnauthorizedException(__('You must be logged in to add categories'));
+			}
+			$data = array();
+			foreach ($diff as $name) {
+				$data[]['Category'] = compact('user_id', 'name');
+			}
+			$result = $this->Category->saveAll($data);
+			if (!$result) {
+				throw new OutOfBoundsException(__('Unable to create missing categories'));
 			}
 		}
-
-		$create = array_diff($this->_categories, $unset);
-		if (empty($create)) {
-			return $categories;
-		}
-
-		if (!$user_id) {
-			throw new UnauthorizedException(__("You must be logged in in order to rate packages"));
-		}
-
-		$data = array();
-		foreach ($create as $name) {
-			$data[]['Category'] = compact('user_id', 'name');
-		}
-
-		$result = $this->Category->saveAll($data);
-		if (!$result) {
-			throw new OutOfBoundsException("Unable to create missing categories");
-		}
-
-		$categories = $this->Category->find('list', array(
+		return $this->_categories = $this->Category->find('list', array(
 			'order' => array('Category.name')
 		));
-		if (count($categories) == count($this->_categories)) {
-			return $categories;
-		}
-
-		throw new RuntimeException("Something went wrong with creating all the required categories");
 	}
 
 /**
