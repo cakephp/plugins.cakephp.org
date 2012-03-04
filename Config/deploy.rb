@@ -171,8 +171,8 @@ namespace :link do
     begin
       run [
         "cd #{current_release}",
-        "git clone git@github.com:cakephp/csf-navbar.git Plugin/Csfnavbar",
-        "ln -s #{current_release}/Plugin #{current_release}/Plugin/Csfnavbar"
+        "git clone git@github.com:cakephp/csfnavbar.git Plugin/Csfnavbar",
+        "ln -s #{current_release}/Plugin #{current_release}/Plugin/Csfnavbar",
 
         "cd #{current_release}",
         "git clone git@github.com:cakephp/theme-packages.git View/Themed/Csf",
