@@ -9,18 +9,18 @@ if ($package['Rating'] && $package['Rating']['value'] == 1) {
 <section class="page-title clearfix">
 	<h2><?php echo $package['Package']['name']; ?></h2>
 
-	<ul class="activity button-group">
-	    <li>
+<!-- 	<ul class="activity button-group">
+		<li>
 			<?php echo $this->Html->link('Like', array(
 				'controller' => 'packages', 'action' => 'like', $package['Package']['id']
 			), array('class' => 'ajax-toggle button primary pill icon like is_like ' . $likeActive)); ?>
 		</li>
-	    <li>
+		<li>
 			<?php echo $this->Html->link('Bookmark', array(
 				'controller' => 'packages', 'action' => 'bookmark', $package['Package']['id']
 			), array('class' => 'ajax-toggle button primary pill icon tag is_tag ' . ($package['Favorite'] ? 'is_activated' : ''))); ?>
 		</li>
-	</ul>
+	</ul> -->
 </section>
 
 <section class="summary clearfix">
