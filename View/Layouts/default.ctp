@@ -7,6 +7,9 @@
 	<?php if ($this->theme) : ?>
 		<?php echo $this->AssetCompress->css('theme'); ?>
 	<?php endif; ?>
+	<?php if (CakePlugin::loaded('Csfnavbar')) : ?>
+		<?php echo $this->Html->css(array('Csfnavbar.style')); ?>
+	<?php endif; ?>
 	<title>
 		<?php echo __('CakePHP Packages -') . $title_for_layout; ?>
 	</title>
@@ -29,6 +32,10 @@
 </head>
 
 <body class="<?php echo $_bodyClass; ?>" id="<?php echo $_bodyId; ?>">
+
+	<?php if (CakePlugin::loaded('Csfnavbar')) : ?>
+		<?php echo $this->element('Csfnavbar.navbar'); ?>
+	<?php endif; ?>
 
 	<div class="wrapper">
 		<header>

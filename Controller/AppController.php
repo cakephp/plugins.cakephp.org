@@ -38,6 +38,7 @@ class AppController extends Controller {
 		'AssetCompress.AssetCompress',
 		'Form',
 		'Html',
+		'Js',
 		'Resource',
 		'Session',
 		'Sham.Sham',
