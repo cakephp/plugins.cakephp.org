@@ -1209,8 +1209,12 @@ class Package extends AppModel {
 			libxml_use_internal_errors($xmlError);
 		}
 
-		if ($result) {
-			$result = Xml::toArray($result);
+		try {
+			if ($result) {
+				$result = Xml::toArray($result);
+			}
+		} catch (Exception $e) {
+			return array($items, $options['cache']);
 		}
 
 		if (!empty($result['feed']['entry'])) {
