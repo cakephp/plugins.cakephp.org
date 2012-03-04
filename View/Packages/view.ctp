@@ -62,19 +62,19 @@ if ($package['Rating'] && $package['Rating']['value'] == 1) {
 			</table>
 		</div>
 
-		<?php if (!empty($package['Rss']) && is_array($package['Rss'])) : ?>
 		<div class="rss package-section">
 			<h3><?php echo __('Recent Activity'); ?></h3>
-			<ul>
-				<?php foreach ($package['Rss'] as $entry) : ?>
-					<li>
-						<?php echo $this->Html->link(
-							$this->Time->format('Y-m-d', $entry['updated']) . ' ' . $entry['title'],
-							$entry['link'], array('target' => '_blank', 'rel' => 'nofollow', 'escape' => false)
-						); ?>
-					</li>
-				<?php endforeach; ?>
-			</ul>
+			<?php if (!empty($package['Rss']) && is_array($package['Rss'])) : ?>
+				<ul>
+					<?php foreach ($package['Rss'] as $entry) : ?>
+						<li>
+							<?php echo $this->Html->link(
+								$this->Time->format('Y-m-d', $entry['updated']) . ' ' . $entry['title'],
+								$entry['link'], array('target' => '_blank', 'rel' => 'nofollow', 'escape' => false)
+							); ?>
+						</li>
+					<?php endforeach; ?>
+				</ul>
 			<?php endif; ?>
 		</div>
 	</section>
