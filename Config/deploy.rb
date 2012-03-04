@@ -172,7 +172,8 @@ namespace :link do
       run [
         "cd #{current_release}",
         "git clone git@github.com:cakephp/csfnavbar.git Plugin/Csfnavbar",
-        "ln -s #{current_release}/Plugin #{current_release}/Plugin/Csfnavbar",
+        "cd #{current_release}/Plugin/Csfnavbar",
+        "git checkout -t origin/2.0",
 
         "cd #{current_release}",
         "git clone git@github.com:cakephp/theme-packages.git View/Themed/Csf",
