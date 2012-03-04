@@ -15,7 +15,7 @@ body {
 	header h1 {
 		margin-right: 0;
 		text-align: center;
-		width: 270px;
+		width: 330px;
 	}
 	header h1 a {
 		height: 70px;
@@ -65,7 +65,7 @@ body.minimal {
 .minimal header h1 {
 	margin-right: 0;
 	text-align: center;
-	width: 270px;
+	width: 330px;
 }
 .minimal header h1 a {
 	height: 70px;
@@ -117,7 +117,7 @@ body.minimal {
 		width: 320px;
 	}
 	header {
-		height: 85px;
+		height: 140px !important;
 	}
 	header h1 {
 		margin: 0;
@@ -136,6 +136,13 @@ body.minimal {
 		text-align: center;
 		top: auto;
 		width: 100%;
+	}
+	header nav.left-nav {
+		height: 70px;
+	}
+	header nav.right-nav {
+		right: auto;
+		top: auto;
 	}
 	.content .packages .article {
 		width: 300px;
@@ -235,7 +242,7 @@ body.mobile {
 	width: 320px;
 }
 .mobile header {
-	height: 85px;
+	height: 140px !important;
 }
 .mobile header h1 {
 	margin: 0;
@@ -254,6 +261,13 @@ body.mobile {
 	text-align: center;
 	top: auto;
 	width: 100%;
+}
+.mobile header nav.left-nav {
+	height: 70px;
+}
+.mobile header nav.right-nav {
+	right: auto;
+	top: auto;
 }
 .mobile .content .packages .article {
 	width: 300px;
