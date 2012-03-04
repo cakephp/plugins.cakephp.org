@@ -19,7 +19,7 @@ header h1 a {
 	color: #fff;
 	display: inline-block;
 	text-decoration: none;
-	text-shadow:1px 1px 2px #000;
+	text-shadow: 0px 1px 0px #111;
 }
 header h1 a:hover {
 	color: #fffbbe;
@@ -34,21 +34,36 @@ header nav.left-nav {
 	left: 0;
 }
 header nav.right-nav {
-	right: 0;
+	font-size: 16px;
+	height: 20px;
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	padding: 10px;
+	background: #417282;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+	border-radius: 8px;
 }
 header nav ul li {
 	display: inline-block;
 	position: relative;
 }
+header nav ul li img {
+	margin-right: 10px;
+	vertical-align: middle;
+}
 header nav ul li a {
 	color: white;
 	display: inline-block;
-	font-size: 14px;
 	font-weight: normal;
-	line-height: 30px;
+	line-height: 10px;
 	padding: 5px;
 	text-decoration: none;
 	text-shadow: 1px 1px 2px black;
+}
+header nav ul li h1 a {
+	font-size: 28px;
 }
 .header-bottom {
 	border-top: 1px #C5C5C5 solid;

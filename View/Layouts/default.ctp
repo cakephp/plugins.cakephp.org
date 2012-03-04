@@ -36,9 +36,12 @@
 				<nav class="left-nav">
 					<ul>
 						<li>
-							<?php $siteTitle = Configure::read('Settings.SiteTitle'); ?>
-							<?php if (!$siteTitle) $siteTitle = __('Package Indexer'); ?>
-							<h1><?php echo $this->Html->link($siteTitle, '/'); ?></h1>
+							<h1>
+								<?php $siteTitle = Configure::read('Settings.SiteTitle'); ?>
+								<?php if (!$siteTitle) $siteTitle = __('Package Indexer'); ?>
+								<?php echo $this->Html->link($this->Html->image('cake-logo.png', array(
+									'alt' => $siteTitle, 'width' => '70')) . $siteTitle, '/', array('escape' => false)); ?>
+							</h1>
 						</li>
 					</ul>
 				</nav>
