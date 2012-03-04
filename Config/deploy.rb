@@ -1,20 +1,30 @@
 $config = {
     'application'       => 'cakepackages.com',
     'repository'        => 'git://github.com/cakephp/cakepackages.git',
-    'remoteusername'    => 'deploy',
+    'remoteusername'    => 'cakephp',
     'cake_folder'       => '/apps/production/resources',
     'cake_version'      => 'cakephp2.1',
     'plugin_dir'        => false,
     'servers'           => {
         'production'              => {
-            'server'        => 'cakepackages.com',
+            'server'        => 'cakephp.org',
             'application'   => 'cakepackages.com',
-            'deploy_to'     => '/apps/production/cakepackages.com/default'
+            'current_dir'   => 'plugins.cakephp.org',
+            'link_core'     => false,
+            'link_cron'     => false,
+            'deploy_to'     => '/home/cakephp/www-live/cakephp-2.1',
+            'releases_path' => '/home/cakephp/www-live/cakephp-2.1/.plugins.cakephp.org-cap/releases',
+            'shared_path'   => '/home/cakephp/www-live/cakephp-2.1/.plugins.cakephp.org-cap/shared',
         },
         'staging'           => {
-            'server'        => 'staging.cakepackages.com',
+            'server'        => 'cakephp.org',
             'application'   => 'staging.cakepackages.com',
-            'deploy_to'     => '/apps/staging/cakepackages.com/default'
+            'current_dir'   => 'plugins.cakephp.org',
+            'link_core'     => false,
+            'link_cron'     => false,
+            'deploy_to'     => '/home/cakephp/www-staging/cakephp-2.1',
+            'releases_path' => '/home/cakephp/www-staging/cakephp-2.1/.plugins.cakephp.org-cap/releases',
+            'shared_path'   => '/home/cakephp/www-staging/cakephp-2.1/.plugins.cakephp.org-cap/shared',
         }
     },
     'cron_files'        => [ 'cakepackages' ]
@@ -43,6 +53,7 @@ set :scm_verbose,     false
 # does a "git fetch" on the remote cache before moving it into place
 set :deploy_via,      :remote_cache
 # Overriding my 'current' directory to public, as that's how I roll
+# This can be overriden by a particular environment
 set :current_dir,     "public"
 
 ## Deploy Specific settings
@@ -67,6 +78,11 @@ task :production do
   server              $config['servers']['production']['server'], :web, :god, :cron
   set :application,   $config['servers']['production']['application']
   set :deploy_to,     $config['servers']['production']['deploy_to']
+  set :current_dir,   $config['servers']['production']['current_dir']
+  set :link_core,     $config['servers']['production']['link_core']
+  set :link_cron,     $config['servers']['production']['link_cron']
+  set :releases_path, $config['servers']['production']['releases_path']
+  set :shared_path,   $config['servers']['production']['shared_path']
   set :branch,        :master
   set :deploy_env,    :production
 end
@@ -75,6 +91,11 @@ task :staging do
   role :web,          $config['servers']['staging']['server']
   set :application,   $config['servers']['staging']['application']
   set :deploy_to,     $config['servers']['staging']['deploy_to']
+  set :current_dir,   $config['servers']['staging']['current_dir']
+  set :link_core,     $config['servers']['staging']['link_core']
+  set :link_cron,     $config['servers']['staging']['link_cron']
+  set :releases_path, $config['servers']['staging']['releases_path']
+  set :shared_path,   $config['servers']['staging']['shared_path']
   set :branch,        ENV['branch'] if ENV.has_key?('branch') && ENV['branch'] =~ /[\w_-]+/i
   set :deploy_env,    :staging
 end
@@ -122,12 +143,14 @@ namespace :link do
     You may need to change this to a 'cp -rf' instead of 'ln -s' depending upon your shell requirements
   DESC
   task :core do
-    run "rm -rf #{deploy_to}/lib && ln -s #{cake_folder}/#{cake_version}/lib #{deploy_to}/lib"
+    if link_core
+      run "rm -rf #{deploy_to}/lib && ln -s #{cake_folder}/#{cake_version}/lib #{deploy_to}/lib"
+    end
   end
 
   desc 'Link the cron file'
   task :cron, :roles => :cron do
-    if deploy_env == :production
+    if link_cron and deploy_env == :production
       cmd = []
 
       $config['cron_files'].each do |cron_file|
@@ -148,6 +171,10 @@ namespace :link do
     begin
       run [
         "cd #{current_release}",
+        "git clone git@github.com:cakephp/csf-navbar.git Plugin/Csfnavbar",
+        "ln -s #{current_release}/Plugin #{current_release}/Plugin/Csfnavbar"
+
+        "cd #{current_release}",
         "git clone git@github.com:cakephp/theme-packages.git View/Themed/Csf",
         "mkdir #{current_release}/webroot/theme",
         "ln -s #{current_release}/View/Themed/Csf/webroot #{current_release}/webroot/theme/Csf"
@@ -163,19 +190,34 @@ namespace :link do
   DESC
   task :config do
     run [
+      "if [ ! -d '#{shared_path}/Config' ]; then " +
+          "mkdir -p #{shared_path}/Config && chmod -R 755 #{shared_path}/Config;" +
+      'fi',
+
       "rm -rf #{current_release}/Config/environments.php",
       "ln -s #{shared_path}/Config/environments.php #{current_release}/Config/environments.php",
-      
+
+      "rm -rf #{current_release}/Config/database.php",
+      "ln -s #{shared_path}/Config/database.php #{current_release}/Config/database.php",
+
       "if [ ! -d '#{shared_path}/webroot/cache_css' ]; then " +
-          "mkdir -p #{shared_path}/webroot/cache_css && chmod -R 777 #{shared_path}/webroot/cache_css;" +
+          "mkdir -p #{shared_path}/webroot/cache_css && chmod -R 755 #{shared_path}/webroot/cache_css;" +
+      'fi',
+
+      "if [ ! -d '#{shared_path}/webroot/cache_js' ]; then " +
+          "mkdir -p #{shared_path}/webroot/cache_js && chmod -R 755 #{shared_path}/webroot/cache_js;" +
+      'fi',
+
+      "if [ ! -d '#{shared_path}/webroot/uploads' ]; then " +
+          "mkdir -p #{shared_path}/webroot/uploads && chmod -R 755 #{shared_path}/webroot/uploads;" +
+      'fi',
+
+      "if [ ! -d '#{shared_path}/webroot/files' ]; then " +
+          "mkdir -p #{shared_path}/webroot/files && chmod -R 755 #{shared_path}/webroot/files;" +
       'fi',
 
       "rm -rf #{current_release}/webroot/cache_css",
       "ln -s #{shared_path}/webroot/cache_css #{current_release}/webroot/cache_css",
-
-      "if [ ! -d '#{shared_path}/webroot/cache_js' ]; then " +
-          "mkdir -p #{shared_path}/webroot/cache_js && chmod -R 777 #{shared_path}/webroot/cache_js;" +
-      'fi',
 
       "rm -rf #{current_release}/webroot/cache_js",
       "ln -s #{shared_path}/webroot/cache_js #{current_release}/webroot/cache_js",
@@ -190,7 +232,26 @@ namespace :link do
 
   desc 'Link the temporary directory'
   task :tmp do
-    run "rm -rf #{current_release}/tmp && ln -s #{shared_path}/tmp #{current_release}/tmp"
+    run [
+      "rm -rf #{current_release}/tmp",
+
+      "if [ ! -d '#{shared_path}/tmp' ]; then " +
+          "mkdir -p #{shared_path}/tmp && " +
+          "mkdir -p #{shared_path}/tmp/cache/data && " +
+          "mkdir -p #{shared_path}/tmp/cache/debug_kit && " +
+          "mkdir -p #{shared_path}/tmp/cache/models && " +
+          "mkdir -p #{shared_path}/tmp/cache/persistent && " +
+          "mkdir -p #{shared_path}/tmp/cache/views && " +
+          "mkdir -p #{shared_path}/tmp/sessions && " +
+          "mkdir -p #{shared_path}/tmp/logs && " +
+          "mkdir -p #{shared_path}/tmp/tests && " +
+          "chmod -R 777 #{shared_path}/tmp;" + 
+      'fi',
+
+      "ln -s #{shared_path}/tmp #{current_release}/tmp",
+
+    ].join(' && ')
+      
   end
 
 end
@@ -208,6 +269,8 @@ namespace :misc do
       "rm -rf #{shared_path}/webroot/cache_css/*",
       "rm -rf #{shared_path}/webroot/cache_js/*",
 
+      "mkdir -p #{shared_path}/tmp/cache/data",
+      "mkdir -p #{shared_path}/tmp/cache/debug_kit",
       "mkdir -p #{shared_path}/tmp/cache/models",
       "mkdir -p #{shared_path}/tmp/cache/persistent",
       "mkdir -p #{shared_path}/tmp/cache/views",
