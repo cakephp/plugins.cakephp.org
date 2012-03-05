@@ -6,7 +6,7 @@ window.templates = {
 
 	maintainer_link: function (p) {
 		return [
-			'<a href="/package/"' + p.Maintainer.username + '/' + p.Package.name + '" title="' + p.Package.name + '">',
+			'<a href="/package/' + p.Maintainer.username + '/' + p.Package.name + '" title="' + p.Package.name + '">',
 				p.Package.name,
 			'</a>'
 		].join("\n");
