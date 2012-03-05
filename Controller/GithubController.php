@@ -14,6 +14,8 @@ class GithubController extends AppController {
  */
 	public $uses = array('Github', 'Maintainer');
 
+	public $helpers = array('Github');
+
 /**
  * Called before the controller action.
  *
@@ -31,6 +33,7 @@ class GithubController extends AppController {
  * Paginates a set of maintainers with related repository information attached
  */
 	public function index() {
+		$this->paginate = array('limit' => 2);
 		$maintainers = $this->Github->get(
 			'relatedRepositories',
 			$this->paginate('Maintainer')
