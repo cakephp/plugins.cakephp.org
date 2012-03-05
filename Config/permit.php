@@ -2,7 +2,7 @@
 
 App::uses('Permit', 'Sanction.Controller/Component');
 
-$element = 'flash/error';
+$element = 'flash/warning';
 $message = __('Access denied.');
 $adminMessage = __('Sorry, but you need to be an administrator to access this location.');
 $redirect = $adminRedirect = $logoutRedirect = array(
