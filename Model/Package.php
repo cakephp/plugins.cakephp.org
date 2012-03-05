@@ -501,8 +501,9 @@ class Package extends AppModel {
 
 			$query['conditions'] = array(
 				"{$this->alias}.{$this->displayField}" => $query['package'],
+				"Maintainer.username" => $query['maintainer'],
 			);
-			$query['contain'] = array('Maintainer' => array($this->displayField, 'username'));
+			$query['contain'] = array('Maintainer' => array('name', 'username'));
 			$query['limit'] = 1;
 
 			if (!empty($query['fields'])) {
@@ -576,12 +577,16 @@ class Package extends AppModel {
 			}
 			return $query;
 		} elseif ($state == 'after') {
-			if (empty($results[0]) || empty($results[0]['Maintainer'])) {
+			if (empty($results[0])) {
 				throw new NotFoundException(__('Invalid package'));
 			}
 
+			if (empty($results[0]['Maintainer'])) {
+				throw new NotFoundException(__('Invalid maintainer'));
+			}
+
 			if ($results[0]['Maintainer']['username'] !== $query['maintainer']) {
-				throw new NotFoundException(__('Invalid package'));
+				throw new NotFoundException(__('Wrong Maintainer'));
 			}
 
 			if (empty($results[0]['Favorite']['id'])) {
