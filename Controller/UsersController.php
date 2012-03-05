@@ -106,25 +106,28 @@ class UsersController extends AppController {
  * @return void
  */
 	public function login() {
-		if ($this->request->is('post') && $this->Auth->login()) {
-			$this->User->loggedIn();
+		if ($this->request->is('post')) {
+			if ($this->Auth->login()) {
+				$this->User->loggedIn();
 
-			if ($this->request->here == $this->Auth->loginRedirect) {
-				$this->Auth->loginRedirect = '/';
+				if ($this->request->here == $this->Auth->loginRedirect) {
+					$this->Auth->loginRedirect = '/';
+				}
+
+				$this->Session->setFlash(sprintf(__("%s, you have successfully logged in"), $this->Auth->user('username')), 'flash/success');
+				if (!empty($this->request->data)) {
+					$data = $this->request->data[$this->modelClass];
+					$this->_setCookie();
+				}
+
+				if (empty($data['return_to'])) {
+					$redirect = $this->Session->read('Auth.redirect');
+					$data['return_to'] = $redirect ? $redirect : $this->Auth->redirect();
+				}
+
+				$this->redirect($data['return_to']);
 			}
-
-			$this->Session->setFlash(sprintf(__("%s, you have successfully logged in"), $this->Auth->user('username')), 'flash/success');
-			if (!empty($this->request->data)) {
-				$data = $this->request->data[$this->modelClass];
-				$this->_setCookie();
-			}
-
-			if (empty($data['return_to'])) {
-				$redirect = $this->Session->read('Auth.redirect');
-				$data['return_to'] = $redirect ? $redirect : $this->Auth->redirect();
-			}
-
-			$this->redirect($data['return_to']);
+			$this->Session->setFlash(__('Unable to log you in with these credentials'), 'flash/error');
 		}
 
 		if (isset($this->request->params['url']['return_to'])) {
