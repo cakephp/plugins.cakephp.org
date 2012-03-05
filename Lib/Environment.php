@@ -89,7 +89,7 @@ class Environment {
 			$this->environments[$current]['callable']();
 		}
 
-		if (Configure::read('debug')) {
+		if (Configure::read('debug') > 0) {
 			App::uses('CakeLog', 'Log');
 			if (class_exists('CakeLog')) {
 				CakeLog::write(LOG_INFO, $current);
