@@ -382,8 +382,7 @@ class AppController extends Controller {
 			$this->Session->delete('Message.flash');
 
 			if (empty($_session)) {
-				$_status = $_message = null;
-				return $this->set(compact('_message', '_status'));;
+				return true;
 			}
 
 			list($_status, $_message) = array('success', '');

@@ -95,6 +95,14 @@ class AjaxView extends View {
 			}
 		}
 
+		if (!isset($this->viewVars['_status'])) {
+			$this->viewVars['_status'] = null;
+		}
+
+		if (!isset($this->viewVars['_message'])) {
+			$this->viewVars['_message'] = null;
+		}
+
 		if (in_array($this->viewVars['_status'], array(200, 'success'))) {
 			$this->data = array();
 		}
