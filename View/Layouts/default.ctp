@@ -3,6 +3,16 @@
 	<?php echo $this->Sham->out('charset'); ?>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<?php echo $this->Sham->out(null, array('skip' => array('charset'))); ?>
+
+	<?php $baseUrl = Router::url('/', true); ?>
+	<link rel="shortcut icon" href="<?php echo $baseUrl; ?>favicon.ico" />
+	<!-- For iPhone 4 with high-resolution Retina display: -->
+	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="<?php echo $baseUrl; ?>apple-touch-icon-114x114-precomposed.png">
+	<!-- For first-generation iPad: -->
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="<?php echo $baseUrl; ?>apple-touch-icon-72x72-precomposed.png">
+	<!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
+	<link rel="apple-touch-icon-precomposed" href="<?php echo $baseUrl; ?>apple-touch-icon-precomposed.png">
+
 	<?php echo $this->AssetCompress->css('default'); ?>
 	<?php if ($this->theme) : ?>
 		<?php echo $this->AssetCompress->css('theme'); ?>
