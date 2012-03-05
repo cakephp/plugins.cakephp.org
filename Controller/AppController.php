@@ -380,8 +380,10 @@ class AppController extends Controller {
 			$this->viewClass = 'Ajax';
 			$_session = $this->Session->read('Message.flash');
 			$this->Session->delete('Message.flash');
+
 			if (empty($_session)) {
-				return true;
+				$_status = $_message = null;
+				return $this->set(compact('_message', '_status'));;
 			}
 
 			list($_status, $_message) = array('success', '');
