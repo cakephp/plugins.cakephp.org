@@ -10,6 +10,7 @@ $config = {
             'server'        => 'cakephp.org',
             'application'   => 'cakepackages.com',
             'current_dir'   => 'plugins.cakephp.org',
+            'remote_user'   => 'cakephp',
             'link_core'     => false,
             'link_cron'     => false,
             'deploy_to'     => '/home/cakephp/www-live/cakephp-2.1',
@@ -17,14 +18,15 @@ $config = {
             'shared_path'   => '/home/cakephp/www-live/cakephp-2.1/.plugins.cakephp.org-cap/shared',
         },
         'staging'           => {
-            'server'        => 'cakephp.org',
+            'server'        => 'cakepackages.com',
             'application'   => 'staging.cakepackages.com',
-            'current_dir'   => 'plugins.cakephp.org',
+            'current_dir'   => 'public',
+            'remote_user'   => 'deploy',
             'link_core'     => false,
             'link_cron'     => false,
-            'deploy_to'     => '/home/cakephp/www-staging/cakephp-2.1',
-            'releases_path' => '/home/cakephp/www-staging/cakephp-2.1/.plugins.cakephp.org-cap/releases',
-            'shared_path'   => '/home/cakephp/www-staging/cakephp-2.1/.plugins.cakephp.org-cap/shared',
+            'deploy_to'     => '/apps/staging/cakepackages.com/default',
+            'releases_path' => '/apps/staging/cakepackages.com/default/releases',
+            'shared_path'   => '/apps/staging/cakepackages.com/default/shared',
         }
     },
     'cron_files'        => [ 'cakepackages' ]
@@ -35,7 +37,7 @@ set :application,     $config["application"]
 # Where is the repository held? Depends on your application
 set :repository,      $config["repository"]
 # Deploy as this username
-set :user,            $config["remoteusername"]
+set :user,            "deploy"
 # Do NOT use sudo by default. Helps with file permissions. You can still
 # manually sudo by prepending #{sudo} to run commands
 set :use_sudo,        false
@@ -79,6 +81,7 @@ task :production do
   set :application,   $config['servers']['production']['application']
   set :deploy_to,     $config['servers']['production']['deploy_to']
   set :current_dir,   $config['servers']['production']['current_dir']
+  set :user,          $config['servers']['production']['remote_user']
   set :link_core,     $config['servers']['production']['link_core']
   set :link_cron,     $config['servers']['production']['link_cron']
   set :releases_path, $config['servers']['production']['releases_path']
@@ -92,6 +95,7 @@ task :staging do
   set :application,   $config['servers']['staging']['application']
   set :deploy_to,     $config['servers']['staging']['deploy_to']
   set :current_dir,   $config['servers']['staging']['current_dir']
+  set :user,          $config['servers']['staging']['remote_user']
   set :link_core,     $config['servers']['staging']['link_core']
   set :link_cron,     $config['servers']['staging']['link_cron']
   set :releases_path, $config['servers']['staging']['releases_path']

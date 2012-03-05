@@ -43,7 +43,7 @@ Environment::configure('production',
 
 		if (function_exists('apc_fetch') && Configure::read('debug') == 0) {
 			Cache::config('default', array(
-			'engine' => 'Apc', //[required]
+				'engine' => 'Apc', //[required]
 				'duration' => 3600, //[optional]
 				'probability' => 100, //[optional]
 				'prefix' => 'DEFAULT_', //[optional]  prefix every cache file with this string
