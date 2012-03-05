@@ -119,7 +119,7 @@
 		<?php $userData = $this->Session->read('Auth.User'); ?>
 		var App = App || {};
 		App.basePath = "<?php echo $this->webroot; ?>";
-		<?
+		<?php
 			$jsUser = array();
 			if (!empty($userData['username'])) {
 				$jsUser['username'] = $userData['username'];
