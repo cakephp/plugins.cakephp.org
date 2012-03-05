@@ -46,13 +46,13 @@
 				)); ?>)
 			</span>
 
-			<!-- <div class="sort-group">
+			<div class="sort-group">
 				<strong>Sort: </strong>
 				<?php echo $this->Resource->sort($order); ?>
-				<a class="active" href="#sort-name">Name</a>
+				<!-- <a class="active" href="#sort-name">Name</a>
 				<a href="#sort-installs">Installs</a>
-				<a href="#sort-lastmodified">Last Modified</a>
-			</div> -->
+				<a href="#sort-lastmodified">Last Modified</a> -->
+			</div>
 		</div>
 	</div>
 </section>

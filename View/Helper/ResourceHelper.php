@@ -74,21 +74,19 @@ class ResourceHelper extends AppHelper {
 			$direction = 'asc';
 		}
 
+		$order = null;
+
 		$output = array();
 		foreach (Package::$_validShownOrders as $sort => $name) {
 			if ($sort == $sortField) {
-				$output[] = $this->Paginator->link($name, array(
-					'?' => array_merge(
-						(array) $this->_View->request->query,
-						compact('sort', 'direction')
-					),
+				$output[] = $this->Paginator->link($name, array_merge(
+					(array) $this->_View->request->query,
+					compact('sort', 'direction', 'order')
 				), array('class' => 'active ' . $direction));
 			} else {
-				$output[] = $this->Paginator->link($name, array(
-					'?' => array_merge(
-						(array) $this->_View->request->query,
-						array('sort' => $sort, 'direction' => 'desc')
-					),
+				$output[] = $this->Paginator->link($name, array_merge(
+					(array) $this->_View->request->query,
+					array('sort' => $sort, 'direction' => 'desc', 'order' => $order)
 				));
 			}
 		}
