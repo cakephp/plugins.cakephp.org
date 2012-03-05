@@ -95,7 +95,7 @@
 				<a href="http://www.cakephp.org/" target="_blank">
 					<img src="/img/cake.power.gif" alt="CakePHP: the rapid development php framework" border="0" height="13" width="98">
 				</a><br />
-				<?php 
+				<?php
 					echo sprintf(
 						__('Powered by %s'),
 						$this->Html->link('CakePackages', 'http://github.com/cakephp/cakepackages')
@@ -119,7 +119,16 @@
 		<?php $userData = $this->Session->read('Auth.User'); ?>
 		var App = App || {};
 		App.basePath = "<?php echo $this->webroot; ?>";
-		App.user = <?php echo empty($userData) ? '{}' : json_encode(array('username' => $userData['username'], 'slug' =>  $userData['slug'])); ?>;
+		<?
+			$jsUser = array();
+			if (!empty($userData['username'])) {
+				$jsUser['username'] = $userData['username'];
+			}
+			if (!empty($userData['slug'])) {
+				$jsUser['slug'] = $userData['slug'];
+			}
+		?>
+		App.user = <?php echo empty($jsUser) ? '{}' : json_encode($jsUser); ?>;
 
 		<?php if (!empty($disqus)) : ?>
 			var disqus_developer = <?php echo Configure::read('Disqus.disqus_developer') ?>;
