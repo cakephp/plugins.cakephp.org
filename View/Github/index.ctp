@@ -27,7 +27,7 @@
 </article>
 <article class="paging">
 	<?php echo $this->Paginator->counter(array(
-		'format' => __('Page %page% of %pages%, showing packages %start% to %end%')); ?>
+		'format' => __('Page %page% of %pages%, showing packages %start% to %end%'))); ?>
 </article>
 
 <div class="pagination">
