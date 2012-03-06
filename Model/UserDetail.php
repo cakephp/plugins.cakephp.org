@@ -18,6 +18,13 @@ class UserDetail extends AppModel {
 	public $displayField = 'field';
 
 /**
+ * order
+ *
+ * @var array
+ */
+	public $order = array('UserDetail.position ASC');
+
+/**
  * List of valid finder method options, supplied as the first parameter to find().
  *
  * @var array

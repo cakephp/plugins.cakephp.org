@@ -4,7 +4,11 @@ App::uses('DebugTimer', 'DebugKit.Lib');
 App::uses('HttpSocket', 'Network/Http');
 App::uses('Sanitize', 'Utility');
 App::uses('Xml', 'Utility');
+App::uses('Folder', 'Utility');
 
+/**
+ * Package Model
+ */
 class Package extends AppModel {
 
 	public $name = 'Package';
@@ -468,6 +472,14 @@ class Package extends AppModel {
 		}
 	}
 
+/**
+ * Find repoclone type
+ *
+ * @param string $state
+ * @param array $query
+ * @param array $results
+ * @return array
+ */
 	public function _findRepoclone($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query[0])) {
@@ -476,7 +488,12 @@ class Package extends AppModel {
 
 			$query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $query[0]);
 			$query['contain'] = array('Maintainer.username');
-			$query['fields'] = array($this->primaryKey, 'name', 'repository_url');
+			$query['fields'] = array(
+				$this->primaryKey,
+				'name',
+				'repository_url',
+				'maintainer_id',
+			);
 			$query['limit'] = 1;
 			$query['order'] = array("{$this->alias}.{$this->primaryKey} ASC");
 			return $query;
@@ -622,6 +639,12 @@ class Package extends AppModel {
 		}
 	}
 
+/**
+ * Setup a repo
+ *
+ * @param integer $id
+ * @return array
+ */
 	public function setupRepository($id = null) {
 		if (!$id) {
 			return false;
@@ -636,31 +659,23 @@ class Package extends AppModel {
 			$this->_Folder = new Folder();
 		}
 
-		$path = rtrim(trim(TMP), DS);
-		$appends = array(
-			'repos',
-			strtolower($package['Maintainer']['username'][0]),
-			$package['Maintainer']['username'],
-		);
-
-		foreach ($appends as $append) {
-			$this->_Folder->cd($path);
-			$read = $this->_Folder->read();
-
-			if (!in_array($append, $read['0'])) {
-				$this->Folder->create($path . DS . $append);
-			}
-			$path = $path . DS . $append;
+		$path = rtrim(trim(TMP), DS) . DS 
+				. 'repos' . DS 
+				. strtolower($package['Maintainer']['username'][0]) . DS 
+				. $package['Maintainer']['username'];
+		if (!file_exists($path)) {
+			$this->_Folder->create($path);
 		}
 
 		$this->_Folder->cd($path);
 		$read = $this->_Folder->read();
 
 		if (!in_array($package['Package']['name'], $read['0'])) {
-			if (($paths = Configure::read('paths')) !== false) {
+			$paths = Configure::read('paths');
+			if ($paths) {
 				putenv('PATH=' . implode(':', $paths) . ':' . getenv('PATH'));
 			}
-			$var = shell_exec(sprintf("cd %s && git clone %s %s%s%s 2>&1 1> /dev/null",
+			$var = $this->_shell_exec(sprintf("cd %s && git clone %s %s%s%s 2>&1 1> /dev/null",
 				$path,
 				$package['Package']['repository_url'],
 				$path,
@@ -674,7 +689,7 @@ class Package extends AppModel {
 			}
 		}
 
-		$var = shell_exec(sprintf("cd %s && git pull",
+		$var = $this->_shell_exec(sprintf("cd %s && git pull",
 			$path . DS . $package['Package']['name']
 		));
 		if (stristr($var, 'fatal')) {
@@ -685,11 +700,23 @@ class Package extends AppModel {
 		return array($package[$this->alias][$this->primaryKey], $path . DS . $package[$this->alias][$this->displayField]);
 	}
 
+/**
+ * Mark a package as deleted/broken
+ *
+ * @param integer $id
+ * @return boolean
+ */
 	public function broken($id) {
 		$this->id = $id;
 		return $this->saveField('deleted', true);
 	}
 
+/**
+ * Characterize a package
+ *
+ * @param integer $id
+ * @return array
+ */
 	public function characterize($id) {
 		$this->Behaviors->detach('Softdeletable');
 		list($package_id, $path) = $this->setupRepository($id);
@@ -705,6 +732,12 @@ class Package extends AppModel {
 		)));
 	}
 
+/**
+ * Fix a repo URL
+ *
+ * @param mixed $package
+ * @return array
+ */
 	public function fixRepositoryUrl($package = null) {
 		if (!$package) return false;
 
@@ -853,6 +886,12 @@ class Package extends AppModel {
 		throw new BadRequestException(__("Unable to %s package", $action));
 	}
 
+/**
+ * Update Attributes from Github
+ *
+ * @param array $package
+ * @return array
+ */
 	public function updateAttributes($package) {
 		if (!$this->_Github) {
 			$this->_Github = ClassRegistry::init('Github');
@@ -928,6 +967,12 @@ class Package extends AppModel {
 		return $this->save($package);
 	}
 
+/**
+ * Find a package on Github
+ *
+ * @param integer $package
+ * @return boolean
+ */
 	public function findOnGithub($package = null) {
 		if (!is_array($package)) {
 			$package = $this->find('first', array(
@@ -953,6 +998,13 @@ class Package extends AppModel {
 		return !empty($response['Repository']);
 	}
 
+/**
+ * Clean Parameters
+ *
+ * @param array $named
+ * @param array $options
+ * @return array
+ */
 	public function cleanParams($named, $options = array()) {
 		$coalesce = '';
 
@@ -1082,50 +1134,41 @@ class Package extends AppModel {
 		return array($named, $coalesce);
 	}
 
+/**
+ * Categories
+ *
+ * @param integer $user_id
+ * @return array
+ */
 	public function categories($user_id = null) {
 		$categories = $this->Category->find('list', array(
 			'order' => array('Category.name')
 		));
-		if (count($categories) == count($this->_categories)) {
-			return $categories;
-		}
-
-		$unset = array();
-		foreach ($categories as $id => $name) {
-			if (in_array($name, $this->_categories)) {
-				$unset[] = $name;
+		$diff = array_diff($this->_categories, $categories);
+		if (!empty($diff)) {
+			if (!$user_id) {
+				throw new UnauthorizedException(__('You must be logged in to add categories'));
+			}
+			$data = array();
+			foreach ($diff as $name) {
+				$data[]['Category'] = compact('user_id', 'name');
+			}
+			$result = $this->Category->saveAll($data);
+			if (!$result) {
+				throw new OutOfBoundsException(__('Unable to create missing categories'));
 			}
 		}
-
-		$create = array_diff($this->_categories, $unset);
-		if (empty($create)) {
-			return $categories;
-		}
-
-		if (!$user_id) {
-			throw new UnauthorizedException(__("You must be logged in in order to rate packages"));			
-		}
-
-		$data = array();
-		foreach ($create as $name) {
-			$data[]['Category'] = compact('user_id', 'name');
-		}
-
-		$result = $this->Category->saveAll($data);
-		if (!$result) {
-			throw new OutOfBoundsException("Unable to create missing categories");
-		}
-
-		$categories = $this->Category->find('list', array(
+		return $this->_categories = $this->Category->find('list', array(
 			'order' => array('Category.name')
 		));
-		if (count($categories) == count($this->_categories)) {
-			return $categories;
-		}
-
-		throw new RuntimeException("Something went wrong with creating all the required categories");
 	}
 
+/**
+ * Suggest a package
+ *
+ * @param array $data
+ * @return array
+ */
 	public function suggest($data) {
 		if (empty($data['github'])) {
 			return false;
@@ -1155,6 +1198,12 @@ class Package extends AppModel {
 		return $pieces;
 	}
 
+/**
+ * Get SEO for Package
+ *
+ * @param array $package
+ * @return array
+ */
 	public function seoView($package) {
 		$title = array();
 		$title[] = Sanitize::clean($package['Package']['name'] . ' by ' . $package['Maintainer']['username']);
@@ -1181,6 +1230,13 @@ class Package extends AppModel {
 		return array($title, $description, $keywords);
 	}
 
+/**
+ * Get feed of package
+ *
+ * @param array $package
+ * @param array $options
+ * @return array
+ */
 	public function rss($package, $options = array()) {
 		$options = array_merge(array(
 			'allowed' => array('id', 'link', 'title', 'updated'),
@@ -1295,6 +1351,12 @@ class Package extends AppModel {
 		return array($items, $options['cache']);
 	}
 
+/**
+ * Get disqus parameters for a package
+ *
+ * @param array $package
+ * @return array
+ */
 	public function disqus($package = array()) {
 		return array(
 			'disqus_shortname' => Configure::read('Disqus.disqus_shortname'),
@@ -1313,7 +1375,14 @@ class Package extends AppModel {
 		);
 	}
 
-	public function getNextPage($params, $next) {
+/**
+ * Get Next Page
+ *
+ * @param array $params
+ * @param boolean $next
+ * @return array
+ */
+	public function getNextPage($params, $next = true) {
 		if ($next === false) {
 			return false;
 		}
@@ -1329,4 +1398,10 @@ class Package extends AppModel {
 		return $params;
 	}
 
+/**
+ * Wrapper for shell_exec() method for testing
+ */
+	protected function _shell_exec($cmd) {
+		return shell_exec($cmd);
+	}
 }
