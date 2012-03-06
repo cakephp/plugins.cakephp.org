@@ -121,7 +121,6 @@
 		!window.jQuery &&
 		document.write(unescape('%3Cscript src="<?php echo $this->Html->url("/js/jquery-1.7.1.min.js") ?>"%3E%3C/script%3E'));
 	</script>
-	<?php echo $this->AssetCompress->script('default'); ?>
 	<script type="text/javascript">
 		var App = App || {};
 		App.basePath = "<?php echo $this->webroot; ?>";
@@ -151,6 +150,7 @@
 			})();
 		<?php endif; ?>
 	</script>
+	<?php echo $this->AssetCompress->script('default'); ?>
 </body>
 
 </html>
