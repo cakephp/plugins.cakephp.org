@@ -178,7 +178,14 @@ namespace :link do
         "git clone git@github.com:cakephp/csfnavbar.git Plugin/Csfnavbar",
         "cd #{current_release}/Plugin/Csfnavbar",
         "git checkout -t origin/2.0",
+        "cp -rfp #{current_release}/Plugin/Csfnavbar/webroot/img/main-link.png #{current_release}/webroot/cache_css"
+      ].join(' && ')
+    rescue
+      puts "**** Could not clone CSF navbar, likely a permissions issue"
+    end
 
+    begin
+      run [
         "cd #{current_release}",
         "git clone git@github.com:cakephp/theme-packages.git View/Themed/Csf",
         "mkdir #{current_release}/webroot/theme",
@@ -221,7 +228,7 @@ namespace :link do
           "mkdir -p #{shared_path}/webroot/files && chmod -R 755 #{shared_path}/webroot/files;" +
       'fi',
 
-      "rm -rf #{current_release}/webroot/cache_css",
+      "find #{current_release}/webroot/cache_css -name '*.css' -exec rm -rf '{}' +",
       "ln -s #{shared_path}/webroot/cache_css #{current_release}/webroot/cache_css",
 
       "rm -rf #{current_release}/webroot/cache_js",
