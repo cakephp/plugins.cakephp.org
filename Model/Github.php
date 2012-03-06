@@ -503,6 +503,13 @@ class Github extends AppModel {
 		return $following['Users']['User'];
 	}
 
+/**
+ * Add a new package for an existing user
+ *
+ * @param string $username
+ * @param string $name
+ * @return boolean
+ */
 	public function savePackage($username, $name) {
 		return $this->enqueue($this->load('NewPackageJob', $username, $name));
 	}
