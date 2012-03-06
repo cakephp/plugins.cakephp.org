@@ -13,13 +13,18 @@
 	<!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
 	<link rel="apple-touch-icon-precomposed" href="<?php echo $baseUrl; ?>apple-touch-icon-precomposed.png">
 
-	<?php echo $this->AssetCompress->css('default'); ?>
-	<?php if ($this->theme) : ?>
-		<?php echo $this->AssetCompress->css('theme'); ?>
-	<?php endif; ?>
-	<?php if (CakePlugin::loaded('Csfnavbar')) : ?>
-		<?php echo $this->Html->css(array('Csfnavbar.style')); ?>
-	<?php endif; ?>
+	<?php
+		if ($this->theme) {
+			if (CakePlugin::loaded('Csfnavbar')) {
+				echo $this->AssetCompress->css('csftheme');
+			} else {
+				echo $this->AssetCompress->css('theme');
+			}
+		} else {
+			echo $this->AssetCompress->css('default');
+		}
+	?>
+
 	<title>
 		<?php echo __('CakePHP Packages -') . $title_for_layout; ?>
 	</title>

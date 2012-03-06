@@ -1,6 +1,6 @@
 [submodule "Plugin/AssetCompress"]
 	path = Plugin/AssetCompress
-	url = git://github.com/josegonzalez/asset_compress.git
+	url = git://github.com/markstory/asset_compress.git
 [submodule "Plugin/CakeDjjob"]
 	path = Plugin/CakeDjjob
 	url = git://github.com/josegonzalez/cake_djjob.git
