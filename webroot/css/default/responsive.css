@@ -15,7 +15,7 @@ body {
 	header h1 {
 		margin-right: 0;
 		text-align: center;
-		width: 330px;
+		width: 360px;
 	}
 	header h1 a {
 		height: 70px;
@@ -65,7 +65,7 @@ body.minimal {
 .minimal header h1 {
 	margin-right: 0;
 	text-align: center;
-	width: 330px;
+	width: 360px;
 }
 .minimal header h1 a {
 	height: 70px;
