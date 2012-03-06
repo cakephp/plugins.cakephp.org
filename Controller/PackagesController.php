@@ -53,14 +53,13 @@ class PackagesController extends AppController {
 		$order = $order['order'][0][0];
 
 		$packages = $this->paginate();
-		$count = $this->Package->find('count');
 		$next = $this->Package->getNextPage(array_merge(
 			(array) $this->request->query,
 			(array) $this->request->data
 		), $this->request->params['paging']['Package']['nextPage']);
 
 		$this->request->data['query'] = $query;
-		$this->set(compact('count', 'next', 'order', 'packages', 'title'));
+		$this->set(compact('next', 'order', 'packages', 'title'));
 	}
 
 /**
