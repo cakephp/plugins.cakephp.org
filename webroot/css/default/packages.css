@@ -179,6 +179,16 @@
 	left: 20px;
 }
 
+/* Package Categories */
+.packages-categories .content ul {
+	line-height: 24px;
+	list-style-type: square;
+	padding-left: 20px;
+	font-family: 'MuseoSlab500', Helvetica, Arial, sans-serif;
+}
+.packages-categories .content ul a {
+	color: #417282;
+}
 /* Package View */
 .packages-view {
 	font-size: 12px;

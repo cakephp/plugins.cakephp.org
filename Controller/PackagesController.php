@@ -81,6 +81,14 @@ class PackagesController extends AppController {
 		$this->set(compact('disqus', 'package'));
 	}
 
+	public function categories() {
+		$categories = $this->Package->Category->find('list', array(
+			'fields' => array('slug', 'name'),
+			'order' => array('slug'),
+		));
+		$this->set(compact('categories'));
+	}
+
 /**
  * Redirects to proper download url
  *

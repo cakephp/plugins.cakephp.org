@@ -25,9 +25,6 @@
 		}
 	?>
 
-	<title>
-		<?php echo __('CakePHP Packages -') . $title_for_layout; ?>
-	</title>
 	<!--[if lt IE 9]>
 		<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
@@ -76,6 +73,9 @@
 				</nav>
 				<nav class="right-nav">
 					<ul>
+						<li>
+							<?php echo $this->Html->link('Categories', array('controller' => 'packages', 'action' => 'categories')); ?>
+						</li>
 						<li>
 							<?php echo $this->Html->link('Packages', array('controller' => 'packages', 'action' => 'index')); ?>
 						</li>

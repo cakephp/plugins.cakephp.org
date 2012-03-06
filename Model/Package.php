@@ -42,7 +42,8 @@ class Package extends AppModel {
 	public $_allowedFilters = array(
 		'collaborators', 'contains', 'contributors',
 		'direction', 'forks', 'has', 'open_issues',
-		'query', 'sort', 'since', 'watchers', 'with'
+		'query', 'sort', 'since', 'watchers', 'with',
+		'category'
 	);
 
 	public $_categories = array(
@@ -318,6 +319,23 @@ class Package extends AppModel {
 						$query['conditions']["{$this->alias}.contains_{$has}"] = true;
 					}
 				}
+			}
+
+			if (!empty($query['named']['category'])) {
+				$this->unbindModel(array(
+					'belongsTo' => array('Categories.Category'),
+				));
+				$query['joins'] = array(
+					array(
+						'alias' => 'Category',
+						'table' => 'categories',
+						'type' => 'INNER',
+						'conditions' => array(
+							'`Category`.`id` = `Package`.`category_id`',
+							'Category.slug' => $query['named']['category'],
+						),
+					)
+				);
 			}
 
 			if ($query['named']['open_issues'] !== null) {
