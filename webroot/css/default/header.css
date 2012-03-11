@@ -5,7 +5,7 @@ header {
 	background-attachment: fixed;
 	border-bottom: 3px white solid;
 	font-family: 'MuseoSlab500', Helvetica, Arial, sans-serif;
-	height: 45px;
+	height: 81px;
 	padding-top: 5px;
 	width: 100%;
 }
@@ -32,6 +32,7 @@ header nav {
 }
 header nav.left-nav {
 	left: 0;
+	height: 80px;
 }
 header nav.right-nav {
 	font-size: 16px;
@@ -45,15 +46,15 @@ header nav.right-nav {
 	-webkit-border-radius: 8px;
 	border-radius: 8px;
 }
-header nav ul li {
+header nav li {
 	display: inline-block;
 	position: relative;
 }
-header nav ul li img {
+header nav li img {
 	margin-right: 10px;
 	vertical-align: middle;
 }
-header nav ul li a {
+header nav li a {
 	color: white;
 	display: inline-block;
 	font-weight: normal;
@@ -62,7 +63,7 @@ header nav ul li a {
 	text-decoration: none;
 	text-shadow: 1px 1px 2px black;
 }
-header nav ul li h1 a {
+header h1 {
 	font-size: 28px;
 }
 .header-bottom {

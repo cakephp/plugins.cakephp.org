@@ -13,8 +13,8 @@ body {
 		overflow-x: hidden;
 	}
 	header h1 {
+		font-size: 22px;
 		margin-right: 0;
-		text-align: center;
 		width: 360px;
 	}
 	header h1 a {
@@ -63,8 +63,8 @@ body.minimal {
 	overflow-x: hidden;
 }
 .minimal header h1 {
+	font-size: 22px;
 	margin-right: 0;
-	text-align: center;
 	width: 360px;
 }
 .minimal header h1 a {

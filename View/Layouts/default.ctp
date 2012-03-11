@@ -14,14 +14,18 @@
 	<link rel="apple-touch-icon-precomposed" href="<?php echo $baseUrl; ?>apple-touch-icon-precomposed.png">
 
 	<?php
-		if ($this->theme) {
+		if ($this->theme == 'Csf') {
 			if (CakePlugin::loaded('Csfnavbar')) {
 				echo $this->AssetCompress->css('csftheme');
 			} else {
 				echo $this->AssetCompress->css('theme');
 			}
 		} else {
-			echo $this->AssetCompress->css('default');
+			if (CakePlugin::loaded('Csfnavbar')) {
+				echo $this->AssetCompress->css('csfdefault');
+			} else {
+				echo $this->AssetCompress->css('default');
+			}
 		}
 	?>
 
@@ -52,7 +56,7 @@
 
 <body class="<?php echo $_bodyClass; ?>" id="<?php echo $_bodyId; ?>">
 
-	<?php if (CakePlugin::loaded('Csfnavbar')) : ?>
+	<?php if ($this->theme == 'Csf' && CakePlugin::loaded('Csfnavbar')) : ?>
 		<?php echo $this->element('Csfnavbar.navbar'); ?>
 	<?php endif; ?>
 
@@ -63,10 +67,17 @@
 					<ul>
 						<li>
 							<h1>
-								<?php $siteTitle = Configure::read('Settings.SiteTitle'); ?>
-								<?php if (!$siteTitle) $siteTitle = __('Package Indexer'); ?>
-								<?php echo $this->Html->link($this->Html->image('cake-logo.png', array(
-									'alt' => $siteTitle, 'width' => '70')) . $siteTitle, '/', array('escape' => false)); ?>
+								<?php
+									$siteTitle = Configure::read('Settings.SiteTitle');
+									if (!$siteTitle) $siteTitle = __('Package Indexer');
+									if ($this->theme == 'Csf') {
+										echo $this->Html->link($this->Html->image('cake-logo.png', array(
+											'alt' => $siteTitle, 'width' => '70'
+										)) . $siteTitle, '/', array('escape' => false));
+									} else {
+										echo $this->Html->link($siteTitle, '/');
+									}
+								?>
 							</h1>
 						</li>
 					</ul>
