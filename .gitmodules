@@ -43,3 +43,6 @@
 [submodule "Plugin/Categories"]
 	path = Plugin/Categories
 	url = git://github.com/josegonzalez/categories.git
+[submodule "Plugin/DataTable"]
+	path = Plugin/DataTable
+	url = https://github.com/shama/cakephp-datatable.git

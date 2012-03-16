@@ -71,6 +71,32 @@ class PackageTestCase extends CakeTestCase {
 		$result = $this->Package->findById(1);
 		$this->assertFalse($result);
 	}
+
+/**
+ * testEnable
+ *
+ * @return void
+ */
+	public function testEnable() {
+		$result = $this->Package->findById(1);
+		$this->assertFalse(empty($result));
+
+		// DISABLE
+		$this->Package->enable(1);
+		$result = $this->Package->findById(1);
+		$this->assertTrue(empty($result));
+
+		// ENABLE
+		$this->Package->enable(1);
+		$result = $this->Package->findById(1);
+		$this->assertFalse(empty($result));
+
+		// MANUAL DISABLE
+		$this->Package->enable(1, false);
+		$result = $this->Package->findById(1);
+		$this->assertTrue(empty($result));
+	}
+
 /**
  * testCharacterize method
  *

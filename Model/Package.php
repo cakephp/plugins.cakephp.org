@@ -712,6 +712,39 @@ class Package extends AppModel {
 	}
 
 /**
+ * Enable/disable a package by toggle
+ *
+ * @param integer $id
+ * @param boolean $enable
+ * @return boolean true if enabled or false if disabled
+ */
+	public function enable($id = null, $enable = null) {
+		if (isset($id)) {
+			$this->id = $id;
+		}
+		if (isset($enable)) {
+			if ($enable) {
+				$this->undelete($this->id);
+				return true;
+			} else {
+				$this->saveField('deleted', true);
+				return false;
+			}
+		}
+		$this->enableSoftDeletable(array('find'), false);
+		$package = $this->findById($id);
+		$this->enableSoftDeletable(array('find'), true);
+		if ($package) {
+			if ($package[$this->alias]['deleted']) {
+				return $this->enable($this->id, true);
+			} else {
+				return $this->enable($this->id, false);
+			}
+		}
+		return null;
+	}
+
+/**
  * Characterize a package
  *
  * @param integer $id
