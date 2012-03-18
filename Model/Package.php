@@ -43,7 +43,7 @@ class Package extends AppModel {
 		'view'              => true,
 	);
 
-	public $_allowedFilters = array(
+	static $_allowedFilters = array(
 		'collaborators', 'contains', 'contributors',
 		'direction', 'forks', 'has', 'open_issues',
 		'query', 'sort', 'since', 'watchers', 'with',

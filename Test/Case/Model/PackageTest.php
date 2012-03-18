@@ -235,7 +235,7 @@ class PackageTestCase extends CakeTestCase {
 			'notallowed' => 'bad!'
 		);
 		$result = $this->Package->cleanParams($data, array(
-			'allowed' => $this->Package->_allowedFilters,
+			'allowed' => Package::$_allowedFilters,
 			'coalesce' => true,
 		));
 		$expected = array(

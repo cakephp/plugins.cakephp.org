@@ -79,7 +79,7 @@
 				'paramType' => 'querystring',
 			),
 			'convertKeys' => array_merge(
-				Package::$_validOrders,
+				Package::$_allowedFilters,
 				array('page', 'limit', 'sort', 'direction')
 			),
 			'url' => $this->request->query,
