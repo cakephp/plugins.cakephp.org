@@ -19,7 +19,7 @@ window.templates = {
 
 		return [
 			'<span class="next-page">',
-				'<a href="/packages/index?' + $.fn.serializeParams(params) + '" rel="next">Load More</a>',
+				'<a href="/packages?' + $.fn.serializeParams(params) + '" rel="next">Load More</a>',
 			'</span>'
 		].join("\n");
 	},
