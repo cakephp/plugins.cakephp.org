@@ -18,7 +18,7 @@ $config = {
             'shared_path'   => '/home/cakephp/www-live/cakephp-2.1/.plugins.cakephp.org-cap/shared',
         },
         'staging'           => {
-            'server'        => 'cakepackages.com',
+            'server'        => 'staging.cakepackages.com',
             'application'   => 'staging.cakepackages.com',
             'current_dir'   => 'public',
             'remote_user'   => 'deploy',
@@ -126,15 +126,21 @@ namespace :deploy do
     Also clear persistent and model cache and sessions and symlink for usability.
   DESC
   task :finalize_update do
-    before 'deploy:symlink', 'link:core', 'link:plugins', 'link:config', 'link:tmp', 'misc:rm_test', 'misc:submodule'
-    after 'deploy:symlink', 'link:cron', 'asset:rebuild'
+    top.link.core
+    top.link.plugins
+    top.link.config
+    top.link.tmp
+    top.misc.rm_test
+    top.misc.submodule
+    top.link.cron
+    top.asset.rebuild
   end
-
+  
   desc <<-DESC
     Copies over the latest release. Necessary unless we place the cake core inside releases
     For larger repositories, something different should be tried instead
   DESC
-  task :symlink do
+  task :create_symlink do
     run "rm -rf #{deploy_to}/#{current_dir} && cp -rf #{latest_release} #{deploy_to}/#{current_dir}"
   end
 
@@ -340,23 +346,23 @@ end
 namespace :asset do
   desc 'Clears assets'
   task :clear do
-    run "cd #{deploy_to}/#{current_dir} && CAKE_ENV=#{deploy_env} ../lib/Cake/Console/cake -app #{deploy_to}/#{current_dir} AssetCompress.asset_compress clear"
+    run "cd #{current_release} && CAKE_ENV=#{deploy_env} #{deploy_to}/lib/Cake/Console/cake -app #{current_release} AssetCompress.asset_compress clear"
   end
 
   desc 'Builds all assets'
   task :build do
-    run "cd #{deploy_to}/#{current_dir} && CAKE_ENV=#{deploy_env} ../lib/Cake/Console/cake -app #{deploy_to}/#{current_dir} AssetCompress.asset_compress build"
+    run "cd #{current_release} && CAKE_ENV=#{deploy_env} #{deploy_to}/lib/Cake/Console/cake -app #{current_release} AssetCompress.asset_compress build"
   end
 
   desc 'Builds ini assets'
   task :build_ini do
-    run "cd #{deploy_to}/#{current_dir} && CAKE_ENV=#{deploy_env} ../lib/Cake/Console/cake -app #{deploy_to}/#{current_dir} AssetCompress.asset_compress build_ini"
+    run "cd #{current_release} && CAKE_ENV=#{deploy_env} #{deploy_to}/lib/Cake/Console/cake -app #{current_release} AssetCompress.asset_compress build_ini"
   end
 
   desc 'Rebuilds assets'
   task :rebuild do
-    run "cd #{deploy_to}/#{current_dir} && CAKE_ENV=#{deploy_env} ../lib/Cake/Console/cake -app #{deploy_to}/#{current_dir} AssetCompress.asset_compress clear"
-    run "cd #{deploy_to}/#{current_dir} && CAKE_ENV=#{deploy_env} ../lib/Cake/Console/cake -app #{deploy_to}/#{current_dir} AssetCompress.asset_compress build"
+    run "cd #{current_release} && CAKE_ENV=#{deploy_env} #{deploy_to}/lib/Cake/Console/cake -app #{current_release} AssetCompress.asset_compress clear"
+    run "cd #{current_release} && CAKE_ENV=#{deploy_env} #{deploy_to}/lib/Cake/Console/cake -app #{current_release} AssetCompress.asset_compress build"
   end
 end
 
@@ -364,12 +370,12 @@ end
 namespace :migrate do
   desc 'Run CakeDC Migrations'
   task :all do
-    run "cd #{deploy_to}/#{current_dir} && CAKE_ENV=#{deploy_env} ../lib/Cake/Console/cake -app #{deploy_to}/#{current_dir} Migrations.migration run all"
+    run "cd #{current_release} && CAKE_ENV=#{deploy_env} #{deploy_to}/lib/Cake/Console/cake -app #{current_release} Migrations.migration run all"
   end
 
   desc 'Gets the status of CakeDC Migrations'
   task :status do
-    run "cd #{deploy_to}/#{current_dir} && CAKE_ENV=#{deploy_env} ../lib/Cake/Console/cake -app #{deploy_to}/#{current_dir} Migrations.migration status"
+    run "cd #{current_release} && CAKE_ENV=#{deploy_env} #{deploy_to}/lib/Cake/Console/cake -app #{current_release} Migrations.migration status"
   end
 end
 
