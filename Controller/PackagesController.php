@@ -215,7 +215,7 @@ class PackagesController extends AppController {
 		$this->Package->enableSoftDeletable(array('find'), false);
 		$this->paginate = array(
 			'Package' => array(
-				'contain' => array('Maintainer')
+				'contain' => array('Maintainer'),
 			),
 		);
 	}
@@ -233,7 +233,13 @@ class PackagesController extends AppController {
 				$this->redirect(array('action' => 'index'));
 			}
 		} else {
-			$this->request->data = $this->Package->findById($id);
+			$this->request->data = $this->Package->find('first', array(
+				'conditions' => array('Package.id' => $id),
+				'contain' => array(
+					'Maintainer',
+					'Tag',
+				),
+			));
 		}
 		$this->set('categories', $this->Package->categories());
 	}
@@ -277,6 +283,22 @@ class PackagesController extends AppController {
 			$this->Session->setFlash($e->getMessage(), 'flash/error');
 		}
 		$this->set(compact('categories', 'package'));
+	}
+
+/**
+ * Ability to kick off admin jobs
+ */
+	public function admin_jobs() {
+		if ($this->_isFromForm('Package')) {
+			try {
+				$this->Package->fireJob($this->request->data);
+				$this->Session->setFlash(__('Job has been loaded and enqueued.'), 'flash/success');
+			} catch (Exception $e) {
+				$this->Session->setFlash($e->getMessage(), 'flash/error');
+			}
+			$this->redirect($this->referer());
+		}
+		$this->set('jobs', $this->Package->getJobs());
 	}
 
 /**

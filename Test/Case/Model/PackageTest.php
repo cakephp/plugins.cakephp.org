@@ -413,4 +413,46 @@ m Test/Case/Model/Datasource/FtpSourceTest.php
 		$result = $this->Package->getNextPage(array('page' => 99));
 		$this->assertEquals(array('page' => 100), $result);
 	}
+
+/**
+ * testGetJobs
+ *
+ * @return void
+ */
+	public function testGetJobs() {
+		$result = $this->Package->getJobs();
+		$this->assertTrue(is_array($result));
+	}
+
+/**
+ * testFireJob
+ *
+ * @return void
+ */
+	public function testFireJob() {
+		$data = array(
+			'job' => 'UserForgotPasswordJob',
+			'user_id' => '4f471545-27a8-4ad7-89c9-1ec075f6eb26',
+			'ip_address' => '127.0.0.1',
+		);
+		$user = $this->Package->Maintainer->User->findById($data['user_id']);
+		$Package = $this->getMock('Package', array('load', 'enqueue'), array(
+			$this->Package->id,
+			$this->Package->useTable,
+			$this->Package->useDbConfig,
+		));
+		$Package->alias = 'Package';
+		$Package->expects($this->once())
+			->method('load')
+			->with(
+				$this->equalTo('UserForgotPasswordJob'),
+				$this->equalTo($user['User']),
+				$this->equalTo('127.0.0.1')
+			)
+			->will($this->returnValue(true));
+		$Package->expects($this->once())
+			->method('enqueue')
+			->will($this->returnValue(true));
+		$Package->fireJob($data);
+	}
 }

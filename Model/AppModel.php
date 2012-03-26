@@ -1,4 +1,7 @@
 <?php
+App::uses('Model', 'Model');
+App::uses('DebugKitDebugger', 'DebugKit.Lib');
+
 /**
  * Application Model class
  *
@@ -6,8 +9,6 @@
  *
  * @package	   app
  */
-
-App::uses('DebugKitDebugger', 'DebugKit.Lib');
 class AppModel extends Model {
 
 /**
@@ -32,6 +33,67 @@ class AppModel extends Model {
  * @link http://book.cakephp.org/view/1057/Model-Attributes#recursive-1063
  */
 	public $recursive = -1;
+
+/**
+ * Available jobs
+ *
+ * @var array
+ * @access protected
+ */
+	protected $_jobs = array(
+		'NewPackageJob' => array('username', 'name'),
+		'SuggestPackageJob' => array('username', 'repository'),
+		'UserForgotPasswordJob' => array('user_id', 'ip_address'),
+		'UserVerificationEmailJob' => array('user_id'),
+	);
+
+/**
+ * Return all the available jobs
+ */
+	public function getJobs() {
+		return $this->_jobs;
+	}
+
+/**
+ * Helper for firing jobs
+ *
+ * @param array $data
+ * @return boolean
+ */
+	public function fireJob($data = array()) {
+		if (isset($data['job'])) {
+			$new = $data;
+			unset($data);
+			$data[$this->alias] = $new;
+		}
+		if (empty($data[$this->alias]['job'])) {
+			throw new CakeException(__('Invalid job.'));
+			return false;
+		}
+		foreach ($data[$this->alias] as $key => $val) {
+			if ($key == 'job') {
+				continue;
+			}
+			if (strpos($key, '_id') !== false) {
+				$model = Inflector::classify(substr($key, 0, strpos($key, '_id')));
+				$Model = ClassRegistry::init($model);
+				$res = $Model->findById($val);
+				$data[$this->alias][$key] = $res[$Model->alias];
+			}
+		}
+		$data = array_values($data[$this->alias]);
+		$job = call_user_func_array(array($this, 'load'), $data);
+		if (!$job) {
+			throw new CakeException(__('Job could not be loaded.'));
+		} else {
+			if (!$this->enqueue($job)) {
+				throw new CakeException(__('Job could not be enqueued.'));
+			} else {
+				return true;
+			}
+		}
+		return false;
+	}
 
 /**
  * Queries the datasource and returns a result set array.
