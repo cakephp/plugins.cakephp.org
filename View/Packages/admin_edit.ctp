@@ -40,16 +40,14 @@
 	<section class="attributes">
 		<h3>Attributes</h3>
 		<?php
-		$attrs = array(
-			'contains_model', 'contains_view', 'contains_controller',
-			'contains_behavior', 'contains_helper', 'contains_component',
-			'contains_shell', 'contains_theme', 'contains_datasource',
-			'contains_vendor', 'contains_test', 'contains_lib', 'contains_resource',
-			'contains_config', 'contains_app',
-		);
-		sort($attrs);
-		foreach ($attrs as $field) {
-			echo $this->Form->input($field);
+		sort($validTypes);
+		foreach ($validTypes as $key => $type) {
+			echo $this->Form->input('Package.contains.' . $key, array(
+				'type' => 'checkbox',
+				'label' => 'Contains ' . Inflector::humanize($type),
+				'value' => $type,
+				'checked' => $this->request->data['Package']['contains_' . $type],
+			));
 		}
 		?>
 	</section>

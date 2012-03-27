@@ -8,6 +8,7 @@ App::uses('HttpSocket', 'Network/Http');
  *
  */
 class PackageTestCase extends CakeTestCase {
+
 /**
  * Fixtures
  *
@@ -18,9 +19,11 @@ class PackageTestCase extends CakeTestCase {
 		'app.user',
 		'app.maintainer',
 		'app.user_detail',
+		'app.tag',
+		'app.tagged',
+		'app.category',
 		'plugin.ratings.rating',
 		'plugin.favorites.favorite',
-		'plugin.categories.category',
 	);
 
 /**
@@ -52,6 +55,7 @@ class PackageTestCase extends CakeTestCase {
  */
 	public function testSetupRepository() {
 		$Package = $this->getMock('Package', array('_shell_exec'));
+		$Package->useDbConfig = 'test';
 		$Package->expects($this->exactly(2))
 			->method('_shell_exec')
 			->will($this->returnValue('success'));
@@ -112,7 +116,7 @@ class PackageTestCase extends CakeTestCase {
 		mkdir($repo[1], 0755, true);
 
 		$result = $Package->characterize(1);
-		$this->assertTrue( sizeof($result['Package']) > 1 );
+		$this->assertTrue(count($result['Package']) > 1);
 	}
 /**
  * testFixRepositoryUrl method
@@ -156,7 +160,7 @@ class PackageTestCase extends CakeTestCase {
 				'type' => 'bookmark',
 			),
 		));
-		$this->assertEquals(2, sizeof($result));
+		$this->assertEquals(2, count($result));
 	}
 /**
  * testRatePackage method
@@ -277,12 +281,12 @@ class PackageTestCase extends CakeTestCase {
  */
 	public function testCategories() {
 		$result = $this->Package->categories(1);
-		$this->assertEquals(44, sizeof($result));
-		$this->assertTrue(in_array('Company News', $result));
+		$this->assertEquals(43, count($result));
+		$this->assertTrue(in_array('Email', $result));
 		$this->assertTrue(in_array('Uncategorized', $result));
 		$result = $this->Package->categories();
-		$this->assertEquals(44, sizeof($result));
-		$this->assertEquals(44, sizeof($this->Package->_categories));
+		$this->assertEquals(43, count($result));
+		$this->assertEquals(43, count($this->Package->_categories));
 	}
 /**
  * testSuggest method
@@ -322,7 +326,7 @@ class PackageTestCase extends CakeTestCase {
 		$expected = array(
 			'chocolate by shama | CakePHP Plugins and Applications | CakePackages',
 			'Lorem ipsum dolor sit amet - CakePHP Package on CakePackages',
-			'chocolate, cakephp package, cakephp, model, controller, view, behavior, component, helper, shell, theme, datasource, lib, test, vendor, app, config, resource',
+			'chocolate, cakephp package, cakephp',
 		);
 		$this->assertEquals($expected, $result);
 	}
@@ -455,4 +459,93 @@ m Test/Case/Model/Datasource/FtpSourceTest.php
 			->will($this->returnValue(true));
 		$Package->fireJob($data);
 	}
+
+/**
+ * testFindIndex
+ *
+ * @return void
+ */
+	public function testFindIndex() {
+		$query = array(
+			'named' => array(
+				'has' => 'model',
+			),
+		);
+		$result = $this->Package->find('index', $query);
+		$result = Set::extract('/Package/name', $result);
+		$expected = array('chocolate', 'peanutbutter');
+		sort($result);
+		$this->assertEquals($expected, $result);
+
+		$query = array(
+			'named' => array(
+				'query' => 'choco',
+			),
+		);
+		$result = $this->Package->find('index', $query);
+		$result = Set::extract('/Package/name', $result);
+		$expected = array('chocolate');
+		$this->assertEquals($expected, $result);
+
+		$query = array(
+			'named' => array(
+				'watchers' => 5,
+			),
+		);
+		$result = $this->Package->find('index', $query);
+		$result = Set::extract('/Package/name', $result);
+		$expected = array('chocolate');
+		$this->assertEquals($expected, $result);
+
+		$query = array(
+			'named' => array(
+				'category' => 'email',
+				'has' => 'model',
+			),
+		);
+		$result = $this->Package->find('index', $query);
+		$result = Set::extract('/Package/name', $result);
+		$expected = array('chocolate');
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testSaveTags
+ *
+ * @return void
+ */
+	public function testSaveTags() {
+		CakeSession::write('Auth', array(
+			'User' => array(
+				'is_admin' => true,
+			),
+		));
+		$this->Package->Behaviors->load('CakePackagesTaggable');
+		$data = array(
+			'Package' => array(
+				'id' => 1,
+				'maintainer_id' => 1,
+				'name' => 'test',
+				'tags' => 'tag1, tag2, tag3',
+				'contains' => array(
+					'app',
+					'0',
+					'component',
+					'0',
+					'0',
+					'helper',
+				),
+			),
+		);
+		$result = $this->Package->save($data);
+		$this->Package->contain(array('Tag'));
+		$result = $this->Package->findById($result['Package']['id']);
+		$expected = 'tag3, tag2, tag1';
+		$this->assertEquals($expected, $result['Package']['tags']);
+		$this->assertTrue($result['Package']['contains_app']);
+		$this->assertTrue($result['Package']['contains_component']);
+		$this->assertTrue($result['Package']['contains_helper']);
+		CakeSession::delete('Auth');
+	}
+
 }

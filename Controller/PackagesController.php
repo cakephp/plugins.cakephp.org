@@ -233,15 +233,11 @@ class PackagesController extends AppController {
 				$this->redirect(array('action' => 'index'));
 			}
 		} else {
-			$this->request->data = $this->Package->find('first', array(
-				'conditions' => array('Package.id' => $id),
-				'contain' => array(
-					'Maintainer',
-					'Tag',
-				),
-			));
+			$this->Package->contain(array('Maintainer', 'Tag'));
+			$this->request->data = $this->Package->findById($id);
 		}
 		$this->set('categories', $this->Package->categories());
+		$this->set('validTypes', $this->Package->_validTypes);
 	}
 
 /**

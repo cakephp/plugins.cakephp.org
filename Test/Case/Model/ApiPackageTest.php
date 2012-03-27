@@ -18,7 +18,7 @@ class ApiPackageTestCase extends CakeTestCase {
 		'app.user_detail',
 		'plugin.ratings.rating',
 		'app.package',
-		'plugin.categories.category',
+		'app.category',
 		'app.favorite',
 	);
 
