@@ -6,6 +6,8 @@
 	RewriteRule ^(.*)$ index.php?/$1 [QSA,L]
 </IfModule>
 
-<FilesMatch "\.(eot|svg|ttf|woff)$">
-	ExpiresDefault "access plus 7 days"
-</FilesMatch>
+<IfModule mod_expires.c>
+	<FilesMatch "\.(eot|svg|ttf|woff)$">
+		ExpiresDefault "access plus 7 days"
+	</FilesMatch>
+</IfModule>
