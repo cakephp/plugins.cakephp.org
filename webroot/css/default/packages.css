@@ -332,3 +332,20 @@
 .packages-admin_categorize .page-title {
 	margin-bottom: 10px;
 }
+
+.edit-package-form section {
+	width: 50%;
+	float: left;
+	margin-bottom: 15px;
+}
+.edit-package-form section.actions, .edit-package-form section.attributes {
+	clear: both;
+	width: 100%;
+}
+.edit-package-form section.attributes .checkbox {
+	margin: 0px;
+	float: left;
+	width: 33%;
+	height: 20px;
+	display: block;
+}
