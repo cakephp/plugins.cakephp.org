@@ -205,7 +205,7 @@ class AppController extends Controller {
 		$this->request->params['action'] = $action;
 		return parent::setAction($action);
 	}
-	
+
 /**
  * Setup Theme
  *
