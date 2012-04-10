@@ -1,0 +1,143 @@
+.dataTables_wrapper {
+	position: relative;
+	min-height: 302px;
+	clear: both;
+	_height: 302px;
+	zoom: 1;
+}
+.dataTables_processing {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 250px;
+	height: 30px;
+	margin-left: -125px;
+	margin-top: -15px;
+	padding: 14px 0 2px 0;
+	text-align: center;
+	background: white;
+	color: #333;
+	display: block;
+	font-size: 14px;
+	-webkit-box-shadow: 0 2px 5px rgba(0,0,0,.25);
+	-khtml-box-shadow: 0 2px 5px rgba(0,0,0,.25);
+	-moz-box-shadow: 0 2px 5px rgba(0,0,0,.25);
+	-o-box-shadow: 0 2px 5px rgba(0,0,0,.25);
+	box-shadow: 0 2px 5px rgba(0,0,0,.25);
+	-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(color=#dddddd,direction=0,strength=1),
+		progid:DXImageTransform.Microsoft.Shadow(color=#dddddd,direction=100,strength=2),
+		progid:DXImageTransform.Microsoft.Shadow(color=#dddddd,direction=180,strength=3),
+		progid:DXImageTransform.Microsoft.Shadow(color=#dddddd,direction=260,strength=2)"; /* IE8+ */  
+	filter: progid:DXImageTransform.Microsoft.Shadow(color=#dddddd,direction=0,strength=1),
+		progid:DXImageTransform.Microsoft.Shadow(color=#dddddd,direction=100,strength=2),
+		progid:DXImageTransform.Microsoft.Shadow(color=#dddddd,direction=180,strength=3),
+		progid:DXImageTransform.Microsoft.Shadow(color=#dddddd,direction=260,strength=2); /* IE7 and lower */
+}
+.dataTables_length {
+	width: 30%;
+	float: left;
+	text-transform: uppercase;
+	font-size: 0.6em;
+	color: #333;
+	padding-bottom: 10px;
+}
+.dataTables_filter {
+	width: 60%;
+	float: right;
+	text-align: right;
+	text-transform: uppercase;
+	font-size: 0.6em;
+	color: #333;
+	padding-bottom: 10px;
+}
+.dataTables_filter input {
+	font-size: 12px;
+	border: 1px solid #ddd;
+	color: #333;
+	width: 80%;
+}
+.dataTables_info {
+	width: 80%;
+	float: left;
+	text-transform: uppercase;
+	font-size: 0.6em;
+	color: #333;
+}
+.dataTables_paginate {
+	width: 44px;
+	* width: 50px;
+	float: right;
+	text-align: right;
+}
+.paginate_disabled_previous, .paginate_enabled_previous, .paginate_disabled_next, .paginate_enabled_next {
+	height: 19px;
+	width: 19px;
+	margin-left: 3px;
+	float: left;
+}
+.paginate_disabled_previous {
+	background-image: url('/img/datatables/back_disabled.jpg');
+}
+.paginate_enabled_previous {
+	background-image: url('/img/datatables/back_enabled.jpg');
+}
+.paginate_disabled_next {
+	background-image: url('/img/datatables/forward_disabled.jpg');
+}
+.paginate_enabled_next {
+	background-image: url('/img/datatables/forward_enabled.jpg');
+}
+table {
+	margin: 0px auto 10px auto;
+	clear: both;
+	width: 100%;
+}
+table thead th {
+	color: #476371;
+	font-family: 'MuseoSlab500', Helvetica, Arial, sans-serif;
+	font-weight: normal;
+	font-size: 14px;
+	padding: 3px 18px 3px 10px;
+	border-bottom: 1px solid #BB9066;
+	font-weight: bold;
+	cursor: pointer;
+	* cursor: hand;
+}
+table tfoot th {
+	color: #476371;
+	font-size: 10px;
+	padding: 3px 18px 3px 10px;
+	border-top: 1px solid #BB9066;
+	font-weight: bold;
+}
+table tr.heading2 td {
+	border-bottom: 1px solid #aaa;
+}
+table td {
+	padding: 3px 10px;
+	font-size: 14px;
+}
+table td.center {
+	text-align: center;
+}
+th.sorting_asc {
+	background: url('/img/datatables/sort_asc.png') no-repeat center right;
+}
+th.sorting_desc {
+	background: url('/img/datatables/sort_desc.png') no-repeat center right;
+}
+th.sorting {
+	background: url('/img/datatables/sort_both.png') no-repeat center right;
+}
+th.sorting_asc_disabled {
+	background: url('/img/datatables/sort_asc_disabled.png') no-repeat center right;
+}
+th.sorting_desc_disabled {
+	background: url('/img/datatables/sort_desc_disabled.png') no-repeat center right;
+}
+tr.odd {
+	background-color: #eee;
+}
+tr.even {
+	background-color: white;
+}

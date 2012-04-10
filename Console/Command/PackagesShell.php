@@ -1,5 +1,6 @@
 <?php
 App::uses('PackageExistsJob', 'Lib/Job');
+App::uses('CakeSession', 'Model/Datasource');
 
 class PackagesShell extends AppShell {
 
@@ -225,6 +226,52 @@ class PackagesShell extends AppShell {
 			}
 		}
 		$this->out(sprintf(__('* Checked %s of %s repositories'), $count, count($packages)));
+	}
+
+/**
+ * Converts the existing `contains_` fields into tags.
+ *
+ * @return void
+ */
+	public function convertContainFields() {
+		$count = 0;
+		$this->Package->Behaviors->unload('CakePackagesTaggable');
+		$packages = $this->Package->find('all', array(
+			'conditions' => array(
+				'OR' => array(
+					'Package.tags IS NULL',
+					'Package.tags' => '',
+				),
+			),
+			'contain' => array(),
+		));
+		$convert = array();
+		foreach ($packages as $key => $package) {
+			$tags = array();
+			foreach ($package['Package'] as $field => $val) {
+				if (substr($field, 0, 9) == 'contains_' && !empty($val)) {
+					$tags[] = substr($field, 9);
+				}
+			}
+			if (!empty($tags)) {
+				$packages[$key]['Package']['contains'] = $tags;
+			} else {
+				unset($packages[$key]);
+			}
+		}
+		CakeSession::write('Auth', array(
+			'User' => array('is_admin' => true),
+		));
+		$this->Package->Behaviors->load('CakePackagesTaggable');
+		reset($packages);
+		foreach ($packages as $package) {
+			$this->Package->create();
+			$this->Package->save($package, false);
+			$this->out(sprintf('[CONVERT] %s', $package['Package']['name']));
+			$count++;
+		}
+		$this->out(sprintf(__('* Converted %s packages'), $count++));
+		CakeSession::delete('Auth');
 	}
 
 }

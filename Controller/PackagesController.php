@@ -1,10 +1,41 @@
 <?php
 class PackagesController extends AppController {
-
+/**
+ * helpers
+ *
+ * @var array
+ */
 	public $helpers = array(
 		'Ratings.Rating',
+		'DataTable.DataTable',
 	);
 
+/**
+ * components
+ *
+ * @var array
+ */
+	public $components = array(
+		'DataTable.DataTable' => array(
+			'columns' => array(
+				'id',
+				'name',
+				'Maintainer.username' => 'By',
+				'created' => false,
+				'last_pushed_at' => false,
+				'deleted' => false,
+				'repository_url' => false,
+				'Actions' => null,
+			),
+			'triggerAction' => array('admin_index'),
+		),
+	);
+
+/**
+ * _ajax
+ *
+ * @var array
+ */
 	public $_ajax = array(
 		'bookmark',
 		'home',
@@ -177,6 +208,58 @@ class PackagesController extends AppController {
 		}
 	}
 
+/**
+ * admin_index
+ */
+	public function admin_index() {
+		$this->Package->enableSoftDeletable(array('find'), false);
+		$this->paginate = array(
+			'Package' => array(
+				'contain' => array('Maintainer'),
+			),
+		);
+	}
+
+/**
+ * admin_edit
+ *
+ * @param integer $id
+ */
+	public function admin_edit($id = null) {
+		$this->Package->enableSoftDeletable(array('find'), false);
+		if ($this->_isFromForm('Package')) {
+			if ($this->Package->save($this->request->data)) {
+				$this->Session->setFlash(__('Saved package #%d', $this->Package->id), 'flash/success');
+				$this->redirect(array('action' => 'index'));
+			}
+		} else {
+			$this->Package->contain(array('Maintainer', 'Tag'));
+			$this->request->data = $this->Package->findById($id);
+		}
+		$this->set('categories', $this->Package->categories());
+		$this->set('validTypes', $this->Package->_validTypes);
+	}
+
+/**
+ * disable
+ *
+ * @param integer $id
+ */
+	public function admin_disable($id = null) {
+		$enabled = $this->Package->enable($id);
+		if ($enabled) {
+			$this->Session->setFlash(__('Package #%d is now enabled.', $id), 'flash/success');
+		} else {
+			$this->Session->setFlash(__('Package #%d is now disabled.', $id), 'flash/success');
+		}
+		$this->redirect($this->referer());
+	}
+
+/**
+ * admin_categorize
+ *
+ * @param integer $id
+ */
 	public function admin_categorize($id = null) {
 		$user_id = $this->Auth->user('id');
 
@@ -196,6 +279,22 @@ class PackagesController extends AppController {
 			$this->Session->setFlash($e->getMessage(), 'flash/error');
 		}
 		$this->set(compact('categories', 'package'));
+	}
+
+/**
+ * Ability to kick off admin jobs
+ */
+	public function admin_jobs() {
+		if ($this->_isFromForm('Package')) {
+			try {
+				$this->Package->fireJob($this->request->data);
+				$this->Session->setFlash(__('Job has been loaded and enqueued.'), 'flash/success');
+			} catch (Exception $e) {
+				$this->Session->setFlash($e->getMessage(), 'flash/error');
+			}
+			$this->redirect($this->referer());
+		}
+		$this->set('jobs', $this->Package->getJobs());
 	}
 
 /**

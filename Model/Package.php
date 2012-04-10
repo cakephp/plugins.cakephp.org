@@ -21,6 +21,7 @@ class Package extends AppModel {
 			'update' => true,
 		),
 		'Softdeletable',
+		'CakePackagesTaggable',
 	);
 
 	public $belongsTo = array(
@@ -108,6 +109,11 @@ class Package extends AppModel {
 		'watchers' => 'Watchers'
 	);
 
+/**
+ * Valid types of `contains_` or `has`
+ *
+ * @var array
+ */
 	public $_validTypes = array(
 		'model', 'controller', 'view',
 		'behavior', 'component', 'helper',
@@ -254,6 +260,9 @@ class Package extends AppModel {
 
 	public function _findIndex($state, $query, $results = array()) {
 		if ($state == 'before') {
+			if (!isset($query['named'])) {
+				$query['named'] = array();
+			}
 			$query['named'] = array_merge(array(
 				'collaborators' => null,
 				'contains'      => array(),
@@ -274,7 +283,7 @@ class Package extends AppModel {
 			);
 
 			$query['conditions'] = array("{$this->alias}.deleted" => false);
-			$query['contain'] = array('Maintainer' => array('id','username', 'name'));
+			$query['contain'] = array('Maintainer' => array('id', 'username', 'name'));
 			$query['fields'] = array(
 				$this->primaryKey, 'maintainer_id', 'name', 'description',
 				'open_issues', 'forks', 'watchers', 'collaborators', 'contributors',
@@ -320,25 +329,42 @@ class Package extends AppModel {
 				foreach ($query['named']['has'] as $has) {
 					$has = inflector::singularize(strtolower($has));
 					if (in_array($has, $this->_validTypes)) {
-						$query['conditions']["{$this->alias}.contains_{$has}"] = true;
+						$query['conditions'][] = array(
+							'Tag.keyname' => $has,
+							'Tag.identifier' => 'contains',
+						);
 					}
 				}
+				$query['joins'][] = array(
+					'alias' => 'Tagged',
+					'table' => 'tagged',
+					'type' => 'INNER',
+					'conditions' => array(
+						'`Tagged`.`foreign_key` = `' . $this->alias . '`.`id`',
+					),
+				);
+				$query['joins'][] = array(
+					'alias' => 'Tag',
+					'table' => 'tags',
+					'type' => 'INNER',
+					'conditions' => array(
+						'`Tagged`.`tag_id` = `Tag`.`id`',
+					),
+				);
 			}
 
 			if (!empty($query['named']['category'])) {
 				$this->unbindModel(array(
 					'belongsTo' => array('Categories.Category'),
 				));
-				$query['joins'] = array(
-					array(
-						'alias' => 'Category',
-						'table' => 'categories',
-						'type' => 'INNER',
-						'conditions' => array(
-							'`Category`.`id` = `Package`.`category_id`',
-							'Category.slug' => $query['named']['category'],
-						),
-					)
+				$query['joins'][] = array(
+					'alias' => 'Category',
+					'table' => 'categories',
+					'type' => 'INNER',
+					'conditions' => array(
+						'`Category`.`id` = `Package`.`category_id`',
+						'`Category`.`slug`' => $query['named']['category'],
+					),
 				);
 			}
 
@@ -709,6 +735,39 @@ class Package extends AppModel {
 	public function broken($id) {
 		$this->id = $id;
 		return $this->saveField('deleted', true);
+	}
+
+/**
+ * Enable/disable a package by toggle
+ *
+ * @param integer $id
+ * @param boolean $enable
+ * @return boolean true if enabled or false if disabled
+ */
+	public function enable($id = null, $enable = null) {
+		if (isset($id)) {
+			$this->id = $id;
+		}
+		if (isset($enable)) {
+			if ($enable) {
+				$this->undelete($this->id);
+				return true;
+			} else {
+				$this->saveField('deleted', true);
+				return false;
+			}
+		}
+		$this->enableSoftDeletable(array('find'), false);
+		$package = $this->findById($id);
+		$this->enableSoftDeletable(array('find'), true);
+		if ($package) {
+			if ($package[$this->alias]['deleted']) {
+				return $this->enable($this->id, true);
+			} else {
+				return $this->enable($this->id, false);
+			}
+		}
+		return null;
 	}
 
 /**

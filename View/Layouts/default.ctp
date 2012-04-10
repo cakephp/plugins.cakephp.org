@@ -166,6 +166,7 @@
 			})();
 		<?php endif; ?>
 	</script>
+	<?php echo $scripts_for_layout; ?>
 	<?php echo $this->AssetCompress->script('default'); ?>
 </body>
 
