@@ -39,7 +39,7 @@ class MaintainerFixture extends CakeTestFixture {
 	public $records = array(
 		array(
 			'id' => 1,
-			'user_id' => 1,
+			'user_id' => '4f471545-27a8-4ad7-89c9-1ec075f6eb26',
 			'group' => 'group1',
 			'username' => 'savant',
 			'email' => 'savant@areyousmokingcrack.com',
@@ -57,7 +57,7 @@ class MaintainerFixture extends CakeTestFixture {
 		),
 		array(
 			'id' => 2,
-			'user_id' => 2,
+			'user_id' => '4f471545-7118-4910-bcbc-1ec075f6eb27',
 			'group' => 'group1',
 			'username' => 'shama',
 			'email' => 'shama@dontkry.com',
