@@ -80,12 +80,12 @@ class ResourceHelper extends AppHelper {
 		foreach (Package::$_validShownOrders as $sort => $name) {
 			if ($sort == $sortField) {
 				$output[] = $this->Paginator->link($name, array_merge(
-					(array) $this->_View->request->query,
+					array('?' => (array) $this->_View->request->query),
 					compact('sort', 'direction', 'order')
 				), array('class' => 'active ' . $direction));
 			} else {
 				$output[] = $this->Paginator->link($name, array_merge(
-					(array) $this->_View->request->query,
+					array('?' => (array) $this->_View->request->query),
 					array('sort' => $sort, 'direction' => 'desc', 'order' => $order)
 				));
 			}
