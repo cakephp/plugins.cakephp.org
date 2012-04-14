@@ -685,9 +685,9 @@ class Package extends AppModel {
 			$this->_Folder = new Folder();
 		}
 
-		$path = rtrim(trim(TMP), DS) . DS 
-				. 'repos' . DS 
-				. strtolower($package['Maintainer']['username'][0]) . DS 
+		$path = rtrim(trim(TMP), DS) . DS
+				. 'repos' . DS
+				. strtolower($package['Maintainer']['username'][0]) . DS
 				. $package['Maintainer']['username'];
 		if (!file_exists($path)) {
 			$this->_Folder->create($path);
@@ -837,7 +837,7 @@ class Package extends AppModel {
 
 		if (!empty($data[$this->alias]['category_id'])) {
 			$category_id = $data[$this->alias]['category_id'];
-		}		
+		}
 
 		if (!$id && $this->id) {
 			$id = $this->id;
@@ -1190,7 +1190,7 @@ class Package extends AppModel {
 		}
 		$named = $clean;
 
-		return array($named, $coalesce);
+		return array($named, trim($coalesce));
 	}
 
 /**
