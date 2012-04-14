@@ -15,7 +15,7 @@
 	-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(color=#dddddd,direction=0,strength=1),
           progid:DXImageTransform.Microsoft.Shadow(color=#dddddd,direction=100,strength=2),
           progid:DXImageTransform.Microsoft.Shadow(color=#dddddd,direction=180,strength=3),
-          progid:DXImageTransform.Microsoft.Shadow(color=#dddddd,direction=260,strength=2)"; /* IE8+ */  
+          progid:DXImageTransform.Microsoft.Shadow(color=#dddddd,direction=260,strength=2)"; /* IE8+ */
 	filter: progid:DXImageTransform.Microsoft.Shadow(color=#dddddd,direction=0,strength=1),
           progid:DXImageTransform.Microsoft.Shadow(color=#dddddd,direction=100,strength=2),
           progid:DXImageTransform.Microsoft.Shadow(color=#dddddd,direction=180,strength=3),
@@ -30,7 +30,7 @@
 	-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=0,strength=1),
           progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=100,strength=2),
           progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=180,strength=3),
-          progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=260,strength=2)"; /* IE8+ */  
+          progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=260,strength=2)"; /* IE8+ */
 	filter: progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=0,strength=1),
           progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=100,strength=2),
           progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=180,strength=3),
@@ -277,12 +277,14 @@
 	line-height: 20px;
 }
 .packages-view .data tr .name {
-	color: #444;
-	font-family: Helvetica, Arial, sans-serif;
-	font-size: 13px;
 	font-weight: bold;
 	margin-right: 10px;
 	width: 90px;
+}
+.packages-view .data td {
+	color: #444;
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 13px;
 }
 .packages-view .package input {
 	border: 1px solid #CCC;
