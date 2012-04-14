@@ -60,8 +60,8 @@ class PackagesController extends AppController {
 	public function index() {
 		if ($this->request->is('post')) {
 			list($data, $query) = $this->Package->cleanParams($this->request->data, array(
-				'rinse' => false,
 				'allowed' => Package::$_allowedFilters,
+				'rinse' => false,
 			));
 			$this->redirect(array('?' => $data, 'escape' => false));
 		}
