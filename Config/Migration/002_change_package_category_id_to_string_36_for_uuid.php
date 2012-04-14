@@ -19,7 +19,7 @@ class M4f7d27e4ab9c4b959951610975f6eb26 extends CakeMigration {
 		'up' => array(
 			'alter_field' => array(
 				'packages' => array(
-					'category_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 36, 'collate' => NULL, 'charset' => ''),
+					'category_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 				),
 			),
 		),
