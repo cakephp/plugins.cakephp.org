@@ -51,7 +51,7 @@ set :branch,          "master"
 set :scm_verbose,     false
 
 ## Deploy Settings
-# Deploy via a remote repository cache. In git's case, it 
+# Deploy via a remote repository cache. In git's case, it
 # does a "git fetch" on the remote cache before moving it into place
 set :deploy_via,      :remote_cache
 # Overriding my 'current' directory to public, as that's how I roll
@@ -135,7 +135,7 @@ namespace :deploy do
     top.link.cron
     top.asset.rebuild
   end
-  
+
   desc <<-DESC
     Copies over the latest release. Necessary unless we place the cake core inside releases
     For larger repositories, something different should be tried instead
@@ -263,13 +263,13 @@ namespace :link do
           "mkdir -p #{shared_path}/tmp/sessions && " +
           "mkdir -p #{shared_path}/tmp/logs && " +
           "mkdir -p #{shared_path}/tmp/tests && " +
-          "chmod -R 777 #{shared_path}/tmp;" + 
+          "chmod -R 777 #{shared_path}/tmp;" +
       'fi',
 
       "ln -s #{shared_path}/tmp #{current_release}/tmp",
 
     ].join(' && ')
-      
+
   end
 
 end
@@ -370,12 +370,12 @@ end
 namespace :migrate do
   desc 'Run CakeDC Migrations'
   task :all do
-    run "cd #{current_release} && CAKE_ENV=#{deploy_env} #{deploy_to}/lib/Cake/Console/cake -app #{current_release} Migrations.migration run all"
+    run "cd #{current_release} && CAKE_ENV=#{deploy_env} #{deploy_to}/lib/Cake/Console/cake Migrations.migration run all -app #{current_release}"
   end
 
   desc 'Gets the status of CakeDC Migrations'
   task :status do
-    run "cd #{current_release} && CAKE_ENV=#{deploy_env} #{deploy_to}/lib/Cake/Console/cake -app #{current_release} Migrations.migration status"
+    run "cd #{current_release} && CAKE_ENV=#{deploy_env} #{deploy_to}/lib/Cake/Console/cake Migrations.migration status -app #{current_release}"
   end
 end
 
