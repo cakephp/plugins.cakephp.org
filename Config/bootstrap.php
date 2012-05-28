@@ -40,6 +40,10 @@ TEXT;
 	if ($die) die;
 }
 
-config('environments');
+// Output debug info as log in CLI
+if (php_sapi_name() == 'cli') {
+	Debugger::outputAs('log');
+}
 
+config('environments');
 CakePlugin::loadAll();
