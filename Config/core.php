@@ -17,35 +17,13 @@
 	// Force UTF-8 Codebase
 	Configure::write('App.encoding', 'UTF-8');
 
-/**
- * To configure CakePHP *not* to use mod_rewrite and to
- * use CakePHP pretty URLs, remove these .htaccess
- * files:
- *
- * /.htaccess
- * /app/.htaccess
- * /app/webroot/.htaccess
- *
- * And uncomment the App.baseUrl below:
- */
-	//Configure::write('App.baseUrl', env('SCRIPT_NAME'));
-
-/**
- * Uncomment the define below to use CakePHP prefix routes.
- *
- * The value of the define determines the names of the routes
- * and their associated controller actions:
- *
- * Set to an array of prefixes you want to use in your application. Use for
- * admin or other prefixed routes.
- *
- * 	Routing.prefixes = array('admin', 'manager');
- *
- * Enables:
- *	`admin_index()` and `/admin/controller/index`
- *	`manager_index()` and `/manager/controller/index`
- *
- */
+	// Conditionally disable mod_rewrite
+	if (php_sapi_name() != 'cli' && function_exists('apache_get_modules')) {
+		if (!in_array('mod_rewrite', apache_get_modules())) {
+			Configure::write('App.baseUrl', env('SCRIPT_NAME'));
+		}
+	}
+	// Current router prefixes
 	Configure::write('Routing.prefixes', array('admin', 'one'));
 
 	// Enable app-wide caching
