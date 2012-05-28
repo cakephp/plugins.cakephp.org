@@ -45,5 +45,18 @@ if (php_sapi_name() == 'cli') {
 	Debugger::outputAs('log');
 }
 
+// Setup defaults for Resque
+Configure::write('Resque', array(
+	'Redis' => array('host' => 'localhost', 'port' => 6379),
+	'default' => array(
+		'queue' => 'default',
+		'interval' => 5,
+		'workers' => 1
+	),
+));
+
+require_once APP . 'Plugin' . DS . 'Resque' . DS . 'Vendor' . DS . 'php-resque' . DS . 'lib' . DS . 'Resque.php';
+Resque::setBackend(Configure::read('Resque.Redis.host') . ':' . Configure::read('Resque.Redis.port'));
+
 config('environments');
 CakePlugin::loadAll();
