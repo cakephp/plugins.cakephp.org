@@ -49,3 +49,6 @@
 [submodule "Plugin/Tags"]
 	path = Plugin/Tags
 	url = git://github.com/CakeDC/tags.git
+[submodule "Plugin/Resque"]
+	path = Plugin/Resque
+	url = git://github.com/josegonzalez/Cake-Resque.git
