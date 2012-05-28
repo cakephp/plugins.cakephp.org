@@ -17,6 +17,7 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 $ds = DIRECTORY_SEPARATOR;
 $dispatcher = 'Cake' . $ds . 'Console' . $ds . 'ShellDispatcher.php';
 
@@ -28,6 +29,23 @@ if (function_exists('ini_set')) {
 if (!include($dispatcher)) {
 	trigger_error('Could not locate CakePHP core files.', E_USER_ERROR);
 }
+
+// Override tmp dir for CLI
+define('TMP', dirname(__DIR__) . $ds . 'tmp' . $ds . 'cli' . $ds);
+// Ensure all tmp paths are created for cli requests
+@mkdir(TMP);
+$dirs = array(
+  'cache', 'logs', 'tests',
+  'cache' . $ds . 'data',
+  'cache' . $ds . 'debug_kit',
+  'cache' . $ds . 'models',
+  'cache' . $ds . 'persistent',
+  'cache' . $ds . 'views',
+);
+foreach ($dirs as $dir) {
+  @mkdir(TMP . $dir);
+}
+
 unset($paths, $path, $dispatcher, $root, $ds);
 
 return ShellDispatcher::run($argv);
