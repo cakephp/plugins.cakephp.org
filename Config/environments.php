@@ -1,8 +1,6 @@
 <?php
 App::uses('Environment', 'Lib');
 
-// config
-
 Environment::configure('production',
 	array(
 		'server' => array('cakepackages.com')
@@ -40,6 +38,7 @@ Environment::configure('production',
 	),
 	function() {
 		error_reporting(0);
+		date_default_timezone_set('UTC');
 
 		if (function_exists('apc_fetch') && Configure::read('debug') == 0) {
 			Cache::config('default', array(
@@ -173,6 +172,7 @@ Environment::configure('development',
 		'Feature.auth_required'   => true,
 	),
 	function() {
+		date_default_timezone_set('UTC');
 		if (!defined('FULL_BASE_URL')) {
 			define('FULL_BASE_URL', Configure::read('Settings.FULL_BASE_URL'));
 		}
