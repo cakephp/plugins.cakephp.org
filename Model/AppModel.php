@@ -21,7 +21,6 @@ class AppModel extends Model {
  * @link http://book.cakephp.org/view/1072/Using-Behaviors
  */
 	public $actsAs = array(
-		'CakeDjjob.CakeDjjob',
 		'Containable',
 	);
 
@@ -52,6 +51,17 @@ class AppModel extends Model {
  */
 	public function getJobs() {
 		return $this->_jobs;
+	}
+
+/**
+ * Enqueues a job in resque
+ *
+ * @return void
+ * @author
+ **/
+	public function enqueue($name, $arguments) {
+		array_unshift($arguments, 'work');
+		return Resque::enqueue('default', $name, $arguments);
 	}
 
 /**

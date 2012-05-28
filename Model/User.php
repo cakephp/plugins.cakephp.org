@@ -401,12 +401,10 @@ class User extends AppModel {
 			return false;
 		}
 
-		$job = $this->load('UserForgotPasswordJob', $data[$this->alias], $_SERVER['REMOTE_ADDR']);
-		if (!$job) {
-			return false;
-		}
-
-		return $this->enqueue($job);
+		return Resque::enqueue('default', 'UserForgotPasswordJob', array('work', array(
+			'user' => $data[$this->alias],
+			'ipaddress' => $_SERVER['REMOTE_ADDR'],
+		)));
 	}
 
 /**
@@ -640,12 +638,7 @@ class User extends AppModel {
  * @return boolean Success
  */
 	protected function _sendVerificationEmail($userData) {
-		$job = $this->load('UserVerificationEmailJob', $userData);
-		if (!$job) {
-			return false;
-		}
-
-		return $this->enqueue($job);
+		return Resque::enqueue('default', 'UserVerificationEmailJob', array('work', compact('userData')));
 	}
 
 }

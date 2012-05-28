@@ -1,23 +1,14 @@
 <?php
-App::uses('BaseEmail', 'Job');
+App::uses('DeferredEmail', 'Console/Command');
 
-/**
- * Sends a forgotten password email
- *
- * @package default
- * @todo Update this to send emails using the Users plugin
- */
-class UserForgotPasswordJob extends BaseEmail {
+class UserForgotPasswordJob extends DeferredEmail {
 
-	public function __construct($user, $ipaddress) {
-		parent::__construct(null, compact('user', 'ipaddress'));
-	}
+	public $uses = array('User');
 
 	public function build() {
 		$vars = $this->getVars();
 		parent::build();
 
-		$this->loadModel('User');
 		$activationKey = $this->User->changeActivationKey($vars['user']);
 
 		$this->_email = $vars['user']['email'];

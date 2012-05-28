@@ -1,15 +1,10 @@
 <?php
-App::uses('BaseEmail', 'Job');
+App::uses('DeferredEmail', 'Console/Command');
 
-class SuggestPackageJob extends BaseEmail {
-
-	public function __construct($username, $repository) {
-		parent::__construct(null, compact('username', 'repository'));
-	}
+class SuggestPackageJob extends DeferredEmail {
 
 	public function build() {
 		$vars = $this->getVars();
-
 		parent::build();
 
 		$this->_email = Configure::read('Email.username');

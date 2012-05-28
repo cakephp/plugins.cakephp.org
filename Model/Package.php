@@ -1245,16 +1245,10 @@ class Package extends AppModel {
 		}
 
 		list($username, $repository) = $pieces;
-		$job = $this->load('SuggestPackageJob', $username, $repository);
-		if (!$job) {
+		if (!Resque::enqueue('default', 'SuggestPackageJob', array('work', compact('username', 'repository')))) {
 			return false;
 		}
-
-		if (!$this->enqueue($job)) {
-			return false;
-		}
-
-		return $pieces;
+		return array($username, $repository);
 	}
 
 /**

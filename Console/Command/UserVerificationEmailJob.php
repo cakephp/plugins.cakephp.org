@@ -1,15 +1,10 @@
 <?php
-App::uses('BaseEmail', 'Job');
+App::uses('DeferredEmail', 'Console/Command');
 
-class UserVerificationEmailJob extends BaseEmail {
-
-	public function __construct($userData) {
-		parent::__construct(null, compact('userData'));
-	}
+class UserVerificationEmailJob extends DeferredEmail {
 
 	public function build() {
 		$vars = $this->getVars();
-
 		parent::build();
 
 		$this->_email = $vars['userData']['User']['email'];

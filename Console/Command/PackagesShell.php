@@ -4,7 +4,6 @@ App::uses('CakeSession', 'Model/Datasource');
 
 class PackagesShell extends AppShell {
 
-	public $tasks = array('CakeDjjob');
 	public $uses = array('Package');
 
 	public $folder = null;
@@ -119,17 +118,14 @@ class PackagesShell extends AppShell {
 			'order' => array('Package.id ASC')
 		));
 
-		$jobs = array();
+		$jobs = 0;
 		$this->out(sprintf(__('* %d records to process'), count($packages)));
 		foreach ($packages as $package) {
-			$jobs[] = new PackageExistsJob($package);
+			$jobs++;
+			Resque::enqueue('default', 'PackageExistsJob', array('work', $package));
 		}
 
-		if (!empty($jobs)) {
-			$this->CakeDjjob->bulkEnqueue($jobs, 'default');
-		}
-
-		$this->out(sprintf(__('* Enqueued %d jobs'), count($jobs)));
+		$this->out(sprintf(__('* Enqueued %d jobs'), $jobs));
 	}
 
 /**

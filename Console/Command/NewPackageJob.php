@@ -1,26 +1,21 @@
 <?php
-class NewPackageJob extends CakeJob {
+App::uses('AppShell', 'Console/Command');
 
-	public $username;
+class NewPackageJob extends AppShell {
 
-	public $name;
+	public $uses = array('Maintainer', 'Github');
 
-	public function __construct($username, $name) {
-		$this->username = $username;
-		$this->name = $name;
-	}
-
-	public function perform() {
-		$this->out(sprintf('Verifying package uniqueness %s/%s', $this->username, $this->name));
-		$this->loadModel('Maintainer');
-		$this->loadModel('Github');
+	public function work() {
+		$username = $this->args[0];
+		$package_name = $this->args[1];
+		$this->out(sprintf('Verifying package uniqueness %s/%s', $username, $package_name));
 
 		try {
-			$maintainer = $this->Maintainer->find('view', $this->username);
+			$maintainer = $this->Maintainer->find('view', $username);
 		} catch (InvalidArgumentException $e) {
 			return $this->out($e->getMessage());
 		} catch (NotFoundException $e) {
-			$maintainer = $this->createMaintainer();
+			$maintainer = $this->createMaintainer($username);
 			if (!$maintainer) {
 				return $this->out($e->getMessage());
 			}
@@ -30,14 +25,14 @@ class NewPackageJob extends CakeJob {
 
 		$existing = $this->Maintainer->Package->find('list', array('conditions' => array(
 				'Package.maintainer_id' => $maintainer['Maintainer']['id'],
-				'Package.name' => $this->name
+				'Package.name' => $package_name
 		)));
 		if ($existing) return false;
 
 		$this->out('Retrieving repository');
 		$repo = $this->Github->find('reposShowSingle', array(
-			'username' => $this->username,
-			'repo' => $this->name
+			'username' => $username,
+			'repo' => $package_name
 		));
 
 		$this->out('Verifying that package is not a fork');
@@ -50,16 +45,16 @@ class NewPackageJob extends CakeJob {
 		$issues = $this->getIssues($repo);
 
 		$this->out('Detecting total number of contributors');
-		$contributors = $this->getContributors($repo);
+		$contributors = $this->getContributors($repo, $username, $package_name);
 
 		$this->out('Detecting number of collaborators');
-		$collaborators = $this->getCollaborators($repo);
+		$collaborators = $this->getCollaborators($repo, $username, $package_name);
 
 		$this->out('Saving package');
 		$this->Maintainer->Package->create();
 		$saved = $this->Maintainer->Package->save(array('Package' => array(
 			'maintainer_id' => $maintainer['Maintainer']['id'],
-			'name' => $this->name,
+			'name' => $package_name,
 			'repository_url' => "git://github.com/{$repo['Repository']['owner']}/{$repo['Repository']['name']}.git",
 			'homepage' => $homepage,
 			'description' => $repo['Repository']['description'],
@@ -85,8 +80,8 @@ class NewPackageJob extends CakeJob {
 		$this->out('Package saved');
 	}
 
-	public function createMaintainer() {
-		$user = $this->Github->find('userShow', $this->username);
+	public function createMaintainer($username) {
+		$user = $this->Github->find('userShow', $username);
 
 		$this->Maintainer->create();
 		$saved = $this->Maintainer->save(array('Maintainer' => array(
@@ -104,7 +99,7 @@ class NewPackageJob extends CakeJob {
 			$this->log(json_encode($this->Maintainer->validationErrors), 'queue');
 		}
 
- 		return $this->Maintainer->find('view', $this->username);
+ 		return $this->Maintainer->find('view', $username);
 	}
 
 	public function getHomepage($repo) {
@@ -123,11 +118,11 @@ class NewPackageJob extends CakeJob {
 		return $issues;
 	}
 
-	public function getContributors($repo) {
+	public function getContributors($repo, $username, $package_name) {
 		$contribs = 1;
 		$contributors = $this->Github->find('reposShowContributors', array(
-			'username' => $this->username,
-			'repo' => $this->name
+			'username' => $username,
+			'repo' => $package_name
 		));
 
 		if (!empty($contributors)) {
@@ -136,11 +131,11 @@ class NewPackageJob extends CakeJob {
 		return $contribs;
 	}
 
-	public function getCollaborators($repo) {
+	public function getCollaborators($repo, $username, $package_name) {
 		$collabs = 1;
 		$collaborators = $this->Github->find('reposShowCollaborators', array(
-			'username' => $this->username,
-			'repo' => $this->name
+			'username' => $username,
+			'repo' => $package_name
 		));
 
 		if (!empty($collaborators)) {
