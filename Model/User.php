@@ -159,7 +159,7 @@ class User extends AppModel {
 			'new_password' => $this->validate['password'],
 			'confirm_password' => array(
 				'required' => array(
-					'rule' => array('compareFields', 'new_password', 'confirm_password'), 
+					'rule' => array('compareFields', 'new_password', 'confirm_password'),
 					'message' => __('The passwords are not equal.')
 				)
 			)
@@ -204,7 +204,7 @@ class User extends AppModel {
 				$this->alias . '.password_token' => $query['token'],
 				$this->alias . '.email_token_expires >=' => date('Y-m-d H:i:s')
 			);
-			
+
 			$query['limit'] = 1;
 			return $query;
 		} elseif ($state == 'after') {
@@ -352,7 +352,7 @@ class User extends AppModel {
 		if (is_array($field1)) {
 			$field1 = key($field1);
 		}
-		if (isset($this->data[$this->alias][$field1]) && isset($this->data[$this->alias][$field2]) && 
+		if (isset($this->data[$this->alias][$field1]) && isset($this->data[$this->alias][$field2]) &&
 			$this->data[$this->alias][$field1] == $this->data[$this->alias][$field2]) {
 			return true;
 		}
@@ -505,7 +505,7 @@ class User extends AppModel {
 
 /**
  * Resets the password
- * 
+ *
  * @param array $postData Post data from controller
  * @return boolean True on success
  */
