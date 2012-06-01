@@ -48,6 +48,7 @@ if (php_sapi_name() == 'cli') {
 // Setup defaults for Resque
 Configure::write('Resque', array(
 	'Redis' => array('host' => 'localhost', 'port' => 6379),
+	'environment_variables' => array('CAKE_ENV'),
 	'default' => array(
 		'queue' => 'default',
 		'interval' => 5,
