@@ -41,7 +41,7 @@ unset($paths, $path, $found, $dispatcher, $root, $dirs, $dir);
 // From ShellDipatcher::_boostrap
 
 define('ROOT', dirname(dirname(getenv('CAKE'))));
-define('APP_DIR', 'app');
+define('APP_DIR', basename(dirname(dirname(__FILE__))));
 define('APP', ROOT . DS . APP_DIR . DS);
 define('WWW_ROOT', APP . 'webroot' . DS);
 if (!is_dir(ROOT . DS . APP_DIR . DS . 'tmp')) {
