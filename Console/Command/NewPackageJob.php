@@ -71,11 +71,11 @@ class NewPackageJob extends AppShell {
 			return $this->out('Package not saved');
 		}
 
-		$id = $this->Maintainer->Package->getLastInsertID();
-		$package = $this->Maintainer->Package->setupRepository($id);
-		if ($package) {
-			$this->Maintainer->Package->characterize($package);
-		}
+		// $id = $this->Maintainer->Package->getLastInsertID();
+		// $package = $this->Maintainer->Package->setupRepository($id);
+		// if ($package) {
+		// 	$this->Maintainer->Package->characterize($package);
+		// }
 
 		$this->out('Package saved');
 	}
@@ -95,8 +95,8 @@ class NewPackageJob extends AppShell {
 		)));
 
 		if (!$saved) {
-			$this->log("Error Saving Maintainer", 'queue');
-			$this->log(json_encode($this->Maintainer->validationErrors), 'queue');
+			$this->out("Error Saving Maintainer", 'queue');
+			$this->out(json_encode($this->Maintainer->validationErrors), 'queue');
 		}
 
  		return $this->Maintainer->find('view', $username);
