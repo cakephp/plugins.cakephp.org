@@ -6,7 +6,7 @@
 	url = git://github.com/cakephp/debug_kit.git
 [submodule "Plugin/Migrations"]
 	path = Plugin/Migrations
-	url = git://github.com/CakeDC/migrations.git
+	url = git://github.com/josegonzalez/migrations.git
 [submodule "Plugin/PageRoute"]
 	path = Plugin/PageRoute
 	url = git://github.com/josegonzalez/page_route.git
@@ -22,12 +22,9 @@
 [submodule "Plugin/Search"]
 	path = Plugin/Search
 	url = git://github.com/CakeDC/search.git
-[submodule "Plugin/Users"]
-	path = Plugin/Users
-	url = git://github.com/CakeDC/users.git
 [submodule "Plugin/Utils"]
 	path = Plugin/Utils
-	url = git://github.com/CakeDC/utils.git
+	url = git://github.com/josegonzalez/utils.git
 [submodule "Plugin/Sham"]
 	path = Plugin/Sham
 	url = git://github.com/josegonzalez/sham.git
@@ -39,10 +36,10 @@
 	url = git://github.com/josegonzalez/categories.git
 [submodule "Plugin/DataTable"]
 	path = Plugin/DataTable
-	url = https://github.com/shama/cakephp-datatable.git
+	url = https://github.com/josegonzalez/cakephp-datatable.git
 [submodule "Plugin/Tags"]
 	path = Plugin/Tags
-	url = git://github.com/CakeDC/tags.git
+	url = git://github.com/josegonzalez/tags.git
 [submodule "Plugin/Resque"]
 	path = Plugin/Resque
 	url = git://github.com/josegonzalez/Cake-Resque.git
