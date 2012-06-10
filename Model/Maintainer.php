@@ -254,7 +254,7 @@ class Maintainer extends AppModel {
  *
  * @return void
  */
-	public function beforeSave() {
+	public function beforeSave($options = array()) {
 		if (!empty($this->data[$this->alias]['url'])) {
 			if (!strpos($this->data[$this->alias]['url'], '://')) {
 				$this->data[$this->alias]['url'] = 'http://' . $this->data[$this->alias]['url'];

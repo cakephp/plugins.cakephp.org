@@ -90,8 +90,8 @@ class CakePackagesTaggableBehavior extends TaggableBehavior {
 /**
  * Check Auth is user is admin
  */
-	public function setup(Model $Model, $settings) {
-		parent::setup($Model, $settings);
+	public function setup(Model $model, $settings = array()) {
+		parent::setup($model, $settings);
 		if (CakeSession::check('Auth')) {
 			$this->_isAdmin = CakeSession::read('Auth.User.is_admin') ? true : false;
 		}

@@ -41,9 +41,9 @@ class SoftDeletableBehavior extends ModelBehavior {
  * @param object $model Model using the behaviour
  * @param array $settings Settings to override for model.
  */
-	function setup(&$model, $settings = array()) {
-		if (!is_array($settings)) $settings = array();
-		$this->__settings[$model->alias] = array_merge($this->defaults, $settings);
+	public function setup(Model $model, $config = array()) {
+		if (!is_array($config)) $config = array();
+		$this->__settings[$model->alias] = array_merge($this->defaults, $config);
 	}
 
 /**
@@ -53,7 +53,7 @@ class SoftDeletableBehavior extends ModelBehavior {
  * @param boolean $cascade If true records that depend on this record will also be deleted
  * @return boolean Set to true to continue with delete, false otherwise
  */
-	function beforeDelete(&$model, $cascade = true) {
+	public function beforeDelete(Model $model, $cascade = true) {
 		if (!$this->__settings[$model->alias]['delete'] || !$model->hasField($this->__settings[$model->alias]['field'])) {
 			return true;
 		}
@@ -214,15 +214,15 @@ class SoftDeletableBehavior extends ModelBehavior {
  * Run before a model is about to be find, used only fetch for non-deleted records.
  *
  * @param object $model Model about to be deleted.
- * @param array $queryData Data used to execute this query, i.e. conditions, order, etc.
+ * @param array $query Data used to execute this query, i.e. conditions, order, etc.
  * @return mixed Set to false to abort find operation, or return an array with data used to execute query
  */
-	function beforeFind(&$model, $queryData) {
+	public function beforeFind(Model $model, $query) {
 		if ($this->__settings[$model->alias]['find'] && $model->hasField($this->__settings[$model->alias]['field'])) {
-			$Db =& ConnectionManager::getDataSource($model->useDbConfig);
+			$Db = ConnectionManager::getDataSource($model->useDbConfig);
 			$include = false;
 
-			if (!empty($queryData['conditions']) && is_string($queryData['conditions'])) {
+			if (!empty($query['conditions']) && is_string($query['conditions'])) {
 				$include = true;
 
 				$fields = array(
@@ -233,34 +233,33 @@ class SoftDeletableBehavior extends ModelBehavior {
 				);
 
 				foreach ($fields as $field) {
-					if (preg_match('/^' . preg_quote($field) . '[\s=!]+/i', $queryData['conditions']) || preg_match('/\\x20+' . preg_quote($field) . '[\s=!]+/i', $queryData['conditions']))
+					if (preg_match('/^' . preg_quote($field) . '[\s=!]+/i', $query['conditions']) || preg_match('/\\x20+' . preg_quote($field) . '[\s=!]+/i', $query['conditions']))
 					{
 						$include = false;
 						break;
 					}
 				}
 			}
-			else if (empty($queryData['conditions'])
-			|| (!in_array($this->__settings[$model->alias]['field'], array_keys($queryData['conditions']))
-			&& !in_array($model->alias . '.' . $this->__settings[$model->alias]['field'], array_keys($queryData['conditions'])))) {
+			else if (empty($query['conditions'])
+			|| (!in_array($this->__settings[$model->alias]['field'], array_keys($query['conditions']))
+			&& !in_array($model->alias . '.' . $this->__settings[$model->alias]['field'], array_keys($query['conditions'])))) {
 				$include = true;
 			}
 
 			if ($include) {
-				if (empty($queryData['conditions'])) {
-					$queryData['conditions'] = array();
+				if (empty($query['conditions'])) {
+					$query['conditions'] = array();
 				}
 
-				if (is_string($queryData['conditions'])) {
-					$queryData['conditions'] = $Db->name($model->alias) . '.' . $Db->name($this->__settings[$model->alias]['field']) . '!= 1 AND ' . $queryData['conditions'];
+				if (is_string($query['conditions'])) {
+					$query['conditions'] = $Db->name($model->alias) . '.' . $Db->name($this->__settings[$model->alias]['field']) . '!= 1 AND ' . $query['conditions'];
 				} else {
-					// $queryData['conditions'][$model->alias . '.' . $this->__settings[$model->alias]['field']] = '!= 1';
-					$queryData['conditions'][$model->alias . '.' . $this->__settings[$model->alias]['field']] = 0;
+					$query['conditions'][$model->alias . '.' . $this->__settings[$model->alias]['field']] = 0;
 				}
 			}
 		}
 
-		return $queryData;
+		return $query;
 	}
 
 /**
@@ -269,7 +268,7 @@ class SoftDeletableBehavior extends ModelBehavior {
  * @param object $model Model about to be saved.
  * @return boolean True if the operation should continue, false if it should abort
  */
-	function beforeSave(&$model) {
+	public function beforeSave(Model $model) {
 		if ($this->__settings[$model->alias]['find']) {
 			if (!isset($this->__backAttributes)) {
 				$this->__backAttributes = array($model->alias => array());
@@ -291,7 +290,7 @@ class SoftDeletableBehavior extends ModelBehavior {
  * @param object $model Model just saved.
  * @param boolean $created True if this save created a new record
  */
-	function afterSave(&$model, $created) {
+	public function afterSave(Model $model, $created) {
 		if (isset($this->__backAttributes[$model->alias]['find'])) {
 			$this->enableSoftDeletable($model, 'find', $this->__backAttributes[$model->alias]['find']);
 			$this->enableSoftDeletable($model, 'delete', $this->__backAttributes[$model->alias]['delete']);
@@ -299,5 +298,5 @@ class SoftDeletableBehavior extends ModelBehavior {
 			unset($this->__backAttributes[$model->alias]['delete']);
 		}
 	}
+
 }
-?>

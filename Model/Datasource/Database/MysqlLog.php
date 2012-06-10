@@ -43,12 +43,12 @@ class MysqlLog extends Mysql {
  *
  * @param string $sql SQL statement
  */
-	public function logQuery($sql) {
-		$return = parent::logQuery($sql);
+	public function logQuery($sql, $params = array()) {
+		$return = parent::logQuery($sql, $params);
 		if (Configure::read('logQueries')) {
 			$this->log("sql[{$this->_queriesCnt}]:{$sql}", 'sql');
 		}
 		return $return;
 	}
+
 }
-?>
