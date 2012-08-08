@@ -49,7 +49,7 @@ class AjaxView extends View {
  *
  * @param object $controller
  */
-	public function __construct(&$controller) {
+	public function __construct(Controller $controller = null) {
 		if (is_object($controller)) {
 			if (isset($controller->_blacklistVars)) {
 				if ($controller->_blacklistVars === false) {
@@ -61,7 +61,7 @@ class AjaxView extends View {
 					);
 				}
 			}
-			
+
 		}
 
 		parent::__construct($controller);
@@ -72,7 +72,7 @@ class AjaxView extends View {
  *
  * @return unknown
  */
-	public function render() {
+	public function render($view = null, $layout = null) {
 		Configure::write('debug', 0);
 		header("Pragma: no-cache");
 
