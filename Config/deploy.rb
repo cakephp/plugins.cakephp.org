@@ -379,6 +379,24 @@ namespace :migrate do
   end
 end
 
+## Tasks involving migrations
+namespace :resque do
+  desc 'Start a resque worker'
+  task :start do
+    run "cd #{current_release} && CAKE_ENV=#{deploy_env} #{deploy_to}/lib/Cake/Console/cake Resque.resque start"
+  end
+
+  desc 'Stop a resque worker'
+  task :stop do
+    run "cd #{current_release} && CAKE_ENV=#{deploy_env} #{deploy_to}/lib/Cake/Console/cake Resque.resque stop"
+  end
+
+  desc 'Get stats on a resque worker'
+  task :stats do
+    run "cd #{current_release} && CAKE_ENV=#{deploy_env} #{deploy_to}/lib/Cake/Console/cake Resque.resque stats"
+  end
+end
+
 ## Tasks involving God+CakeDJJob
 namespace :god do
   task :stop, :roles => :god do
