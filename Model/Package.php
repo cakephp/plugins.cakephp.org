@@ -1244,8 +1244,11 @@ class Package extends AppModel {
 			return false;
 		}
 
+		$ipaddress = $_SERVER['REMOTE_ADDR'];
 		list($username, $repository) = $pieces;
-		if (!Resque::enqueue('default', 'SuggestPackageJob', array('work', compact('username', 'repository')))) {
+
+		$data = compact('ipaddress', 'username', 'repository');
+		if (!Resque::enqueue('default', 'SuggestPackageJob', array('work', $data))) {
 			return false;
 		}
 		return array($username, $repository);

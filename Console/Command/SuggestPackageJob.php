@@ -12,6 +12,7 @@ class SuggestPackageJob extends DeferredEmail {
 			'subject' => sprintf("New Package: %s/%s", $vars['username'], $vars['repository']),
 			'template' => 'suggest_package',
 			'variables' => array(
+				'ipaddress' => $vars['ipaddress'],
 				'username' => $vars['username'],
 				'repository' => $vars['repository']
 			),

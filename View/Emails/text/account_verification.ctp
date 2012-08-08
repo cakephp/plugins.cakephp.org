@@ -15,4 +15,4 @@
 <?php echo __('If you did not request an account, then please ignore this email.'); ?>
 
 
-<?php echo __('IP Address: ') . $_SERVER['REMOTE_ADDR']; ?>
+<?php echo __('IP Address: ') . $ipaddress; ?>
