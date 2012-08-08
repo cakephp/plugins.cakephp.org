@@ -1,4 +1,4 @@
-<?php echo __('Hello') . ' ' . $user['User']['username']; ?>,
+<?php echo __('Hello') . ' ' . $userData['User']['username']; ?>,
 <br />
 <?php echo __('To validate your account, you must visit the URL below within 24 hours') . ': '; ?><br />
 <br />
@@ -8,7 +8,7 @@
 		'plugin' => null,
 		'controller' => 'users',
 		'action' => 'verify',
-		$user['User']['email_token']
+		$userData['User']['email_token']
 	), true);
 ?>
 <br />
