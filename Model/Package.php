@@ -956,16 +956,16 @@ class Package extends AppModel {
 			$this->_Github = ClassRegistry::init('Github');
 		}
 
-		$repo = $this->_Github->find('reposShowSingle', array(
-			'username' => $package['Maintainer']['username'],
-			'repo' => $package['Package']['name']
+		$repo = $this->_Github->find('repository', array(
+			'owner' => $package['Maintainer']['username'],
+			'repo' => $package['Package']['name'],
 		));
 		if (empty($repo) || !isset($repo['Repository'])) {
 			return false;
 		}
 
 		// Detect homepage
-		$homepage = (string) $repo['Repository']['url'];
+		$homepage = $repo['Repository']['html_url'];
 		if (!empty($repo['Repository']['homepage'])) {
 			if (is_array($repo['Repository']['homepage'])) {
 				$homepage = $repo['Repository']['homepage'];
@@ -984,16 +984,20 @@ class Package extends AppModel {
 
 		// Detect total contributors
 		$contribs = 1;
-		$contributors = $this->_Github->find('reposShowContributors', array(
-			'username' => $package['Maintainer']['username'], 'repo' => $package['Package']['name']
+		$contributors = $this->_Github->find('repository', array(
+			'owner' => $package['Maintainer']['username'],
+			'repo' => $package['Package']['name'],
+			'_action' => 'contributors'
 		));
 		if (!empty($contributors)) {
 			$contribs = count($contributors);
 		}
 
 		$collabs = 1;
-		$collaborators = $this->_Github->find('reposShowCollaborators', array(
-			'username' => $package['Maintainer']['username'], 'repo' => $package['Package']['name']
+		$collaborators = $this->_Github->find('repository', array(
+			'owner' => $package['Maintainer']['username'],
+			'repo' => $package['Package']['name'],
+			'_action' => 'collaborators',
 		));
 
 		if (!empty($collaborators)) {
@@ -1049,12 +1053,12 @@ class Package extends AppModel {
 			$this->_Github = ClassRegistry::init('Github');
 		}
 
-		$response = $this->_Github->find('reposShowSingle', array(
-			'username' => $package['Maintainer']['username'],
+		$response = $this->_Github->find('repository', array(
+			'owner' => $package['Maintainer']['username'],
 			'repo' => $package[$this->alias]['name']
 		));
 
-		return !empty($response['Repository']);
+		return !empty($response);
 	}
 
 /**

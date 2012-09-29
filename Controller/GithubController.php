@@ -48,7 +48,7 @@ class GithubController extends AppController {
  * @param string $username Github username
  */
 	public function view($username = null) {
-		$user = $this->Github->find('userShow', $username);
+		$user = $this->Github->find('user', array('user' => $username));
 		$this->_redirectUnless($user, __('Invalid user'));
 
 		try {
@@ -91,7 +91,7 @@ class GithubController extends AppController {
  * @param string $username Github username
  */
 	public function github($username = null) {
-		$user = $this->Github->find('userShow', $username);
+		$user = $this->Github->find('user', array('user' => $username));
 		$this->_redirectUnless($username, __('Invalid user'));
 		$this->set(compact('user'));
 	}

@@ -30,8 +30,8 @@ class NewPackageJob extends AppShell {
 		if ($existing) return false;
 
 		$this->out('Retrieving repository');
-		$repo = $this->Github->find('reposShowSingle', array(
-			'username' => $username,
+		$repo = $this->Github->find('repository', array(
+			'owner' => $username,
 			'repo' => $package_name
 		));
 
@@ -81,17 +81,17 @@ class NewPackageJob extends AppShell {
 	}
 
 	public function createMaintainer($username) {
-		$user = $this->Github->find('userShow', $username);
+		$user = $this->Github->find('user', array('user' => $username));
 
 		$this->Maintainer->create();
 		$saved = $this->Maintainer->save(array('Maintainer' => array(
-			'username' => $user['User']['login'],
-			'gravatar_id' => $user['User']['gravatar_id'],
-			'name' => (isset($user['User']['name'])) ? $user['User']['name'] : '',
-			'company' => (isset($user['User']['company'])) ? $user['User']['company'] : '',
-			'url' => (isset($user['User']['blog'])) ? $user['User']['blog'] : '',
-			'email' => (isset($user['User']['email'])) ? $user['User']['email'] : '',
-			'location' => (isset($user['User']['location'])) ? $user['User']['location'] : ''
+			'username'    => (isset($user['User']['username']))    ? $user['User']['username'] : '',
+			'gravatar_id' => (isset($user['User']['gravatar_id'])) ? $user['User']['name'] : '',
+			'name'        => (isset($user['User']['name']))        ? $user['User']['name'] : '',
+			'company'     => (isset($user['User']['company']))     ? $user['User']['company'] : '',
+			'url'         => (isset($user['User']['blog']))        ? $user['User']['blog'] : '',
+			'email'       => (isset($user['User']['email']))       ? $user['User']['email'] : '',
+			'location'    => (isset($user['User']['location']))    ? $user['User']['location'] : ''
 		)));
 
 		if (!$saved) {
@@ -103,7 +103,7 @@ class NewPackageJob extends AppShell {
 	}
 
 	public function getHomepage($repo) {
-		$homepage = (string) $repo['Repository']['url'];
+		$homepage = $repo['Repository']['html_url'];
 		if (!empty($repo['Repository']['homepage'])) {
 			$homepage = $repo['Repository']['homepage'];
 		}
@@ -120,9 +120,10 @@ class NewPackageJob extends AppShell {
 
 	public function getContributors($repo, $username, $package_name) {
 		$contribs = 1;
-		$contributors = $this->Github->find('reposShowContributors', array(
-			'username' => $username,
-			'repo' => $package_name
+		$contributors = $this->Github->find('repository', array(
+			'owner' => $username,
+			'repo' => $package_name,
+			'_action' => 'contributors',
 		));
 
 		if (!empty($contributors)) {
@@ -133,9 +134,10 @@ class NewPackageJob extends AppShell {
 
 	public function getCollaborators($repo, $username, $package_name) {
 		$collabs = 1;
-		$collaborators = $this->Github->find('reposShowCollaborators', array(
-			'username' => $username,
-			'repo' => $package_name
+		$collaborators = $this->Github->find('repository', array(
+			'owner' => $username,
+			'repo' => $package_name,
+			'_action' => 'collaborators',
 		));
 
 		if (!empty($collaborators)) {
