@@ -16,6 +16,10 @@ class GithubSource extends DataSource {
 		'users',
 	);
 
+	protected $mapping = array(
+		'repository' => '/repos/:owner/:repo/:_action',
+		'user' => '/users/:user/:_action',
+	);
 
 	public $_schema = array(
 		'githubs' => array(),
@@ -28,11 +32,11 @@ class GithubSource extends DataSource {
 
 	public function __construct($config) {
 		$config = array_merge(array(
-			'host'      => 'github.com',
+			'host'      => 'api.github.com',
 			'port'      => 443,
 			'login'     => null,
 			'password'  => null,
-			'database'  => 'api/v2/json',
+			'database'  => 'api/v3/json',
 			'cacheKey'  => 'github',
 			'duration'  => '+2 days'
 		), $config);
@@ -64,7 +68,6 @@ class GithubSource extends DataSource {
 
 		if (!$config['login'] || !$config['password']) {
 			unset($this->sConfig['request']['auth']);
-			$this->sConfig['port'] = $this->sConfig['request']['url']['port'] = 80;
 		}
 
 		$this->connection = new HttpSocket($this->sConfig);
@@ -105,50 +108,15 @@ class GithubSource extends DataSource {
 		);
 		$queryData = array_diff_key($queryData, array_combine($remove, $remove));
 
-		$params = null;
-		$path = str_replace('_', '/', Inflector::underscore($model->findQueryType));
-
-		if (!empty($queryData)) {
-			$params = current($queryData);
+		$path = $this->mapping[$model->findQueryType];
+		foreach ($queryData as $key => $value) {
+			$path = str_replace(':' . $key, $value, $path);
 		}
 
-		$request  = $this->_readRequest($path, $params);
-		$response = $this->_cachedResponse("/{$this->config['database']}/{$request}");
-		$response = $this->_formatResponse($response);
+		$path = str_replace('/:_action', '', $path);
+		$response = $this->_cachedResponse($path);
+		$response = $this->_formatResponse($model->findQueryType, $queryData, $response);
 		return $response;
-	}
-
-	public function _readRequest($path, $query) {
-		switch ($path) {
-			case 'user/show/following' :
-				return 'user/show/' . $query . '/following';
-			case 'user/watched' :
-				return 'repos/watched/' . $query;
-			case 'repos/search' : 
-				return 'repos/search/' . str_replace(' ', '+', $query);
-			case 'repos/show/single' :
-				return 'repos/show/' . $query;
-			case 'repos/show/collaborators' :
-				return 'repos/show/' . $query . '/collaborators';
-			case 'repos/show/contributors' :
-				return 'repos/show/' . $query . '/contributors';
-			case 'repos/show/network' :
-				return 'repos/show/' . $query . '/network';
-			case 'repos/show/languages' :
-				return 'repos/show/' . $query . '/network';
-			case 'repos/show/tags' :
-				return 'repos/show/' . $query . '/tags';
-			case 'commits/show/path' :
-				return 'commits/show/' . $query;
-			case 'commits/show/sha' :
-				return 'commits/show/' . $query . '/sha';
-			case 'blob/show/all' :
-				return 'blob/all/' . $query;
-			case 'blob/show/path' :
-				return 'blob/show/' . $query;
-		}
-
-		return $path . '/' . $query;
 	}
 
 /**
@@ -193,8 +161,12 @@ class GithubSource extends DataSource {
 		Cache::set(array('duration' => $this->config['duration']));
 		if (($response = Cache::read($this->config['cacheKey'] . $hash)) === false) {
 			sleep(1);
-			$this->connection = new HttpSocket($this->sConfig);
-			$response = json_decode($this->connection->get($request . $var), true);
+			$this->connection = new HttpSocket();
+			$response = json_decode($this->connection->get(sprintf("%s://%s%s",
+				$this->sConfig['request']['uri']['scheme'],
+				$this->sConfig['request']['uri']['host'],
+				$request . $var
+			)), true);
 
 			if (!$response) {
 				$this->error = 'response was html page';
@@ -206,7 +178,6 @@ class GithubSource extends DataSource {
 				return false;
 			}
 
-			Cache::set(array('duration' => '+2 days'));
 			Cache::write($this->config['cacheKey'] . $hash, $response);
 		}
 		return $response;
@@ -220,24 +191,30 @@ class GithubSource extends DataSource {
  * @param array $data Data to be formatted
  * @return array
  */
-	protected function _formatResponse($data) {
+	protected function _formatResponse($findQueryType, $queryData, $data) {
 		if (!$data) {
 			return array();
 		}
 
 		$response = array();
-		foreach ($data as $modelName => $keys) {
-			$response[Inflector::singularize(ucfirst($modelName))] = $keys;
-		}
-
-		if (!Set::numeric(array_keys(current($response)))) {
-			return $response;
+		if (isset($queryData['_action']) && !empty($queryData['_action'])) {
+			foreach ($data as $k => $values) {
+				$response[] = array($queryData['_action'] => $values);
+			}
+		} else {
+			$response = array($findQueryType => $data);
 		}
 
 		$data = array();
-		foreach ($response as $modelName => $sets) {
-			foreach ($sets as $set) {
-				$data[] = array($modelName => $set);
+		if (Set::numeric(array_keys($response))) {
+			foreach ($response as $key => $record) {
+				foreach ($record as $modelName => $values) {
+					$data[$key][Inflector::singularize(ucfirst($modelName))] = $values;
+				}
+			}
+		} else {
+			foreach ($response as $modelName => $keys) {
+				$data[Inflector::singularize(ucfirst($modelName))] = $keys;
 			}
 		}
 
