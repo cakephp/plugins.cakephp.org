@@ -135,6 +135,10 @@ class AppController extends Controller {
  * @return void
  */
 	public function beforeRender() {
+		if ($this->Auth->user() || $this->Session->read('Message')) {
+			$this->disableCache();
+		}
+
 		$isAjaxable = in_array($this->action, $this->_ajax);
 		$isAjax = $this->request->is('ajax');
 		if ($isAjaxable && $isAjax) {
