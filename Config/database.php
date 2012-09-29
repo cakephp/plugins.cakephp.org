@@ -49,10 +49,8 @@ class DATABASE_CONFIG {
 
 	public $github = array(
 		'datasource'    => 'GithubSource',
-		'host'          => 'github.com',
 		'login'         => null,
 		'password'      => null,
-		'database'      => 'api/v2/json',
 	);
 
 	protected $_skip = array(
