@@ -27,10 +27,10 @@ class GithubHelper extends AppHelper {
 		));
 	}
 
-	function url($url = null) {
+	function link_to($url = null) {
 		if (!$url) return null;
 
 		return $this->Html->link(__('Url'), $url);
 	}
+
 }
-?>
