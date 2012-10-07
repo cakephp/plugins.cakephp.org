@@ -33,7 +33,7 @@
 	//Configure::write('Cache.check', true);
 
 	// Log message type
-	define('LOG_ERROR', 2);
+	define('LOG_ERROR', LOG_ERR);
 
 	// Configure session management
 	Configure::write('Session', array(

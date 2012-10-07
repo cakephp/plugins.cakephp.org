@@ -40,6 +40,22 @@ TEXT;
 	if ($die) die;
 }
 
+Configure::write('Dispatcher.filters', array(
+  'AssetDispatcher',
+  'CacheDispatcher'
+));
+
+CakeLog::config('debug', array(
+  'engine' => 'FileLog',
+  'types' => array('notice', 'info', 'debug'),
+  'file' => 'debug',
+));
+CakeLog::config('error', array(
+  'engine' => 'FileLog',
+  'types' => array('warning', 'error', 'critical', 'alert', 'emergency'),
+  'file' => 'error',
+));
+
 // Output debug info as log in CLI
 if (php_sapi_name() == 'cli') {
 	Debugger::outputAs('log');
