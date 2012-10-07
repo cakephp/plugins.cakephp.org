@@ -135,7 +135,7 @@ class AppController extends Controller {
  * @return void
  */
 	public function beforeRender() {
-		if ($this->Auth->user() || $this->Session->read('Message')) {
+		if ($this->Auth->user() || $this->Session->read('Message') || $this->request->is('post')) {
 			$this->disableCache();
 		}
 
