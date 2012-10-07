@@ -136,15 +136,15 @@ class UserDetail extends AppModel {
 			);
 
 			if (!is_null($query['section'])) {
-				$query['conditions']["{$this->alias}.field LIKE"] = $query['section'] . '.%'; 
+				$query['conditions']["{$this->alias}.field LIKE"] = $query['section'] . '.%';
 			}
 
 			$query['fields'] = array("{$this->alias}.field", "{$this->alias}.value");
 			$query['recursive'] = -1;
 			return $query;
-		} elseif ($state == 'after') {
-			return $results;
 		}
+
+		return $results;
 	}
 
 	public function _findDetail($state, $query, $results = array()) {
@@ -162,12 +162,12 @@ class UserDetail extends AppModel {
 			$query['limit'] = 1;
 			$query['recursive'] = -1;
 			return $query;
-		} elseif ($state == 'after') {
-			if (empty($results[0])) {
-				throw new NotFoundException(__('The detail does not exist'));
-			}
-			return $results[0];
 		}
+
+		if (empty($results[0])) {
+			throw new NotFoundException(__('The detail does not exist'));
+		}
+		return $results[0];
 	}
 
 /**
@@ -192,7 +192,7 @@ class UserDetail extends AppModel {
 
 /**
  * Save details for named section
- * 
+ *
  * @var string $userId User ID
  * @var array $data Data
  * @var string $section Section name
@@ -225,7 +225,7 @@ class UserDetail extends AppModel {
 					foreach($details as $key => $value) {
 						// Quickfix for date inputs - TODO Try to use $this->deconstruct()?
 						if (is_array($value) && array_keys($value) == array('month', 'day', 'year')) {
-							$value = $value['year'] . '-' . $value['month'] . '-' .  $value['day']; 
+							$value = $value['year'] . '-' . $value['month'] . '-' .  $value['day'];
 						}
 						$newDetail = array();
 						$field = $section . '.' . $key;

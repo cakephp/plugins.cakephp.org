@@ -94,12 +94,12 @@ class Maintainer extends AppModel {
 			$query['conditions'] = array("{$this->alias}.{$this->displayField}" => $query[0]);
 			$query['limit'] = 1;
 			return $query;
-		} elseif ($state == 'after') {
-			if (empty($results[0])) {
-				throw new NotFoundException(__('Nonexistent user'));
-			}
-			return $results[0];
 		}
+
+		if (empty($results[0])) {
+			throw new NotFoundException(__('Nonexistent user'));
+		}
+		return $results[0];
 	}
 
 /**
@@ -115,15 +115,12 @@ class Maintainer extends AppModel {
 			$query['fields'] = array('id', 'username', 'name', 'alias', 'url', 'twitter_username', 'company', 'location', 'gravatar_id');
 			$query['contain'] = false;
 			if (!empty($query['operation'])) {
-				return $this->_findCount($state, $query, $results);
+				return $query;
 			}
 			return $query;
-		} elseif ($state == 'after') {
-			if (!empty($query['operation'])) {
-				return $this->_findCount($state, $query, $results);
-			}
-			return $results;
 		}
+
+		return $results;
 	}
 
 /**
@@ -153,12 +150,12 @@ class Maintainer extends AppModel {
 			$query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $user_id);
 			$query['limit'] = 1;
 			return $query;
-		} elseif ($state == 'after') {
-			if (empty($results[0])) {
-				throw new NotFoundException(__('Invalid user'));
-			}
-			return $results[0];
 		}
+
+		if (empty($results[0])) {
+			throw new NotFoundException(__('Invalid user'));
+		}
+		return $results[0];
 	}
 
 /**
@@ -179,12 +176,12 @@ class Maintainer extends AppModel {
 			$query['conditions'] = array("{$this->alias}.{$this->displayField}" => $query[0]);
 			$query['limit'] = 1;
 			return $query;
-		} elseif ($state == 'after') {
-			if (empty($results[0])) {
-				throw new NotFoundException(__('Invalid maintainer'));
-			}
-			return $results[0];
 		}
+
+		if (empty($results[0])) {
+			throw new NotFoundException(__('Invalid maintainer'));
+		}
+		return $results[0];
 	}
 
 /**
@@ -213,40 +210,40 @@ class Maintainer extends AppModel {
 			$query['conditions'] = array("{$this->alias}.{$this->displayField}" => $query[0]);
 			$query['limit'] = 1;
 			return $query;
-		} elseif ($state == 'after') {
-			if (empty($results[0])) {
-				throw new NotFoundException(__('Invalid maintainer'));
-			}
-
-			$url = $results[0]['Maintainer']['url'];
-			if (strlen($url) && !strpos($url, '://')) {
-				$results[0]['Maintainer']['url'] = 'http://' . $url;
-			}
-
-			$results[0][$this->alias]['has_summary'] = false;
-			$summaryFields = array('company', 'location', 'url', 'twitter_username');
-			foreach ($summaryFields as $field) {
-				if (!empty($results[0][$this->alias][$field])) {
-					$results[0][$this->alias]['has_summary'] = true;
-					break;
-				}
-			}
-
-			if ($results[0][$this->alias]['has_summary']) {
-				$results[0][$this->alias]['package_count'] = count($results[0]['Package']);
-			}
-
-			if (!empty($results[0]['Package'])) {
-				foreach ($results[0]['Package'] as $i => $result) {
-					$results[0]['Package'][$i]['description'] = trim($results[0]['Package'][$i]['description']);
-					if (empty($results[0]['Package'][$i]['description'])) {
-						$results[0]['Package'][$i]['description'] = 'No description available';
-					}
-				}
-			}
-
-			return $results[0];
 		}
+
+		if (empty($results[0])) {
+			throw new NotFoundException(__('Invalid maintainer'));
+		}
+
+		$url = $results[0]['Maintainer']['url'];
+		if (strlen($url) && !strpos($url, '://')) {
+			$results[0]['Maintainer']['url'] = 'http://' . $url;
+		}
+
+		$results[0][$this->alias]['has_summary'] = false;
+		$summaryFields = array('company', 'location', 'url', 'twitter_username');
+		foreach ($summaryFields as $field) {
+			if (!empty($results[0][$this->alias][$field])) {
+				$results[0][$this->alias]['has_summary'] = true;
+				break;
+			}
+		}
+
+		if ($results[0][$this->alias]['has_summary']) {
+			$results[0][$this->alias]['package_count'] = count($results[0]['Package']);
+		}
+
+		if (!empty($results[0]['Package'])) {
+			foreach ($results[0]['Package'] as $i => $result) {
+				$results[0]['Package'][$i]['description'] = trim($results[0]['Package'][$i]['description']);
+				if (empty($results[0]['Package'][$i]['description'])) {
+					$results[0]['Package'][$i]['description'] = 'No description available';
+				}
+			}
+		}
+
+		return $results[0];
 	}
 
 /**

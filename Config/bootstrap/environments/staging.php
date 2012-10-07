@@ -38,22 +38,22 @@ Environment::configure('staging',
 
 		'Category.sluggable'      => array('separator' => '-'),
 
-		'CakeResqueOverrides.Redis.host'      => 'localhost',
-		'CakeResqueOverrides.Redis.port'      => 6379,
-		'CakeResqueOverrides.Redis.database'  => 0,
-		'CakeResqueOverrides.Redis.namespace' => 'resque',
-		'CakeResqueOverrides.Worker.queue'    => 'default',
-		'CakeResqueOverrides.Worker.interval' => 5,
-		'CakeResqueOverrides.Worker.workers'  => 1,
-		'CakeResqueOverrides.Worker.log'      => TMP . 'logs' . DS . 'resque-worker.log',
-		'CakeResqueOverrides.Env'             => array('CAKE_ENV'),
-		'CakeResqueOverrides.Queues'          => array(
+		'ResqueOverrides.Redis.host'      => 'localhost',
+		'ResqueOverrides.Redis.port'      => 6379,
+		'ResqueOverrides.Redis.database'  => 0,
+		'ResqueOverrides.Redis.namespace' => 'resque',
+		'ResqueOverrides.Worker.queue'    => 'default',
+		'ResqueOverrides.Worker.interval' => 5,
+		'ResqueOverrides.Worker.workers'  => 1,
+		'ResqueOverrides.Worker.log'      => TMP . 'logs' . DS . 'resque-worker.log',
+		'ResqueOverrides.Env'             => array('CAKE_ENV'),
+		'ResqueOverrides.Queues'          => array(
 																							array('queue' => 'default'),
 																							array('queue' => 'email', 'interval' => 5)
 																						),
-		'CakeResqueOverrides.Resque.lib'      => 'kamisama/php-resque-ex',
-		'CakeResqueOverrides.Log.handler'     => 'RotatingFile',
-		'CakeResqueOverrides.Log.target'      => TMP . 'logs' . DS . 'resque-error.log',
+		'ResqueOverrides.Resque.lib'      => 'kamisama/php-resque-ex',
+		'ResqueOverrides.Log.handler'     => 'RotatingFile',
+		'ResqueOverrides.Log.target'      => TMP . 'logs' . DS . 'resque-error.log',
 
 		// Feature flags
 		'Feature.auth_required'   => true,

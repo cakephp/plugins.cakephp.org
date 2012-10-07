@@ -46,3 +46,6 @@
 [submodule "Plugin/Completion"]
 	path = Plugin/Completion
 	url = git://github.com/AD7six/cakephp-completion.git
+[submodule "Plugin/Environments"]
+	path = Plugin/Environments
+	url = git://github.com/OctoBear/cakephp-environments.git

@@ -207,17 +207,17 @@ class Package extends AppModel {
 				),
 			);
 			return $query;
-		} elseif ($state == 'after') {
-			if (empty($results[0])) {
-				throw new NotFoundException(__("Cannot like a non-existent package"));
-			}
-
-			if (empty($results[0]['Favorite']['id'])) {
-				$results[0]['Favorite'] = false;
-			}
-
-			return $results[0];
 		}
+
+		if (empty($results[0])) {
+			throw new NotFoundException(__("Cannot like a non-existent package"));
+		}
+
+		if (empty($results[0]['Favorite']['id'])) {
+			$results[0]['Favorite'] = false;
+		}
+
+		return $results[0];
 	}
 
 	public function _findCategory($state, $query, $results = array()) {
@@ -228,12 +228,12 @@ class Package extends AppModel {
 			$query['fields'] = array($this->primaryKey, 'category_id', 'name', 'description');
 			$query['limit'] = 1;
 			return $query;
-		} elseif ($state == 'after') {
-			if (empty($results[0])) {
-				throw new NotFoundException(__('Invalid package'));
-			}
-			return $results[0];
 		}
+
+		if (empty($results[0])) {
+			throw new NotFoundException(__('Invalid package'));
+		}
+		return $results[0];
 	}
 
 	public function _findDownload($state, $query, $results = array()) {
@@ -245,17 +245,17 @@ class Package extends AppModel {
 			$query['fields'] = array($this->primaryKey, 'name');
 			$query['limit'] = 1;
 			return $query;
-		} elseif ($state == 'after') {
-			if (empty($results[0])) {
-				return false;
-			}
-			return sprintf(
-				'https://github.com/%s/%s/zipball/%s',
-				$results[0]['Maintainer']['username'],
-				$results[0]['Package']['name'],
-				$query['branch']
-			);
 		}
+
+		if (empty($results[0])) {
+			return false;
+		}
+		return sprintf(
+			'https://github.com/%s/%s/zipball/%s',
+			$results[0]['Maintainer']['username'],
+			$results[0]['Package']['name'],
+			$query['branch']
+		);
 	}
 
 	public function _findIndex($state, $query, $results = array()) {
@@ -390,23 +390,23 @@ class Package extends AppModel {
 			}
 
 			if (!empty($query['operation'])) {
-				return $this->_findCount($state, $query, $results);
+				return $query;
 			}
 			return $query;
-		} elseif ($state == 'after') {
-			if (!empty($query['operation'])) {
-				return $this->_findCount($state, $query, $results);
-			}
+		}
 
-			foreach ($results as $i => $result) {
-				$results[$i]['Package']['description'] = trim($results[$i]['Package']['description']);
-				if (empty($results[$i]['Package']['description'])) {
-					$results[$i]['Package']['description'] = 'No description available';
-				}
-			}
-
+		if (!empty($query['operation'])) {
 			return $results;
 		}
+
+		foreach ($results as $i => $result) {
+			$results[$i]['Package']['description'] = trim($results[$i]['Package']['description']);
+			if (empty($results[$i]['Package']['description'])) {
+				$results[$i]['Package']['description'] = 'No description available';
+			}
+		}
+
+		return $results;
 	}
 
 	public function _findListformaintainer($state, $query, $results = array()) {
@@ -420,16 +420,16 @@ class Package extends AppModel {
 			$query['order'] = array("{$this->alias}.{$this->displayField} DESC");
 			$query['recursive'] = -1;
 			return $query;
-		} elseif ($state == 'after') {
-			if (empty($results)) {
-				return array();
-			}
-			return Set::combine(
-				$results,
-				"{n}.{$this->alias}.{$this->primaryKey}",
-				"{n}.{$this->alias}.{$this->displayField}"
-			);
 		}
+
+		if (empty($results)) {
+			return array();
+		}
+		return Set::combine(
+			$results,
+			"{n}.{$this->alias}.{$this->primaryKey}",
+			"{n}.{$this->alias}.{$this->displayField}"
+		);
 	}
 
 /**
@@ -485,17 +485,17 @@ class Package extends AppModel {
 				)
 			);
 			return $query;
-		} elseif ($state == 'after') {
-			if (empty($results[0])) {
-				throw new NotFoundException(__("Cannot rate a non-existent package"));
-			}
-
-			if (empty($results[0]['Rating']['id'])) {
-				$results[0]['Rating'] = false;
-			}
-
-			return $results[0];
 		}
+
+		if (empty($results[0])) {
+			throw new NotFoundException(__("Cannot rate a non-existent package"));
+		}
+
+		if (empty($results[0]['Rating']['id'])) {
+			$results[0]['Rating'] = false;
+		}
+
+		return $results[0];
 	}
 
 /**
@@ -523,12 +523,12 @@ class Package extends AppModel {
 			$query['limit'] = 1;
 			$query['order'] = array("{$this->alias}.{$this->primaryKey} ASC");
 			return $query;
-		} elseif ($state == 'after') {
-			if (empty($results[0])) {
-				throw new NotFoundException(__('Invalid package'));
-			}
-			return $results[0];
 		}
+
+		if (empty($results[0])) {
+			throw new NotFoundException(__('Invalid package'));
+		}
+		return $results[0];
 	}
 
 	public function _findUncategorized($state, $query, $results = array()) {
@@ -546,12 +546,12 @@ class Package extends AppModel {
 			$query['limit'] = 1;
 			$query['order'] = array("{$this->alias}.{$this->primaryKey} ASC");
 			return $query;
-		} elseif ($state == 'after') {
-			if (empty($results[0])) {
-				throw new NotFoundException(__('No more uncategorized packages'));
-			}
-			return $results[0];
 		}
+
+		if (empty($results[0])) {
+			throw new NotFoundException(__('No more uncategorized packages'));
+		}
+		return $results[0];
 	}
 
 	public function _findView($state, $query, $results = array()) {
@@ -637,32 +637,32 @@ class Package extends AppModel {
 				);
 			}
 			return $query;
-		} elseif ($state == 'after') {
-			if (empty($results[0])) {
-				throw new NotFoundException(__('Invalid package'));
-			}
-
-			if (empty($results[0]['Maintainer'])) {
-				throw new NotFoundException(__('Invalid maintainer'));
-			}
-
-			if ($results[0]['Maintainer']['username'] !== $query['maintainer']) {
-				throw new NotFoundException(__('Wrong Maintainer'));
-			}
-
-			if (empty($results[0]['Favorite']['id'])) {
-				$results[0]['Favorite'] = false;
-			}
-
-			if (empty($results[0]['Rating']['id'])) {
-				$results[0]['Rating'] = false;
-			}
-
-			DebugTimer::start('app.Package::rss', __d('app', 'Package::rss()'));
-			list($results[0]['Rss'], $results[0]['Cache']) = $this->rss($results[0]);
-			DebugTimer::stop('app.Package::rss');
-			return $results[0];
 		}
+
+		if (empty($results[0])) {
+			throw new NotFoundException(__('Invalid package'));
+		}
+
+		if (empty($results[0]['Maintainer'])) {
+			throw new NotFoundException(__('Invalid maintainer'));
+		}
+
+		if ($results[0]['Maintainer']['username'] !== $query['maintainer']) {
+			throw new NotFoundException(__('Wrong Maintainer'));
+		}
+
+		if (empty($results[0]['Favorite']['id'])) {
+			$results[0]['Favorite'] = false;
+		}
+
+		if (empty($results[0]['Rating']['id'])) {
+			$results[0]['Rating'] = false;
+		}
+
+		DebugTimer::start('app.Package::rss', __d('app', 'Package::rss()'));
+		list($results[0]['Rss'], $results[0]['Cache']) = $this->rss($results[0]);
+		DebugTimer::stop('app.Package::rss');
+		return $results[0];
 	}
 
 /**

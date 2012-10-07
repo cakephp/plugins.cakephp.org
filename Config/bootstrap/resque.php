@@ -6,16 +6,16 @@ if (php_sapi_name() == 'cli') {
 	Debugger::outputAs('log');
 }
 
-$cakeResque = Configure::read('CakeResque');
-$cakeResqueOverrides = Configure::read('CakeResqueOverrides');
+$cakeResque = Configure::read('Resque');
+$cakeResqueOverrides = Configure::read('ResqueOverrides');
 
-Configure::write('CakeResque', Hash::merge((array)$cakeResque, $cakeResqueOverrides));
+Configure::write('Resque', Hash::merge((array)$cakeResque, $cakeResqueOverrides));
 
 CakePlugin::load(array(
-	'CakeResque' => array('bootstrap' => true)
+	'Resque' => array('bootstrap' => true)
 ));
 
-Configure::write('CakeResque', Hash::merge((array)$cakeResque, $cakeResqueOverrides));
+Configure::write('Resque', Hash::merge((array)$cakeResque, $cakeResqueOverrides));
 
-require_once APP . 'Plugin' . DS . 'CakeResque' . DS . 'vendor' . DS . 'kamisama' . DS . 'php-resque-ex' . DS . 'lib' . DS . 'Resque.php';
-Resque::setBackend(Configure::read('CakeResque.Redis.host') . ':' . Configure::read('CakeResque.Redis.port'));
+require_once APP . 'Plugin' . DS . 'Resque' . DS . 'Vendor' . DS . 'php-resque' . DS . 'lib' . DS . 'Resque.php';
+Resque::setBackend(Configure::read('Resque.Redis.host') . ':' . Configure::read('Resque.Redis.port'));
