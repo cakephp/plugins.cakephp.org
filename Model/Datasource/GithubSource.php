@@ -161,12 +161,19 @@ class GithubSource extends DataSource {
 		Cache::set(array('duration' => $this->config['duration']));
 		if (($response = Cache::read($this->config['cacheKey'] . $hash)) === false) {
 			sleep(1);
-			$this->connection = new HttpSocket();
-			$response = json_decode($this->connection->get(sprintf("%s://%s%s",
+			$url = sprintf("%s://%s%s",
 				$this->sConfig['request']['uri']['scheme'],
 				$this->sConfig['request']['uri']['host'],
 				$request . $var
-			)), true);
+			);
+			$this->connection = new HttpSocket();
+			$response = $this->connection->get($url);
+			if ($response->code == 404) {
+				$this->error = $response->reasonPhrase;
+				return false;
+			}
+
+			$response = json_decode($response, true);
 
 			if (!$response) {
 				$this->error = 'response was html page';
@@ -209,12 +216,20 @@ class GithubSource extends DataSource {
 		if (Set::numeric(array_keys($response))) {
 			foreach ($response as $key => $record) {
 				foreach ($record as $modelName => $values) {
-					$data[$key][Inflector::singularize(ucfirst($modelName))] = $values;
+					$m = Inflector::singularize(ucfirst($modelName));
+					if ($m == 'Repo') {
+						$m = 'Repository';
+					}
+					$data[$key][$m] = $values;
 				}
 			}
 		} else {
 			foreach ($response as $modelName => $keys) {
-				$data[Inflector::singularize(ucfirst($modelName))] = $keys;
+				$m = Inflector::singularize(ucfirst($modelName));
+					if ($m == 'Repo') {
+						$m = 'Repository';
+					}
+				$data[$m] = $keys;
 			}
 		}
 

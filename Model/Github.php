@@ -31,10 +31,11 @@ class Github extends AppModel {
 		$this->findMethods['user'] = true;
 	}
 
-	public function _getNewRepositories($username = null) {
-		if (!$username) return false;
+	public function _getNewRepositories($user = null) {
+		if (!$user) return false;
 
-		$repositories = $this->find('reposShow', $username);
+		$_action = 'repos';
+		$repositories = $this->find('user', compact('user', '_action'));
 		if (empty($repositories)) {
 			return false;
 		}
@@ -59,11 +60,12 @@ class Github extends AppModel {
 
 		$Package = ClassRegistry::init('Package');
 		foreach ($maintainers as $i => $maintainer) {
-			$repos = $this->find('reposShow', $maintainer['Maintainer']['username']);
+			$user = $maintainer['Maintainer']['username'];
+			$_action = 'repos';
+			$repos = $this->find('user', compact('user', '_action'));
 			$maintainers[$i]['Repository'] = array();
 			if (!empty($repos)) {
 				$packages = $Package->find('listformaintainer', $maintainer['Maintainer']['id']);
-
 				foreach ($repos as $j => $repo) {
 					if (!in_array($repo['Repository']['name'], $packages) && $repo['Repository']['fork'] != true) {
 						$maintainers[$i]['Repository'][] = $repo['Repository'];
@@ -75,8 +77,9 @@ class Github extends AppModel {
 		return $maintainers;
 	}
 
-	public function _getUnlisted($username = 'josegonzalez') {
-		$following = $this->find('usersShowFollowing', 'josegonzalez');
+	public function _getUnlisted($user = 'josegonzalez') {
+		$_action = 'following';
+		$following = $this->find('users', compact('user', '_action'));
 		ClassRegistry::init('Maintainer');
 		$maintainer = &new Maintainer;
 		$maintainers = $maintainer->find('list', array('fields' => array('username')));
