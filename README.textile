@@ -13,7 +13,7 @@ This is apparently now an official project. However, because there are other off
 h2. Requirements
 
 * PHP 5.3+ .
-* CakePHP 2.x
+* CakePHP 2.2+
 * GIT for version control
 * "God":https://github.com/mojombo/god for running DJJob in the background on a server
 
