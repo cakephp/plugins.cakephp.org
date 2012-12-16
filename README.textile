@@ -21,13 +21,13 @@ h2. Installation
 
 _[Manual]_
 
-# Download this: http://github.com/josegonzalez/cakepackages/zipball/master
+# Download this: http://github.com/cakephp/cakepackages/zipball/master
 # Unzip that download.
 # Copy the resulting folder to a new directory containing the cake core
 
 _[GIT Clone]_
 
-<pre><code>git clone git://github.com/josegonzalez/cakepackages.git cakepackages</code></pre>
+<pre><code>git clone git://github.com/cakephp/cakepackages.git cakepackages</code></pre>
 
 If using git clone to download be sure to update the submodules after you clone with the command:
 
