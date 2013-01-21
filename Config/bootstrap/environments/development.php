@@ -22,9 +22,6 @@ Environment::configure('development',
 		'Security.salt'           => 'AYcG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9ab',
 		'Security.cipherSeed'     => '76859364557429242496749683650',
 
-		'Recaptcha.publicKey'     => '6LeyksQSAAAAAJdkmQB7vBtsP9kYY75rE1ebY7B5',
-		'Recaptcha.privateKey'    => '6LeyksQSAAAAAEOJpZmWFHoBzgpSBtVlbDCDy6Uv',
-
 		'Favorites.types'         => array('bookmark' => 'Package'),
 		'Favorites.defaultTexts'  => array('bookmark' => __('Bookmark')),
 		'Favorites.modelCategories'=>array('Package'),

@@ -11,7 +11,6 @@ class User extends AppModel {
  */
 	public $actsAs = array(
 		'Ratings.Ratable',
-		'Search.Searchable',
 		'Utils.Sluggable' => array(
 			'label' => 'username',
 			'method' => 'multibyteSlug'
@@ -109,27 +108,11 @@ class User extends AppModel {
  * @param string $ds Datasource
  */
 	public function __construct($id = false, $table = null, $ds = null) {
-		$this->_setupBehaviors();
 		$this->_setupValidation();
 		parent::__construct($id, $table, $ds);
 		$this->findMethods['name'] = array(
 			'order' => array('User.username' => 'asc')
 		);
-	}
-
-/**
- * Setup available plugins
- *
- * This checks for the existence of certain plugins, and if available, uses them.
- *
- * @return void
- * @link https://github.com/CakeDC/search
- * @link https://github.com/CakeDC/utils
- */
-	protected function _setupBehaviors() {
-		if (App::import('Behavior', 'Search.Searchable')) {
-			$this->actsAs[] = 'Search.Searchable';
-		}
 	}
 
 /**

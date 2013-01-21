@@ -7,21 +7,12 @@
 [submodule "Plugin/Migrations"]
 	path = Plugin/Migrations
 	url = git://github.com/josegonzalez/migrations.git
-[submodule "Plugin/PageRoute"]
-	path = Plugin/PageRoute
-	url = git://github.com/josegonzalez/page_route.git
 [submodule "Plugin/Ratings"]
 	path = Plugin/Ratings
 	url = git://github.com/CakeDC/ratings.git
-[submodule "Plugin/Recaptcha"]
-	path = Plugin/Recaptcha
-	url = git://github.com/CakeDC/recaptcha.git
 [submodule "Plugin/Sanction"]
 	path = Plugin/Sanction
 	url = git://github.com/josegonzalez/sanction.git
-[submodule "Plugin/Search"]
-	path = Plugin/Search
-	url = git://github.com/CakeDC/search.git
 [submodule "Plugin/Utils"]
 	path = Plugin/Utils
 	url = git://github.com/josegonzalez/utils.git

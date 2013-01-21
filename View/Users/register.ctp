@@ -45,12 +45,9 @@
 			echo $this->Form->input('tos', array(
 				'div' => array('class' => 'input checkbox clearfix'),
 				'error' => __('You must verify you have read the Terms of Service'),
-				'label' => __('I have read and agreed to ') . $this->Html->link(__('Terms of Service'), array('controller' => 'pages', 'action' => 'tos')), 
+				'label' => __('I have read and agreed to ') . $this->Html->link(__('Terms of Service'), array('controller' => 'pages', 'action' => 'tos')),
 				'type' => 'checkbox',
 			));
-			if (!empty($this->Recaptcha)) {
-				echo $this->Recaptcha->display();
-			}
 
 			echo $this->Form->button(__('Register'), array(
 				'class' => 'button solid-green',

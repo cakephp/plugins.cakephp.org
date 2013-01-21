@@ -34,18 +34,6 @@ class UsersController extends AppController {
 	);
 
 /**
- * Components
- *
- * @var array
- */
-	public $components = array(
-		'Recaptcha.Recaptcha' => array(
-			'actions' => array('register'),
-		),
-	);
-
-
-/**
  * Constructor
  *
  * @param CakeRequest $request Request object for this controller. Can be null for testing,
@@ -53,28 +41,15 @@ class UsersController extends AppController {
  * @param CakeResponse $response Response object for this controller.
  */
 	public function __construct($request, $response) {
-		$this->_setupComponents();
 		$this->_setupHelpers();
 		parent::__construct($request, $response);
-	}
-
-/**
- * Setup components based on plugin availability
- *
- * @return void
- * @link https://github.com/CakeDC/search
- */	
-	protected function _setupComponents() {
-		if (App::import('Component', 'Search.Prg')) {
-			$this->components[] = 'Search.Prg';
-		}
 	}
 
 /**
  * Setup helpers based on plugin availability
  *
  * @return void
- */	
+ */
 	protected function _setupHelpers() {
 		if (App::import('Helper', 'Goodies.Gravatar')) {
 			$this->helpers[] = 'Goodies.Gravatar';

@@ -31,7 +31,7 @@
 	Router::connect('/1/:action/*', array('controller' => 'api', 'one' => true));
 
 	Router::connect('/', array('controller' => 'packages', 'action' => 'home'));
-	
+
 	Router::connect('/:id-:slug',
 		array('controller' => 'packages', 'action' => 'show'),
 		array('id' => '[0-9]+', 'slug' => '[\w_-]+')
@@ -46,10 +46,5 @@
 	Router::connect('/dashboard', array('controller' => 'users', 'action' => 'dashboard'));
 	Router::connect('/package/*', array('controller' => 'packages', 'action' => 'view'));
 	Router::connect('/maintainer/*', array('controller' => 'maintainers', 'action' => 'view'));
-
-	App::uses('PageRoute', 'PageRoute.Routing/Route');
-	Router::connect('/:page', array('controller' => 'pages', 'action' => 'display'),
-		array('routeClass' => 'PageRoute')
-	);
 
 	require CAKE . 'Config' . DS . 'routes.php';
