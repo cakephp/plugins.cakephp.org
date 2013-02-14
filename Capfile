@@ -102,7 +102,7 @@ task :staging do
   set :link_cron,     $config['servers']['staging']['link_cron']
   set :releases_path, $config['servers']['staging']['releases_path']
   set :shared_path,   $config['servers']['staging']['shared_path']
-  set :branch,        ENV['branch'] if ENV.has_key?('branch') && ENV['branch'] =~ /[\w_-]+/i
+  set :branch,        ENV['branch'] if ENV.has_key?('branch') && ENV['branch'] =~ /[\w-]+/i
   set :deploy_env,    :staging
 end
 
