@@ -15,7 +15,7 @@
 	url = git://github.com/josegonzalez/sanction.git
 [submodule "Plugin/Utils"]
 	path = Plugin/Utils
-	url = git://github.com/josegonzalez/utils.git
+	url = git://github.com/CakeDC/utils.git
 [submodule "Plugin/Sham"]
 	path = Plugin/Sham
 	url = git://github.com/josegonzalez/sham.git
