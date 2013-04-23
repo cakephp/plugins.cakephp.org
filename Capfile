@@ -214,8 +214,8 @@ namespace :link do
           "mkdir -p #{shared_path}/Config && chmod -R 755 #{shared_path}/Config;" +
       'fi',
 
-      "rm -rf #{current_release}/Config/environments.php",
-      "ln -s #{shared_path}/Config/environments.php #{current_release}/Config/environments.php",
+      "rm -rf #{current_release}/Config/bootstrap/environments/production.php",
+      "ln -s #{shared_path}/Config/bootstrap/environments/production.php #{current_release}/Config/bootstrap/environments/production.php",
 
       "rm -rf #{current_release}/Config/database.php",
       "ln -s #{shared_path}/Config/database.php #{current_release}/Config/database.php",
