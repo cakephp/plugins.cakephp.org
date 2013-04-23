@@ -63,7 +63,7 @@ class PackagesController extends AppController {
 				'allowed' => Package::$_allowedFilters,
 				'rinse' => false,
 			));
-			$this->redirect(array('?' => $data, 'escape' => false));
+			return $this->redirect(array('?' => $data, 'escape' => false));
 		}
 
 		list($this->request->data, $query) = $this->Package->cleanParams(
@@ -129,7 +129,7 @@ class PackagesController extends AppController {
 	public function download($id = null) {
 		if (!$id) {
 			$this->Session->setFlash('Invalid Package download', 'flash/error');
-			$this->redirect($this->referer('/', true));
+			return $this->redirect($this->referer('/', true));
 		}
 
 		$branch = 'master';
@@ -140,10 +140,10 @@ class PackagesController extends AppController {
 		$download_url = $this->Package->find('download', compact('id', 'branch'));
 		if (!$download_url) {
 			$this->Session->setFlash('Invalid Package download', 'flash/error');
-			$this->redirect($this->referer('/', true));
+			return $this->redirect($this->referer('/', true));
 		}
 
-		$this->redirect($download_url);
+		return $this->redirect($download_url);
 	}
 
 /**
@@ -167,7 +167,7 @@ class PackagesController extends AppController {
 		}
 
 		$this->Session->setFlash($message, 'flash/' . ($status == 200 ? 'success' : ($status >= 600 ? 'info' : 'error')));
-		$this->redirect($this->referer('/', true));
+		return $this->redirect($this->referer('/', true));
 	}
 
 /**
@@ -191,7 +191,7 @@ class PackagesController extends AppController {
 		}
 
 		$this->Session->setFlash($message, 'flash/' . ($status == 200 ? 'success' : ($status >= 600 ? 'info' : 'error')));
-		$this->redirect($this->referer('/', true));
+		return $this->redirect($this->referer('/', true));
 	}
 
 	public function suggest() {
@@ -204,7 +204,7 @@ class PackagesController extends AppController {
 			$this->Session->setFlash(
 				__('Thanks, your submission of <i>%s/%s</i> will be reviewed shortly!', $result[0], $result[1]
 			), 'flash/success');
-			$this->redirect($this->referer(array('controller' => 'packages', 'action' => 'suggest'), true));
+			return $this->redirect($this->referer(array('controller' => 'packages', 'action' => 'suggest'), true));
 		}
 	}
 
@@ -230,7 +230,7 @@ class PackagesController extends AppController {
 		if ($this->_isFromForm('Package')) {
 			if ($this->Package->save($this->request->data)) {
 				$this->Session->setFlash(__('Saved package #%d', $this->Package->id), 'flash/success');
-				$this->redirect(array('action' => 'index'));
+				return $this->redirect(array('action' => 'index'));
 			}
 		} else {
 			$this->Package->contain(array('Maintainer', 'Tag'));
@@ -252,7 +252,7 @@ class PackagesController extends AppController {
 		} else {
 			$this->Session->setFlash(__('Package #%d is now disabled.', $id), 'flash/success');
 		}
-		$this->redirect($this->referer());
+		return $this->redirect($this->referer());
 	}
 
 /**
@@ -292,7 +292,7 @@ class PackagesController extends AppController {
 			} catch (Exception $e) {
 				$this->Session->setFlash($e->getMessage(), 'flash/error');
 			}
-			$this->redirect($this->referer());
+			return $this->redirect($this->referer());
 		}
 		$this->set('jobs', $this->Package->getJobs());
 	}
