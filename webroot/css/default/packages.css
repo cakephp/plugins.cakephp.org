@@ -73,6 +73,9 @@
 .content .packages .info .author:hover {
 	color: #666666;
 }
+.content .packages .info .date {
+	float: right;
+}
 
 /* Package Index */
 .packages-index .search {
