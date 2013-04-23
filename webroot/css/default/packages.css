@@ -22,19 +22,19 @@
           progid:DXImageTransform.Microsoft.Shadow(color=#dddddd,direction=260,strength=2); /* IE7 and lower */
 }
 .content .packages .article:hover {
-	-webkit-box-shadow: 0 2px 5px rgba(0,0,0,.35);
-	-khtml-box-shadow: 0 2px 5px rgba(0,0,0,.35);
-	-moz-box-shadow: 0 2px 5px rgba(0,0,0,.35);
-	-o-box-shadow: 0 2px 5px rgba(0,0,0,.35);
-	box-shadow: 0 2px 5px rgba(0,0,0,.35);
-	-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=0,strength=1),
-          progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=100,strength=2),
-          progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=180,strength=3),
-          progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=260,strength=2)"; /* IE8+ */
-	filter: progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=0,strength=1),
-          progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=100,strength=2),
-          progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=180,strength=3),
-          progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=260,strength=2); /* IE7 and lower */
+	-webkit-box-shadow: 0 2px 5px rgba(0,0,0,.70);
+	-khtml-box-shadow: 0 2px 5px rgba(0,0,0,.70);
+	-moz-box-shadow: 0 2px 5px rgba(0,0,0,.70);
+	-o-box-shadow: 0 2px 5px rgba(0,0,0,.70);
+	box-shadow: 0 2px 5px rgba(0,0,0,.70);
+	-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=0,strength=2),
+          progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=100,strength=4),
+          progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=180,strength=6),
+          progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=260,strength=4)"; /* IE8+ */
+	filter: progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=0,strength=2),
+          progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=100,strength=4),
+          progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=180,strength=6),
+          progid:DXImageTransform.Microsoft.Shadow(color=#cccccc,direction=260,strength=4); /* IE7 and lower */
 }
 .content .packages h3 {
 	padding-bottom: 0;
