@@ -17,7 +17,7 @@ $hasDetails =  $showMaintainer || $showDate || $showLastPushedAt;
 
 $title = $this->Html->link($this->Text->truncate($package['name'], 35), array(
 	'plugin' => null,
-	'controller' => 'packages', 
+	'controller' => 'packages',
 	'action' => 'view',
 	$maintainer['username'], $package['name']
 ), array('title' => $package['name']));

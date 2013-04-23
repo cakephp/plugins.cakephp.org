@@ -68,7 +68,7 @@
 					<?php echo $this->element('preview', array(
 						'package' => $package['Package'],
 						'maintainer' => $package['Maintainer'],
-						'showLastPushedAt' => false,
+						'showDate' => false,
 					)); ?>
 				</article>
 			<?php endforeach; ?>
