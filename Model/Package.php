@@ -1338,10 +1338,14 @@ class Package extends AppModel {
 			return array($items, $options['cache']);
 		}
 
-		$result = $this->_HttpSocket->request(array('uri' => $options['uri']));
+		try {
+			$result = $this->_HttpSocket->request(array('uri' => $options['uri']));
+		} catch (SocketException $e) {
+			return array($items, $options['cache']);
+		}
+
 		$code = $this->_HttpSocket->response['status']['code'];
 		$isError = is_array($result) && isset($result['Html']);
-
 		if ($code != 404  && $result && !$isError) {
 			$xmlError = libxml_use_internal_errors(true);
 			$result = simplexml_load_string($result['body']);
