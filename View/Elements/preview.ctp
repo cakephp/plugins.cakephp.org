@@ -19,7 +19,7 @@ $title = $this->Html->link($this->Text->truncate($package['name'], 35), array(
 	'plugin' => null,
 	'controller' => 'packages',
 	'action' => 'view',
-	$maintainer['username'], $package['name']
+	'id' => $package['id'], 'slug' => $package['name']
 ), array('title' => $package['name']));
 
 ?>

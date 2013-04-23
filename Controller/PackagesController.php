@@ -94,18 +94,54 @@ class PackagesController extends AppController {
 	}
 
 /**
- * Allows viewing of a particular package
+ * Redirects to the :id-:slug url
  *
  * @param string $maintainer Maintainer name
  * @param string $package Package name
  */
-	public function view($maintainer = null, $package = null) {
+	public function utility_redirect($maintainer = null, $package = null) {
 		try {
-			$user_id = AuthComponent::user('id');
-			$package = $this->Package->find('view', compact('maintainer', 'package', 'user_id'));
+			$package = $this->Package->find('redirect', compact('maintainer', 'package'));
 		} catch (Exception $e) {
 			$this->Session->setFlash($e->getMessage(), 'flash/error');
-			$this->redirect($this->redirectTo);
+			return $this->redirect($this->redirectTo);
+		}
+
+		return $this->redirect(array(
+			'controller' => 'packages', 'action' => 'show',
+			'id' => $package['Package']['id'], 'slug' => $package['Package']['name']
+		));
+	}
+
+/**
+ * Allows viewing of a particular package
+ *
+ * @param string $package_id Package id
+ * @param string $slug Package slug
+ */
+	public function view() {
+		if (isset($this->request->params['id'])) {
+			$package_id = $this->request->params['id'];
+		}
+
+		if (isset($this->request->params['slug'])) {
+			$slug = $this->request->params['slug'];
+		}
+
+		$user_id = AuthComponent::user('id');
+
+		try {
+			$package = $this->Package->find('show', compact('package_id', 'user_id'));
+		} catch (Exception $e) {
+			$this->Session->setFlash($e->getMessage(), 'flash/error');
+			return $this->redirect($this->redirectTo);
+		}
+
+		if ($slug != $package['Package']['name']) {
+			return $this->redirect(array(
+				'controller' => 'packages', 'action' => 'show',
+				'id' => $package['Package']['id'], 'slug' => $package['Package']['name']
+			));
 		}
 
 		$disqus = $this->Package->disqus($package);

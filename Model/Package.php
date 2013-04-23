@@ -40,6 +40,7 @@ class Package extends AppModel {
 		'listformaintainer' => true,
 		'rate'              => true,
 		'repoclone'         => true,
+		'redirect'          => true,
 		'uncategorized'     => true,
 		'view'              => true,
 	);
@@ -498,6 +499,26 @@ class Package extends AppModel {
 		return $results[0];
 	}
 
+	public function _findRedirect($state, $query, $results = array()) {
+		if ($state == 'before') {
+			if (empty($query['maintainer']) || empty($query['package'])) {
+				throw new InvalidArgumentException(__('Invalid find params'));
+			}
+
+			$query['conditions'] = array(
+				"{$this->alias}.{$this->displayField}" => $query['package'],
+				"Maintainer.username" => $query['maintainer'],
+			);
+			$query['contain'] = array('Maintainer' => array('username'));
+			return $query;
+		}
+
+		if (empty($results[0])) {
+			throw new NotFoundException(__('Invalid package'));
+		}
+		return $results[0];
+	}
+
 /**
  * Find repoclone type
  *
@@ -556,13 +577,12 @@ class Package extends AppModel {
 
 	public function _findView($state, $query, $results = array()) {
 		if ($state == 'before') {
-			if (empty($query['maintainer']) || empty($query['package'])) {
+			if (empty($query['package_id'])) {
 				throw new InvalidArgumentException(__('Invalid package'));
 			}
 
 			$query['conditions'] = array(
-				"{$this->alias}.{$this->displayField}" => $query['package'],
-				"Maintainer.username" => $query['maintainer'],
+				"{$this->alias}.{$this->primaryKey}" => $query['package_id'],
 			);
 			$query['contain'] = array('Maintainer' => array('name', 'username'));
 			$query['limit'] = 1;
@@ -645,10 +665,6 @@ class Package extends AppModel {
 
 		if (empty($results[0]['Maintainer'])) {
 			throw new NotFoundException(__('Invalid maintainer'));
-		}
-
-		if ($results[0]['Maintainer']['username'] !== $query['maintainer']) {
-			throw new NotFoundException(__('Wrong Maintainer'));
 		}
 
 		if (empty($results[0]['Favorite']['id'])) {

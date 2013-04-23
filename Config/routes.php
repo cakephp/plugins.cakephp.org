@@ -46,7 +46,7 @@
 	Router::connect('/suggest', array('controller' => 'packages', 'action' => 'suggest'));
 
 	Router::connect('/dashboard', array('controller' => 'users', 'action' => 'dashboard'));
-	Router::connect('/package/*', array('controller' => 'packages', 'action' => 'view'));
+	Router::connect('/package/*', array('controller' => 'packages', 'action' => 'utility_redirect'));
 	Router::connect('/maintainer/*', array('controller' => 'maintainers', 'action' => 'view'));
 
 	require CAKE . 'Config' . DS . 'routes.php';
