@@ -37,6 +37,7 @@
 			.clearfix { zoom: 1; }
 		</style>
 	<![endif]-->
+	<?php if (Configure::read('Environment.name') == 'production') : ?>
 	<script type="text/javascript">
 		var _gaq = _gaq || [];
 		_gaq.push(['_setAccount', 'UA-743287-12']);
@@ -48,6 +49,7 @@
 			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 		})();
 	</script>
+	<?php endif; ?>
 </head>
 
 <body class="<?php echo $_bodyClass; ?>" id="<?php echo $_bodyId; ?>">
