@@ -131,7 +131,7 @@ class PackagesController extends AppController {
 		$user_id = AuthComponent::user('id');
 
 		try {
-			$package = $this->Package->find('show', compact('package_id', 'user_id'));
+			$package = $this->Package->find('view', compact('package_id', 'user_id'));
 		} catch (Exception $e) {
 			$this->Session->setFlash($e->getMessage(), 'flash/error');
 			return $this->redirect($this->redirectTo);
