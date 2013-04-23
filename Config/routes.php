@@ -32,8 +32,8 @@
 
 	Router::connect('/', array('controller' => 'packages', 'action' => 'home'));
 
-	Router::connect('/:id-:slug',
-		array('controller' => 'packages', 'action' => 'show'),
+	Router::connect('/p/:id-:slug',
+		array('controller' => 'packages', 'action' => 'view'),
 		array('id' => '[0-9]+', 'slug' => '[\w_-]+')
 	);
 
