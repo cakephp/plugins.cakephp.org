@@ -6,6 +6,7 @@ Environment::configure('development',
 		'Settings.SiteTitle'      => 'Package Indexer',
 		'Settings.FULL_BASE_URL'  => 'http://cakepackages.dev',
 
+
 		'Disqus.disqus_shortname' => 'cakepackages',
 		'Disqus.disqus_developer' => 1,
 
@@ -13,7 +14,6 @@ Environment::configure('development',
 		'Email.password'          => 'password',
 		'Email.test'              => 'email@example.com',
 		'Email.from'              => 'email@example.com',
-
 		'logQueries'              => true,
 
 		'debug'                   => 2,
