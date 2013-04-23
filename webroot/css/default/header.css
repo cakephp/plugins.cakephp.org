@@ -32,7 +32,8 @@ header nav {
 }
 header nav.left-nav {
 	left: 0;
-	height: 80px;
+	height: 40px;
+	top: 25px;
 }
 header nav.right-nav {
 	font-size: 16px;
