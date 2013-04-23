@@ -37,6 +37,8 @@
 		array('id' => '[0-9]+', 'slug' => '[\w_-]+')
 	);
 
+	Router::connect('/login', array('controller' => 'users', 'action' => 'login'));
+
 	// Route cached files
 	Router::connect('/cache_css/*', array('plugin' => 'asset_compress', 'controller' => 'css_files', 'action' => 'get'));
 	Router::connect('/cache_js/*', array('plugin' => 'asset_compress', 'controller' => 'js_files', 'action' => 'get'));
