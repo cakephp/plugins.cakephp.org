@@ -99,8 +99,6 @@
 			</div>
 		</header>
 
-		<div class="header-bottom"></div>
-
 		<div class="content container">
 			<?php echo $this->Session->flash(); ?>
 			<?php echo $content_for_layout; ?>
