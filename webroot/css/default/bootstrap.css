@@ -72,7 +72,8 @@ a {
 a:hover {
 	text-decoration: underline;
 }
-a.outbound {
+a.external {
+	color: #4183C5;
 }
 strong {
 	font-weight: bold;

@@ -48,7 +48,6 @@ class PackagesController extends AppController {
  * Default page for entire application
  */
 	public function home() {
-		return $this->setAction('index');
 	}
 
 /**

@@ -78,12 +78,15 @@
 }
 
 /* Package Index */
+.packages-home .search,
 .packages-index .search {
 	margin-bottom: 10px;
 }
+.packages-home .search form,
 .packages-index .search form {
 	text-align: center;
 }
+.packages-home .search form .query,
 .packages-index .search form .query {
 	background: white url('/img/icons/search-icon.png') 5px 3px no-repeat;
 	font-size: 12px;
@@ -92,6 +95,8 @@
 	padding: 7px 6px 7px 25px;
 	width: 828px;
 }
+.packages-home .search .query:hover,
+.packages-home .search .query:focus,
 .packages-index .search .query:hover,
 .packages-index .search .query:focus {
 	border-color: #aaa;
@@ -173,19 +178,23 @@
 .packages-index .no-results h3 span {
 	color: #C83400;
 }
+.packages-home .highlight,
 .packages-index .highlight {
 	position: relative;
 }
+.packages-home .highlight p,
 .packages-index .highlight p {
 	float: left;
 	margin-bottom: 0;
 	margin-right: 240px;
 }
+.packages-home .highlight .description,
 .packages-index .highlight .description {
 	font-size: 16px;
 	line-height: 24px;
 	padding: 8px;
 }
+.packages-home .highlight .title,
 .packages-index .highlight .title {
 	font-size: 22px;
 }
@@ -232,7 +241,7 @@
 .packages-view .page-title .activity {
 	float: right;
 }
-.packages-index .highlight,
+.packages-home .highlight,
 .packages-view .summary {
 	background: #EEE;
 	border-top: 1px solid #FCFCFC;
@@ -249,19 +258,19 @@
 	-o-box-shadow: inset 0 0px 42px 0px rgba( 100, 100, 100, 0.1 );
 	box-shadow: inset 0 0px 42px 0px rgba( 100, 100, 100, 0.1 );
 }
-.packages-index .highlight p,
+.packages-home .highlight p,
 .packages-view .summary p {
 	float: left;
 	margin-bottom: 0;
 	margin-right: 240px;
 }
-.packages-index .highlight p.button {
-	background: #5B8DB6;
+.packages-home .highlight p.button {
+	background: #D83137;
 }
 .packages-view .summary p.button {
 	background: #D54E21;
 }
-.packages-index .highlight p.button,
+.packages-home .highlight p.button,
 .packages-view .summary p.button {
 	border: none;
 	cursor: pointer;
@@ -285,7 +294,7 @@
 	-webkit-box-sizing: content-box;
 	box-sizing: content-box;
 }
-.packages-index .highlight p.button a,
+.packages-home .highlight p.button a,
 .packages-view .summary p.button a {
 	color: white;
 	display: block;
