@@ -6,7 +6,7 @@
 	<span>
 		<?php
 			if (strlen($maintainer['Maintainer']['name'])) {
-				echo $maintainer['Maintainer']['username'] . '(' . $maintainer['Maintainer']['name'] . ')';
+				echo $maintainer['Maintainer']['username'] . '&nbsp;(' . $maintainer['Maintainer']['name'] . ')';
 			} else {
 				echo $maintainer['Maintainer']['username'];
 			}
