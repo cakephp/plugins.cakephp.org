@@ -161,6 +161,30 @@
 				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
 			})();
 		<?php endif; ?>
+
+		<?php if (Configure::read('Environment.name') == 'production') : ?>
+			$('.github-external').click(function(e) {
+				e = e || window.event;
+				target = e.target || e.srcElement;
+				_gaq.push(['_trackEvent', 'click', 'github-external', $(target).attr('package-name')]);
+			});
+			$('.blog-external').click(function(e) {
+				e = e || window.event;
+				target = e.target || e.srcElement;
+				_gaq.push(['_trackEvent', 'click', 'blog-external', $(target).text()]);
+			});
+			$('.video-external').click(function(e) {
+				e = e || window.event;
+				target = e.target || e.srcElement;
+				_gaq.push(['_trackEvent', 'click', 'video-external', $(target).text()]);
+			});
+			$('.download-link').click(function(e) {
+				e = e || window.event;
+				target = e.target || e.srcElement;
+				_gaq.push(['_trackEvent', 'click', 'download-link', $(target).attr('package-id')]);
+			});
+		<?php endif; ?>
+
 	</script>
 	<?php echo $scripts_for_layout; ?>
 	<?php echo $this->AssetCompress->script('default'); ?>

@@ -19,6 +19,7 @@ class ResourceHelper extends AppHelper {
 		return $this->Html->link($name, $link, array(
 			'target' => '_blank',
 			'class' => 'external github-external',
+			'package-name' => "{$maintainer}-{$package}",
 		));
 	}
 

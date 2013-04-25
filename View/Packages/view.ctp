@@ -29,7 +29,7 @@ if ($package['Rating'] && $package['Rating']['value'] == 1) {
 	<p class="button">
 		<?php echo $this->Html->link('Download Zip', array(
 			'controller' => 'packages', 'action' => 'download', 'branch' => 'master', $package['Package']['id']
-		), array('rel' => 'nofollow')); ?>
+		), array('rel' => 'nofollow', 'class' => 'download-link', 'package-id' => $package['Package']['id'])); ?>
 	</p>
 </section>
 
@@ -63,15 +63,15 @@ if ($package['Rating'] && $package['Rating']['value'] == 1) {
 					<tr>
 						<td class="name">Blog Posts:</td>
 						<td class="mobile-block">
-							<a href="http://mark-story.com/posts/view/extending-debugkit-the-new-javascript-features" class="external">Extending DebugKit - The new Javascript features</a>
+							<a href="http://mark-story.com/posts/view/extending-debugkit-the-new-javascript-features" class="external blog-external">Extending DebugKit - The new Javascript features</a>
 							<br />
-							<a href="http://grahamweldon.com/posts/view/element-debugging-with-cakephps-debugkit" class="external">Element Debugging with CakePHP's DebugKit</a>
+							<a href="http://grahamweldon.com/posts/view/element-debugging-with-cakephps-debugkit" class="external blog-external">Element Debugging with CakePHP's DebugKit</a>
 							<br />
-							<a href="http://mark-story.com/posts/view/debugkit-updates" class="external">DebugKit Updates</a>
+							<a href="http://mark-story.com/posts/view/debugkit-updates" class="external blog-external">DebugKit Updates</a>
 							<br />
-							<a href="http://mark-story.com/posts/view/making-elements-drag-resizable-with-javascript" class="external">Making elements drag resizable with Javascript</a>
+							<a href="http://mark-story.com/posts/view/making-elements-drag-resizable-with-javascript" class="external blog-external">Making elements drag resizable with Javascript</a>
 							<br />
-							<a href="http://cakebaker.42dh.com/2008/10/30/debugkit-for-cakephp/" class="external">DebugKit for CakePHP</a>
+							<a href="http://cakebaker.42dh.com/2008/10/30/debugkit-for-cakephp/" class="external blog-external">DebugKit for CakePHP</a>
 						</td>
 					</tr>
 					<tr>
@@ -99,9 +99,9 @@ if ($package['Rating'] && $package['Rating']['value'] == 1) {
 					<tr>
 						<td class="name">Videos:</td>
 						<td class="mobile-block">
-							<a href="http://www.dailymotion.com/video/xxhv95_tuto-installer-le-plugin-debugkit-toolbar-cakephp-2-3-0_tech" class="external">Installation Video (in French)
+							<a href="http://www.dailymotion.com/video/xxhv95_tuto-installer-le-plugin-debugkit-toolbar-cakephp-2-3-0_tech" class="external video-external">DebugKit Installation Video (in French)
 							<br />
-							<a href="http://www.youtube.com/watch?v=2jF_fSULzIY" class="external">Installation Video (in Arabic)</a>
+							<a href="http://www.youtube.com/watch?v=2jF_fSULzIY" class="external video-external">DebugKit Installation Video (in Arabic)</a>
 						</td>
 					</tr>
 					<?php endif; ?>
