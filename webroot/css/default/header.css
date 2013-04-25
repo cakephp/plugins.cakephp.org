@@ -33,7 +33,7 @@ header nav {
 header nav.left-nav {
 	left: 0;
 	height: 40px;
-	top: 25px;
+	top: 0;
 }
 header nav.right-nav {
 	font-size: 16px;
