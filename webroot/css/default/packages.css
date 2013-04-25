@@ -219,6 +219,15 @@
 	left: 20px;
 }
 
+/* Package Home */
+.packages-home .popular-list {
+	list-style: disc outside;
+	margin: 18px 0 18px 30px;
+}
+.packages-home .popular-list li {
+	margin-bottom: 12px;
+}
+
 /* Package Categories */
 .packages-categories .content ul {
 	line-height: 24px;
