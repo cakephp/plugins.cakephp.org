@@ -1,34 +1,3 @@
-<section class="highlight clearfix">
-	<span class="tag">featured</span>
-	<p class="description">
-		<span class="title">debug_kit:</span>&nbsp;
-		The official method of debugging your applications
-	</p>
-	<p class="button">
-		<a href="/p/52-debug_kit" rel="nofollow">Get the Package!</a>
-	</p>
-</section>
-
-<section class="contribute">
-	<div class="bubble-top bubble-border">
-		<h2 class="header">Use and Share Open Source CakePHP Code</h2>
-	</div>
-	<div class="bubble-bottom clearfix">
-		<article>
-			Signup
-		</article>
-		<article>
-			Create a Package
-		</article>
-		<article>
-			Install Plugins
-		</article>
-		<article>
-			Follow Repositories
-		</article>
-	</div>
-</section>
-
 <section class="search">
 	<?php if (!empty($packages)) : ?>
 		<h2><?php echo $title; ?></h2>
