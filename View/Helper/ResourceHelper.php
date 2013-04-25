@@ -3,9 +3,9 @@ class ResourceHelper extends AppHelper {
 
 	public $helpers = array('Form', 'Html', 'Paginator', 'Text', 'Time');
 
-	public function package($name, $maintainer) {
-		return $this->Html->link($name,
-			array('plugin' => null, 'controller' => 'packages', 'action' => 'view', $maintainer, $name),
+	public function package($maintainer, $package) {
+		return $this->Html->link("{$package} from {$maintainer}",
+			array('plugin' => null, 'controller' => 'packages', 'action' => 'utility_redirect', $maintainer, $package),
 			array('class' => 'package_name')
 		);
 	}
