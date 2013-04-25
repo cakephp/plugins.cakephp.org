@@ -35,6 +35,9 @@ header nav.left-nav {
 	height: 40px;
 	top: 0;
 }
+.theme-default header nav.left-nav {
+	top: 25px;
+}
 header nav.right-nav {
 	font-size: 16px;
 	height: 20px;

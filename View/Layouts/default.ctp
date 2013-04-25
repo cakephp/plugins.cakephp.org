@@ -14,7 +14,9 @@
 	<link rel="apple-touch-icon-precomposed" href="<?php echo $baseUrl; ?>apple-touch-icon-precomposed.png">
 
 	<?php
+		$_theme = 'default';
 		if ($this->theme == 'Csf') {
+			$_theme = 'csf';
 			if (CakePlugin::loaded('Csfnavbar')) {
 				echo $this->AssetCompress->css('csftheme');
 			} else {
@@ -52,7 +54,7 @@
 	<?php endif; ?>
 </head>
 
-<body class="<?php echo $_bodyClass; ?>" id="<?php echo $_bodyId; ?>">
+<body class="<?php echo $_bodyClass; ?> theme-<?php echo $_theme ?>" id="<?php echo $_bodyId; ?>">
 
 	<?php if ($this->theme == 'Csf' && CakePlugin::loaded('Csfnavbar')) : ?>
 		<?php echo $this->element('Csfnavbar.navbar'); ?>
