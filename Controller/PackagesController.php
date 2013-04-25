@@ -107,7 +107,7 @@ class PackagesController extends AppController {
 		}
 
 		return $this->redirect(array(
-			'controller' => 'packages', 'action' => 'show',
+			'controller' => 'packages', 'action' => 'view',
 			'id' => $package['Package']['id'], 'slug' => $package['Package']['name']
 		));
 	}
