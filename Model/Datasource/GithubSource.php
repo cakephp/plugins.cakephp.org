@@ -98,7 +98,7 @@ class GithubSource extends DataSource {
 		return $this->_sources;
 	}
 
-	public function read(Model $model, $queryData = array()) {
+	public function read(Model $model, $queryData = array(), $recursive = NULL) {
 		if (!$model->findQueryType) {
 			return array();
 		}

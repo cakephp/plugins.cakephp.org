@@ -41,7 +41,7 @@ class Github extends AppModel {
 		}
 
 		$Maintainer = ClassRegistry::init('Maintainer');
-		$existingUser = $Maintainer->find('view', $username);
+		$existingUser = $Maintainer->find('view', $user);
 		$packages = $Maintainer->Package->find('list', array('conditions' => array(
 			'Package.maintainer_id' => $existingUser['Maintainer']['id'])
 		));
