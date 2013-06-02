@@ -45,12 +45,6 @@ class NewPackageJob extends AppShell {
 			return false;
 		}
 
-		$this->out('Verifying that package is not a fork');
-		if ($repo['Repository']['fork']) {
-			$this->out("Package is a fork! Exiting...");
-			return false;
-		}
-
 		$this->out('Detecting homepage');
 		$homepage = $this->getHomepage($repo);
 
