@@ -55,7 +55,7 @@ class NewPackageJob extends AppShell {
 		$saved = $this->Maintainer->Package->save(array('Package' => array(
 			'maintainer_id' => $maintainer['Maintainer']['id'],
 			'name' => $package_name,
-			'repository_url' => "git://github.com/{$repo['Repository']['owner']}/{$repo['Repository']['name']}.git",
+			'repository_url' => "git://github.com/{$username}/{$package_name}.git",
 			'homepage' => $homepage,
 			'description' => $repo['Repository']['description'],
 			'contributors' => $contributors,
