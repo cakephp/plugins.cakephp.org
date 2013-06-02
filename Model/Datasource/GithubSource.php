@@ -61,6 +61,7 @@ class GithubSource extends DataSource {
 			),
 		);
 
+		$this->_token = $config['token'];
 		if (!$config['token']) {
 			unset($this->sConfig['header']['Authorization']);
 		}
@@ -161,6 +162,11 @@ class GithubSource extends DataSource {
 				$this->sConfig['request']['uri']['host'],
 				$request . $var
 			);
+
+			if (!empty($this->_token)) {
+				$url = sprintf("%s?access_token=%s", $url, $this->_token);
+			}
+
 			$this->connection = new HttpSocket();
 			$response = $this->connection->get($url);
 			if ($response->code == 404) {
