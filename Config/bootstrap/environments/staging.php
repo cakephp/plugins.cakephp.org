@@ -46,7 +46,7 @@ Environment::configure('staging',
 		'ResqueOverrides.Worker.interval' => 5,
 		'ResqueOverrides.Worker.workers'  => 1,
 		'ResqueOverrides.Worker.log'      => TMP . 'logs' . DS . 'resque-worker.log',
-		'ResqueOverrides.Env'             => array('CAKE_ENV'),
+		'ResqueOverrides.environment_variables' => array('CAKE_ENV'),
 		'ResqueOverrides.Queues'          => array(
 																							array('queue' => 'default'),
 																							array('queue' => 'email', 'interval' => 5)
