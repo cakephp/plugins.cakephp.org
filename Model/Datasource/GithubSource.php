@@ -185,7 +185,9 @@ class GithubSource extends DataSource {
 				return false;
 			}
 
-			Cache::write($this->config['cacheKey'] . $hash, $response);
+			if (php_sapi_name() != 'cli') {
+				Cache::write($this->config['cacheKey'] . $hash, $response);
+			}
 		}
 		return $response;
 	}
