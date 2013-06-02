@@ -385,7 +385,7 @@ end
 namespace :resque do
   desc 'Start a resque worker'
   task :start do
-    run "cd #{deploy_to}/#{current_dir} && CAKE_ENV=#{deploy_env} #{deploy_to}/lib/Cake/Console/cake Resque.resque start"
+    run "cd #{deploy_to}/#{current_dir} && CAKE_ENV=#{deploy_env} #{deploy_to}/lib/Cake/Console/cake Resque.resque start --queue=default,email"
   end
 
   desc 'Stop a resque worker'
