@@ -1,0 +1,81 @@
+.github-view table {
+  margin-bottom: 5px;
+  width: 100%;
+  max-width: 100%;
+  background-color: rgba(0, 0, 0, 0);
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.github-view table thead:first-child tr:first-child th,
+.github-view table thead:first-child tr:first-child td {
+  border-top: 0;
+}
+
+.github-view table thead th {
+  vertical-align: bottom;
+}
+.github-view table th {
+  font-weight: bold;
+}
+.github-view table th,
+.github-view table td {
+  padding: 8px;
+  line-height: 20px;
+  text-align: left;
+  vertical-align: top;
+  border-top: 1px solid #DDD;
+}
+
+.github-view table tbody > tr:nth-child(odd) > td,
+.github-view table tbody > tr:nth-child(odd) > th {
+  background-color: #F9F9F9;
+}
+
+.github-view table tbody tr:hover > td,
+.github-view table tbody tr:hover > th {
+  background-color: #f5f5f5;
+}
+
+.github-view dl {
+  margin-bottom: 20px;
+  *zoom: 1;
+}
+
+.github-view dt,
+.github-view dd {
+  line-height: 20px;
+}
+
+.github-view dt {
+  font-weight: bold;
+}
+
+.github-view dd {
+  margin-left: 10px;
+}
+
+.github-view dl:before,
+.github-view dl:after {
+  display: table;
+  line-height: 0;
+  content: "";
+}
+
+.github-view dl:after {
+  clear: both;
+}
+
+.github-view dl dt {
+  float: left;
+  width: 160px;
+  overflow: hidden;
+  clear: left;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.github-view dl dd {
+  margin-left: 180px;
+}
