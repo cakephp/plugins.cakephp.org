@@ -98,6 +98,7 @@ class NewPackageJob extends AppShell {
 
 		if (!$saved) {
 			$this->out("Error Saving Maintainer");
+			$this->out(sprintf("User: %s", json_encode($user)));
 			$this->out(sprintf("Data: %s", json_encode($data)));
 			$this->out(sprintf("Validation Errors: %s", json_encode($this->Maintainer->validationErrors)));
 		}
