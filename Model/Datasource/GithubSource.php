@@ -34,8 +34,7 @@ class GithubSource extends DataSource {
 		$config = array_merge(array(
 			'host'      => 'api.github.com',
 			'port'      => 443,
-			'login'     => null,
-			'password'  => null,
+			'token'     => null,
 			'database'  => 'api/v3/json',
 			'cacheKey'  => 'github',
 			'duration'  => '+2 days'
@@ -47,6 +46,7 @@ class GithubSource extends DataSource {
 			'header' => array(
 				'Content-Type' => 'application/json',
 				'encoding' => 'UTF-8',
+				'Authorization' => sprintf('token %s', $config['token']),
 			),
 			'host' => $config['host'],
 			'protocol' => '6',
@@ -58,16 +58,11 @@ class GithubSource extends DataSource {
 					'host' => $config['host'],
 					'port' => $config['port'],
 				),
-				'auth' => array(
-					'method' => 'Basic',
-					'user' => $config['login'],
-					'pass' => $config['password'],
-				)
 			),
 		);
 
-		if (!$config['login'] || !$config['password']) {
-			unset($this->sConfig['request']['auth']);
+		if (!$config['token']) {
+			unset($this->sConfig['header']['Authorization']);
 		}
 
 		$this->connection = new HttpSocket($this->sConfig);
