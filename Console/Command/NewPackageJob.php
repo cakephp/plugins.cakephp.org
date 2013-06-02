@@ -84,7 +84,7 @@ class NewPackageJob extends AppShell {
 		$user = $this->Github->find('user', array('user' => $username));
 
 		$data = array('Maintainer' => array(
-			'username'    => (isset($user['User']['username']))    ? $user['User']['username'] : '',
+			'username'    => (isset($user['User']['login']))       ? $user['User']['login'] : '',
 			'gravatar_id' => (isset($user['User']['gravatar_id'])) ? $user['User']['name'] : '',
 			'name'        => (isset($user['User']['name']))        ? $user['User']['name'] : '',
 			'company'     => (isset($user['User']['company']))     ? $user['User']['company'] : '',
