@@ -15,6 +15,7 @@ class NewPackageJob extends AppShell {
 		} catch (InvalidArgumentException $e) {
 			return $this->out($e->getMessage());
 		} catch (NotFoundException $e) {
+			$this->out("Maintainer not found, creating...");
 			$maintainer = $this->createMaintainer($username);
 			if (!$maintainer) {
 				return $this->out($e->getMessage());
@@ -27,7 +28,10 @@ class NewPackageJob extends AppShell {
 				'Package.maintainer_id' => $maintainer['Maintainer']['id'],
 				'Package.name' => $package_name
 		)));
-		if ($existing) return false;
+		if ($existing) {
+			$this->out("Package exists! Exiting...");
+			return false;
+		}
 
 		$this->out('Retrieving repository');
 		$repo = $this->Github->find('repository', array(
@@ -35,8 +39,17 @@ class NewPackageJob extends AppShell {
 			'repo' => $package_name
 		));
 
+		$this->out(sprintf("Repo Data: %s", json_encode($repo)));
+		if (empty($repo['Repository'])) {
+			$this->out("No repo data found! Exiting...");
+			return false;
+		}
+
 		$this->out('Verifying that package is not a fork');
-		if ($repo['Repository']['fork']) return false;
+		if ($repo['Repository']['fork']) {
+			$this->out("Package is a fork! Exiting...");
+			return false;
+		}
 
 		$this->out('Detecting homepage');
 		$homepage = $this->getHomepage($repo);
