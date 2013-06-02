@@ -15,13 +15,13 @@
 		<?php echo $this->Gravatar->image($user['User']['email'], array('size' => '60', 'class' => 'avatar')); ?>
 	</div>
 	<p class="subheading">
-		<?php __('Registered') ?> 
+		<?php echo __('Registered') ?>
 		<time><?php echo $this->Time->niceShort($user['User']['created']); ?><time>
 	</p>
 	<div class="details">
 		<ul>
 			<li><a href="#uploaded" class="no-icon"><?php printf(__('Uploaded (%d)'), $uploaded); ?></a></li>
-			<li><a href="#liked" class="no-icon"><?php __('Liked'); ?></a></li>
+			<li><a href="#liked" class="no-icon"><?php echo __('Liked'); ?></a></li>
 		</ul>
 		<div id="uploaded">
 			<?php
@@ -46,7 +46,7 @@
 			?>
 		</div>
 	</div>
-	<div class="main-content">		
+	<div class="main-content">
 		<?php //TODO show something ?>
 	</div>
 	<aside class="sidebar">

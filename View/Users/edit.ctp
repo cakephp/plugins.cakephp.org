@@ -1,9 +1,9 @@
-<h2><?php __d('spactare', 'Your Account Settings'); ?></h2>
+<h2><?php echo __d('spactare', 'Your Account Settings'); ?></h2>
 <?php
 	echo $this->Form->create($model, array());
 ?>
 <fieldset>
-	<legend><?php __d('spactare', 'Account information'); ?></legend>
+	<legend><?php echo __d('spactare', 'Account information'); ?></legend>
 	<p>
 		<?php echo $this->Html->link(__d('spactare', 'Change your password'), array('action' => 'change_password')); ?>
 	</p>
@@ -13,7 +13,7 @@
 	?>
 </fieldset>
 <fieldset>
-	<legend><?php __d('spactare', 'Personal information'); ?></legend>
+	<legend><?php echo __d('spactare', 'Personal information'); ?></legend>
 	<?php
 		echo $this->Form->input('UserDetail.firstname', array(
 			'label' => __d('spactare', 'First Name')));
@@ -40,7 +40,7 @@
 	?>
 </fieldset>
 <fieldset>
-	<legend><?php __d('spactare', 'Your Gravatar'); ?></legend>
+	<legend><?php echo __d('spactare', 'Your Gravatar'); ?></legend>
 		<p>
 		<?php
 			$gravatarEmail = (empty($this->data['UserDetail']['gravatar_email'])) ? $this->data[$model]['email'] : $this->data['UserDetail']['gravatar_email'];

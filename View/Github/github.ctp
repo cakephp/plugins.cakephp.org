@@ -9,37 +9,37 @@
 
 	<div class="meta-maintainer border-radius">
 		<dl><?php $i = 0; $class = ' class="altrow"';?>
-			<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Gravatar ID'); ?></dt>
+			<dt<?php if ($i % 2 == 0) echo $class;?>><?php echo __('Gravatar ID'); ?></dt>
 			<dd<?php if ($i++ % 2 == 0) echo $class;?>>
 				<?php echo $user['User']['gravatar_id']; ?>
 				&nbsp;
 			</dd>
-			<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Login'); ?></dt>
+			<dt<?php if ($i % 2 == 0) echo $class;?>><?php echo __('Login'); ?></dt>
 			<dd<?php if ($i++ % 2 == 0) echo $class;?>>
 				<?php echo $user['User']['login']; ?>
 				&nbsp;
 			</dd>
-			<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Name'); ?></dt>
+			<dt<?php if ($i % 2 == 0) echo $class;?>><?php echo __('Name'); ?></dt>
 			<dd<?php if ($i++ % 2 == 0) echo $class;?>>
 				<?php echo (isset($user['User']['name'])) ? $user['User']['name'] : ''; ?>
 				&nbsp;
 			</dd>
-			<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Email'); ?></dt>
+			<dt<?php if ($i % 2 == 0) echo $class;?>><?php echo __('Email'); ?></dt>
 			<dd<?php if ($i++ % 2 == 0) echo $class;?>>
 				<?php echo (isset($user['User']['email'])) ? $user['User']['email'] : ''; ?>
 				&nbsp;
 			</dd>
-			<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Url'); ?></dt>
+			<dt<?php if ($i % 2 == 0) echo $class;?>><?php echo __('Url'); ?></dt>
 			<dd<?php if ($i++ % 2 == 0) echo $class;?>>
 				<?php echo (isset($user['User']['blog'])) ? $user['User']['blog'] : ''; ?>
 				&nbsp;
 			</dd>
-			<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Company'); ?></dt>
+			<dt<?php if ($i % 2 == 0) echo $class;?>><?php echo __('Company'); ?></dt>
 			<dd<?php if ($i++ % 2 == 0) echo $class;?>>
 				<?php echo (isset($user['User']['company'])) ? $user['User']['company'] : ''; ?>
 				&nbsp;
 			</dd>
-			<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Location'); ?></dt>
+			<dt<?php if ($i % 2 == 0) echo $class;?>><?php echo __('Location'); ?></dt>
 			<dd<?php if ($i++ % 2 == 0) echo $class;?>>
 				<?php echo (isset($user['User']['location'])) ? $user['User']['location'] : ''; ?>
 				&nbsp;
