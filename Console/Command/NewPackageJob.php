@@ -83,8 +83,7 @@ class NewPackageJob extends AppShell {
 	public function createMaintainer($username) {
 		$user = $this->Github->find('user', array('user' => $username));
 
-		$this->Maintainer->create();
-		$saved = $this->Maintainer->save(array('Maintainer' => array(
+		$data = array('Maintainer' => array(
 			'username'    => (isset($user['User']['username']))    ? $user['User']['username'] : '',
 			'gravatar_id' => (isset($user['User']['gravatar_id'])) ? $user['User']['name'] : '',
 			'name'        => (isset($user['User']['name']))        ? $user['User']['name'] : '',
@@ -92,11 +91,15 @@ class NewPackageJob extends AppShell {
 			'url'         => (isset($user['User']['blog']))        ? $user['User']['blog'] : '',
 			'email'       => (isset($user['User']['email']))       ? $user['User']['email'] : '',
 			'location'    => (isset($user['User']['location']))    ? $user['User']['location'] : ''
-		)));
+		));
+
+		$this->Maintainer->create();
+		$saved = $this->Maintainer->save($data);
 
 		if (!$saved) {
-			$this->out("Error Saving Maintainer", 'queue');
-			$this->out(json_encode($this->Maintainer->validationErrors), 'queue');
+			$this->out("Error Saving Maintainer");
+			$this->out(sprintf("Data: %s", json_encode($data)));
+			$this->out(sprintf("Validation Errors: %s", json_encode($this->Maintainer->validationErrors)));
 		}
 
  		return $this->Maintainer->find('view', $username);
