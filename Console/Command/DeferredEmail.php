@@ -133,7 +133,7 @@ class DeferredEmail extends AppShell {
 			$this->_sent = $email->send($this->_message);
 		} catch (Exception $e) {
 			$this->_sent = false;
-			$this->out($e->getMessage(), 'email');
+			$this->out($e->getMessage());
 			$this->sendLater();
 		}
 
