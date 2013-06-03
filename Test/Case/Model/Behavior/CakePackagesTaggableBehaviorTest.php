@@ -116,7 +116,7 @@ class CakePackagesTaggableBehaviorTest extends CakeTestCase {
 		$this->Article->create();
 		$this->Article->save($data, false);
 		$result = $this->Article->findByTitle('Test Article');
-		$this->assertEquals('neat, behavior', $result['Article']['tags']);
+		$this->assertEquals('behavior, neat', $result['Article']['tags']);
 	}
 
 /**
@@ -133,6 +133,7 @@ class CakePackagesTaggableBehaviorTest extends CakeTestCase {
 			),
 		));
 		$this->Article->Behaviors->load('CakePackagesTaggable');
+		$this->Article->isAdmin(true);
 		$data = array(
 			'title' => 'Test Article',
 			'tags' => 'contains:behavior, neat, anus'
