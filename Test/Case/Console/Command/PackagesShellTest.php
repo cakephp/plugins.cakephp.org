@@ -44,7 +44,7 @@ class PackagesShellTest extends CakeTestCase {
 		$this->Shell->Package->contain(array('Tag'));
 		$result = $this->Shell->Package->findById(3);
 		$this->assertTrue($result['Package']['contains_model']);
-		$this->assertTrue($result['Package']['contains_theme']);
+		$this->assertFalse($result['Package']['contains_theme']);
 	}
 
 }
