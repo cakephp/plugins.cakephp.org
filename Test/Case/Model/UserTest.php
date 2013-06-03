@@ -13,12 +13,11 @@ class UserTestCase extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
-		'plugin.cake_djjob.job',
 		'app.user',
 		'app.maintainer',
 		'app.package',
 		'app.category',
-		'app.favorite',
+		'plugin.favorites.favorite',
 		'plugin.ratings.rating',
 		'app.user_detail'
 	);
@@ -85,18 +84,20 @@ class UserTestCase extends CakeTestCase {
 	public function testForgotPassword() {
 		$_SERVER['REMOTE_ADDR'] = '127.0.0.1';
 		$data = $this->User->findById('4f471545-7118-4910-bcbc-1ec075f6eb27');
-		$User = $this->getMock('User', array('load', 'enqueue'), array(
+		$User = $this->getMock('User', array('enqueue'), array(
 			$this->User->id,
 			$this->User->useTable,
 			$this->User->useDbConfig,
 		));
 		$User->alias = 'User';
 		$User->expects($this->once())
-			->method('load')
+			->method('enqueue')
 			->with(
 				$this->equalTo('UserForgotPasswordJob'),
-				$this->equalTo($data['User']),
-				$this->equalTo($_SERVER['REMOTE_ADDR'])
+				$this->equalTo(array(array(
+					'user' => $data['User'],
+					'ipaddress' => $_SERVER['REMOTE_ADDR']
+				)))
 			)
 			->will($this->returnValue(true));
 		$User->expects($this->once())->method('enqueue');
