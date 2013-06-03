@@ -1,4 +1,4 @@
-h1. CakePackages
+h1. CakePackages !https://travis-ci.org/cakephp/cakepackages.png?branch=master!:https://travis-ci.org/cakephp/cakepackages
 
 A self-contained application that tracks CakePHP developer's open source code repositories, including applications and plugins. Includes some social integration features
 
