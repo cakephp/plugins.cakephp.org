@@ -13,7 +13,7 @@ $redirect = $adminRedirect = $logoutRedirect = array(
 if (Configure::read('Feature.auth_required')) {
 	$message = __('Sorry, but you need to be logged in to access this location.');
 	$redirect = array('controller' => 'users', 'action' => 'login');
-} 
+}
 
 Permit::access(
 	array('prefix' => 'admin'),

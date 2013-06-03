@@ -80,6 +80,7 @@ class AppModel extends Model {
 			throw new CakeException(__('Invalid job.'));
 			return false;
 		}
+
 		foreach ($data[$this->alias] as $key => $val) {
 			if ($key == 'job') {
 				continue;
@@ -102,6 +103,7 @@ class AppModel extends Model {
 				return true;
 			}
 		}
+
 		return false;
 	}
 
