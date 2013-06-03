@@ -97,6 +97,14 @@ class CakePackagesTaggableBehavior extends TaggableBehavior {
 		}
 	}
 
+	public function isAdmin($value = null) {
+		if ($value === null) {
+			return $this->_isAdmin;
+		}
+
+		$this->_isAdmin = $value;
+	}
+
 /**
  * Override to check if !admin for identifiers and blacklisted tags
  *
@@ -172,6 +180,7 @@ class CakePackagesTaggableBehavior extends TaggableBehavior {
 						$results[$key][$Model->alias]['contains_' . $tag['keyname']] = true;
 					}
 				}
+				sort($tags);
 				$tags = join($separator . ' ', $tags);
 				$results[$key][$Model->alias][$field] = $tags;
 			}

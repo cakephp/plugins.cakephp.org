@@ -1,5 +1,6 @@
 <?php
 App::uses('AppShell', 'Console/Command');
+App::uses('PackageData', 'Lib');
 
 class NewPackageJob extends AppShell {
 
@@ -10,69 +11,27 @@ class NewPackageJob extends AppShell {
 		$package_name = $this->args[1];
 		$this->out(sprintf('Verifying package uniqueness %s/%s', $username, $package_name));
 
-		try {
-			$maintainer = $this->Maintainer->find('view', $username);
-		} catch (InvalidArgumentException $e) {
-			return $this->out($e->getMessage());
-		} catch (NotFoundException $e) {
-			$this->out("Maintainer not found, creating...");
-			$maintainer = $this->createMaintainer($username);
-			if (!$maintainer) {
-				return $this->out($e->getMessage());
-			}
-		} catch (Exception $e) {
-			return $this->out('Unable to find maintainer: ' . $e->getMessage());
+		$maintainer = $this->getMaintainer($username);
+		if (!$maintainer) {
+			return false;
 		}
 
-		$existing = $this->Maintainer->Package->find('list', array('conditions' => array(
-				'Package.maintainer_id' => $maintainer['Maintainer']['id'],
-				'Package.name' => $package_name
-		)));
+		$existing = $this->getExisting($maintainer['Maintainer']['id'], $package_name);
 		if ($existing) {
-			$this->out("Package exists! Exiting...");
 			return false;
 		}
 
-		$this->out('Retrieving repository');
-		$repo = $this->Github->find('repository', array(
-			'owner' => $username,
-			'repo' => $package_name
-		));
-
-		$this->out(sprintf("Repo Data: %s", json_encode($repo)));
-		if (empty($repo['Repository'])) {
-			$this->out("No repo data found! Exiting...");
-			return false;
+		$packageData = new PackageData($username, $package_name, $this->Github);
+		$data = $packageData->retrieve();
+		if ($data === false) {
+			return;
 		}
 
-		$this->out('Detecting homepage');
-		$homepage = $this->getHomepage($repo);
-
-		$this->out('Detecting number of issues');
-		$issues = $this->getIssues($repo);
-
-		$this->out('Detecting total number of contributors');
-		$contributors = $this->getContributors($repo, $username, $package_name);
-
-		$this->out('Detecting number of collaborators');
-		$collaborators = $this->getCollaborators($repo, $username, $package_name);
+		$data['maintainer_id'] = $maintainer['Maintainer']['id'];
 
 		$this->out('Saving package');
 		$this->Maintainer->Package->create();
-		$saved = $this->Maintainer->Package->save(array('Package' => array(
-			'maintainer_id' => $maintainer['Maintainer']['id'],
-			'name' => $package_name,
-			'repository_url' => "git://github.com/{$username}/{$package_name}.git",
-			'homepage' => $homepage,
-			'description' => $repo['Repository']['description'],
-			'contributors' => $contributors,
-			'collaborators' => $collaborators,
-			'forks' => $repo['Repository']['forks'],
-			'watchers' => $repo['Repository']['watchers'],
-			'open_issues' => $issues,
-			'created_at' => substr(str_replace('T', ' ', $repo['Repository']['created_at']), 0, 19),
-			'last_pushed_at' => substr(str_replace('T', ' ', $repo['Repository']['pushed_at']), 0, 19),
-		)));
+		$saved = $this->Maintainer->Package->save(array('Package' => $data));
 
 		if (!$saved) {
 			return $this->out('Package not saved');
@@ -85,6 +44,27 @@ class NewPackageJob extends AppShell {
 		// }
 
 		$this->out('Package saved');
+	}
+
+	public function getMaintainer($username) {
+		try {
+			$maintainer = $this->Maintainer->find('view', $username);
+		} catch (InvalidArgumentException $e) {
+			$this->out($e->getMessage());
+			return false;
+		} catch (NotFoundException $e) {
+			$this->out("Maintainer not found, creating...");
+			$maintainer = $this->createMaintainer($username);
+			if (!$maintainer) {
+				$this->out($e->getMessage());
+				return false;
+			}
+		} catch (Exception $e) {
+			$this->out('Unable to find maintainer: ' . $e->getMessage());
+			return false;
+		}
+
+		return $maintainer;
 	}
 
 	public function createMaintainer($username) {
@@ -113,48 +93,17 @@ class NewPackageJob extends AppShell {
  		return $this->Maintainer->find('view', $username);
 	}
 
-	public function getHomepage($repo) {
-		$homepage = $repo['Repository']['html_url'];
-		if (!empty($repo['Repository']['homepage'])) {
-			$homepage = $repo['Repository']['homepage'];
+	public function getExisting($maintainer_id, $name) {
+		$existing = $this->Maintainer->Package->find('list', array('conditions' => array(
+				'Package.maintainer_id' => $maintainer_id,
+				'Package.name' => $name
+		)));
+
+		if ($existing) {
+			$this->out("Package exists! Exiting...");
 		}
-		return $homepage;
-	}
 
-	public function getIssues($repo) {
-		$issues = 0;
-		if ($repo['Repository']['has_issues']) {
-			$issues = $repo['Repository']['open_issues'];
-		}
-		return $issues;
-	}
-
-	public function getContributors($repo, $username, $package_name) {
-		$contribs = 1;
-		$contributors = $this->Github->find('repository', array(
-			'owner' => $username,
-			'repo' => $package_name,
-			'_action' => 'contributors',
-		));
-
-		if (!empty($contributors)) {
-			$contribs = count($contributors);
-		}
-		return $contribs;
-	}
-
-	public function getCollaborators($repo, $username, $package_name) {
-		$collabs = 1;
-		$collaborators = $this->Github->find('repository', array(
-			'owner' => $username,
-			'repo' => $package_name,
-			'_action' => 'collaborators',
-		));
-
-		if (!empty($collaborators)) {
-			$collabs = count($collaborators);
-		}
-		return $collabs;
+		return $existing;
 	}
 
 }

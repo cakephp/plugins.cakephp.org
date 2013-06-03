@@ -1,5 +1,6 @@
 <?php
 App::uses('Characterizer', 'Lib');
+App::uses('PackageData', 'Lib');
 App::uses('DebugTimer', 'DebugKit.Lib');
 App::uses('HttpSocket', 'Network/Http');
 App::uses('Sanitize', 'Utility');
@@ -972,75 +973,21 @@ class Package extends AppModel {
 			$this->_Github = ClassRegistry::init('Github');
 		}
 
-		$repo = $this->_Github->find('repository', array(
-			'owner' => $package['Maintainer']['username'],
-			'repo' => $package['Package']['name'],
-		));
-		if (empty($repo) || !isset($repo['Repository'])) {
-			return false;
+		$packageData = new PackageData(
+			$package['Maintainer']['username'],
+			$package['Package']['name'],
+			$this->_Github
+		);
+		$data = $packageData->retrieve();
+		if ($data === false) {
+			return;
 		}
 
-		// Detect homepage
-		$homepage = $repo['Repository']['html_url'];
-		if (!empty($repo['Repository']['homepage'])) {
-			if (is_array($repo['Repository']['homepage'])) {
-				$homepage = $repo['Repository']['homepage'];
-			} else {
-				$homepage = $repo['Repository']['homepage'];
+		foreach ($data as $key => $value) {
+			if ($value !== null) {
+				$package['Package'][$key] = $value;
 			}
-		} else if (!empty($repo['Repsitory']['homepage'])) {
-			$homepage = $repo['Repository']['homepage'];
 		}
-
-		// Detect issues
-		$issues = null;
-		if ($repo['Repository']['has_issues']) {
-			$issues = $repo['Repository']['open_issues'];
-		}
-
-		// Detect total contributors
-		$contribs = 1;
-		$contributors = $this->_Github->find('repository', array(
-			'owner' => $package['Maintainer']['username'],
-			'repo' => $package['Package']['name'],
-			'_action' => 'contributors'
-		));
-		if (!empty($contributors)) {
-			$contribs = count($contributors);
-		}
-
-		$collabs = 1;
-		$collaborators = $this->_Github->find('repository', array(
-			'owner' => $package['Maintainer']['username'],
-			'repo' => $package['Package']['name'],
-			'_action' => 'collaborators',
-		));
-
-		if (!empty($collaborators)) {
-			$collabs = count($collaborators);
-		}
-
-		if (isset($repo['Repository']['description'])) {
-			$package['Package']['description'] = $repo['Repository']['description'];
-		}
-
-		if (!empty($homepage)) {
-			$package['Package']['homepage'] = $homepage;
-		}
-		if ($collabs !== null) {
-			$package['Package']['collaborators'] = $collabs;
-		}
-		if ($contribs !== null) {
-			$package['Package']['contributors'] = $contribs;
-		}
-		if ($issues !== null) {
-			$package['Package']['open_issues'] = $issues;
-		}
-
-		$package['Package']['forks'] = $repo['Repository']['forks'];
-		$package['Package']['watchers'] = $repo['Repository']['watchers'];
-		$package['Package']['created_at'] = substr(str_replace('T', ' ', $repo['Repository']['created_at']), 0, 20);
-		$package['Package']['last_pushed_at'] = substr(str_replace('T', ' ', $repo['Repository']['pushed_at']), 0, 20);
 
 		$this->create();
 		return $this->save($package);
@@ -1264,11 +1211,15 @@ class Package extends AppModel {
 			return false;
 		}
 
-		$ipaddress = $_SERVER['REMOTE_ADDR'];
+		$ipaddress = null;
+		if (isset($_SERVER['REMOTE_ADDR'], $ipaddress)) {
+			$ipaddress = $_SERVER['REMOTE_ADDR'];
+		}
+
 		list($username, $repository) = $pieces;
 
 		$data = compact('ipaddress', 'username', 'repository');
-		if (!Resque::enqueue('default', 'SuggestPackageJob', array('work', $data))) {
+		if (!$this->enqueue('SuggestPackageJob', array($data))) {
 			return false;
 		}
 		return array($username, $repository);

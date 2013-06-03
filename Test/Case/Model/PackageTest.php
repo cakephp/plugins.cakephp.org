@@ -60,7 +60,7 @@ class PackageTestCase extends CakeTestCase {
 			->method('_shell_exec')
 			->will($this->returnValue('success'));
 		$result = $Package->setupRepository(1);
-		$expected = array(1, '/var/www/cakepackages/app/tmp/repos/s/shama/chocolate');
+		$expected = array(1, TMP . 'repos/s/shama/chocolate');
 		$this->assertEquals($expected, $result);
 		$this->assertTrue( file_exists(dirname($result[1])) );
 
@@ -73,7 +73,7 @@ class PackageTestCase extends CakeTestCase {
 	public function testBroken() {
 		$this->Package->broken(1);
 		$result = $this->Package->findById(1);
-		$this->assertFalse($result);
+		$this->assertEmpty($result);
 	}
 
 /**
@@ -83,22 +83,22 @@ class PackageTestCase extends CakeTestCase {
  */
 	public function testEnable() {
 		$result = $this->Package->findById(1);
-		$this->assertFalse(empty($result));
+		$this->assertNotEmpty($result);
 
 		// DISABLE
 		$this->Package->enable(1);
 		$result = $this->Package->findById(1);
-		$this->assertTrue(empty($result));
+		$this->assertEmpty($result);
 
 		// ENABLE
 		$this->Package->enable(1);
 		$result = $this->Package->findById(1);
-		$this->assertFalse(empty($result));
+		$this->assertNotEmpty($result);
 
 		// MANUAL DISABLE
 		$this->Package->enable(1, false);
 		$result = $this->Package->findById(1);
-		$this->assertTrue(empty($result));
+		$this->assertEmpty($result);
 	}
 
 /**
@@ -108,6 +108,7 @@ class PackageTestCase extends CakeTestCase {
  */
 	public function testCharacterize() {
 		$Package = $this->getMock('Package', array('_shell_exec'));
+		$Package->useDbConfig = 'test';
 		$Package->expects($this->any())
 			->method('_shell_exec')
 			->will($this->returnValue('success'));
@@ -193,38 +194,42 @@ class PackageTestCase extends CakeTestCase {
 		$this->Package->_Github
 			->expects($this->at(0))
 			->method('find')
-			->with($this->equalTo('reposShowSingle'))
+			->with($this->equalTo('repository'))
 			->will($this->returnValue(array(
 				'Repository' => array(
-					'url' => 'http://github.com/shama/chocolate',
+					'name' => 'chocolate',
+					'url' => 'http://github.com/shama/chocolate/',
 					'homepage' => 'http://shama.github.com/newchocolate',
 					'has_issues' => true,
 					'open_issues' => 99,
 					'forks' => 99,
 					'watchers' => 99,
-					'created_at' => '2012-12-31 04:42:44',
-					'pushed_at' => '2012-12-31 04:42:44',
+					'created_at' => '2012-12-31T04:42:44Z',
+					'pushed_at' => '2012-12-31T04:42:44Z',
 				),
 			)));
 		$this->Package->_Github
 			->expects($this->at(1))
 			->method('find')
-			->with($this->equalTo('reposShowContributors'))
+			->with($this->equalTo('repository'))
 			->will($this->returnValue(array()));
 		$this->Package->_Github
 			->expects($this->at(2))
 			->method('find')
-			->with($this->equalTo('reposShowCollaborators'))
+			->with($this->equalTo('repository'))
 			->will($this->returnValue(array()));
 		$this->Package->contain('Maintainer');
 		$package = $this->Package->findById(1);
 		$result = $this->Package->updateAttributes($package);
-		$this->assertEquals('http://shama.github.com/newchocolate', $result['Package']['homepage']);
-		$this->assertEquals(99, $result['Package']['open_issues']);
-		$this->assertEquals(99, $result['Package']['watchers']);
-		$this->assertEquals(99, $result['Package']['forks']);
-		$this->assertEquals('2012-12-31 04:42:44', $result['Package']['created_at']);
-		$this->assertEquals('2012-12-31 04:42:44', $result['Package']['last_pushed_at']);
+		$this->assertNotEmpty($result);
+
+		$package = $this->Package->findById(1);
+		$this->assertEquals('http://shama.github.com/newchocolate', $package['Package']['homepage']);
+		$this->assertEquals(99, $package['Package']['open_issues']);
+		$this->assertEquals(99, $package['Package']['watchers']);
+		$this->assertEquals(99, $package['Package']['forks']);
+		$this->assertEquals('2012-12-31 04:42:44', $package['Package']['created_at']);
+		$this->assertEquals('2012-12-31 04:42:44', $package['Package']['last_pushed_at']);
 	}
 /**
  * testFindOnGithub method
@@ -237,9 +242,10 @@ class PackageTestCase extends CakeTestCase {
 		$this->Package->_Github
 			->expects($this->once())
 			->method('find')
-			->with($this->equalTo('reposShowSingle'))
+			->with($this->equalTo('repository'))
 			->will($this->returnValue(array(
 				'Repository' => array(
+					'name' => 'chocolate',
 					'url' => 'http://github.com/shama/chocolate',
 					'homepage' => 'http://shama.github.com/newchocolate',
 					'has_issues' => true,
@@ -294,19 +300,23 @@ class PackageTestCase extends CakeTestCase {
  * @return void
  */
 	public function testSuggest() {
-		$Package = $this->getMock('Package', array('load', 'enqueue'));
+		$Package = $this->getMock('Package', array('enqueue'));
+		$Package->useDbConfig = 'test';
 		$Package->expects($this->once())
-			->method('load')
+			->method('enqueue')
 			->with(
 				$this->equalTo('SuggestPackageJob'),
-				$this->equalTo('shama'),
-				$this->equalTo('chocolate')
+				$this->equalTo(array(array(
+					'ipaddress' => null,
+					'username' => 'shama',
+					'repository' => 'chocolate'
+				)))
 			)
 			->will($this->returnValue(true));
 		$Package->expects($this->once())
 			->method('enqueue')
 			->will($this->returnValue(true));
-		
+
 		$data = array(
 			'github' => 'http://github.com/shama/chocolate',
 		);
@@ -338,7 +348,7 @@ class PackageTestCase extends CakeTestCase {
 	public function testRss() {
 		$this->Package->contain('Maintainer');
 		$package = $this->Package->findById(1);
-		
+
 		$response = array(
 			'status' => array('code' => 200),
 			'body' => '<?xml version="1.0" encoding="UTF-8"?>
@@ -445,13 +455,13 @@ m Test/Case/Model/Datasource/FtpSourceTest.php
 			$this->Package->useTable,
 			$this->Package->useDbConfig,
 		));
+		$Package->useDbConfig = 'test';
 		$Package->alias = 'Package';
 		$Package->expects($this->once())
-			->method('load')
+			->method('enqueue')
 			->with(
 				$this->equalTo('UserForgotPasswordJob'),
-				$this->equalTo($user['User']),
-				$this->equalTo('127.0.0.1')
+				$this->equalTo(array($user['User'], '127.0.0.1'))
 			)
 			->will($this->returnValue(true));
 		$Package->expects($this->once())
@@ -531,16 +541,17 @@ m Test/Case/Model/Datasource/FtpSourceTest.php
 					'app',
 					'0',
 					'component',
-					'0',
-					'0',
 					'helper',
+					'0',
+					0,
 				),
 			),
 		);
+		$this->Package->isAdmin(true);
 		$result = $this->Package->save($data);
 		$this->Package->contain(array('Tag'));
 		$result = $this->Package->findById($result['Package']['id']);
-		$expected = 'tag3, tag2, tag1';
+		$expected = 'tag1, tag2, tag3';
 		$this->assertEquals($expected, $result['Package']['tags']);
 		$this->assertTrue($result['Package']['contains_app']);
 		$this->assertTrue($result['Package']['contains_component']);

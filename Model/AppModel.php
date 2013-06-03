@@ -92,16 +92,18 @@ class AppModel extends Model {
 				$data[$this->alias][$key] = $res[$Model->alias];
 			}
 		}
-		$data = array_values($data[$this->alias]);
-		$job = call_user_func_array(array($this, 'load'), $data);
-		if (!$job) {
+
+		if (empty($data[$this->alias]['job'])) {
 			throw new CakeException(__('Job could not be loaded.'));
+		}
+		$job = $data[$this->alias]['job'];
+		unset($data[$this->alias]['job']);
+
+		$data = array_values($data[$this->alias]);
+		if (!$this->enqueue($job, $data)) {
+			throw new CakeException(__('Job could not be enqueued.'));
 		} else {
-			if (!$this->enqueue($job)) {
-				throw new CakeException(__('Job could not be enqueued.'));
-			} else {
-				return true;
-			}
+			return true;
 		}
 
 		return false;
