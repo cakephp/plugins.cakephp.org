@@ -17,7 +17,7 @@ class UserDetailTestCase extends CakeTestCase {
 		'app.maintainer',
 		'app.package',
 		'app.category',
-		'app.favorite',
+		'plugin.favorites.favorite',
 		'plugin.ratings.rating'
 	);
 
