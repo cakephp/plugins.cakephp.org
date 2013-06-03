@@ -18,7 +18,7 @@ class MaintainerTestCase extends CakeTestCase {
 		'plugin.ratings.rating',
 		'app.package',
 		'app.category',
-		'app.favorite'
+		'plugin.favorites.favorite'
 	);
 
 /**
