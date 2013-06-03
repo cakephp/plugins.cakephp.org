@@ -383,8 +383,7 @@ class User extends AppModel {
 			$this->invalidate('email', __('This Email Address exists but was never validated.'));
 			return false;
 		}
-
-		return Resque::enqueue('default', 'UserForgotPasswordJob', array('work', array(
+		return $this->enqueue('UserForgotPasswordJob', array(array(
 			'user' => $data[$this->alias],
 			'ipaddress' => $_SERVER['REMOTE_ADDR'],
 		)));

@@ -100,7 +100,7 @@ class Github extends AppModel {
  * @return boolean
  */
 	public function savePackage($username, $name) {
-		return Resque::enqueue('default', 'NewPackageJob', array('work', $username, $name));
+		return $this->enqueue('NewPackageJob', array($username, $name));
 	}
 
 }
