@@ -11,7 +11,7 @@ class GithubTestCase extends CakeTestCase {
  *
  * @var array
  */
-	public $fixtures = array('app.github');
+	public $fixtures = array();
 
 /**
  * setUp method
@@ -46,14 +46,14 @@ class GithubTestCase extends CakeTestCase {
 			$this->Github->useDbConfig,
 		));
 		$Github->expects($this->once())
-			->method('load')
+			->method('enqueue')
 			->with(
 				$this->equalTo('NewPackageJob'),
-				$this->equalTo('shama'),
-				$this->equalTo('Kyle Robinson Young')
+				$this->equalTo(array('shama', 'Kyle Robinson Young'))
 			)
 			->will($this->returnValue(true));
 		$Github->expects($this->once())->method('enqueue');
+
 		$Github->savePackage('shama', 'Kyle Robinson Young');
 	}
 }
