@@ -12,14 +12,13 @@ class ApiPackageTestCase extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
-		'app.api_package',
 		'app.maintainer',
 		'app.user',
 		'app.user_detail',
 		'plugin.ratings.rating',
 		'app.package',
 		'app.category',
-		'app.favorite',
+		'plugin.favorites.favorite',
 	);
 
 /**
