@@ -121,6 +121,7 @@ namespace :deploy do
 
   desc 'Override the original :migrate'
   task :migrate do
+    run "cd #{deploy_to}/#{current_dir} && CAKE_ENV=#{deploy_env} #{deploy_to}/lib/Cake/Console/cake Migrations.migration run all"
   end
 
   desc <<-DESC
