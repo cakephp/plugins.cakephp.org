@@ -79,7 +79,7 @@ set :ssh_options,     :forward_agent => true
 
 ## Available Environments
 task :production do
-  server              $config['servers']['production']['server'], :web, :god, :cron
+  server              $config['servers']['production']['server'], :db, :web, :god, :cron
   set :application,   $config['servers']['production']['application']
   set :deploy_to,     $config['servers']['production']['deploy_to']
   set :current_dir,   $config['servers']['production']['current_dir']
@@ -137,6 +137,7 @@ namespace :deploy do
     top.misc.submodule
     top.link.cron
     top.asset.rebuild
+    top.deploy.migrate
   end
 
   desc <<-DESC
