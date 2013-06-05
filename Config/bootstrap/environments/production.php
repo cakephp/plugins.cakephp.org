@@ -51,12 +51,17 @@ Environment::configure('production',
 		error_reporting(0);
 		date_default_timezone_set('UTC');
 
-		if (function_exists('apc_fetch') && Configure::read('debug') == 0) {
+		$engine = 'File';
+		if (extension_loaded('apc') && function_exists('apc_dec') && (php_sapi_name() !== 'cli' || ini_get('apc.enable_cli'))) {
+			$engine = 'Apc';
+		}
+
+		if (Configure::read('debug') == 0) {
 			Cache::config('default', array(
-				'engine' => 'Apc', //[required]
-				'duration' => 3600, //[optional]
-				'probability' => 100, //[optional]
-				'prefix' => 'plugins_DEFAULT_', //[optional]  prefix every cache file with this string
+				'engine' => $engine,
+				'duration' => 3600,
+				'probability' => 100,
+				'prefix' => 'plugins_DEFAULT_',
 			));
 		}
 

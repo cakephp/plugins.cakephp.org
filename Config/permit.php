@@ -25,6 +25,17 @@ Permit::access(
 	)
 );
 
+Permit::access(
+	array('controllers' => 'users', 'action' => 'admin'),
+	array('auth' => array('is_admin' => 1)),
+	array(
+		'element' => $element,
+		'message' => $adminMessage,
+		'redirect' => $adminRedirect,
+	)
+);
+
+
 // Block access to every plugin in case people try to cut around application logic
 Permit::access(
 	array('plugin' => array('favorites', 'ratings', 'categories', 'settings')),
@@ -47,7 +58,7 @@ Permit::access(
 );
 
 Permit::access(
-	array('controller' => 'users', 'action' => array('change_password', 'dashboard', 'logout')),
+	array('controller' => 'users', 'action' => array('change_password', 'admin', 'logout')),
 	array('auth' => true),
 	compact('element', 'message', 'redirect')
 );
