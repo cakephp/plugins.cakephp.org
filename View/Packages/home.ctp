@@ -61,6 +61,7 @@
       <li><?php echo $this->Resource->package('dkullmann', 'CakePHP-Elastic-Search-DataSource'); ?></li>
       <li><?php echo $this->Resource->package('josegonzalez', 'upload'); ?></li>
       <li><?php echo $this->Resource->package('CakeDC', 'migrations'); ?></li>
+      <li><?php echo $this->Resource->package('jippi', 'cakephp-crud'); ?></li>
     </ul>
   </article>
 
