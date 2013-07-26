@@ -223,6 +223,9 @@
 .packages-home .popular-list {
 	list-style: disc outside;
 	margin: 18px 0 18px 30px;
+	column-count: 2;
+	-webkit-column-count: 2;
+	-moz-column-count: 2;
 }
 .packages-home .popular-list li {
 	margin-bottom: 12px;
