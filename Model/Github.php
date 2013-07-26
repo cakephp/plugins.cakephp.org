@@ -46,9 +46,13 @@ class Github extends AppModel {
 			'Package.maintainer_id' => $existingUser['Maintainer']['id'])
 		));
 
+		foreach ($packages as $i => $package) {
+			$packages[$i] = strtolower($package);
+		}
+
 		$results = array();
 		foreach ($repositories as $key => $repository) {
-			if (!in_array($repository['Repository']['name'], $packages) && ($repository['Repository']['fork'] != 1)) {
+			if (!in_array(strtolower($repository['Repository']['name']), $packages) && ($repository['Repository']['fork'] != 1)) {
 				$results[] = $repository;
 			}
 		}
