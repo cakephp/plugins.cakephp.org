@@ -27,7 +27,7 @@
 	url = git://github.com/josegonzalez/categories.git
 [submodule "Plugin/DataTable"]
 	path = Plugin/DataTable
-	url = https://github.com/josegonzalez/cakephp-datatable.git
+	url = git://github.com/josegonzalez/cakephp-datatable.git
 [submodule "Plugin/Tags"]
 	path = Plugin/Tags
 	url = git://github.com/CakeDC/tags.git
