@@ -63,6 +63,7 @@
       <li><?php echo $this->Resource->package('CakeDC', 'migrations'); ?></li>
       <li><?php echo $this->Resource->package('FriendsOfCake', 'crud'); ?></li>
       <li><?php echo $this->Resource->package('slywalker', 'cakephp-plugin-boost_cake'); ?></li>
+      <li><?php echo $this->Resource->package('FriendsOfCake', 'app-template'); ?></li>
     </ul>
   </article>
 
