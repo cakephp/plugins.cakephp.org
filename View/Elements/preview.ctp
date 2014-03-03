@@ -43,6 +43,14 @@ $title = $this->Html->link($this->Text->truncate($package['name'], 35), array(
 							), array('class' => 'author')); ?>
 					<?php endif; ?>
 
+					<?php if ($this->Session->read('Auth.User')) : ?>
+						<strong>Github:</strong> <?php echo $this->Resource->github_url(
+								$Maintainer['username'],
+								$package['name']
+							); ?>
+						<?php echo $this->Html->link('Disable', array('admin' => true, 'action' => 'disable', $package['id'])); ?>
+					<?php endif; ?>
+
 					<?php if ($showDate) : ?>
 						<span class="date">
 							<strong>Added On:</strong> <?php echo $this->Time->format('Y-m-d', $package['created']); ?>
