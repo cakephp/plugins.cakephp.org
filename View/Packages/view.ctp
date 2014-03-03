@@ -3,7 +3,6 @@ $likeActive = '';
 if ($package['Rating'] && $package['Rating']['value'] == 1) {
 	$likeActive = 'is_activated';
 }
-
 ?>
 
 <section class="page-title clearfix">
@@ -58,6 +57,16 @@ if ($package['Rating'] && $package['Rating']['value'] == 1) {
 							); ?>
 						</td>
 					</tr>
+					<?php if ($this->Session->read('Auth.User')) : ?>
+						<tr>
+							<td class="name">Disable:</td>
+							<td class="mobile-block">
+								<?php echo $this->Html->link('Disable', array(
+									'admin' => true, 'action' => 'disable', $package['Package']['id']
+								)); ?>
+							</td>
+						</tr>
+					<?php endif; ?>
 					<?php // MVP For featured project ?>
 					<?php if ($package['Package']['name'] == 'debug_kit') : ?>
 					<tr>
