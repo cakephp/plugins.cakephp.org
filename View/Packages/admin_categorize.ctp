@@ -4,7 +4,13 @@
 	}
 ?>
 <section class="page-title clearfix">
-	<h2><?php echo $package['Package']['name']; ?></h2>
+	<h2><?php echo $this->Resource->github_url(
+		$package['Maintainer']['username'],
+		$package['Package']['name']
+	); ?></h2>
+	<?php echo $this->Html->link('Disable', array(
+		'admin' => true, 'action' => 'disable', $package['Package']['id']
+	)); ?>
 	<?php echo $this->Resource->description($package['Package']['description']); ?>
 </section>
 
