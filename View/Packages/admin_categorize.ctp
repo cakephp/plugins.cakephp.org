@@ -8,10 +8,10 @@
 		$package['Maintainer']['username'],
 		$package['Package']['name']
 	); ?></h2>
-	<?php echo $this->Html->link('Disable', array(
-		'admin' => true, 'action' => 'disable', $package['Package']['id']
-	)); ?>
 	<?php echo $this->Resource->description($package['Package']['description']); ?>
+	<?php echo $this->Html->link('Disable Package', array(
+		'admin' => true, 'action' => 'disable', $package['Package']['id']
+	), array('class' => 'button solid-red')); ?>
 </section>
 
 <section>
