@@ -21,7 +21,7 @@ class Package extends AppModel {
 			'modelClass' => 'Package',
 			'update' => true,
 		),
-		'Softdeletable',
+		'SoftDeletable',
 		'CakePackagesTaggable',
 	);
 
@@ -794,7 +794,7 @@ class Package extends AppModel {
  * @return array
  */
 	public function characterize($id) {
-		$this->Behaviors->detach('Softdeletable');
+		$this->Behaviors->detach('SoftDeletable');
 		list($package_id, $path) = $this->setupRepository($id);
 		if (!$package_id || !$path) {
 			return !$this->broken($id);

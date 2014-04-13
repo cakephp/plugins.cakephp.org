@@ -19,14 +19,14 @@ class GithubController extends AppController {
 /**
  * Called before the controller action.
  *
- * Detach the Softdeletable behavior from packages to prevent odd behavior
+ * Detach the SoftDeletable behavior from packages to prevent odd behavior
  * when attempting to search for them
  *
  * @link http://book.cakephp.org/view/984/Callbacks
  */
 	public function beforeFilter() {
 		parent::beforeFilter();
-		$this->Maintainer->Package->Behaviors->detach('Softdeletable');
+		$this->Maintainer->Package->Behaviors->detach('SoftDeletable');
 	}
 
 /**

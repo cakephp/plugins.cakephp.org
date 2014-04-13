@@ -208,7 +208,7 @@ class PackagesShell extends AppShell {
  */
 	public function characterize() {
 		$count = 0;
-		$this->Package->Behaviors->detach('Softdeletable');
+		$this->Package->Behaviors->detach('SoftDeletable');
 		$packages = $this->Package->find('list', array(
 			'order' => 'Package.id'
 		));
