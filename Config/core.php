@@ -1,5 +1,8 @@
 <?php
 
+    include (ROOT . DS . APP_DIR . DS . 'Vendor' . DS . 'autoload.php');
+
+
 	Configure::write('debug', 2);
 
 	// Set the default ErrorHandler
