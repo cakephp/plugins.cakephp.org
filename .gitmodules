@@ -1,9 +1,3 @@
-[submodule "Plugin/AssetCompress"]
-	path = Plugin/AssetCompress
-	url = git://github.com/markstory/asset_compress.git
-[submodule "Plugin/DebugKit"]
-	path = Plugin/DebugKit
-	url = git://github.com/cakephp/debug_kit.git
 [submodule "Plugin/Migrations"]
 	path = Plugin/Migrations
 	url = git://github.com/CakeDC/migrations.git
@@ -28,9 +22,6 @@
 [submodule "Plugin/DataTable"]
 	path = Plugin/DataTable
 	url = git://github.com/josegonzalez/cakephp-datatable.git
-[submodule "Plugin/Tags"]
-	path = Plugin/Tags
-	url = git://github.com/CakeDC/tags.git
 [submodule "Plugin/Resque"]
 	path = Plugin/Resque
 	url = git://github.com/josegonzalez/Cake-Resque.git
