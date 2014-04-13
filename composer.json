@@ -11,7 +11,11 @@
     "composer/installers" : "~1.0",
     "cssmin/cssmin": "*",
     "rgrove/jsmin-php": "*",
-    "cakephp/cakephp": "2.4.7"
+    "cakephp/cakephp": "2.4.7",
+
+    "markstory/asset_compress": "v0.12",
+    "cakephp/debug_kit" : "2.2.*",
+    "cakedc/tags": "1.5.1"
   },
   "config": {
     "preferred-install": "dist",

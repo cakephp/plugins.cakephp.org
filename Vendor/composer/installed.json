@@ -165,5 +165,144 @@
         "keywords": [
             "framework"
         ]
+    },
+    {
+        "name": "markstory/asset_compress",
+        "version": "v0.12",
+        "version_normalized": "0.12.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/markstory/asset_compress.git",
+            "reference": "c1870c2cfb9066fd74e978822a41244c3786f6ec"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/markstory/asset_compress/zipball/c1870c2cfb9066fd74e978822a41244c3786f6ec",
+            "reference": "c1870c2cfb9066fd74e978822a41244c3786f6ec",
+            "shasum": ""
+        },
+        "require": {
+            "composer/installers": "*",
+            "php": ">=5.3.0"
+        },
+        "time": "2014-02-01 21:10:52",
+        "type": "cakephp-plugin",
+        "installation-source": "dist",
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Mark Story",
+                "homepage": "http://mark-story.com",
+                "role": "Author"
+            }
+        ],
+        "description": "An asset compression plugin for CakePHP. Provides file concatenation and a flexible filter system for preprocessing and minification.",
+        "homepage": "https://github.com/markstory/asset_compress",
+        "keywords": [
+            "assets",
+            "cakephp",
+            "coffee-script",
+            "less",
+            "minifier",
+            "sass"
+        ]
+    },
+    {
+        "name": "cakedc/tags",
+        "version": "1.5.1",
+        "version_normalized": "1.5.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/CakeDC/tags.git",
+            "reference": "fba681438f7b76aa22bdcbf429e24950b3c00001"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/CakeDC/tags/zipball/fba681438f7b76aa22bdcbf429e24950b3c00001",
+            "reference": "fba681438f7b76aa22bdcbf429e24950b3c00001",
+            "shasum": ""
+        },
+        "require": {
+            "composer/installers": "*",
+            "php": ">=5.3.0"
+        },
+        "time": "2014-01-27 00:21:22",
+        "type": "cakephp-plugin",
+        "extra": {
+            "installer-name": "Tags"
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Cake Development Corporation",
+                "email": "team@cakedc.com",
+                "homepage": "http://cakedc.com"
+            }
+        ],
+        "description": "Tags plugin for CakePHP.",
+        "homepage": "http://github.com/CakeDC/tags",
+        "keywords": [
+            "cakephp",
+            "plugin",
+            "tags"
+        ]
+    },
+    {
+        "name": "cakephp/debug_kit",
+        "version": "2.2.3",
+        "version_normalized": "2.2.3.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/cakephp/debug_kit.git",
+            "reference": "fce9fca6e2e54469c4826d26392322d3f2e3cb9d"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/cakephp/debug_kit/zipball/fce9fca6e2e54469c4826d26392322d3f2e3cb9d",
+            "reference": "fce9fca6e2e54469c4826d26392322d3f2e3cb9d",
+            "shasum": ""
+        },
+        "require": {
+            "composer/installers": "*",
+            "php": ">=5.3.0"
+        },
+        "time": "2014-02-01 21:15:24",
+        "type": "cakephp-plugin",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.2.x-dev"
+            },
+            "installer-name": "DebugKit"
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Mark Story",
+                "homepage": "http://mark-story.com",
+                "role": "Author"
+            },
+            {
+                "name": "CakePHP Community",
+                "homepage": "https://github.com/cakephp/debug_kit/graphs/contributors"
+            }
+        ],
+        "description": "CakePHP Debug Kit",
+        "homepage": "https://github.com/cakephp/debug_kit",
+        "keywords": [
+            "cakephp",
+            "debug",
+            "kit"
+        ]
     }
 ]
