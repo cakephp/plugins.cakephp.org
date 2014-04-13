@@ -1,15 +1,6 @@
-[submodule "Plugin/Migrations"]
-	path = Plugin/Migrations
-	url = git://github.com/CakeDC/migrations.git
 [submodule "Plugin/Ratings"]
 	path = Plugin/Ratings
 	url = git://github.com/CakeDC/ratings.git
-[submodule "Plugin/Sanction"]
-	path = Plugin/Sanction
-	url = git://github.com/josegonzalez/sanction.git
-[submodule "Plugin/Sham"]
-	path = Plugin/Sham
-	url = git://github.com/josegonzalez/sham.git
 [submodule "Plugin/Favorites"]
 	path = Plugin/Favorites
 	url = git://github.com/CakeDC/favorites.git
@@ -22,9 +13,3 @@
 [submodule "Plugin/Resque"]
 	path = Plugin/Resque
 	url = git://github.com/josegonzalez/Cake-Resque.git
-[submodule "Plugin/Completion"]
-	path = Plugin/Completion
-	url = git://github.com/AD7six/cakephp-completion.git
-[submodule "Plugin/Environments"]
-	path = Plugin/Environments
-	url = git://github.com/OctoBear/cakephp-environments.git
