@@ -304,5 +304,44 @@
             "debug",
             "kit"
         ]
+    },
+    {
+        "name": "cakedc/utils",
+        "version": "1.4.3",
+        "version_normalized": "1.4.3.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/CakeDC/utils.git",
+            "reference": "ea48ed95b62517ddb046a46c17638726242121da"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/CakeDC/utils/zipball/ea48ed95b62517ddb046a46c17638726242121da",
+            "reference": "ea48ed95b62517ddb046a46c17638726242121da",
+            "shasum": ""
+        },
+        "require": {
+            "composer/installers": "*"
+        },
+        "time": "2014-03-30 21:42:43",
+        "type": "cakephp-plugin",
+        "installation-source": "dist",
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Cake Development Corporation",
+                "email": "team@cakedc.com",
+                "homepage": "http://cakedc.com"
+            }
+        ],
+        "description": "Utils Plugin for CakePHP",
+        "homepage": "http://cakedc.com",
+        "keywords": [
+            "cakephp",
+            "utility"
+        ]
     }
 ]

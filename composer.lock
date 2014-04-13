@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "5db81e975513ee9841d2d59398748179",
+    "hash": "9be0c89eb4bbf93aa7489e0ebdbedb25",
     "packages": [
         {
             "name": "cakedc/tags",
@@ -46,6 +46,43 @@
                 "tags"
             ],
             "time": "2014-01-27 00:21:22"
+        },
+        {
+            "name": "cakedc/utils",
+            "version": "1.4.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/CakeDC/utils.git",
+                "reference": "ea48ed95b62517ddb046a46c17638726242121da"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/CakeDC/utils/zipball/ea48ed95b62517ddb046a46c17638726242121da",
+                "reference": "ea48ed95b62517ddb046a46c17638726242121da",
+                "shasum": ""
+            },
+            "require": {
+                "composer/installers": "*"
+            },
+            "type": "cakephp-plugin",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Cake Development Corporation",
+                    "email": "team@cakedc.com",
+                    "homepage": "http://cakedc.com"
+                }
+            ],
+            "description": "Utils Plugin for CakePHP",
+            "homepage": "http://cakedc.com",
+            "keywords": [
+                "cakephp",
+                "utility"
+            ],
+            "time": "2014-03-30 21:42:43"
         },
         {
             "name": "cakephp/cakephp",
