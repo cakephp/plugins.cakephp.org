@@ -120,5 +120,50 @@
                 "jsmin.php"
             ]
         }
+    },
+    {
+        "name": "cakephp/cakephp",
+        "version": "2.4.7",
+        "version_normalized": "2.4.7.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/cakephp/cakephp.git",
+            "reference": "92800889a677899fd5c7a82fb7bab2cbfff887a3"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/cakephp/cakephp/zipball/92800889a677899fd5c7a82fb7bab2cbfff887a3",
+            "reference": "92800889a677899fd5c7a82fb7bab2cbfff887a3",
+            "shasum": ""
+        },
+        "require": {
+            "ext-mcrypt": "*",
+            "php": ">=5.2.8"
+        },
+        "require-dev": {
+            "cakephp/debug_kit": "2.2.*",
+            "phpunit/phpunit": "3.7.*"
+        },
+        "time": "2014-04-05 02:25:48",
+        "bin": [
+            "lib/Cake/Console/cake"
+        ],
+        "type": "library",
+        "installation-source": "dist",
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "CakePHP Community",
+                "homepage": "https://github.com/cakephp/cakephp/graphs/contributors"
+            }
+        ],
+        "description": "The CakePHP framework",
+        "homepage": "http://cakephp.org",
+        "keywords": [
+            "framework"
+        ]
     }
 ]
