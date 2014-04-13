@@ -14,8 +14,19 @@
     "cakephp/cakephp": "2.4.7",
 
     "markstory/asset_compress": "v0.12",
+
+
     "cakephp/debug_kit" : "2.2.*",
-    "cakedc/tags": "1.5.1"
+
+    "josegonzalez/cakephp-environments": "1.0.0",
+
+    "cakedc/migrations": "2.2.3",
+
+
+    "josegonzalez/cakephp-sanction": "2.1.0",
+    "josegonzalez/cakephp-sham": "1.0.0",
+    "cakedc/tags": "1.5.1",
+    "cakedc/utils": "1.4.3"
   },
   "config": {
     "preferred-install": "dist",

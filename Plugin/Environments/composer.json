@@ -1,0 +1,42 @@
+
+{
+  "name": "josegonzalez/cakephp-environments",
+  "description": "CakePHP plugin to handle environments-level configuration",
+  "type": "cakephp-plugin",
+  "keywords": [
+    "cakephp",
+    "environments",
+    "configuration"
+  ],
+  "homepage": "http://github.com/josegonzalez/cakephp-environments",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Jose Diaz-Gonzalez",
+      "email": "email@josediazgonzalez.com",
+      "homepage": "http://josediazgonzalez.com",
+      "role": "Maintainer"
+    },
+    {
+      "name": "David Kullmann",
+      "role": "Contributor",
+      "homepage": "https://github.com/dkullmann"
+    },
+    {
+      "name": "David Steinsland",
+      "role": "Contributor",
+      "homepage": "https://github.com/davidsteinsland"
+    }
+  ],
+  "require": {
+    "composer/installers": "*"
+  },
+  "support": {
+    "email": "cakephp+environments@josediazgonzalez.com",
+    "issues": "https://github.com/josegonzalez/cakephp-environments/issues",
+    "source": "https://github.com/josegonzalez/cakephp-environments"
+  },
+  "extra": {
+    "installer-name": "Environments"
+  }
+}

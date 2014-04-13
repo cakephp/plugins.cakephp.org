@@ -3,8 +3,45 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "9be0c89eb4bbf93aa7489e0ebdbedb25",
+    "hash": "ac4f010e19aab068129a4f3e0e45dec7",
     "packages": [
+        {
+            "name": "cakedc/migrations",
+            "version": "2.2.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/CakeDC/migrations.git",
+                "reference": "94036a606089c7e14b349eba043b0f58a0947e29"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/CakeDC/migrations/zipball/94036a606089c7e14b349eba043b0f58a0947e29",
+                "reference": "94036a606089c7e14b349eba043b0f58a0947e29",
+                "shasum": ""
+            },
+            "require": {
+                "composer/installers": "*"
+            },
+            "type": "cakephp-plugin",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Cake Development Corporation",
+                    "email": "team@cakedc.com",
+                    "homepage": "http://cakedc.com"
+                }
+            ],
+            "description": "Migrations Plugin for CakePHP",
+            "homepage": "http://cakedc.com",
+            "keywords": [
+                "cakephp",
+                "migrations"
+            ],
+            "time": "2013-10-21 10:45:27"
+        },
         {
             "name": "cakedc/tags",
             "version": "1.5.1",
@@ -275,6 +312,176 @@
                     "cssmin-v3.0.1.php"
                 ]
             }
+        },
+        {
+            "name": "josegonzalez/cakephp-environments",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/josegonzalez/cakephp-environments.git",
+                "reference": "3cdff916386b28d7e685504f8db6c86bc1b8a492"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/josegonzalez/cakephp-environments/zipball/3cdff916386b28d7e685504f8db6c86bc1b8a492",
+                "reference": "3cdff916386b28d7e685504f8db6c86bc1b8a492",
+                "shasum": ""
+            },
+            "require": {
+                "composer/installers": "*"
+            },
+            "type": "cakephp-plugin",
+            "extra": {
+                "installer-name": "Environments"
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David Kullmann",
+                    "homepage": "https://github.com/dkullmann",
+                    "role": "Contributor"
+                },
+                {
+                    "name": "Jose Diaz-Gonzalez",
+                    "email": "email@josediazgonzalez.com",
+                    "homepage": "http://josediazgonzalez.com",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "David Steinsland",
+                    "homepage": "https://github.com/davidsteinsland",
+                    "role": "Contributor"
+                }
+            ],
+            "description": "CakePHP plugin to handle environments-level configuration",
+            "homepage": "http://github.com/josegonzalez/cakephp-environments",
+            "keywords": [
+                "cakephp",
+                "configuration",
+                "environments"
+            ],
+            "time": "2014-04-13 10:27:24"
+        },
+        {
+            "name": "josegonzalez/cakephp-sanction",
+            "version": "2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/josegonzalez/cakephp-sanction.git",
+                "reference": "0c06b4baf610a838f6855ba61f0e17361459c1bc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/josegonzalez/cakephp-sanction/zipball/0c06b4baf610a838f6855ba61f0e17361459c1bc",
+                "reference": "0c06b4baf610a838f6855ba61f0e17361459c1bc",
+                "shasum": ""
+            },
+            "require": {
+                "composer/installers": "*"
+            },
+            "type": "cakephp-plugin",
+            "extra": {
+                "installer-name": "Sanction"
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Daniel Hollands",
+                    "homepage": "https://github.com/LimeBlast",
+                    "role": "Contributor"
+                },
+                {
+                    "name": "Alan Blount",
+                    "homepage": "https://github.com/zeroasterisk",
+                    "role": "Contributor"
+                },
+                {
+                    "name": "mreishus",
+                    "homepage": "https://github.com/mreishus",
+                    "role": "Contributor"
+                },
+                {
+                    "name": "kaptron",
+                    "homepage": "https://github.com/kaptron",
+                    "role": "Contributor"
+                },
+                {
+                    "name": "Rifat Nabi",
+                    "homepage": "https://github.com/torifat",
+                    "role": "Contributor"
+                },
+                {
+                    "name": "Jose Diaz-Gonzalez",
+                    "email": "email@josediazgonzalez.com",
+                    "homepage": "http://josediazgonzalez.com",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "Centralize all of those permissions in a single file using the Sanction plugin.",
+            "homepage": "http://github.com/josegonzalez/cakephp-sanction",
+            "keywords": [
+                "auth",
+                "authorization",
+                "cakephp"
+            ],
+            "time": "2014-04-13 10:13:12"
+        },
+        {
+            "name": "josegonzalez/cakephp-sham",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/josegonzalez/cakephp-sham.git",
+                "reference": "0a06129a957ff1396f8eae636482acb3a7deed41"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/josegonzalez/cakephp-sham/zipball/0a06129a957ff1396f8eae636482acb3a7deed41",
+                "reference": "0a06129a957ff1396f8eae636482acb3a7deed41",
+                "shasum": ""
+            },
+            "require": {
+                "composer/installers": "*"
+            },
+            "type": "cakephp-plugin",
+            "extra": {
+                "installer-name": "Sham"
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David Kullmann",
+                    "homepage": "https://github.com/dkullmann",
+                    "role": "Contributor"
+                },
+                {
+                    "name": "Jose Diaz-Gonzalez",
+                    "email": "email@josediazgonzalez.com",
+                    "homepage": "http://josediazgonzalez.com",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "David Yell",
+                    "homepage": "https://github.com/davidyell",
+                    "role": "Contributor"
+                }
+            ],
+            "description": "A CakePHP plugin for handling SEO-related information",
+            "homepage": "http://github.com/josegonzalez/cakephp-sham",
+            "keywords": [
+                "cakephp",
+                "seo"
+            ],
+            "time": "2014-04-13 10:36:23"
         },
         {
             "name": "markstory/asset_compress",
