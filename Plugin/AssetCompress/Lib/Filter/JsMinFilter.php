@@ -20,7 +20,7 @@ class JsMinFilter extends AssetFilter {
 	);
 
 /**
- * Apply JSMin to $content.
+ * Apply JsMin to $content.
  *
  * @param string $filename
  * @param string $content Content to filter.
@@ -29,9 +29,9 @@ class JsMinFilter extends AssetFilter {
  */
 	public function output($filename, $content) {
 		App::import('Vendor', 'jsmin', array('file' => $this->_settings['path']));
-		if (!class_exists('JSMin')) {
-			throw new Exception(sprintf('Cannot not load filter class "%s".', 'JSMin'));
+		if (!class_exists('JsMin')) {
+			throw new Exception(sprintf('Cannot not load filter class "%s".', 'JsMin'));
 		}
-		return JSMin::minify($content);
+		return JsMin::minify($content);
 	}
 }
