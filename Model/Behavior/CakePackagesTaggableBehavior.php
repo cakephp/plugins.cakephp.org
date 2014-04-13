@@ -108,13 +108,13 @@ class CakePackagesTaggableBehavior extends TaggableBehavior {
 /**
  * Override to check if !admin for identifiers and blacklisted tags
  *
- * @param Model $Model
+ * @param Model $model
  * @param string $string
  * @param string $separator
  * @return array
  */
-	public function disassembleTags(Model $Model, $string = '', $separator = ',') {
-		$tags = parent::disassembleTags($Model, $string, $separator);
+	public function disassembleTags(Model $model, $string = '', $separator = ',') {
+		$tags = parent::disassembleTags($model, $string, $separator);
 		if (!$this->_isAdmin) {
 			foreach ($tags['tags'] as $key => $val) {
 				$tags['tags'][$key]['identifier'] = null;
@@ -139,17 +139,17 @@ class CakePackagesTaggableBehavior extends TaggableBehavior {
 /**
  * Rebuild `contains` field into `tags` with identifiers
  *
- * @param Model $Model
+ * @param Model $model
  * @return boolean
  */
-	public function beforeSave(Model $Model) {
-		if (!empty($Model->data[$Model->alias]['contains'])) {
-			$contains = array_filter($Model->data[$Model->alias]['contains']);
+	public function beforeSave(Model $model, $options = array()) {
+		if (!empty($model->data[$model->alias]['contains'])) {
+			$contains = array_filter($model->data[$model->alias]['contains']);
 			if (!empty($contains)) {
 				$contains = ', contains:' . implode(', contains:', $contains);
-				$Model->data[$Model->alias]['tags'] .= $contains;
+				$model->data[$model->alias]['tags'] .= $contains;
 			}
-			unset($Model->data[$Model->alias]['contains']);
+			unset($model->data[$model->alias]['contains']);
 		}
 		return true;
 	}
@@ -158,17 +158,17 @@ class CakePackagesTaggableBehavior extends TaggableBehavior {
  * Rebuild `tags` without identifiers and ones with `contains` set each
  * legacy `contains_` fields
  *
- * @param Model $Model
+ * @param Model $model
  * @param array $results
  * @param boolean $primary
  */
-	public function afterFind(Model $Model, $results, $primary) {
-		$validTypes = !empty($Model->_validTypes) ? $Model->_validTypes : array();
-		extract($this->settings[$Model->alias]);
+	public function afterFind(Model $model, $results, $primary = false) {
+		$validTypes = !empty($model->_validTypes) ? $model->_validTypes : array();
+		extract($this->settings[$model->alias]);
 		foreach ($results as $key => $row) {
 			foreach ($validTypes as $type) {
-				if (isset($row[$Model->alias]['contains_' . $type])) {
-					$results[$key][$Model->alias]['contains_' . $type] = false;
+				if (isset($row[$model->alias]['contains_' . $type])) {
+					$results[$key][$model->alias]['contains_' . $type] = false;
 				}
 			}
 			if (!empty($row['Tag'])) {
@@ -177,12 +177,12 @@ class CakePackagesTaggableBehavior extends TaggableBehavior {
 					if (empty($tag['identifier'])) {
 						$tags[] = $tag['name'];
 					} elseif ($tag['identifier'] == 'contains') {
-						$results[$key][$Model->alias]['contains_' . $tag['keyname']] = true;
+						$results[$key][$model->alias]['contains_' . $tag['keyname']] = true;
 					}
 				}
 				sort($tags);
 				$tags = join($separator . ' ', $tags);
-				$results[$key][$Model->alias][$field] = $tags;
+				$results[$key][$model->alias][$field] = $tags;
 			}
 		}
 		return $results;
