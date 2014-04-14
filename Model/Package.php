@@ -266,7 +266,7 @@ class Package extends AppModel {
 			$query['contain'] = array('Category', 'Maintainer');
 			$query['fields'] = array(
 				"{$this->alias}.{$this->primaryKey}", "{$this->alias}.name",
-				"{$this->alias}.description", "{$this->alias}.watchers",
+				"{$this->alias}.description", "{$this->alias}.watchers", "{$this->alias}.modified",
 				'Category.name', 'Category.slug',
 				'Maintainer.username',
 			);
