@@ -270,7 +270,7 @@ class Package extends AppModel {
 				'Category.name', 'Category.slug',
 				'Maintainer.username',
 			);
-			$query['order'] = array('Maintainer.username');
+			$query['order'] = array('Maintainer.username ASC');
 			return $query;
 		}
 
@@ -587,6 +587,7 @@ class Package extends AppModel {
 				throw new UnauthorizedException(__("You must be logged in in order to rate packages"));
 			}
 
+			$query['contain'] = array('Maintainer');
 			$query['conditions'] = array("{$this->alias}.category_id" => null);
 			if (!empty($query[$this->primaryKey])) {
 				$query['conditions']["{$this->alias}.{$this->primaryKey} <>"] = $query[$this->primaryKey];
@@ -594,7 +595,7 @@ class Package extends AppModel {
 
 			$query['contain'] = array('Maintainer');
 			$query['limit'] = 1;
-			$query['order'] = array("{$this->alias}.{$this->primaryKey} ASC");
+			$query['order'] = array('Maintainer.username ASC');
 			return $query;
 		}
 
