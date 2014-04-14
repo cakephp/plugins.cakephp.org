@@ -10,7 +10,7 @@ class PackageData {
   }
 
   protected function out($message) {
-    CakeLog::info($message);
+    CakeLog::debug($message);
   }
 
   public function retrieve() {
