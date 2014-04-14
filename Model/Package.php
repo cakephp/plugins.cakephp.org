@@ -1036,7 +1036,7 @@ class Package extends AppModel {
 		unset($packageData['modified']);
 
 		$this->create();
-		return $this->save($package);
+		return $this->save($packageData);
 	}
 
 /**
