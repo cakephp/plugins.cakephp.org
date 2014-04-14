@@ -34,11 +34,24 @@ class PackageData {
     $data['description'] = $this->getDescription($repo);
     $data['contributors'] = $this->getContributors($repo, $owner);
     $data['collaborators'] = $this->getCollaborators($repo, $owner);
-    $data['forks'] = $this->getForks($repo);
-    $data['watchers'] = $this->getWatchers($repo);
     $data['open_issues'] = $this->getIssues($repo);
     $data['created_at'] = $this->getCreatedAt($repo);
     $data['last_pushed_at'] = $this->getLastPushedAt($repo);
+
+    $countFields = array(
+      'forks',
+      'forks_count',
+      'network_count',
+      'open_issues',
+      'open_issues_count',
+      'stargazers_count',
+      'subscribers_count',
+      'watchers',
+      'watchers_count',
+    );
+    foreach ($countFields as $countField) {
+      $data[$countField] = (empty($repo[$countField])) ? 0 : $repo[$countField];
+    }
 
     $unset = array();
     foreach ($data as $key => $value) {
@@ -125,14 +138,6 @@ class PackageData {
 
   public function getDescription($repo) {
     return empty($repo['description']) ? null : $repo['description'];
-  }
-
-  public function getForks($repo) {
-    return empty($repo['forks']) ? 0 : $repo['forks'];
-  }
-
-  public function getWatchers($repo) {
-    return empty($repo['subscribers_count']) ? 0 : $repo['subscribers_count'];
   }
 
   public function getCreatedAt($repo) {
