@@ -48,6 +48,8 @@ class PackagesController extends AppController {
  * Default page for entire application
  */
 	public function home() {
+		$packages = $this->Package->find('home');
+		$this->set(compact('packages'));
 	}
 
 /**

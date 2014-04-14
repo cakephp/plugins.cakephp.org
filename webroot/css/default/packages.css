@@ -230,6 +230,28 @@
 .packages-home .popular-list li {
 	margin-bottom: 12px;
 }
+.packages-home table .package-name {
+	color: #1B252C;
+	font-family: 'MuseoSlab500', Helvetica, Arial, sans-serif;
+	font-size: 15px;
+	font-weight: normal;
+	line-height: 15px;
+	padding: 2px 0 2px 0;
+}
+.packages-home table .description {
+	font-size: 12px;
+	margin: 2px 0 2px 0;
+	opacity: 1;
+}
+.packages-home table .watchers {
+	padding-right: 20px;
+	text-align: right;
+}
+.packages-home table .category-label {
+	font-weight: normal;
+	padding: .3em .6em;
+	text-shadow:1px 1px #000;
+}
 
 /* Package Categories */
 .packages-categories .content ul {

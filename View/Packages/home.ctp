@@ -1,4 +1,4 @@
-<section class="highlight clearfix">
+<!-- <section class="highlight clearfix">
   <span class="tag">featured</span>
   <p class="description">
     <span class="title">debug_kit:</span>&nbsp;
@@ -8,7 +8,7 @@
     <a href="/p/52-debug_kit" rel="nofollow">Get it!</a>
   </p>
 </section>
-
+ -->
 <section class="contribute">
   <div class="bubble-top bubble-border">
     <h2 class="header">Use and Share Open Source CakePHP Code</h2>
@@ -66,15 +66,35 @@
       <li><?php echo $this->Resource->package('FriendsOfCake', 'app-template'); ?></li>
     </ul>
   </article>
-
-  <article class="popular-maintainers">
-    <h3 class="section-heading">Popular Maintainers</h3>
-    <ul class="popular-list">
-      <li><?php echo $this->Resource->maintainer('CakePHP'); ?></li>
-      <li><?php echo $this->Resource->maintainer('CakeDC'); ?></li>
-      <li><?php echo $this->Resource->maintainer('lorenzo'); ?></li>
-      <li><?php echo $this->Resource->maintainer('markstory'); ?></li>
-      <li><?php echo $this->Resource->maintainer('josegonzalez'); ?></li>
-    </ul>
-  </article>
 </section>
+
+
+<table class="table table-hover table-condensed">
+  <thead>
+    <tr>
+      <th>Package</th>
+      <th>Watchers</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php foreach ($packages as $package) : ?>
+      <tr>
+        <td>
+          <a href="/p/<?php echo $package['Package']['id']; ?>-<?php echo $package['Package']['name']; ?>" class="package-name">
+            <?php echo $package['Maintainer']['username']; ?> / <?php echo $package['Package']['name']; ?>
+          </a>
+          <p class="description">
+            <?php if (!empty($package['Category']['slug'])) : ?>
+              <a href="/packages?category=<?php echo $package['Category']['slug']; ?>" class="label category-label" style="background-color:<?php echo $package['Category']['color']; ?>">
+                <?php echo $package['Category']['name']; ?>
+              </a>&nbsp;
+            <?php endif; ?>
+            <?php echo $this->Text->truncate($package['Package']['description']) ?>
+          </p>
+        </td>
+        <td class="watchers"><?php echo $package['Package']['watchers']; ?></td>
+      </tr>
+    <?php endforeach; ?>
+  </tbody>
+</table>
+

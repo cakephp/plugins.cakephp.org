@@ -37,6 +37,7 @@ class Package extends AppModel {
 		'bookmark'          => true,
 		'category'          => true,
 		'download'          => true,
+		'home'              => true,
 		'index'             => true,
 		'listformaintainer' => true,
 		'rate'              => true,
@@ -258,6 +259,32 @@ class Package extends AppModel {
 			$results[0]['Package']['name'],
 			$query['branch']
 		);
+	}
+
+	public function _findHome($state, $query, $results = array()) {
+		if ($state == 'before') {
+			$query['contain'] = array('Category', 'Maintainer');
+			$query['fields'] = array(
+				"{$this->alias}.{$this->primaryKey}", "{$this->alias}.name",
+				"{$this->alias}.description", "{$this->alias}.watchers",
+				'Category.name', 'Category.slug',
+				'Maintainer.username',
+			);
+			return $query;
+		}
+
+		$colors = array();
+
+		foreach ($results as $i => $result) {
+			$slug = $results[$i]['Category']['slug'];
+			if (isset($colors[$slug])) {
+				$results[$i]['Category']['color'] = $colors[$slug];
+			} else {
+				$colors[$slug] = $results[$i]['Category']['color'] = $this->stringToColor($slug);
+			}
+		}
+
+		return $results;
 	}
 
 	public function _findIndex($state, $query, $results = array()) {
@@ -1418,6 +1445,48 @@ class Package extends AppModel {
 				$package['Package']['name']
 			), true),
 		);
+	}
+
+	public function stringToColor($text, $min_brightness = 50, $spec = 9) {
+		// Check inputs
+		if (!is_int($min_brightness)) {
+			throw new Exception("$min_brightness is not an integer");
+		}
+		if (!is_int($spec)) {
+			throw new Exception("$spec is not an integer");
+		}
+		if ($spec < 2 or $spec > 10) {
+			throw new Exception("$spec is out of range");
+		}
+		if ($min_brightness < 0 or $min_brightness > 255) {
+			throw new Exception("$min_brightness is out of range");
+		}
+
+
+		$hash = md5($text);  //Gen hash of text
+		$colors = array();
+		for ($i = 0; $i < 3; $i++) {
+			//convert hash into 3 decimal values between 0 and 255
+			$colors[$i] = max(array(round(((hexdec(substr($hash, $spec * $i, $spec))) / hexdec(str_pad('', $spec, 'F'))) * 255), $min_brightness));
+		}
+
+		//only check brightness requirements if min_brightness is about 100
+		if ($min_brightness > 0) {
+			//loop until brightness is above or equal to min_brightness
+			while (array_sum($colors) / 3 < $min_brightness) {
+				for ($i = 0; $i < 3; $i++) {
+					$colors[$i] += 10;	//increase each color by 10
+				}
+			}
+		}
+
+		$output = '';
+
+		for ($i = 0; $i < 3; $i++) {
+			$output .= str_pad(dechex($colors[$i]),2,0,STR_PAD_LEFT);  //convert each color to hex and append to output
+		}
+
+		return '#'.$output;
 	}
 
 /**

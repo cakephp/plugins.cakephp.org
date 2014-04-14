@@ -10,6 +10,15 @@ class ResourceHelper extends AppHelper {
 		);
 	}
 
+	public function packageLink($package) {
+		return $this->Html->link($this->Text->truncate($package['name'], 35), array(
+			'plugin' => null,
+			'controller' => 'packages',
+			'action' => 'view',
+			'id' => $package['id'], 'slug' => $package['name']
+		), array('title' => $package['name']));
+	}
+
 	public function github_url($maintainer, $package, $name = null) {
 		$link = "https://github.com/{$maintainer}/{$package}";
 		if ($name === null) {
