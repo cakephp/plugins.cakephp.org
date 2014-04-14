@@ -139,8 +139,8 @@ class PackagesController extends AppController {
 		}
 
 		if ($slug != $package['Package']['name']) {
-			return $this->redirect(array(
-				'controller' => 'packages', 'action' => 'show',
+		return $this->redirect(array(
+				'controller' => 'packages', 'action' => 'view',
 				'id' => $package['Package']['id'], 'slug' => $package['Package']['name']
 			));
 		}
