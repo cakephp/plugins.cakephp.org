@@ -51,7 +51,7 @@
   </div>
 </section>
 
-<section class="lists">
+<!-- <section class="lists">
   <article class="popular-packages">
     <h3 class="section-heading">Popular Packages</h3>
     <ul class="popular-list">
@@ -67,7 +67,7 @@
     </ul>
   </article>
 </section>
-
+ -->
 
 <table class="table table-hover table-condensed">
   <thead>
