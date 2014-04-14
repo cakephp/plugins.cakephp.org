@@ -39,6 +39,10 @@ before_script:
       'database' => 'cakephp_test',
       'prefix' => ''
     );
+    public \$github = array(
+      'datasource' => 'GithubSource',
+      'token' => null,
+    );
     public function __construct() {
       \$db = 'mysql';
       if (!empty(\$_SERVER['DB'])) {
