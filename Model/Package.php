@@ -270,6 +270,7 @@ class Package extends AppModel {
 				'Category.name', 'Category.slug',
 				'Maintainer.username',
 			);
+			$query['order'] = array('Maintainer.username');
 			return $query;
 		}
 
