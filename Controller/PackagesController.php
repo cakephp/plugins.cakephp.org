@@ -293,6 +293,28 @@ class PackagesController extends AppController {
 	}
 
 /**
+ * update github info for package(s)
+ *
+ * @param integer $id
+ */
+	public function admin_update($id = null) {
+		if ($id) {
+			if ($this->Package->enqueue('UpdatePackageJob', array($id))) {
+				$this->Session->setFlash(__('Package #%d has been queued for updating.', $id), 'flash/success');
+			} else {
+				$this->Session->setFlash(__('Package #%d could not be queued for updating.', $id), 'flash/error');
+			}
+		} else {
+			$packages = $this->Package->find('list');
+			foreach ($packages as $id => $name) {
+				$this->Package->enqueue('UpdatePackageJob', array($id));
+			}
+			$this->Session->setFlash(__('Attempted to queue %d packages.', count($packages)), 'flash/success');
+		}
+		return $this->redirect(array('admin' => true, 'action' => 'index'));
+	}
+
+/**
  * admin_categorize
  *
  * @param integer $id
