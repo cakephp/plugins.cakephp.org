@@ -676,10 +676,21 @@ class Package extends AppModel {
 			$results[0]['Rating'] = false;
 		}
 
+		if ($this->shouldForceUpdate($results[0][$this->alias]['modified'])) {
+			$this->enqueue('UpdatePackageJob', array($results[0][$this->alias]['id']));
+		}
+
 		DebugTimer::start('app.Package::rss', __d('app', 'Package::rss()'));
 		list($results[0]['Rss'], $results[0]['Cache']) = $this->rss($results[0]);
 		DebugTimer::stop('app.Package::rss');
 		return $results[0];
+	}
+
+	public function shouldForceUpdate($lastModified) {
+		$date = new DateTime();
+		$lastModifiedDate = new DateTime($lastModified);
+		$interval = $date->diff($lastModifiedDate);
+		return $interval->days > 7;
 	}
 
 /**
@@ -975,7 +986,7 @@ class Package extends AppModel {
 
 		$packageData = new PackageData(
 			$package['Maintainer']['username'],
-			$package['Package']['name'],
+			$package[$this->alias]['name'],
 			$this->_Github
 		);
 		$data = $packageData->retrieve();
@@ -985,9 +996,12 @@ class Package extends AppModel {
 
 		foreach ($data as $key => $value) {
 			if ($value !== null) {
-				$package['Package'][$key] = $value;
+				$package[$this->alias][$key] = $value;
 			}
 		}
+
+		$packageData = $package[$this->alias];
+		unset($packageData['modified']);
 
 		$this->create();
 		return $this->save($package);
