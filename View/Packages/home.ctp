@@ -59,7 +59,7 @@
       <li><?php echo $this->Resource->package('lorenzo', 'MongoCake'); ?></li>
       <li><?php echo $this->Resource->package('markstory', 'asset_compress'); ?></li>
       <li><?php echo $this->Resource->package('dkullmann', 'CakePHP-Elastic-Search-DataSource'); ?></li>
-      <li><?php echo $this->Resource->package('josegonzalez', 'upload'); ?></li>
+      <li><?php echo $this->Resource->package('josegonzalez', 'cakephp-upload'); ?></li>
       <li><?php echo $this->Resource->package('CakeDC', 'migrations'); ?></li>
       <li><?php echo $this->Resource->package('FriendsOfCake', 'crud'); ?></li>
       <li><?php echo $this->Resource->package('slywalker', 'cakephp-plugin-boost_cake'); ?></li>
