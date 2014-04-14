@@ -248,6 +248,7 @@
 	text-align: right;
 }
 .packages-home table .category-label {
+	font-size: 10px;
 	font-weight: normal;
 	padding: .3em .6em;
 	text-shadow:1px 1px #000;
