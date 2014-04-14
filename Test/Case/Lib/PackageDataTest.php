@@ -29,7 +29,7 @@ class PackageDataTest extends CakeTestCase {
 
 		$packageData = new PackageData($username, $packageName, $this->Github);
 		$data = $packageData->retrieve();
-		$this->assertFalse($data);
+		$this->assertEquals(array('deleted' => true), $data);
 	}
 
 }
