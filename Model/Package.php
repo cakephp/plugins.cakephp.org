@@ -277,12 +277,6 @@ class Package extends AppModel {
 		$colors = array();
 
 		foreach ($results as $i => $result) {
-			try {
-				$this->enqueue('UpdatePackageJob', array($results[0][$this->alias][$this->primaryKey]));
-			} catch (Exception $e) {
-				CakeLog::warning('Package::find(\'view\')' . $e->getMessage());
-			}
-
 			$slug = $results[$i]['Category']['slug'];
 			if (isset($colors[$slug])) {
 				$results[$i]['Category']['color'] = $colors[$slug];
