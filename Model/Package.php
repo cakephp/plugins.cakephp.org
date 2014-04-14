@@ -704,7 +704,11 @@ class Package extends AppModel {
 		}
 
 		if ($this->shouldForceUpdate($results[0][$this->alias]['modified'])) {
-			$this->enqueue('UpdatePackageJob', array($results[0][$this->alias]['id']));
+			try {
+				$this->enqueue('UpdatePackageJob', array($results[0][$this->alias]['id']));
+			} catch (Exception $e) {
+				CakeLog::warning('Package::find(\'view\')' . $e->getMessage());
+			}
 		}
 
 		DebugTimer::start('app.Package::rss', __d('app', 'Package::rss()'));
