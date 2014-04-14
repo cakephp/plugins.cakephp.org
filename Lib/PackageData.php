@@ -132,7 +132,7 @@ class PackageData {
   }
 
   public function getWatchers($repo) {
-    return empty($repo['watchers']) ? 0 : $repo['watchers'];
+    return empty($repo['subscribers_count']) ? 0 : $repo['subscribers_count'];
   }
 
   public function getCreatedAt($repo) {
