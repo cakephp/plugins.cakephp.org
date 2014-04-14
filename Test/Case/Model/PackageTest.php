@@ -411,7 +411,7 @@ m Test/Case/Model/Datasource/FtpSourceTest.php
 			'disqus_shortname' => 'cakepackages',
 			'disqus_identifier' => '1',
 			'disqus_title' => 'chocolate by shama',
-			'disqus_url' => 'http://cakepackages.dev/packages/view/shama/chocolate'
+			'disqus_url' => '/packages/view/shama/chocolate'
 		);
 		$this->assertEquals($expected, $result);
 	}
