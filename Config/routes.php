@@ -49,4 +49,9 @@
 	Router::connect('/package/*', array('controller' => 'packages', 'action' => 'utility_redirect'));
 	Router::connect('/maintainer/*', array('controller' => 'maintainers', 'action' => 'view'));
 
+	App::uses('PageRoute', 'PageRoute.Routing/Route');
+	Router::connect('/:page', array('controller' => 'pages', 'action' => 'display'),
+		array('routeClass' => 'PageRoute')
+	);
+
 	require CAKE . 'Config' . DS . 'routes.php';

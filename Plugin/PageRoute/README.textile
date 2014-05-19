@@ -1,0 +1,97 @@
+h1. PageRoute Plugin
+
+Forget about cluttering your @routes.php@ with zillions of @/page@-style routes.
+
+h2. Background
+
+Someone in IRC was migrating tons of static pages into a fresh CakePHP install. In the webroot. I was going to hurt him, but then told him to move them into @app/View/pages@ and use routes to properly route everything. I also mentioned that rather than routing every static file one by one, it might be possible using a custom @CakeRoute@ class, but didn't elaborate.
+
+So a few minutes of hacking later, and here I am with this lovely @PageRoute@.
+
+h2. Requirements
+
+* PHP 5.2+
+* CakePHP 2.x
+
+h2. Installation
+
+_[Manual]_
+
+# Download this: http://github.com/josegonzalez/page_route/zipball/2.0
+# Unzip that download.
+# Copy the resulting folder to app/Plugin
+# Rename the folder you just copied to @PageRoute@
+
+_[GIT Submodule]_
+
+In your app directory type:
+<pre><code>git submodule add git://github.com/josegonzalez/page_route.git Plugin/PageRoute
+git submodule init
+git submodule update
+cd Plugin/PageRoute
+git checkout -t origin/2.0
+</code></pre>
+
+_[GIT Clone]_
+
+In your plugin directory type
+<pre><code>git clone --branch=2.0 git://github.com/josegonzalez/page_route.git PageRoute</code></pre>
+
+h2. Usage
+
+Way near the bottom of your @app/Config/routes.php@ file, add the following:
+
+<pre><code>App::uses('PageRoute', 'PageRoute.Routing/Route');
+Router::connect('/:page', array('controller' => 'pages', 'action' => 'display'),
+	array('routeClass' => 'PageRoute')
+);
+</code></pre>
+
+And now you can remove all shortcuts to your @/pages/display/page-name@ urls. Whenever you create a new @.ctp@ file in @app/views/pages@, this route will automatically detect it using a @file_exists()@ call. Because of this, it is recommended to use this as one of the last, if not the last, route in your application, in order to minimize file-reads.
+
+It is also possible to customize the controller/action used for this. For example, we might want to use the @StaticPagesController::index()@ instead of @PagesController::display()@. In that case, our @routes.php@ would look like the following:
+
+<pre><code>App::uses('PageRoute', 'PageRoute.Routing/Route');
+Router::connect('/:page', array('controller' => 'static_pages', 'action' => 'index'),
+	array('routeClass' => 'PageRoute', 'controller' => 'static_pages', 'action' => 'index')
+);
+</code></pre>
+
+In this way, we can easily rename the @PagesController@ to something less useful, and reuse the @PagesController@ for something else - such as dynamic content from the database.
+
+Reverse routing will all work the same as it does without this route class. @array('controller' => 'pages', 'action' => 'display', 'about')@ will be automatically converted to @array('controller' => 'pages', 'action' => 'display', 'page' =. 'about')@ for backwards compatibility Please note that by default, the regex @[\/\w_-]+@ is used to check the page validity, so you may need to update that regex in the Route options as follows:
+
+<pre><code>App::uses('PageRoute', 'PageRoute.Routing/Route');
+Router::connect('/:page', array('controller' => 'static_pages', 'action' => 'index'),
+	array('routeClass' => 'PageRoute', 'page' => '[a-zA-Z]+')
+);
+</code></pre>
+
+Note that the @.@ character has been disallowed in the default regex to remove the possibility of traversing the directory tree for security reasons.
+
+h2. Todo
+
+* Unit Tests
+* Allow usage of the @.@ character in routes
+
+h2. License
+
+Copyright (c) 2011 Jose Diaz-Gonzalez
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
