@@ -12,6 +12,8 @@ before_script:
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"
   - git clone git://github.com/cakephp/cakephp ../cakephp && cd ../cakephp && git checkout $CAKE_VERSION
   - rm -rf app/ && cp -R ../cakepackages app
+  - composer global require 'phpunit/phpunit=3.7.33'
+  - ln -s ~/.composer/vendor/phpunit/phpunit/PHPUnit ./app/Vendor/PHPUnit
   - chmod -R 777 app/tmp
   - set +H
   - echo "<?php
