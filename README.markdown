@@ -1,4 +1,4 @@
-[https://travis-ci.org/cakephp/cakepackages.png?branch=master](https://travis-ci.org/cakephp/cakepackages)
+[![Build Status](https://travis-ci.org/cakephp/cakepackages.svg?branch=master)](https://travis-ci.org/cakephp/cakepackages)
 
 # CakePackages
 
