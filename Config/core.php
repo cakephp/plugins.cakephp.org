@@ -21,9 +21,11 @@
 	Configure::write('App.encoding', 'UTF-8');
 
 	// Conditionally disable mod_rewrite
-	if (php_sapi_name() != 'cli' && function_exists('apache_get_modules')) {
-		if (!in_array('mod_rewrite', apache_get_modules())) {
+	if (php_sapi_name() != 'cli') {
+		if (function_exists('apache_get_modules') && !in_array('mod_rewrite', apache_get_modules())) {
 			Configure::write('App.baseUrl', env('SCRIPT_NAME'));
+		} elseif (!empty($_SERVER['SERVER_SOFTWARE']) && strstr($_SERVER['SERVER_SOFTWARE'], 'Development Server') !== false) {
+			Configure::write('App.baseUrl', '/');
 		}
 	}
 	// Current router prefixes
