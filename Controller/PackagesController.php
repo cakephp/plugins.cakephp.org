@@ -91,7 +91,7 @@ class PackagesController extends AppController {
 		), $this->request->params['paging']['Package']['nextPage']);
 
 		$this->request->data['query'] = $query;
-		$this->set(compact('next', 'order', 'packages', 'title'));
+		$this->set(compact('next', 'order', 'packages'));
 	}
 
 /**
@@ -102,7 +102,10 @@ class PackagesController extends AppController {
  */
 	public function utility_redirect($maintainer = null, $package = null) {
 		try {
-			$package = $this->Package->find('redirect', compact('maintainer', 'package'));
+			$package = $this->Package->find('redirect', array(
+				'maintainer' => $maintainer,
+				'package' => $package
+			));
 		} catch (Exception $e) {
 			$this->Session->setFlash($e->getMessage(), 'flash/error');
 			return $this->redirect($this->redirectTo);
@@ -306,7 +309,7 @@ class PackagesController extends AppController {
 			}
 		} else {
 			$packages = $this->Package->find('list');
-			foreach ($packages as $id => $name) {
+			foreach (array_keys($packages) as $id) {
 				$this->Package->enqueue('UpdatePackageJob', array($id));
 			}
 			$this->Session->setFlash(__('Attempted to queue %d packages.', count($packages)), 'flash/success');
