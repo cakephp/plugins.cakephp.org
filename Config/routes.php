@@ -39,10 +39,6 @@
 
 	Router::connect('/login', array('controller' => 'users', 'action' => 'login'));
 
-	// Route cached files
-	Router::connect('/cache_css/*', array('plugin' => 'asset_compress', 'controller' => 'css_files', 'action' => 'get'));
-	Router::connect('/cache_js/*', array('plugin' => 'asset_compress', 'controller' => 'js_files', 'action' => 'get'));
-
 	Router::connect('/suggest', array('controller' => 'packages', 'action' => 'suggest'));
 
 	Router::connect('/admin', array('controller' => 'users', 'action' => 'admin'));

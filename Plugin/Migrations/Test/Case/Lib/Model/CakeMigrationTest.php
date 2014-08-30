@@ -1,18 +1,12 @@
 <?php
 /**
- * Cake Migrations plugin.
- *
- * Copyright 2009 - 2013, Cake Development Corporation
- *						1785 E. Sahara Avenue, Suite 490-423
- *						Las Vegas, Nevada 89104
+ * Copyright 2009 - 2014, Cake Development Corporation (http://cakedc.com)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright 2009 - 2013, Cake Development Corporation
- * @link	  http://codaset.com/cakedc/migrations/
- * @package   plugns.migrations
- * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright Copyright 2009 - 2014, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('CakeMigration', 'Migrations.Lib');
@@ -21,8 +15,6 @@ App::uses('MigrationVersion', 'Migrations.Lib');
 /**
  * TestCakeMigration
  *
- * @package       migrations
- * @subpackage    migrations.tests.cases.libs
  */
 class TestCakeMigration extends CakeMigration {
 
@@ -37,20 +29,18 @@ class TestCakeMigration extends CakeMigration {
 /**
  * TestCallbackCakeMigration
  *
- * @package       migrations
- * @subpackage    migrations.tests.cases.libs
  */
 class TestCallbackCakeMigration {
 
 /**
- * calls property
+ * Calls property
  *
  * @var array
  */
 	public $calls = array();
 
 /**
- * beforeMigration method
+ * BeforeMigration method
  *
  * @param $Migration
  * @param $type
@@ -61,7 +51,7 @@ class TestCallbackCakeMigration {
 	}
 
 /**
- * afterMigration method
+ * AfterMigration method
  *
  * @param $Migration
  * @param $type
@@ -72,7 +62,7 @@ class TestCallbackCakeMigration {
 	}
 
 /**
- * beforeAction method
+ * BeforeAction method
  *
  * @param $Migration
  * @param $type
@@ -84,7 +74,7 @@ class TestCallbackCakeMigration {
 	}
 
 /**
- * afterAction method
+ * AfterAction method
  *
  * @param $Migration
  * @param $type
@@ -100,13 +90,11 @@ class TestCallbackCakeMigration {
 /**
  * CakeMigrationTest
  *
- * @package       migration
- * @subpackage    migration.tests.cases.libs
  */
 class CakeMigrationTest extends CakeTestCase {
 
 /**
- * fixtures property
+ * Fixtures property
  *
  * @var array
  */
@@ -114,14 +102,14 @@ class CakeMigrationTest extends CakeTestCase {
 		'core.user', 'core.post');
 
 /**
- * autoFixtures property
+ * AutoFixtures property
  *
  * @var array
  */
 	public $autoFixtures = false;
 
 /**
- * tables property
+ * Tables property
  *
  * @var array
  */
@@ -150,7 +138,18 @@ class CakeMigrationTest extends CakeTestCase {
 	public $db;
 
 /**
- * testCreateTable method
+ * Start test
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+
+		Configure::write('Config.language', 'en');
+	}
+
+/**
+ * TestCreateTable method
  *
  * @return void
  */
@@ -172,7 +171,7 @@ class CakeMigrationTest extends CakeTestCase {
 			$migration->run('up');
 			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Table "' . $this->db->fullTableName('migration_posts', false, false) . '" already exists in database.', $e->getMessage());
+			$this->assertEquals('Table "' . $this->db->fullTableName('migration_posts', false, false) . '" already exists in database.', $e->getMessage());
 		}
 
 		$this->assertTrue($migration->run('down'));
@@ -182,7 +181,7 @@ class CakeMigrationTest extends CakeTestCase {
 	}
 
 /**
- * test create and drop tables with a prefix
+ * Test create and drop tables with a prefix
  *
  * @return void
  */
@@ -213,7 +212,7 @@ class CakeMigrationTest extends CakeTestCase {
 	}
 
 /**
- * testRenameTable method
+ * TestRenameTable method
  *
  * @return void
  */
@@ -238,7 +237,7 @@ class CakeMigrationTest extends CakeTestCase {
 			$migration->run('up');
 			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
-			$this->assertEqual($e->getMessage(), 'Table "' . $this->db->fullTableName('renamed_posts', false, false) . '" already exists in database.');
+			$this->assertEquals($e->getMessage(), 'Table "' . $this->db->fullTableName('renamed_posts', false, false) . '" already exists in database.');
 		}
 
 		$this->assertTrue($migration->run('down'));
@@ -248,7 +247,7 @@ class CakeMigrationTest extends CakeTestCase {
 	}
 
 /**
- * testCreateDropField method
+ * TestCreateDropField method
  *
  * @return void
  */
@@ -278,7 +277,7 @@ class CakeMigrationTest extends CakeTestCase {
 			$migration->run('up');
 			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Field "views" already exists in "posts".', $e->getMessage());
+			$this->assertEquals('Field "views" already exists in "posts".', $e->getMessage());
 		}
 
 		$this->assertTrue($migration->run('down'));
@@ -289,12 +288,12 @@ class CakeMigrationTest extends CakeTestCase {
 			$migration->run('down');
 			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Field "views" does not exists in "posts".', $e->getMessage());
+			$this->assertEquals('Field "views" does not exists in "posts".', $e->getMessage());
 		}
 	}
 
 /**
- * testCreateDropIndex method
+ * TestCreateDropIndex method
  *
  * @return void
  */
@@ -330,10 +329,10 @@ class CakeMigrationTest extends CakeTestCase {
 		$viewCount = array('column' => 'views', 'unique' => 0);
 		$this->assertTrue(isset($indexes['UNIQUE_AUTHOR_TITLE']));
 		$this->assertTrue(isset($indexes['VIEW_COUNT']));
-		$this->assertIdentical($indexes['UNIQUE_AUTHOR_TITLE'], $uniqueAuthorTitle);
-		$this->assertIdentical($indexes['VIEW_COUNT'], $viewCount);
+		$this->assertSame($indexes['UNIQUE_AUTHOR_TITLE'], $uniqueAuthorTitle);
+		$this->assertSame($indexes['VIEW_COUNT'], $viewCount);
 		$this->assertTrue(isset($fields['views']));
-		$this->assertEqual($fields['views']['key'], 'index');
+		$this->assertEquals($fields['views']['key'], 'index');
 
 		try {
 			$migration->run('up');
@@ -360,7 +359,7 @@ class CakeMigrationTest extends CakeTestCase {
 		$fields = $this->db->describe($model);
 		$indexes = $this->db->index($model);
 		$this->assertTrue(!empty($indexes) && is_array($indexes));
-		$this->assertEqual($indexes['PRIMARY']['column'], 'id');
+		$this->assertEquals($indexes['PRIMARY']['column'], 'id');
 		$this->assertFalse(array_key_exists('key', $fields['published']));
 		$this->assertFalse(array_key_exists('key', $fields['title']));
 		$migration = new TestCakeMigration(array(
@@ -391,8 +390,8 @@ class CakeMigrationTest extends CakeTestCase {
 		$this->assertTrue($migration->run('up'));
 		$indexes = $this->db->index($model);
 		$this->assertArrayHasKey('NEW_INDEX', $indexes);
-		$this->assertEqual($indexes['NEW_INDEX']['column'], 'title');
-		$this->assertEqual($indexes['NEW_INDEX']['unique'], 0);
+		$this->assertEquals($indexes['NEW_INDEX']['column'], 'title');
+		$this->assertEquals($indexes['NEW_INDEX']['unique'], 0);
 
 		$migration2 = new TestCakeMigration(array(
 			'up' => array(
@@ -428,7 +427,7 @@ class CakeMigrationTest extends CakeTestCase {
 		$this->assertFalse(array_key_exists('key', $fields['title']));
 		$this->assertTrue(array_key_exists('key', $fields['published']));
 		$this->assertEquals($indexes['NEW_INDEX']['column'], 'published');
-		$this->assertEqual($indexes['NEW_INDEX']['unique'], 0);
+		$this->assertEquals($indexes['NEW_INDEX']['unique'], 0);
 
 		$this->assertTrue($migration2->run('down'));
 		$indexes = $this->db->index($model);
@@ -436,19 +435,19 @@ class CakeMigrationTest extends CakeTestCase {
 		$this->assertTrue(array_key_exists('key', $fields['title']));
 		$this->assertFalse(array_key_exists('key', $fields['published']));
 		$this->assertEquals($indexes['NEW_INDEX']['column'], 'title');
-		$this->assertEqual($indexes['NEW_INDEX']['unique'], 0);
+		$this->assertEquals($indexes['NEW_INDEX']['unique'], 0);
 
 		$this->assertTrue($migration->run('down'));
 		$fields = $this->db->describe($model);
 		$indexes = $this->db->index($model);
 		$this->assertTrue(!empty($indexes) && is_array($indexes));
-		$this->assertEqual($indexes['PRIMARY']['column'], 'id');
+		$this->assertEquals($indexes['PRIMARY']['column'], 'id');
 		$this->assertFalse(array_key_exists('key', $fields['published']));
 		$this->assertFalse(array_key_exists('key', $fields['title']));
 	}
 
 /**
- * testAlterField method
+ * TestAlterField method
  * @return void
  */
 	public function testAlterField() {
@@ -469,11 +468,11 @@ class CakeMigrationTest extends CakeTestCase {
 		));
 
 		$fields = $this->db->describe($model);
-		$this->assertEqual($fields['published']['default'], 'N');
+		$this->assertEquals($fields['published']['default'], 'N');
 
 		$this->assertTrue($migration->run('up'));
 		$fields = $this->db->describe($model);
-		$this->assertEqual($fields['published']['default'], 'Y');
+		$this->assertEquals($fields['published']['default'], 'Y');
 
 		try {
 			$migration->migration['up']['alter_field']['posts']['inexistent'] = array('default' => 'N');
@@ -481,16 +480,16 @@ class CakeMigrationTest extends CakeTestCase {
 			$this->fail('No expection triggered');
 			$this->setExpectedException('MigrationException');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Undefined index: inexistent', $e->getMessage());
+			$this->assertEquals('Undefined index: inexistent', $e->getMessage());
 		}
 
 		$this->assertTrue($migration->run('down'));
 		$fields = $this->db->describe($model);
-		$this->assertEqual($fields['published']['default'], 'N');
+		$this->assertEquals($fields['published']['default'], 'N');
 	}
 
 /**
- * test the change of fields type.
+ * Test the change of fields type.
  */
 	public function testAlterFieldType() {
 		$this->loadFixtures('User', 'Post');
@@ -518,9 +517,8 @@ class CakeMigrationTest extends CakeTestCase {
 	}
 
 /**
- * testAlterFieldLength method
+ * TestAlterFieldLength method
  *
- * @access public
  * @return void
  */
 	public function testAlterFieldLength() {
@@ -541,22 +539,22 @@ class CakeMigrationTest extends CakeTestCase {
 		));
 
 		$fields = $this->db->describe($model);
-		$this->assertEqual($fields['created']['type'], 'datetime');
+		$this->assertEquals($fields['created']['type'], 'datetime');
 		$this->assertNull($fields['created']['length']);
 
 		$this->assertTrue($migration->run('up'));
 		$fields = $this->db->describe($model);
-		$this->assertEqual($fields['created']['type'], 'integer');
-		$this->assertEqual($fields['created']['length'], 11);
+		$this->assertEquals($fields['created']['type'], 'integer');
+		$this->assertEquals($fields['created']['length'], 11);
 
 		$this->assertTrue($migration->run('down'));
 		$fields = $this->db->describe($model);
-		$this->assertEqual($fields['created']['type'], 'datetime');
+		$this->assertEquals($fields['created']['type'], 'datetime');
 		$this->assertNull($fields['created']['length']);
 	}
 
 /**
- * testAlterAndRenameField method
+ * TestAlterAndRenameField method
  *
  * @return void
  */
@@ -580,23 +578,23 @@ class CakeMigrationTest extends CakeTestCase {
 		$fields = $this->db->describe($model);
 		$this->assertTrue(isset($fields['published']));
 		$this->assertFalse(isset($fields['renamed_published']));
-		$this->assertEqual($fields['published']['default'], 'N');
+		$this->assertEquals($fields['published']['default'], 'N');
 
 		$this->assertTrue($migration->run('up'));
 		$fields = $this->db->describe($model);
 		$this->assertFalse(isset($fields['published']));
 		$this->assertTrue(isset($fields['renamed_published']));
-		$this->assertEqual($fields['renamed_published']['default'], 'Y');
+		$this->assertEquals($fields['renamed_published']['default'], 'Y');
 
 		$this->assertTrue($migration->run('down'));
 		$fields = $this->db->describe($model);
 		$this->assertTrue(isset($fields['published']));
 		$this->assertFalse(isset($fields['renamed_published']));
-		$this->assertEqual($fields['published']['default'], 'N');
+		$this->assertEquals($fields['published']['default'], 'N');
 	}
 
 /**
- * testRenameField method
+ * TestRenameField method
  *
  * @return void
  */
@@ -623,7 +621,7 @@ class CakeMigrationTest extends CakeTestCase {
 			$this->fail('No exception triggered');
 			$this->setExpectedException('MigrationException');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Field "renamed_updated" already exists in "posts".', $e->getMessage());
+			$this->assertEquals('Field "renamed_updated" already exists in "posts".', $e->getMessage());
 		}
 
 		$this->assertTrue($migration->run('down'));
@@ -636,12 +634,12 @@ class CakeMigrationTest extends CakeTestCase {
 			$this->fail('No exception triggered');
 			$this->setExpectedException('MigrationException');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Field "updated" already exists in "posts".', $e->getMessage());
+			$this->assertEquals('Field "updated" already exists in "posts".', $e->getMessage());
 		}
 	}
 
 /**
- * testCallbacks method
+ * TestCallbacks method
  *
  * @return void
  */
@@ -674,11 +672,11 @@ class CakeMigrationTest extends CakeTestCase {
 			array('type' => 'add_field', 'data' => array('table' => 'users', 'field' => 'email')),
 			array('type' => 'add_index', 'data' => array('table' => 'users', 'index' => 'UNIQUE_USER')));
 
-		$this->assertEqual($result['afterMigration'], 'up');
-		$this->assertEqual($result['beforeMigration'], 'up');
-		$this->assertEqual($result['afterAction'], $expected);
-		$this->assertEqual($result['beforeAction'], $expected);
-		$this->assertEqual(array_keys($result), array('beforeMigration', 'beforeAction', 'afterAction', 'afterMigration'));
+		$this->assertEquals($result['afterMigration'], 'up');
+		$this->assertEquals($result['beforeMigration'], 'up');
+		$this->assertEquals($result['afterAction'], $expected);
+		$this->assertEquals($result['beforeAction'], $expected);
+		$this->assertEquals(array_keys($result), array('beforeMigration', 'beforeAction', 'afterAction', 'afterMigration'));
 
 		$this->assertTrue($migration->run('down'));
 		$this->assertTrue(isset($callback->calls['down']));
@@ -688,11 +686,11 @@ class CakeMigrationTest extends CakeTestCase {
 			array('type' => 'drop_index', 'data' => array('table' => 'users', 'index' => 'UNIQUE_USER')),
 			array('type' => 'drop_field', 'data' => array('table' => 'users', 'field' => 'email')));
 
-		$this->assertEqual($result['afterMigration'], 'down');
-		$this->assertEqual($result['beforeMigration'], 'down');
-		$this->assertEqual($result['afterAction'], $expected);
-		$this->assertEqual($result['beforeAction'], $expected);
-		$this->assertEqual(array_keys($result), array('beforeMigration', 'beforeAction', 'afterAction', 'afterMigration'));
+		$this->assertEquals($result['afterMigration'], 'down');
+		$this->assertEquals($result['beforeMigration'], 'down');
+		$this->assertEquals($result['afterAction'], $expected);
+		$this->assertEquals($result['beforeAction'], $expected);
+		$this->assertEquals(array_keys($result), array('beforeMigration', 'beforeAction', 'afterAction', 'afterMigration'));
 	}
 
 	public function testTruncateLongIndexKey() {
@@ -709,7 +707,7 @@ class CakeMigrationTest extends CakeTestCase {
 						'description' => array(
 							'type' => 'string',
 							'null' => false,
-							'length' => 256,
+							'length' => 768,
 							'default' => null
 						),
 						'info' => array(
@@ -740,13 +738,13 @@ class CakeMigrationTest extends CakeTestCase {
 			$migration->run('up');
 			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
-			$this->assertPattern('/SQL Error/', $e->getMessage());
+			$this->assertRegExp('/SQL Error/', $e->getMessage());
 		}
 		$this->assertFalse(in_array($this->db->fullTableName('migration_categories', false, false), $sources));
 	}
 
 /**
- * testGenerateModel method
+ * TestGenerateModel method
  *
  * @return void
  */
@@ -755,13 +753,13 @@ class CakeMigrationTest extends CakeTestCase {
 
 		$return = $migration->generateModel('Post');
 		$this->assertInstanceOf('AppModel', $return);
-		$this->assertEqual($return->name, 'Post');
-		$this->assertEqual($return->table, 'posts');
+		$this->assertEquals($return->name, 'Post');
+		$this->assertEquals($return->table, 'posts');
 
 		$return = $migration->generateModel('Post', 'users');
 		$this->assertInstanceOf('AppModel', $return);
-		$this->assertEqual($return->name, 'Post');
-		$this->assertEqual($return->table, 'users');
+		$this->assertEquals($return->name, 'Post');
+		$this->assertEquals($return->table, 'users');
 	}
 
 /**
@@ -779,14 +777,14 @@ class CakeMigrationTest extends CakeTestCase {
 			$migration->run('last');
 			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Migration direction (last) is not one of valid directions.', $e->getMessage());
+			$this->assertEquals('Migration direction (last) is not one of valid directions.', $e->getMessage());
 		}
 
 		try {
 			$migration->run('up');
 			$this->fail('No exception triggered');
 		} catch (MigrationException $e) {
-			$this->assertEqual('Migration action type (do_something) is not one of valid actions type.', $e->getMessage());
+			$this->assertEquals('Migration action type (do_something) is not one of valid actions type.', $e->getMessage());
 		}
 	}
 }

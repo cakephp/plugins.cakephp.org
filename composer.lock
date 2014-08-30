@@ -1,26 +1,28 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
     ],
-    "hash": "ac4f010e19aab068129a4f3e0e45dec7",
+    "hash": "75b79a32a1638bdee363426259bda235",
     "packages": [
         {
             "name": "cakedc/migrations",
-            "version": "2.2.3",
+            "version": "2.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CakeDC/migrations.git",
-                "reference": "94036a606089c7e14b349eba043b0f58a0947e29"
+                "reference": "c975ba95db59df55c155141052b8d7774d24ce35"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CakeDC/migrations/zipball/94036a606089c7e14b349eba043b0f58a0947e29",
-                "reference": "94036a606089c7e14b349eba043b0f58a0947e29",
+                "url": "https://api.github.com/repos/CakeDC/migrations/zipball/c975ba95db59df55c155141052b8d7774d24ce35",
+                "reference": "c975ba95db59df55c155141052b8d7774d24ce35",
                 "shasum": ""
             },
             "require": {
-                "composer/installers": "*"
+                "composer/installers": "*",
+                "php": ">=5.2.8"
             },
             "type": "cakephp-plugin",
             "notification-url": "https://packagist.org/downloads/",
@@ -40,20 +42,20 @@
                 "cakephp",
                 "migrations"
             ],
-            "time": "2013-10-21 10:45:27"
+            "time": "2014-07-09 23:50:13"
         },
         {
             "name": "cakedc/tags",
-            "version": "1.5.1",
+            "version": "1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CakeDC/tags.git",
-                "reference": "fba681438f7b76aa22bdcbf429e24950b3c00001"
+                "reference": "f0f1f735fbec8dd925c5925a9a4f69a3d5f6e2f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CakeDC/tags/zipball/fba681438f7b76aa22bdcbf429e24950b3c00001",
-                "reference": "fba681438f7b76aa22bdcbf429e24950b3c00001",
+                "url": "https://api.github.com/repos/CakeDC/tags/zipball/f0f1f735fbec8dd925c5925a9a4f69a3d5f6e2f8",
+                "reference": "f0f1f735fbec8dd925c5925a9a4f69a3d5f6e2f8",
                 "shasum": ""
             },
             "require": {
@@ -82,7 +84,7 @@
                 "plugin",
                 "tags"
             ],
-            "time": "2014-01-27 00:21:22"
+            "time": "2014-06-04 21:24:10"
         },
         {
             "name": "cakedc/utils",
@@ -123,16 +125,16 @@
         },
         {
             "name": "cakephp/cakephp",
-            "version": "2.4.7",
+            "version": "2.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/cakephp.git",
-                "reference": "92800889a677899fd5c7a82fb7bab2cbfff887a3"
+                "reference": "ac9af7e3269f956b5a030a1bb6e6b95325af8b9c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/92800889a677899fd5c7a82fb7bab2cbfff887a3",
-                "reference": "92800889a677899fd5c7a82fb7bab2cbfff887a3",
+                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/ac9af7e3269f956b5a030a1bb6e6b95325af8b9c",
+                "reference": "ac9af7e3269f956b5a030a1bb6e6b95325af8b9c",
                 "shasum": ""
             },
             "require": {
@@ -162,20 +164,20 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2014-04-05 02:25:48"
+            "time": "2014-07-21 02:20:47"
         },
         {
             "name": "cakephp/debug_kit",
-            "version": "2.2.3",
+            "version": "2.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/debug_kit.git",
-                "reference": "fce9fca6e2e54469c4826d26392322d3f2e3cb9d"
+                "reference": "61d91e8eac30b7d6eb3d145101ea1622bd6e8c34"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/debug_kit/zipball/fce9fca6e2e54469c4826d26392322d3f2e3cb9d",
-                "reference": "fce9fca6e2e54469c4826d26392322d3f2e3cb9d",
+                "url": "https://api.github.com/repos/cakephp/debug_kit/zipball/61d91e8eac30b7d6eb3d145101ea1622bd6e8c34",
+                "reference": "61d91e8eac30b7d6eb3d145101ea1622bd6e8c34",
                 "shasum": ""
             },
             "require": {
@@ -211,28 +213,29 @@
                 "debug",
                 "kit"
             ],
-            "time": "2014-02-01 21:15:24"
+            "time": "2014-07-29 01:27:30"
         },
         {
             "name": "composer/installers",
-            "version": "v1.0.13",
+            "version": "v1.0.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/installers.git",
-                "reference": "26d37e307f9aa6e2e81806a6525666f8ab5ba0ff"
+                "reference": "74fb0a7a1a23696d9c8cc2fba5903f6711cdd067"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/installers/zipball/26d37e307f9aa6e2e81806a6525666f8ab5ba0ff",
-                "reference": "26d37e307f9aa6e2e81806a6525666f8ab5ba0ff",
+                "url": "https://api.github.com/repos/composer/installers/zipball/74fb0a7a1a23696d9c8cc2fba5903f6711cdd067",
+                "reference": "74fb0a7a1a23696d9c8cc2fba5903f6711cdd067",
                 "shasum": ""
             },
             "replace": {
+                "roundcube/plugin-installer": "*",
                 "shama/baton": "*"
             },
             "require-dev": {
                 "composer/composer": "1.0.*@dev",
-                "phpunit/phpunit": "3.7.*"
+                "phpunit/phpunit": "4.1.*"
             },
             "type": "composer-installer",
             "extra": {
@@ -254,21 +257,23 @@
                 {
                     "name": "Kyle Robinson Young",
                     "email": "kyle@dontkry.com",
-                    "homepage": "https://github.com/shama",
-                    "role": "Developer"
+                    "homepage": "https://github.com/shama"
                 }
             ],
             "description": "A multi-framework Composer library installer",
             "homepage": "http://composer.github.com/installers/",
             "keywords": [
                 "Craft",
+                "Dolibarr",
                 "Hurad",
                 "MODX Evo",
                 "OXID",
                 "WolfCMS",
                 "agl",
                 "annotatecms",
+                "bitrix",
                 "cakephp",
+                "chef",
                 "codeigniter",
                 "concrete5",
                 "croogo",
@@ -284,9 +289,12 @@
                 "mako",
                 "mediawiki",
                 "modulework",
+                "moodle",
                 "phpbb",
                 "piwik",
                 "ppi",
+                "puppet",
+                "roundcube",
                 "shopware",
                 "silverstripe",
                 "symfony",
@@ -295,7 +303,7 @@
                 "zend",
                 "zikula"
             ],
-            "time": "2014-04-09 16:12:43"
+            "time": "2014-08-18 20:00:12"
         },
         {
             "name": "cssmin/cssmin",
@@ -485,16 +493,16 @@
         },
         {
             "name": "markstory/asset_compress",
-            "version": "v0.12",
+            "version": "v0.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/markstory/asset_compress.git",
-                "reference": "c1870c2cfb9066fd74e978822a41244c3786f6ec"
+                "reference": "f50c7a6c775a47058d4f46e9bbf1fcdd4e7cb47c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/markstory/asset_compress/zipball/c1870c2cfb9066fd74e978822a41244c3786f6ec",
-                "reference": "c1870c2cfb9066fd74e978822a41244c3786f6ec",
+                "url": "https://api.github.com/repos/markstory/asset_compress/zipball/f50c7a6c775a47058d4f46e9bbf1fcdd4e7cb47c",
+                "reference": "f50c7a6c775a47058d4f46e9bbf1fcdd4e7cb47c",
                 "shasum": ""
             },
             "require": {
@@ -523,7 +531,7 @@
                 "minifier",
                 "sass"
             ],
-            "time": "2014-02-01 21:10:52"
+            "time": "2014-07-20 00:17:55"
         },
         {
             "name": "rgrove/jsmin-php",
@@ -542,20 +550,13 @@
             }
         }
     ],
-    "packages-dev": [
-
-    ],
-    "aliases": [
-
-    ],
+    "packages-dev": [],
+    "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [
-
-    ],
+    "stability-flags": [],
+    "prefer-stable": false,
     "platform": {
         "php": ">=5.3"
     },
-    "platform-dev": [
-
-    ]
+    "platform-dev": []
 }

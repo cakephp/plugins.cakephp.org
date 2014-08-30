@@ -1,4 +1,3 @@
-
 {
   "name": "cakephp/cakepackages",
   "description": "self-contained application that automatically tracks cakephp developer's open source code repositories, including applications and plugins",
@@ -11,21 +10,19 @@
     "composer/installers" : "~1.0",
     "cssmin/cssmin": "*",
     "rgrove/jsmin-php": "*",
-    "cakephp/cakephp": "2.4.7",
+    "cakephp/cakephp": "2.5.3",
 
-    "markstory/asset_compress": "v0.12",
+    "markstory/asset_compress": "v0.15",
 
-
-    "cakephp/debug_kit" : "2.2.*",
+    "cakephp/debug_kit" : "2.2.4",
 
     "josegonzalez/cakephp-environments": "1.0.0",
 
-    "cakedc/migrations": "2.2.3",
-
+    "cakedc/migrations": "2.3.1",
 
     "josegonzalez/cakephp-sanction": "2.1.0",
     "josegonzalez/cakephp-sham": "1.0.0",
-    "cakedc/tags": "1.5.1",
+    "cakedc/tags": "1.6.0",
     "cakedc/utils": "1.4.3"
   },
   "config": {

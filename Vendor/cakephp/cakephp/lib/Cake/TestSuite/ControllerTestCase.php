@@ -41,13 +41,15 @@ class ControllerTestDispatcher extends Dispatcher {
 /**
  * Use custom routes during tests
  *
- * @var boolean
+ * @var bool
  */
 	public $loadRoutes = true;
 
 /**
  * Returns the test controller
  *
+ * @param CakeRequest $request The request instance.
+ * @param CakeResponse $response The response instance.
  * @return Controller
  */
 	protected function _getController($request, $response) {
@@ -120,14 +122,14 @@ abstract class ControllerTestCase extends CakeTestCase {
 /**
  * Automatically mock controllers that aren't mocked
  *
- * @var boolean
+ * @var bool
  */
 	public $autoMock = true;
 
 /**
  * Use custom routes during tests
  *
- * @var boolean
+ * @var bool
  */
 	public $loadRoutes = true;
 
@@ -171,7 +173,7 @@ abstract class ControllerTestCase extends CakeTestCase {
  * Once a test has been run on a controller it should be rebuilt
  * to clean up properties.
  *
- * @var boolean
+ * @var bool
  */
 	protected $_dirtyController = false;
 
@@ -215,11 +217,11 @@ abstract class ControllerTestCase extends CakeTestCase {
 	protected function _testAction($url = '', $options = array()) {
 		$this->vars = $this->result = $this->view = $this->contents = $this->headers = null;
 
-		$options = array_merge(array(
+		$options += array(
 			'data' => array(),
 			'method' => 'POST',
 			'return' => 'result'
-		), $options);
+		);
 
 		$restore = array('get' => $_GET, 'post' => $_POST);
 

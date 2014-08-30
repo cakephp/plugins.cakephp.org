@@ -88,10 +88,15 @@ class InstallerTest extends TestCase
             array('annotatecms-module', true),
             array('annotatecms-component', true),
             array('annotatecms-service', true),
+            array('bitrix-module', true),
+            array('bitrix-component', true),
+            array('bitrix-theme', true),
             array('cakephp', false),
             array('cakephp-', false),
             array('cakephp-app', false),
             array('cakephp-plugin', true),
+            array('chef-cookbook', true),
+            array('chef-role', true),
             array('codeigniter-app', false),
             array('codeigniter-library', true),
             array('codeigniter-third-party', true),
@@ -104,6 +109,7 @@ class InstallerTest extends TestCase
             array('croogo-plugin', true),
             array('croogo-theme', true),
             array('drupal-module', true),
+            array('dolibarr-module', true),
             array('elgg-plugin', true),
             array('fuel-module', true),
             array('fuel-package', true),
@@ -123,12 +129,19 @@ class InstallerTest extends TestCase
             array('modxevo-lib', true),
             array('mediawiki-extension', true),
             array('mediawiki-skin', true),
+            array('microweber-module', true),
             array('modulework-module', true),
+            array('moodle-mod', true),
             array('october-module', true),
             array('october-plugin', true),
             array('piwik-plugin', true),
             array('phpbb-extension', true),
+            array('pimcore-plugin', true),
             array('ppi-module', true),
+            array('puppet-module', true),
+            array('redaxo-addon', true),
+            array('redaxo-bestyle-plugin', true),
+            array('roundcube-plugin', true),
             array('shopware-backend-plugin', true),
             array('shopware-core-plugin', true),
             array('shopware-frontend-plugin', true),
@@ -136,6 +149,8 @@ class InstallerTest extends TestCase
             array('silverstripe-module', true),
             array('silverstripe-theme', true),
             array('symfony1-plugin', true),
+            array('tusk-task', true),
+            array('tusk-asset', true),
             array('typo3-flow-plugin', true),
             array('typo3-cms-extension', true),
             array('wolfcms-plugin', true),
@@ -172,7 +187,12 @@ class InstallerTest extends TestCase
             array('annotatecms-module', 'addons/modules/my_module/', 'vysinsky/my_module'),
             array('annotatecms-component', 'addons/components/my_component/', 'vysinsky/my_component'),
             array('annotatecms-service', 'addons/services/my_service/', 'vysinsky/my_service'),
+            array('bitrix-module', 'local/modules/my_module/', 'author/my_module'),
+            array('bitrix-component', 'local/components/my_component/', 'author/my_component'),
+            array('bitrix-theme', 'local/templates/my_theme/', 'author/my_theme'),
             array('cakephp-plugin', 'Plugin/Ftp/', 'shama/ftp'),
+            array('chef-cookbook', 'Chef/mre/my_cookbook/', 'mre/my_cookbook'),
+            array('chef-role', 'Chef/roles/my_role/', 'mre/my_role'),
             array('codeigniter-library', 'application/libraries/my_package/', 'shama/my_package'),
             array('codeigniter-module', 'application/modules/my_package/', 'shama/my_package'),
             array('concrete5-block', 'blocks/concrete5_block/', 'remo/concrete5_block'),
@@ -182,6 +202,7 @@ class InstallerTest extends TestCase
             array('craft-plugin', 'craft/plugins/my_plugin/', 'mdcpepper/my_plugin'),
             array('croogo-plugin', 'Plugin/Sitemaps/', 'fahad19/sitemaps'),
             array('croogo-theme', 'View/Themed/Readable/', 'rchavik/readable'),
+            array('dolibarr-module', 'htdocs/custom/my_module/', 'shama/my_module'),
             array('drupal-module', 'modules/my_module/', 'shama/my_module'),
             array('drupal-theme', 'themes/my_module/', 'shama/my_module'),
             array('drupal-profile', 'profiles/my_module/', 'shama/my_module'),
@@ -203,20 +224,28 @@ class InstallerTest extends TestCase
             array('modxevo-template', 'assets/templates/my_template/', 'shama/my_template'),
             array('modxevo-lib', 'assets/lib/my_lib/', 'shama/my_lib'),
             array('mako-package', 'app/packages/my_package/', 'shama/my_package'),
-            array('mediawiki-extension', 'extensions/APC/', 'author/APC' ),
-            array('mediawiki-extension', 'extensions/APC/', 'author/APC-extension' ),
-            array('mediawiki-extension', 'extensions/UploadWizard/', 'author/upload-wizard' ),
-            array('mediawiki-extension', 'extensions/SyntaxHighlight_GeSHi/', 'author/syntax-highlight_GeSHi' ),
-            array('mediawiki-skin', 'skins/someskin/', 'author/someskin-skin' ),
-            array('mediawiki-skin', 'skins/someskin/', 'author/someskin' ),
+            array('mediawiki-extension', 'extensions/APC/', 'author/APC'),
+            array('mediawiki-extension', 'extensions/APC/', 'author/APC-extension'),
+            array('mediawiki-extension', 'extensions/UploadWizard/', 'author/upload-wizard'),
+            array('mediawiki-extension', 'extensions/SyntaxHighlight_GeSHi/', 'author/syntax-highlight_GeSHi'),
+            array('mediawiki-skin', 'skins/someskin/', 'author/someskin-skin'),
+            array('mediawiki-skin', 'skins/someskin/', 'author/someskin'),
+            array('microweber-module', 'userfiles/modules/my-thing/', 'author/my-thing-module'),
             array('modulework-module', 'modules/my_package/', 'shama/my_package'),
+            array('moodle-mod', 'mod/my_package/', 'shama/my_package'),
             array('october-module', 'modules/my_plugin/', 'shama/my_plugin'),
             array('october-plugin', 'plugins/shama/my_plugin/', 'shama/my_plugin'),
             array('piwik-plugin', 'plugins/VisitSummary/', 'shama/visit-summary'),
             array('phpbb-extension', 'ext/test/foo/', 'test/foo'),
             array('phpbb-style', 'styles/foo/', 'test/foo'),
             array('phpbb-language', 'language/foo/', 'test/foo'),
+            array('pimcore-plugin', 'plugins/MyPlugin/', 'ubikz/my_plugin'),
             array('ppi-module', 'modules/foo/', 'test/foo'),
+            array('puppet-module', 'modules/puppet-name/', 'puppet/puppet-name'),
+            array('redaxo-addon', 'redaxo/include/addons/my_plugin/', 'shama/my_plugin'),
+            array('redaxo-bestyle-plugin', 'redaxo/include/addons/be_style/plugins/my_plugin/', 'shama/my_plugin'),
+            array('roundcube-plugin', 'plugins/base/', 'test/base'),
+            array('roundcube-plugin', 'plugins/replace_dash/', 'test/replace-dash'),
             array('shopware-backend-plugin', 'engine/Shopware/Plugins/Local/Backend/ShamaMyBackendPlugin/', 'shama/my-backend-plugin'),
             array('shopware-core-plugin', 'engine/Shopware/Plugins/Local/Core/ShamaMyCorePlugin/', 'shama/my-core-plugin'),
             array('shopware-frontend-plugin', 'engine/Shopware/Plugins/Local/Frontend/ShamaMyFrontendPlugin/', 'shama/my-frontend-plugin'),
@@ -229,6 +258,7 @@ class InstallerTest extends TestCase
             array('silverstripe-theme', 'themes/my_theme/', 'shama/my_theme'),
             array('symfony1-plugin', 'plugins/sfShamaPlugin/', 'shama/sfShamaPlugin'),
             array('symfony1-plugin', 'plugins/sfShamaPlugin/', 'shama/sf-shama-plugin'),
+            array('tusk-task', '.tusk/tasks/my_task/', 'shama/my_task'),
             array('typo3-flow-package', 'Packages/Application/my_package/', 'shama/my_package'),
             array('typo3-flow-build', 'Build/my_package/', 'shama/my_package'),
             array('typo3-cms-extension', 'typo3conf/ext/my_extension/', 'shama/my_extension'),
@@ -282,7 +312,8 @@ class InstallerTest extends TestCase
     /**
      * testCustomInstallerName
      */
-    public function testCustomInstallerName() {
+    public function testCustomInstallerName()
+    {
         $installer = new Installer($this->io, $this->composer);
         $package = new Package('shama/cakephp-ftp-plugin', '1.0.0', '1.0.0');
         $package->setType('cakephp-plugin');
@@ -296,7 +327,8 @@ class InstallerTest extends TestCase
     /**
      * testCustomTypePath
      */
-    public function testCustomTypePath() {
+    public function testCustomTypePath()
+    {
         $installer = new Installer($this->io, $this->composer);
         $package = new Package('slbmeh/my_plugin', '1.0.0', '1.0.0');
         $package->setType('wordpress-plugin');

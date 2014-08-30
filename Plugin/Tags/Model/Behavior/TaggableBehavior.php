@@ -167,15 +167,21 @@ class TaggableBehavior extends ModelBehavior {
 			extract($this->disassembleTags($model, $string, $this->settings[$model->alias]['separator']));
 
 			if (!empty($tags)) {
+				$conditions = array();
+				foreach ($tags as $tag) {
+					$conditions['OR'][] = array(
+						$tagModel->alias . '.identifier' => $tag['identifier'],
+						$tagModel->alias . '.keyname' => $tag['keyname'],
+					);
+				}
 				$existingTags = $tagModel->find('all', array(
 					'contain' => array(),
-					'conditions' => array(
-						$tagAlias . '.keyname' => Set::extract($tags, '{n}.keyname')),
+					'conditions' => $conditions,
 					'fields' => array(
-						$tagAlias . '.identifier',
-						$tagAlias . '.keyname',
-						$tagAlias . '.name',
-						$tagAlias . '.id'
+						$tagModel->alias . '.identifier',
+						$tagModel->alias . '.keyname',
+						$tagModel->alias . '.name',
+						$tagModel->alias . '.id'
 					)
 				));
 
@@ -271,7 +277,7 @@ class TaggableBehavior extends ModelBehavior {
 						));
 
 						if (!empty($newTagIds)) {
-							$newTagIds = Hash::extract($newTagIds, '{n}.Tagged.tag_id');
+							$newTagIds = Set::extract($newTagIds, '{n}.Tagged.tag_id');
 						}
 
 						$this->cacheOccurrence($model, array_merge($oldTagIds, $newTagIds));
@@ -357,7 +363,15 @@ class TaggableBehavior extends ModelBehavior {
  */
 	public function tagArrayToString(Model $model, $data = null) {
 		if ($data) {
-			return join($this->settings[$model->alias]['separator'] . ' ', Set::extract($data, '{n}.name'));
+			$tags = array();
+			foreach ($data as $tag) {
+				if (!empty($tag['identifier'])) {
+					$tags[] = $tag['identifier'] . ':' . $tag['name'];
+				} else {
+					$tags[] =  $tag['name'];
+				}
+			}
+			return join($this->settings[$model->alias]['separator'] . ' ', $tags);
 		}
 		return '';
 	}
@@ -406,6 +420,12 @@ class TaggableBehavior extends ModelBehavior {
  */
 	public function afterFind(Model $model, $results, $primary = false) {
 		extract($this->settings[$model->alias]);
+
+		list($plugin, $class) = pluginSplit($tagClass);
+		if ($model->name === $class) {
+			return $results;
+		}
+
 		foreach ($results as $key => $row) {
 			$row[$model->alias][$field] = '';
 			if (isset($row[$tagAlias]) && !empty($row[$tagAlias])) {

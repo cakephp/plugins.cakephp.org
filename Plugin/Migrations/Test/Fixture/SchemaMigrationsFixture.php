@@ -1,13 +1,18 @@
 <?php
+/**
+ * Copyright 2009 - 2014, Cake Development Corporation (http://cakedc.com)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright 2009 - 2014, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
+
 class SchemaMigrationsFixture extends CakeTestFixture {
 
 /**
- *
- */
-	public $name = 'SchemaMigrations';
-
-/**
- *
+ * @var array
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
@@ -20,7 +25,7 @@ class SchemaMigrationsFixture extends CakeTestFixture {
 	);
 
 /**
- *
+ * @var array
  */
 	public $records = array(
 		array('id' => '1', 'class' => 'InitMigrations', 'type' => 'migrations', 'created' => '2009-11-10 00:55:34'),

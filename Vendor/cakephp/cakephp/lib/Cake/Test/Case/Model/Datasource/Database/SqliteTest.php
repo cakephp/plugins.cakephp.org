@@ -68,7 +68,7 @@ class SqliteTest extends CakeTestCase {
 /**
  * Do not automatically load fixtures for each test, they will be loaded manually using CakeTestCase::loadFixtures
  *
- * @var boolean
+ * @var bool
  */
 	public $autoFixtures = false;
 
@@ -364,6 +364,12 @@ class SqliteTest extends CakeTestCase {
 				'null' => false,
 				'default' => '',
 				'length' => '5,2',
+			),
+			'decimal_field' => array(
+				'type' => 'decimal',
+				'null' => true,
+				'default' => '0.000',
+				'length' => '6,3',
 			),
 			'huge_int' => array(
 				'type' => 'biginteger',
