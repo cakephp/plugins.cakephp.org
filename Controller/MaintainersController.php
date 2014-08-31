@@ -39,13 +39,23 @@ class MaintainersController extends AppController {
  */
 	public function view() {
 		$maintainer_id = $this->request->param('id');
+		$slug = $this->request->param('slug');
 
 		try {
-			$this->set('maintainer', $this->Maintainer->find('view', compact('maintainer_id')));
+			$maintainer = $this->Maintainer->find('view', compact('maintainer_id'));
 		} catch (Exception $e) {
 			$this->Session->setFlash($e->getMessage(), 'flash/error');
 			return $this->redirect($this->redirectTo);
 		}
+
+		if ($slug != $maintainer['Maintainer']['username']) {
+			return $this->redirect(array(
+				'controller' => 'maintainers', 'action' => 'view',
+				'id' => $maintainer['Maintainer']['id'], 'slug' => $maintainer['Maintainer']['username']
+			));
+		}
+
+		$this->set(compact('maintainer'));
 	}
 
 	public function _seoIndex() {
