@@ -15,6 +15,9 @@
 .header .h1 {
 	margin-top: 0;
 }
+.header img {
+	margin-right: 5px;
+}
 .header a {
 	color: white;
 	display: inline-block;
