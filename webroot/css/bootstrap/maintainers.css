@@ -1,6 +1,6 @@
 .maintainers-view .user-details {position: relative; padding: 0;}
 .maintainers-view .user-details .user-image {position: relative;  z-index: 1; width: 100%; text-align: center;}
- .maintainers-view .user-image img { clear: both; margin: auto; position: relative;}
+ .maintainers-view .user-image img { clear: both; margin: auto; position: relative; width: 80px;}
 
 .maintainers-view .user-details .user-info-block {width: 100%; background: rgb(255, 255, 255); z-index: 0; }
  .maintainers-view .user-info-block .user-heading {width: 100%; text-align: center; margin: 10px 0 0;}
