@@ -39,7 +39,8 @@ $title = $this->Html->link($this->Text->truncate($package['name'], 35), array(
 						<strong>By:</strong> <?php echo $this->Html->link($maintainer['username'], array(
 								'controller' => 'maintainers',
 								'action' => 'view',
-								$maintainer['username']
+								'id' => $maintainer['id'],
+								'slug' => $maintainer['username']
 							), array('class' => 'author')); ?>
 					<?php endif; ?>
 

@@ -12,13 +12,36 @@ class MaintainersController extends AppController {
 	}
 
 /**
+ * Redirects to the :id-:slug url
+ *
+ * @param string $maintainer Maintainer name
+ */
+	public function utility_redirect($username = null) {
+		try {
+			$maintainer = $this->Maintainer->find('redirect', array(
+				'username' => $username
+			));
+		} catch (Exception $e) {
+			$this->Session->setFlash($e->getMessage(), 'flash/error');
+			return $this->redirect($this->redirectTo);
+		}
+
+		return $this->redirect(array(
+			'controller' => 'maintainers', 'action' => 'view',
+			'id' => $maintainer['Maintainer']['id'], 'slug' => $maintainer['Maintainer']['username']
+		));
+	}
+
+/**
  * Allows the viewing of a user
  *
  * @param string $username Username
  */
-	public function view($username = null) {
+	public function view() {
+		$maintainer_id = $this->request->param('id');
+
 		try {
-			$this->set('maintainer', $this->Maintainer->find('view', $username));
+			$this->set('maintainer', $this->Maintainer->find('view', compact('maintainer_id')));
 		} catch (Exception $e) {
 			$this->Session->setFlash($e->getMessage(), 'flash/error');
 			return $this->redirect($this->redirectTo);

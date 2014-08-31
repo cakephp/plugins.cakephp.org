@@ -37,6 +37,11 @@
 		array('id' => '[0-9]+', 'slug' => '[\w_-]+')
 	);
 
+	Router::connect('/m/:id-:slug',
+		array('controller' => 'maintainers', 'action' => 'view'),
+		array('id' => '[0-9]+', 'slug' => '[\w_-]+')
+	);
+
 	Router::connect('/login', array('controller' => 'users', 'action' => 'login'));
 
 	Router::connect('/suggest', array('controller' => 'packages', 'action' => 'suggest'));

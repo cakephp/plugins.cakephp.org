@@ -6,7 +6,11 @@ if ($package['Rating'] && $package['Rating']['value'] == 1) {
 
 $this->Html->addCrumb('packages', array('action' => 'index'));
 $this->Html->addCrumb($package['Maintainer']['username'], array(
-	'plugin' => null, 'controller' => 'maintainers', 'action' => 'view', $package['Maintainer']['username']
+	'plugin' => null,
+	'controller' => 'maintainers',
+	'action' => 'view',
+	'id' => $package['Maintainer']['id'],
+	'slug' => $package['Maintainer']['username'],
 ));
 $this->Html->addCrumb($package['Package']['name'], $this->Resource->packageUrl($package['Package']));
 ?>

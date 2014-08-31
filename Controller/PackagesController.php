@@ -121,14 +121,8 @@ class PackagesController extends AppController {
  * @param string $slug Package slug
  */
 	public function view() {
-		if (isset($this->request->params['id'])) {
-			$package_id = $this->request->params['id'];
-		}
-
-		if (isset($this->request->params['slug'])) {
-			$slug = $this->request->params['slug'];
-		}
-
+		$package_id = $this->request->param('id');
+		$slug = $this->request->param('slug');
 		$user_id = AuthComponent::user('id');
 
 		try {

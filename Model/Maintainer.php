@@ -71,6 +71,7 @@ class Maintainer extends AppModel {
 		);
 		$this->findMethods['existing'] = true;
 		$this->findMethods['index'] = true;
+		$this->findMethods['redirect'] = true;
 		$this->findMethods['username'] = true;
 		$this->findMethods['user'] = true;
 		$this->findMethods['view'] = true;
@@ -121,6 +122,25 @@ class Maintainer extends AppModel {
 		}
 
 		return $results;
+	}
+
+	public function _findRedirect($state, $query, $results = array()) {
+		if ($state == 'before') {
+			if (empty($query['username'])) {
+				throw new InvalidArgumentException(__('Invalid find params'));
+			}
+
+			$query['conditions'] = array(
+				"{$this->alias}.{$this->displayField}" => $query['username'],
+			);
+			return $query;
+		}
+
+		if (empty($results[0])) {
+			throw new NotFoundException(__('Invalid package'));
+		}
+
+		return $results[0];
 	}
 
 /**
@@ -194,7 +214,7 @@ class Maintainer extends AppModel {
  */
 	public function _findView($state, $query, $results = array()) {
 		if ($state == 'before') {
-			if (empty($query[0])) {
+			if (empty($query['maintainer_id'])) {
 				throw new InvalidArgumentException(__('Invalid maintainer'));
 			}
 
@@ -210,7 +230,7 @@ class Maintainer extends AppModel {
 					),
 				)
 			);
-			$query['conditions'] = array("{$this->alias}.{$this->displayField}" => $query[0]);
+			$query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $query['maintainer_id']);
 			$query['limit'] = 1;
 			return $query;
 		}

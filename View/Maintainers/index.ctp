@@ -9,7 +9,11 @@
 	<?php foreach ($maintainers as $i => $maintainer) : ?>
 		<article class="maintainer<?php echo ($i%2 == 0) ? ' alt' : '' ?>">
 			<span class="name">
-				<?php echo $this->Html->link($maintainer['Maintainer']['username'], array('action' => 'view', $maintainer['Maintainer']['username'])); ?>&nbsp;
+				<?php echo $this->Html->link($maintainer['Maintainer']['username'], array(
+					'action' => 'view',
+					'id' => $maintainer['Maintainer']['id'],
+					'slug' => $maintainer['Maintainer']['username'],
+				)); ?>&nbsp;
 				<?php echo ($maintainer['Maintainer']['name'] != ' ' and $maintainer['Maintainer']['name'] != '') ? "({$maintainer['Maintainer']['name']})" : ''; ?>
 			</span>
 			<?php if (!empty($maintainer['Maintainer']['url'])) : ?>

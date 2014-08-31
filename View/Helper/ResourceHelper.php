@@ -56,14 +56,6 @@ class ResourceHelper extends AppHelper {
 		);
 	}
 
-	public function maintainer($username, $name = '') {
-		$name = trim($name);
-		return $this->Html->link(!empty($name) ? $name : $username,
-			array('plugin' => null, 'controller' => 'maintainers', 'action' => 'view', $username),
-			array('class' => 'maintainer_name')
-		);
-	}
-
 	public function gravatar($username, $gravatar_id = null) {
 		if (empty($gravatar_id)) {
 			return '';
