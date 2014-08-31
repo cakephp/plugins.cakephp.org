@@ -34,3 +34,8 @@
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
+@media screen and (max-width: 980px) {
+	.category-container {
+		display: none;
+	}
+}
