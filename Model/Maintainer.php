@@ -203,7 +203,7 @@ class Maintainer extends AppModel {
 				'Package' => array(
 					'Category',
 					'conditions' => array('Package.deleted' => 0),
-					'order' => array('Package.last_pushed_at desc'),
+					'order' => array('Package.watchers desc'),
 					'fields' => array(
 						$this->Package->primaryKey, 'maintainer_id',
 						'name', 'description', 'last_pushed_at', 'watchers'
