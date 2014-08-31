@@ -52,7 +52,7 @@
 
 	<div class="header">
 		<div class="container">
-			<h1>
+			<h1 class="h1">
 				<?php
 					$siteTitle = Configure::read('Settings.SiteTitle');
 					if (!$siteTitle) $siteTitle = __('Package Indexer');
