@@ -199,14 +199,17 @@ class Maintainer extends AppModel {
 			}
 
 			$query['fields'] = array('id', 'username', 'name', 'alias', 'url', 'twitter_username', 'company', 'location', 'gravatar_id');
-			$query['contain'] = array('Package' => array(
-				'conditions' => array('Package.deleted' => 0),
-				'order' => array('Package.last_pushed_at desc'),
-				'fields' => array(
-					$this->Package->primaryKey, 'maintainer_id',
-					'name', 'description', 'last_pushed_at'
-				),
-			));
+			$query['contain'] = array(
+				'Package' => array(
+					'Category',
+					'conditions' => array('Package.deleted' => 0),
+					'order' => array('Package.last_pushed_at desc'),
+					'fields' => array(
+						$this->Package->primaryKey, 'maintainer_id',
+						'name', 'description', 'last_pushed_at', 'watchers'
+					),
+				)
+			);
 			$query['conditions'] = array("{$this->alias}.{$this->displayField}" => $query[0]);
 			$query['limit'] = 1;
 			return $query;
@@ -239,6 +242,11 @@ class Maintainer extends AppModel {
 				$results[0]['Package'][$i]['description'] = trim($results[0]['Package'][$i]['description']);
 				if (empty($results[0]['Package'][$i]['description'])) {
 					$results[0]['Package'][$i]['description'] = 'No description available';
+				}
+
+				$results[0]['Package'][$i]['Category']['color'] = '';
+				if (!empty($results[0]['Package'][$i]['Category']['slug'])) {
+					$results[0]['Package'][$i]['Category']['color'] = $this->Package->packageColor($results[0]['Package'][$i]['Category']['slug']);
 				}
 			}
 		}

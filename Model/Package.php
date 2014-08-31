@@ -99,6 +99,8 @@ class Package extends AppModel {
 		'WYSIWYG editors',
 	);
 
+	static $_categoryColors = array();
+
 	static $_validOrders = array(
 		'collaborators', 'contributors',
 		'created', 'forks', 'last_pushed_at',
@@ -106,6 +108,7 @@ class Package extends AppModel {
 	);
 
 	static $_validShownOrders = array(
+		'username' => 'Name',
 		'created' => 'Created',
 		'forks' => 'Forks',
 		'last_pushed_at' => 'Last Pushed',
@@ -274,14 +277,10 @@ class Package extends AppModel {
 			return $query;
 		}
 
-		$colors = array();
-
 		foreach ($results as $i => $result) {
-			$slug = $results[$i]['Category']['slug'];
-			if (isset($colors[$slug])) {
-				$results[$i]['Category']['color'] = $colors[$slug];
-			} else {
-				$colors[$slug] = $results[$i]['Category']['color'] = $this->stringToColor($slug);
+			$results[$i]['Category']['color'] = '';
+			if (!empty($results[$i]['Category']['slug'])) {
+				$results[$i]['Category']['color'] = $this->packageColor($results[$i]['Category']['slug']);
 			}
 		}
 
@@ -313,14 +312,15 @@ class Package extends AppModel {
 			);
 
 			$query['conditions'] = array("{$this->alias}.deleted" => false);
-			$query['contain'] = array('Maintainer' => array('id', 'username', 'name'));
+			$query['contain'] = array('Maintainer');
 			$query['fields'] = array(
-				$this->primaryKey, 'maintainer_id', 'name', 'description',
-				'open_issues', 'forks', 'watchers', 'collaborators', 'contributors',
-				'created_at', 'last_pushed_at', 'created'
+				"{$this->alias}.{$this->primaryKey}", "{$this->alias}.name",
+				"{$this->alias}.description", "{$this->alias}.watchers", "{$this->alias}.modified",
+				'Category.name', 'Category.slug',
+				'Maintainer.username',
 			);
 
-			$direction = 'desc';
+			$direction = 'asc';
 			if (!empty($query['named']['direction'])) {
 				$query['named']['direction'] = strtolower((string) $query['named']['direction']);
 				if ($query['named']['direction'] == 'dsc' || $query['named']['direction'] == 'des') {
@@ -333,7 +333,7 @@ class Package extends AppModel {
 				$direction = $query['named']['direction'];
 			}
 
-			$sortField = 'created';
+			$sortField = 'username';
 			if (!empty($query['named']['sort'])) {
 				$query['named']['sort'] = strtolower($query['named']['sort']);
 				if (in_array($query['named']['sort'], Package::$_validOrders)) {
@@ -341,7 +341,11 @@ class Package extends AppModel {
 				}
 			}
 
-			$query['order'] = array(array("{$this->alias}.{$sortField} {$direction}"));
+			if ($sortField == 'username') {
+				$query['order'] = array(array("Maintainer.{$sortField} {$direction}"));
+			} else {
+				$query['order'] = array(array("{$this->alias}.{$sortField} {$direction}"));
+			}
 
 			if ($query['named']['collaborators'] !== null) {
 				$query['conditions']["{$this->alias}.collaborators >="] = (int) $query['named']['collaborators'];
@@ -396,6 +400,8 @@ class Package extends AppModel {
 						'`Category`.`slug`' => $query['named']['category'],
 					),
 				);
+			} else {
+				$query['contain'][] = 'Category';
 			}
 
 			if ($query['named']['open_issues'] !== null) {
@@ -429,10 +435,17 @@ class Package extends AppModel {
 			return $results;
 		}
 
+		$colors = array();
+
 		foreach ($results as $i => $result) {
 			$results[$i]['Package']['description'] = trim($results[$i]['Package']['description']);
 			if (empty($results[$i]['Package']['description'])) {
 				$results[$i]['Package']['description'] = 'No description available';
+			}
+
+			$results[$i]['Category']['color'] = '';
+			if (!empty($results[$i]['Category']['slug'])) {
+				$results[$i]['Category']['color'] = $this->packageColor($results[$i]['Category']['slug']);
 			}
 		}
 
@@ -1516,6 +1529,14 @@ class Package extends AppModel {
 		}
 
 		return $params;
+	}
+
+	public function packageColor($slug) {
+		if (empty(static::$_categoryColors[$slug])) {
+			static::$_categoryColors[$slug] = $this->stringToColor($slug);
+		}
+
+		return static::$_categoryColors[$slug];
 	}
 
 /**

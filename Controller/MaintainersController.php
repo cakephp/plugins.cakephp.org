@@ -5,9 +5,10 @@ class MaintainersController extends AppController {
  * Paginates the current maintainers
  */
 	public function index() {
-		$this->paginate = array('index');
-		$maintainers = $this->paginate();
-		$this->set(compact('maintainers'));
+		return $this->redirect(array(
+			'controller' => 'packages',
+			'action' => 'home'
+		));
 	}
 
 /**
@@ -17,10 +18,10 @@ class MaintainersController extends AppController {
  */
 	public function view($username = null) {
 		try {
-			$this->set('maintainer', $maintainer = $this->Maintainer->find('view', $username));
+			$this->set('maintainer', $this->Maintainer->find('view', $username));
 		} catch (Exception $e) {
 			$this->Session->setFlash($e->getMessage(), 'flash/error');
-			$this->redirect($this->redirectTo);
+			return $this->redirect($this->redirectTo);
 		}
 	}
 

@@ -58,6 +58,9 @@ body {
 		position: static;
 		width: auto;
 	}
+	.category-container {
+		display: none;
+	}
 }
 body.minimal {
 	min-width: 600px;
@@ -108,6 +111,9 @@ body.minimal {
 	margin-top: 20px;
 	position: static;
 	width: auto;
+}
+.minimal .category-container {
+	display: none;
 }
 
 @media screen and (max-width: 600px) {
@@ -239,6 +245,9 @@ body.minimal {
 		right: auto;
 		width: 100%;
 	}
+	.category-container {
+		display: none;
+	}
 }
 body.mobile {
 	min-width: 320px;
@@ -365,4 +374,7 @@ body.mobile {
 	position: static;
 	right: auto;
 	width: 100%;
+}
+.mobile .category-container {
+	display: none;
 }

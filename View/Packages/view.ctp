@@ -3,45 +3,107 @@ $likeActive = '';
 if ($package['Rating'] && $package['Rating']['value'] == 1) {
 	$likeActive = 'is_activated';
 }
+
+$this->Html->addCrumb('packages', array('action' => 'index'));
+$this->Html->addCrumb($package['Maintainer']['username'], array(
+	'plugin' => null, 'controller' => 'maintainers', 'action' => 'view', $package['Maintainer']['username']
+));
+$this->Html->addCrumb($package['Package']['name'], $this->Resource->packageUrl($package['Package']));
 ?>
 
-<section class="page-title clearfix">
-	<h2><?php echo $package['Package']['name']; ?></h2>
+<?php echo $this->Html->getCrumbList(array('class' => 'breadcrumb')) ?>
 
-	<!-- <ul class="activity button-group">
-		<li>
-			<?php echo $this->Html->link('Like', array(
-				'controller' => 'packages', 'action' => 'like', $package['Package']['id']
-			), array('class' => 'ajax-toggle button primary pill icon like is_like ' . $likeActive)); ?>
-		</li>
-		<li>
-			<?php echo $this->Html->link('Bookmark', array(
-				'controller' => 'packages', 'action' => 'bookmark', $package['Package']['id']
-			), array('class' => 'ajax-toggle button primary pill icon tag is_tag ' . ($package['Favorite'] ? 'is_activated' : ''))); ?>
-		</li>
-	</ul> -->
-</section>
+<div class="row">
+	<div class="col-md-6">
+		<div class="package-description">
+			<?php echo $this->Text->truncate(
+				$this->Text->autoLink($package['Package']['description']), 100, array('html' => true)
+			); ?>
+		</div>
 
-<section class="summary clearfix">
-	<?php echo $this->Resource->description($package['Package']['description']); ?>
-
-	<p class="button">
-		<?php echo $this->Html->link('Download Zip', array(
-			'controller' => 'packages', 'action' => 'download', 'branch' => 'master', $package['Package']['id']
-		), array('rel' => 'nofollow', 'class' => 'download-link', 'package-id' => $package['Package']['id'])); ?>
-	</p>
-</section>
-
-<div class="package-info clearfix">
-	<section class="package">
-		<div class="package-section">
-			<h3>Important Links</h3>
-
-			<table class="data">
+		<div class="panel panel-default">
+			<div class="panel-heading clearfix">
+				<h3 class="panel-title pull-left">
+					Stats
+				</h3>
+				<small class="pull-right">Last fetched: <?php echo $this->Time->timeAgoInWords($package['Package']['modified']) ?></small>
+			</div>
+			<table class="table">
 				<tbody>
 					<tr>
-						<td class="name">Github Url:</td>
-						<td class="mobile-block">
+						<td>Watchers</td>
+						<td><?php echo $package['Package']['watchers'] ?></td>
+					</tr>
+					<tr>
+						<td>Issues</td>
+						<td><?php echo $package['Package']['open_issues'] ?></td>
+					</tr>
+					<tr>
+						<td>Forks</td>
+						<td><?php echo $package['Package']['forks'] ?></td>
+					</tr>
+					<tr>
+						<td>Maintainer</td>
+						<td><?php echo $package['Maintainer']['username'] ?></td>
+					</tr>
+					<tr>
+						<td>Last Updated</td>
+						<td><?php echo $this->Time->format('Y-m-d', $package['Package']['last_pushed_at']); ?></td>
+					</tr>
+					<tr>
+						<td>Category</td>
+						<td>
+							<?php if (!empty($package['Category']['name'])) : ?>
+								<?php echo $package['Category']['name']; ?>
+							<?php endif; ?>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading clearfix">
+				<h3 class="panel-title pull-left"><?php echo __('Recent Activity'); ?></h3>
+			</div>
+
+			<?php if (!empty($package['Rss']) && is_array($package['Rss'])) : ?>
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Date</th>
+							<th>Commit Message</th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach ($package['Rss'] as $entry) : ?>
+							<tr>
+								<td><?php echo $this->Time->format('Y-m-d', $entry['updated']); ?></td>
+								<td>
+									<?php echo $this->Html->link($entry['title'],
+										$entry['link'], array('target' => '_blank', 'rel' => 'nofollow', 'escape' => false)
+									); ?>
+								</td>
+							</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
+			<?php endif; ?>
+
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="panel panel-default">
+			<div class="panel-heading clearfix">
+				<h3 class="panel-title pull-left">
+					Repo Info
+				</h3>
+			</div>
+			<table class="table">
+				<tbody>
+					<tr>
+						<td>Repo Url</td>
+						<td>
 							<?php echo $this->Resource->github_url(
 								$package['Maintainer']['username'],
 								$package['Package']['name']
@@ -49,130 +111,95 @@ if ($package['Rating'] && $package['Rating']['value'] == 1) {
 						</td>
 					</tr>
 					<tr>
-						<td class="name">Clone Url:</td>
-						<td class="mobile-block">
-							<?php echo $this->Resource->clone_url(
-								$package['Maintainer']['username'],
-								$package['Package']['name']
-							); ?>
+						<td class="clone-url">Clone Url:</td>
+						<td>
+							<form role="form">
+								<div class="form-group">
+									<?php echo $this->Resource->clone_url(
+										$package['Maintainer']['username'],
+										$package['Package']['name']
+									); ?>
+								</div>
+							</form>
 						</td>
 					</tr>
 					<?php if ($this->Session->read('Auth.User')) : ?>
 						<tr>
-							<td class="name">Disable:</td>
-							<td class="mobile-block">
+							<td>Disable:</td>
+							<td>
 								<?php echo $this->Html->link('Disable', array(
 									'admin' => true, 'action' => 'disable', $package['Package']['id']
 								)); ?>
 							</td>
 						</tr>
 					<?php endif; ?>
+
 					<?php // MVP For featured project ?>
 					<?php if ($package['Package']['name'] == 'debug_kit') : ?>
-					<tr>
-						<td class="name">Blog Posts:</td>
-						<td class="mobile-block">
-							<a href="http://mark-story.com/posts/view/extending-debugkit-the-new-javascript-features" class="external blog-external">Extending DebugKit - The new Javascript features</a>
-							<br />
-							<a href="http://grahamweldon.com/posts/view/element-debugging-with-cakephps-debugkit" class="external blog-external">Element Debugging with CakePHP's DebugKit</a>
-							<br />
-							<a href="http://mark-story.com/posts/view/debugkit-updates" class="external blog-external">DebugKit Updates</a>
-							<br />
-							<a href="http://mark-story.com/posts/view/making-elements-drag-resizable-with-javascript" class="external blog-external">Making elements drag resizable with Javascript</a>
-							<br />
-							<a href="http://cakebaker.42dh.com/2008/10/30/debugkit-for-cakephp/" class="external blog-external">DebugKit for CakePHP</a>
-						</td>
-					</tr>
-					<tr>
-						<td class="name">Related:</td>
-						<td class="mobile-block">
-							<?php echo $this->Resource->github_url(
-								'kamisama',
-								'DebugKitEx',
-								'DebugKitEx Plugin (Cache, NoSQL, and CakeResque panels)'
-							); ?>
-							<br />
-							<?php echo $this->Resource->github_url(
-								'steinkel',
-								'LogMail',
-								'LogMail Plugin (store and view sent emails in the database)'
-							); ?>
-							<br />
-							<?php echo $this->Resource->github_url(
-								'oldskool',
-								'DebugPlus',
-								'DebugPlus Plugin (Logs and Model viewing panels)'
-							); ?>
-						</td>
-					</tr>
-					<tr>
-						<td class="name">Videos:</td>
-						<td class="mobile-block">
-							<a href="http://www.dailymotion.com/video/xxhv95_tuto-installer-le-plugin-debugkit-toolbar-cakephp-2-3-0_tech" class="external video-external">DebugKit Installation Video (in French)
-							<br />
-							<a href="http://www.youtube.com/watch?v=2jF_fSULzIY" class="external video-external">DebugKit Installation Video (in Arabic)</a>
-						</td>
-					</tr>
+						<tr>
+							<td>Blog Posts:</td>
+							<td>
+								<a href="http://mark-story.com/posts/view/extending-debugkit-the-new-javascript-features" class="external blog-external">Extending DebugKit - The new Javascript features</a>
+								<br />
+								<a href="http://grahamweldon.com/posts/view/element-debugging-with-cakephps-debugkit" class="external blog-external">Element Debugging with CakePHP's DebugKit</a>
+								<br />
+								<a href="http://mark-story.com/posts/view/debugkit-updates" class="external blog-external">DebugKit Updates</a>
+								<br />
+								<a href="http://mark-story.com/posts/view/making-elements-drag-resizable-with-javascript" class="external blog-external">Making elements drag resizable with Javascript</a>
+								<br />
+								<a href="http://cakebaker.42dh.com/2008/10/30/debugkit-for-cakephp/" class="external blog-external">DebugKit for CakePHP</a>
+							</td>
+						</tr>
+						<tr>
+							<td>Related:</td>
+							<td>
+								<?php echo $this->Resource->github_url(
+									'kamisama',
+									'DebugKitEx',
+									'DebugKitEx Plugin (Cache, NoSQL, and CakeResque panels)'
+								); ?>
+								<br />
+								<?php echo $this->Resource->github_url(
+									'steinkel',
+									'LogMail',
+									'LogMail Plugin (store and view sent emails in the database)'
+								); ?>
+								<br />
+								<?php echo $this->Resource->github_url(
+									'oldskool',
+									'DebugPlus',
+									'DebugPlus Plugin (Logs and Model viewing panels)'
+								); ?>
+							</td>
+						</tr>
+						<tr>
+							<td>Videos:</td>
+							<td>
+								<a href="http://www.dailymotion.com/video/xxhv95_tuto-installer-le-plugin-debugkit-toolbar-cakephp-2-3-0_tech" class="external video-external">DebugKit Installation Video (in French)
+								<br />
+								<a href="http://www.youtube.com/watch?v=2jF_fSULzIY" class="external video-external">DebugKit Installation Video (in Arabic)</a>
+							</td>
+						</tr>
 					<?php endif; ?>
 				</tbody>
 			</table>
 		</div>
-
-		<div class="rss package-section">
-			<h3><?php echo __('Recent Activity'); ?></h3>
-			<?php if (!empty($package['Rss']) && is_array($package['Rss'])) : ?>
-				<ul>
-					<?php foreach ($package['Rss'] as $entry) : ?>
-						<li>
-							<?php echo $this->Html->link(
-								$this->Time->format('Y-m-d', $entry['updated']) . ' ' . $entry['title'],
-								$entry['link'], array('target' => '_blank', 'rel' => 'nofollow', 'escape' => false)
-							); ?>
-						</li>
-					<?php endforeach; ?>
-				</ul>
-			<?php endif; ?>
-		</div>
-	</section>
-
-	<aside class="package-sidebar">
-		<div class="stats package-section">
-			<h3>Project Stats</h3>
-			<table class="data">
-				<tbody>
-					<tr>
-						<td class="name">Watchers:</td>
-						<td>&nbsp;<?php echo $package['Package']['watchers'] ?></td>
-					</tr>
-					<tr>
-						<td class="name">Issues:</td>
-						<td>&nbsp;<?php echo $package['Package']['open_issues'] ?></td>
-					</tr>
-					<tr>
-						<td class="name">Forks:</td>
-						<td>&nbsp;<?php echo $package['Package']['forks'] ?></td>
-					</tr>
-					<tr>
-						<td class="name">Maintainers:</td>
-						<td>
-							&nbsp;<?php echo $this->Resource->maintainer(
-								$package['Maintainer']['username'],
-								$package['Maintainer']['name']
-							); ?>
-						</td>
-					</tr>
-					<tr>
-						<td class="name">Last Updated:</td>
-						<td>
-							&nbsp;<?php echo $this->Time->format('Y-m-d', $package['Package']['last_pushed_at']); ?>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</aside>
+		<div id="disqus_thread"></div>
+	</div>
 </div>
 
-<div id="disqus_thread"></div>
+<!-- <ul class="activity button-group">
+	<li>
+		<?php echo $this->Html->link('Like', array(
+			'controller' => 'packages', 'action' => 'like', $package['Package']['id']
+		), array('class' => 'ajax-toggle button primary pill icon like is_like ' . $likeActive)); ?>
+	</li>
+	<li>
+		<?php echo $this->Html->link('Bookmark', array(
+			'controller' => 'packages', 'action' => 'bookmark', $package['Package']['id']
+		), array('class' => 'ajax-toggle button primary pill icon tag is_tag ' . ($package['Favorite'] ? 'is_activated' : ''))); ?>
+	</li>
+</ul> -->
+
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>

@@ -1,0 +1,24 @@
+.header {
+	background-color: #376475;
+	background-image: url('http://plugins.cakephp.org/theme/Csf/img/header-halftone.png');
+	background-repeat: repeat;
+	background-attachment: fixed;
+	border-bottom: 3px white solid;
+	font-family: 'MuseoSlab500', Helvetica, Arial, sans-serif;
+	margin-bottom: 16px;
+	padding-top: 5px;
+	width: 100%;
+}
+.header .container {
+	margin-bottom: 10px;
+}
+.header a {
+	color: white;
+	display: inline-block;
+	font-size: 28px;
+	font-weight: normal;
+	line-height: 10px;
+	padding: 5px;
+	text-decoration: none;
+	text-shadow: 1px 1px 2px black;
+}

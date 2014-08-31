@@ -1,0 +1,5 @@
+.search-legend tr td:last-of-type {
+	background: #EEE;
+	font-family: Monaco,"Courier New","DejaVu Sans Mono","Bitstream Vera Sans Mono",monospace;
+	padding-bottom: 3px;
+}

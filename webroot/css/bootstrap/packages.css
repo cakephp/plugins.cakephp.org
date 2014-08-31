@@ -1,0 +1,90 @@
+.packages table thead th {
+	border-bottom: 1px solid #BB9066;
+	color: #476371;
+	cursor: pointer;
+	font-family: 'MuseoSlab500', Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	padding-bottom: 3px;
+	padding-top: 3px;
+}
+.packages table thead th:last-of-type {
+	text-align: center;
+}
+.packages table .package-name {
+	color: #1B252C;
+	font-family: 'MuseoSlab500', Helvetica, Arial, sans-serif;
+	font-size: 15px;
+	font-weight: normal;
+	line-height: 15px;
+	padding: 2px 0 2px 0;
+}
+.packages table .description {
+	font-size: 12px;
+	margin: 2px 0 2px 0;
+	opacity: 1;
+}
+.packages table .category-label {
+	font-size: 10px;
+	font-weight: normal;
+	padding: .3em .6em;
+	text-shadow: 1px 1px #000;
+}
+.packages table .watchers {
+	text-align: center;
+}
+
+.packages-home .site-description {
+	font-size: 1.4em;
+	font-style: italic;
+	letter-spacing: 1px;
+	line-height: 1.5em;
+	margin-top: 0;
+}
+.packages-home .site-description em {
+	color: #376475;
+	font-weight: bold;
+}
+.packages-home .row {
+	margin-top: 16px;
+}
+.packages-home .panel-default {
+	border-color: transparent;
+}
+.packages-home .popular-packages table {
+	border-bottom: 1px solid #ddd;
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+}
+.packages-home .search-legend table {
+	font-size: 12px;
+}
+.packages-home .panel-default > .panel-heading {
+	background: none;
+	padding-left: 0;
+}
+.packages-home .panel-default .panel-body {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.packages-view .page-header {
+	margin-top: 0;
+}
+.packages-view .page-title {
+	margin-top: 6px;
+	padding-left: 2px;
+}
+.packages-view .package-description {
+	margin-bottom: 20px;
+	padding-left: 2px;
+}
+.packages-view .panel-default > .panel-heading {
+	padding-left: 10px;
+}
+.packages-view .form-group {
+	margin-bottom: 0;
+}
+.packages-view .clone-url {
+	padding-top: 16px;
+}

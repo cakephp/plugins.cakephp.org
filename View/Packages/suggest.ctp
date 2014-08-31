@@ -1,5 +1,5 @@
 <?php $this->set('_bodyClass', $_bodyClass . ' page-form'); ?>
-<h2>Suggest a New Package for CakePackages</h2>
+<h2 class="search-title">Suggest a New Package for CakePackages</h2>
 
 <?php echo $this->Session->flash(); ?>
 
@@ -8,21 +8,27 @@
 
 	<?php
 		echo $this->Form->create('Package', array(
-			'class' => 'PackageSuggestForm',
-			'url' => array('controller' => 'packages', 'action' => 'suggest'),
+			'class' => 'PackageSuggestForm form-inline',
 			'inputDefaults' => array('label' => false),
+			'role' => 'form',
+			'url' => array('controller' => 'packages', 'action' => 'suggest'),
 		));
-
-		echo $this->Form->input('Package.github', array(
-			'class' => 'github',
-			'placeholder' => __('github repository url'),
-		));
-
+	?>
+	<div class="form-group">
+		<?php
+			echo $this->Form->input('Package.github', array(
+				'class' => 'form-control github',
+				'div' => false,
+				'label' => false,
+				'placeholder' => __('github repository url'),
+			));
+		?>
+	</div>
+	<?php
 		echo $this->Form->button(__('Suggest!'), array(
-			'class' => 'button solid-green',
+			'class' => 'btn btn-default',
 			'div' => false,
 		));
-		echo '<br />';
 
 		echo $this->Form->end();
 	?>

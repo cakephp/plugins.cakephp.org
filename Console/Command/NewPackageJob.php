@@ -72,7 +72,7 @@ class NewPackageJob extends AppShell {
 
 		$data = array('Maintainer' => array(
 			'username'    => (isset($user['User']['login']))       ? $user['User']['login'] : '',
-			'gravatar_id' => (isset($user['User']['gravatar_id'])) ? $user['User']['name'] : '',
+			'gravatar_id' => (isset($user['User']['gravatar_id'])) ? $user['User']['gravatar_id'] : '',
 			'name'        => (isset($user['User']['name']))        ? $user['User']['name'] : '',
 			'company'     => (isset($user['User']['company']))     ? $user['User']['company'] : '',
 			'url'         => (isset($user['User']['blog']))        ? $user['User']['blog'] : '',

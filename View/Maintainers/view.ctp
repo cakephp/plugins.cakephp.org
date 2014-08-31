@@ -1,57 +1,42 @@
-<h2>
-	<?php echo $this->Resource->gravatar(
-		$maintainer['Maintainer']['username'],
-		$maintainer['Maintainer']['gravatar_id']
-	); ?>
-	<span>
-		<?php
-			if (strlen($maintainer['Maintainer']['name'])) {
-				echo $maintainer['Maintainer']['username'] . '&nbsp;(' . $maintainer['Maintainer']['name'] . ')';
-			} else {
-				echo $maintainer['Maintainer']['username'];
-			}
-		?>
-	</span>
-</h2>
-
-<?php if ($maintainer['Maintainer']['has_summary']): ?>
-	<section class="summary clearfix">
-		<?php if (!empty($maintainer['Maintainer']['url'])) : ?>
-			<p><strong>Url:</strong>&nbsp;<?php echo $this->Html->link(
-					$maintainer['Maintainer']['url'],
-					$maintainer['Maintainer']['url']
-				); ?>
-			</p>
-		<?php endif; ?>
-
-		<?php if (!empty($maintainer['Maintainer']['company'])) : ?>
-			<p><strong>Company:</strong>&nbsp;<?php echo $maintainer['Maintainer']['company']; ?></p>
-		<?php endif; ?>
-
-		<?php if (!empty($maintainer['Maintainer']['location'])) : ?>
-			<p><strong>Location:</strong>&nbsp;<?php echo $maintainer['Maintainer']['location']; ?></p>
-		<?php endif; ?>
-
-		<?php if (!empty($maintainer['Maintainer']['twitter_username'])) : ?>
-			<p><strong>Twitter:</strong>&nbsp;<?php echo $maintainer['Maintainer']['twitter_username']; ?></p>
-		<?php endif; ?>
-
-		<?php if (!empty($maintainer['Maintainer']['package_count'])) : ?>
-			<p><strong>Packages:</strong>&nbsp;<?php echo $maintainer['Maintainer']['package_count']; ?></p>
-		<?php endif; ?>
-
-	</section>
-<?php endif; ?>
+<div class="col-lg-12 user-details">
+	<div class="user-image">
+		<?php echo $this->Resource->gravatar(
+			$maintainer['Maintainer']['username'],
+			$maintainer['Maintainer']['gravatar_id']
+		); ?>
+	</div>
+	<div class="user-info-block">
+		<div class="user-heading">
+			<h3>
+				<?php
+					if (strlen($maintainer['Maintainer']['name'])) {
+						echo $maintainer['Maintainer']['username'] . '&nbsp;(' . $maintainer['Maintainer']['name'] . ')';
+					} else {
+						echo $maintainer['Maintainer']['username'];
+					}
+				?>
+			</h3>
+			<span class="help-block">
+				<?php if (!empty($maintainer['Maintainer']['location'])) : ?>
+					<p><?php echo $maintainer['Maintainer']['location']; ?></p>
+				<?php endif; ?>
+			</span>
+		</div>
+    </div>
+</div>
 
 <section class="packages">
-	<?php if (!empty($maintainer['Package'])):?>
-		<?php foreach ($maintainer['Package'] as $package): ?>
-			<?php echo $this->element('preview', array(
-				'package' => $package,
-				'maintainer' => $maintainer['Maintainer'],
-				'showDate' => false,
-				'showMaintainer' => false,
-			)); ?>
-		<?php endforeach; ?>
-	<?php endif; ?>
+	<?php
+		if (!empty($maintainer['Package'])) {
+			$packages = array();
+			foreach ($maintainer['Package'] as $package) {
+				$packages[] = array(
+					'Maintainer' => $maintainer['Maintainer'],
+					'Package' => $package,
+					'Category' => $package['Category'],
+				);
+			}
+			echo $this->element('package-results', array('packages' => $packages));
+		}
+	?>
 </section>

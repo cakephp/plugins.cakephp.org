@@ -1,10 +1,10 @@
 <?php
 class ResourceHelper extends AppHelper {
 
-	public $helpers = array('Form', 'Html', 'Paginator', 'Text', 'Time');
+	public $helpers = array('Form', 'Html', 'Text', 'Time');
 
-	public function package($maintainer, $package) {
-		return $this->Html->link("{$package} from {$maintainer}",
+	public function package($name, $maintainer, $package) {
+		return $this->Html->link($name,
 			array('plugin' => null, 'controller' => 'packages', 'action' => 'utility_redirect', $maintainer, $package),
 			array('class' => 'package_name')
 		);
@@ -17,6 +17,15 @@ class ResourceHelper extends AppHelper {
 			'action' => 'view',
 			'id' => $package['id'], 'slug' => $package['name']
 		), array('title' => $package['name']));
+	}
+
+	public function packageUrl($package) {
+		return $this->url(array(
+			'plugin' => null,
+			'controller' => 'packages',
+			'action' => 'view',
+			'id' => $package['id'], 'slug' => $package['name']
+		));
 	}
 
 	public function github_url($maintainer, $package, $name = null) {
@@ -34,6 +43,7 @@ class ResourceHelper extends AppHelper {
 
 	public function clone_url($maintainer, $name) {
 		return $this->Form->input('clone', array(
+			'class' => 'form-control',
 			'div' => false,
 			'label' => false,
 			'value' => "git://github.com/{$maintainer}/{$name}.git"
@@ -55,16 +65,14 @@ class ResourceHelper extends AppHelper {
 	}
 
 	public function gravatar($username, $gravatar_id = null) {
-		if (!$gravatar_id) {
+		if (empty($gravatar_id)) {
 			return '';
 		}
 
-		$format = 'https://secure.gravatar.com/avatar/';
-		return $this->Html->image('https://secure.gravatar.com/avatar/' . $gravatar_id, array(
+		$imageUrl = sprintf('https://secure.gravatar.com/avatar/%s', $gravatar_id);
+		return $this->Html->image($imageUrl, array(
 			'alt' => 'Gravatar for ' . $username,
-			'class' => 'gravatar',
-			'height' => 50,
-			'width' => 50,
+			'class' => 'img-circle'
 		));
 	}
 
@@ -75,13 +83,9 @@ class ResourceHelper extends AppHelper {
 		));
 	}
 
-	public function license($tags = null) {
-		return $this->Html->tag('p', 'MIT License');
-	}
-
 	public function sort($order) {
 		list($order, $direction) = explode(' ', $order);
-		list($model, $sortField) = explode('.', $order);
+		list(, $sortField) = explode('.', $order);
 
 		if ($direction == 'asc') {
 			$direction = 'desc';
@@ -94,15 +98,15 @@ class ResourceHelper extends AppHelper {
 		$output = array();
 		foreach (Package::$_validShownOrders as $sort => $name) {
 			if ($sort == $sortField) {
-				$output[] = $this->Paginator->link($name, array_merge(
-					array('?' => (array) $this->_View->request->query),
+				$output[] = $this->Html->link($name, array('?' => array_merge(
+					(array) $this->_View->request->query,
 					compact('sort', 'direction', 'order')
-				), array('class' => 'active ' . $direction));
+				)), array('class' => 'active ' . $direction));
 			} else {
-				$output[] = $this->Paginator->link($name, array_merge(
-					array('?' => (array) $this->_View->request->query),
+				$output[] = $this->Html->link($name, array('?' => array_merge(
+					(array) $this->_View->request->query,
 					array('sort' => $sort, 'direction' => 'desc', 'order' => $order)
-				));
+				)));
 			}
 		}
 

@@ -13,23 +13,9 @@
 	<!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
 	<link rel="apple-touch-icon-precomposed" href="<?php echo $baseUrl; ?>apple-touch-icon-precomposed.png">
 
-	<?php
-		$_theme = 'default';
-		if ($this->theme == 'Csf') {
-			$_theme = 'csf';
-			if (CakePlugin::loaded('Csfnavbar')) {
-				echo $this->AssetCompress->css('csftheme');
-			} else {
-				echo $this->AssetCompress->css('theme');
-			}
-		} else {
-			if (CakePlugin::loaded('Csfnavbar')) {
-				echo $this->AssetCompress->css('csfdefault');
-			} else {
-				echo $this->AssetCompress->css('default');
-			}
-		}
-	?>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+	<?php echo $this->AssetCompress->css('bootstrap'); ?>
 
 	<!--[if lt IE 9]>
 		<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -54,81 +40,61 @@
 	<?php endif; ?>
 </head>
 
-<body class="<?php echo $_bodyClass; ?> theme-<?php echo $_theme ?>" id="<?php echo $_bodyId; ?>">
+<body class="<?php echo $_bodyClass; ?>" id="<?php echo $_bodyId; ?>">
 
 	<?php if ($this->theme == 'Csf' && CakePlugin::loaded('Csfnavbar')) : ?>
 		<?php echo $this->element('Csfnavbar.navbar'); ?>
 	<?php endif; ?>
 
-	<div class="wrapper">
-		<header>
-			<div class="container">
-				<nav class="left-nav">
-					<ul>
-						<li>
-							<h1>
-								<?php
-									$siteTitle = Configure::read('Settings.SiteTitle');
-									if (!$siteTitle) $siteTitle = __('Package Indexer');
-									if ($this->theme == 'Csf') {
-										echo $this->Html->link($this->Html->image('cake-logo.png', array(
-											'alt' => $siteTitle, 'width' => '70'
-										)) . $siteTitle, '/', array('escape' => false));
-									} else {
-										echo $this->Html->link($siteTitle, '/');
-									}
-								?>
-							</h1>
-						</li>
-					</ul>
-				</nav>
-				<nav class="right-nav">
-					<ul>
-						<li>
-							<?php echo $this->Html->link('Categories', array('controller' => 'packages', 'action' => 'categories')); ?>
-						</li>
-						<li>
-							<?php echo $this->Html->link('Packages', array('controller' => 'packages', 'action' => 'index')); ?>
-						</li>
-						<li>
-							<?php echo $this->Html->link('Suggest', array('controller' => 'packages', 'action' => 'suggest')); ?>
-						</li>
-						<?php if ($this->Session->read('Auth.User')) : ?>
-							<li>
-								<?php echo $this->Html->link('Logout', array('controller' => 'users', 'action' => 'logout')); ?>
-							</li>
-						<?php endif; ?>
-					</ul>
-				</nav>
-			</div>
-		</header>
+	<div class="header">
+		<div class="container">
+			<h1>
+				<?php
+					$siteTitle = Configure::read('Settings.SiteTitle');
+					if (!$siteTitle) $siteTitle = __('Package Indexer');
+					if ($this->theme == 'Csf') {
+						echo $this->Html->link($this->Html->image('cake-logo.png', array(
+							'alt' => $siteTitle, 'width' => '70'
+						)) . $siteTitle, '/', array('escape' => false));
+					} else {
+						echo $this->Html->link($siteTitle, '/');
+					}
+				?>
+			</h1>
+		</div>
+	</div>
 
+	<div class="wrapper">
 		<div class="content container">
-			<?php echo $this->Session->flash(); ?>
-			<?php echo $content_for_layout; ?>
+			<?php
+				if ($this->request->param('controller') != 'maintainers') {
+					echo $this->element('categories', array(), array('cache' => Configure::read('debug') == 0));
+				}
+
+				echo $this->Session->flash();
+				echo $content_for_layout;
+			?>
 		</div>
 		<div class="push"></div>
 	</div>
 
-	<footer>
+	<div class="footer">
 		<div class="container">
-			<div class="copyright">
-				<a href="http://www.cakephp.org/" target="_blank">
-					<img src="/img/cake.power.gif" alt="CakePHP: the rapid development php framework" border="0" height="13" width="98">
-				</a><br />
-				<?php
-					echo sprintf(
-						__('Powered by %s'),
-						$this->Html->link('CakePackages', 'http://github.com/cakephp/cakepackages')
-					) .
-					' &copy; 2009 - ' . date('Y') . ' ' .
-					$this->Html->link('Jose Diaz Gonzalez', 'http://josediazgonzalez.com', array('target' => '_blank')) .
-					'<br />CakePHP Package Indexer &copy; 2011 - ' . date('Y') . ' ' .
-					$this->Html->link('Cake Software Foundation, Inc.', 'http://cakefoundation.org', array('target' => '_blank'));
-				?>
-			</div>
+			<a href="http://www.cakephp.org/" target="_blank">
+				<img src="/img/cake.power.gif" alt="CakePHP: the rapid development php framework" border="0" height="13" width="98">
+			</a><br />
+			<?php
+				echo sprintf(
+					__('Powered by %s'),
+					$this->Html->link('CakePackages', 'http://github.com/cakephp/cakepackages')
+				) .
+				' &copy; 2009 - ' . date('Y') . ' ' .
+				$this->Html->link('Jose Diaz Gonzalez', 'http://josediazgonzalez.com', array('target' => '_blank')) .
+				'<br />CakePHP Package Indexer &copy; 2011 - ' . date('Y') . ' ' .
+				$this->Html->link('Cake Software Foundation, Inc.', 'http://cakefoundation.org', array('target' => '_blank'));
+			?>
 		</div>
-	</footer>
+	</div>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 	<script>

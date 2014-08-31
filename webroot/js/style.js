@@ -5,34 +5,6 @@
 		$(e.delegateTarget).select();
 	});
 
-	if ($('.packages-index').length) {
-		$('.next-page a').live('click', function (e) {
-			e.preventDefault();
-			var el = $(e.target);
-
-			$('.next-page').replaceWith(window.templates.loader());
-			$.ajax({
-				url: el.attr('href'),
-				dataType: 'json',
-				success: function (data, textStatus, jqXHR) {
-					var packages = '';
-					jQuery.each(data.content.packages, function(i, v) {
-						packages += window.templates.package_listing(v);
-					});
-
-					if (data.content.packages.length === 0) {
-						$('.packages').append(window.templates.noMoreResults());
-					} else {
-						$('.packages').append(packages + window.templates.nextPage(data.content.next));
-					}
-				},
-				complete: function() {
-					$('.loading').remove();
-				}
-			});
-		});
-	}
-
 	if (!window.matchMedia) {
 		var detect_width = function () {
 			var current_width = $(window).width();

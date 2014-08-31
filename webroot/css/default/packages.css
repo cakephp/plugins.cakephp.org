@@ -220,17 +220,20 @@
 }
 
 /* Package Home */
-.packages-home .popular-list {
+.packages-home .popular-list,
+.packages-index .popular-list {
 	list-style: disc outside;
 	margin: 18px 0 18px 30px;
 	column-count: 2;
 	-webkit-column-count: 2;
 	-moz-column-count: 2;
 }
-.packages-home .popular-list li {
+.packages-home .popular-list li,
+.packages-index .popular-list li {
 	margin-bottom: 12px;
 }
-.packages-home table .package-name {
+.packages-home table .package-name,
+.packages-index table .package-name {
 	color: #1B252C;
 	font-family: 'MuseoSlab500', Helvetica, Arial, sans-serif;
 	font-size: 15px;
@@ -238,16 +241,19 @@
 	line-height: 15px;
 	padding: 2px 0 2px 0;
 }
-.packages-home table .description {
+.packages-home table .description,
+.packages-index table .description {
 	font-size: 12px;
 	margin: 2px 0 2px 0;
 	opacity: 1;
 }
-.packages-home table .watchers {
+.packages-home table .watchers,
+.packages-index table .watchers {
 	padding-right: 20px;
 	text-align: right;
 }
-.packages-home table .category-label {
+.packages-home table .category-label,
+.packages-index table .category-label {
 	font-size: 10px;
 	font-weight: normal;
 	padding: .3em .6em;

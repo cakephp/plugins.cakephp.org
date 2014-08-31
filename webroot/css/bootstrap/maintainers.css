@@ -1,0 +1,13 @@
+.maintainers-view .user-details {position: relative; padding: 0;}
+.maintainers-view .user-details .user-image {position: relative;  z-index: 1; width: 100%; text-align: center;}
+ .maintainers-view .user-image img { clear: both; margin: auto; position: relative;}
+
+.maintainers-view .user-details .user-info-block {width: 100%; background: rgb(255, 255, 255); z-index: 0; }
+ .maintainers-view .user-info-block .user-heading {width: 100%; text-align: center; margin: 10px 0 0;}
+ .maintainers-view .user-info-block .navigation {float: left; width: 100%; margin: 0; padding: 0; list-style: none; border-bottom: 1px solid #476371; border-top: 1px solid #476371;}
+  .maintainers-view .navigation li {float: left; margin: 0; padding: 0;}
+   .maintainers-view .navigation li a {padding: 20px 30px; float: left;}
+   .maintainers-view .navigation li.active a {background: #476371; color: #fff;}
+ .maintainers-view .user-info-block .user-body {float: left; padding: 5%; width: 90%;}
+  .maintainers-view .user-body .tab-content > div {float: left; width: 100%;}
+  .maintainers-view .user-body .tab-content h4 {width: 100%; margin: 10px 0; color: #333;}

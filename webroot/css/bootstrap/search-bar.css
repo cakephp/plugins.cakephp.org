@@ -1,0 +1,82 @@
+.search-bar {
+	position: relative;
+}
+.search-bar .form-group {
+	width: 90%;
+}
+.search-bar .form-control {
+	padding-left: 30px;
+	width: 100%;
+}
+.search-bar .glyphicon {
+	left: 0;
+}
+.search-bar .btn {
+	position: absolute;
+	right: 0;
+}
+.search-details {
+	padding-top: 5px;
+}
+.search-details .total {
+	color: #999999;
+	font-size: 11px;
+	height: 24px;
+	padding-left: 2px;
+}
+.search-details .sort-group {
+	color: #999999;
+	float: right;
+	font-size: 12px;
+	height: 24px;
+}
+.search-details .sort-group a {
+	color: #476371;
+	padding-left: 8px;
+}
+.sort-group .active {
+	font-weight: bold;
+}
+.sort-group .asc:after {
+	content: ' ▼';
+}
+.sort-group .desc:after {
+	content: ' ▲';
+}
+.search-title {
+	border-bottom: 1px solid #bb9066;
+	color: #cc222d;
+	font-family: 'MuseoSlab500', Helvetica, Arial, sans-serif;
+	font-size: 22px;
+	line-height: 24px;
+	padding-bottom: 12px;
+	margin-bottom: 18px;
+}
+.form-inline .has-feedback .form-control-feedback {
+	left: 0;
+	right: auto;
+}
+@media (min-width: 256px) {
+	.search-bar .form-group {
+		display: inline-block;
+		margin-bottom: 0;
+		vertical-align: middle;
+		width: 80%;
+	}
+}
+@media (min-width: 512px) {
+	.search-bar .form-group {
+		display: inline-block;
+		margin-bottom: 0;
+		vertical-align: middle;
+		width: 85%;
+	}
+}
+@media (min-width: 768px) {
+	.search-bar .form-group {
+		display: inline-block;
+		margin-bottom: 0;
+		vertical-align: middle;
+		width: 89%;
+	}
+}

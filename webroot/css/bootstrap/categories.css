@@ -1,0 +1,36 @@
+.category-container {
+	border: 1px solid #eee;
+	background-color: #f8f8f8;
+	border-bottom: 1px solid #eee;
+	margin-bottom: 20px;
+	overflow: hidden;
+	padding-bottom: 0;
+	padding-top: 0;
+	position: relative;
+}
+.category-container ul {
+	display: inline-block;
+	left: 2%;
+	margin-bottom: 0;
+	margin-left: 1%;
+	margin-right: 1%;
+	padding: 0;
+	position: relative;
+	width: 16.8%;
+	-moz-transition: .6s ease-in-out left;
+	-o-transition: .6s ease-in-out left;
+	-webkit-transition: .6s ease-in-out left;
+	transition: .6s ease-in-out left;
+}
+.category-container li {
+	list-style-type: none;
+}
+.category-container a {
+	color: #1a1a1a;
+	font-size: 11px;
+	letter-spacing: 1px;
+	overflow: hidden;
+	text-transform: uppercase;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}

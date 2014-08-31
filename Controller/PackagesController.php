@@ -48,8 +48,6 @@ class PackagesController extends AppController {
  * Default page for entire application
  */
 	public function home() {
-		$packages = $this->Package->find('home');
-		$this->set(compact('packages'));
 	}
 
 /**
@@ -84,14 +82,13 @@ class PackagesController extends AppController {
 		$order = $this->Package->_findIndex('before', $this->paginate);
 		$order = $order['order'][0][0];
 
-		$packages = $this->paginate();
-		$next = $this->Package->getNextPage(array_merge(
-			(array) $this->request->query,
-			(array) $this->request->data
-		), $this->request->params['paging']['Package']['nextPage']);
+		$packages = $this->Package->find('index', array(
+			'named' => $this->request->data,
+			'order' => $order
+		));
 
 		$this->request->data['query'] = $query;
-		$this->set(compact('next', 'order', 'packages'));
+		$this->set(compact('order', 'packages'));
 	}
 
 /**
@@ -153,11 +150,7 @@ class PackagesController extends AppController {
 	}
 
 	public function categories() {
-		$categories = $this->Package->Category->find('list', array(
-			'fields' => array('slug', 'name'),
-			'order' => array('slug'),
-		));
-		$this->set(compact('categories'));
+		return $this->redirect(array('action' => 'home'));
 	}
 
 /**
