@@ -15,7 +15,11 @@
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 
-	<?php echo $this->AssetCompress->css('bootstrap'); ?>
+	<?php if ($this->theme == 'Csf' && CakePlugin::loaded('Csfnavbar')) : ?>
+		<?php echo $this->AssetCompress->css('csfbootstrap'); ?>
+	<? else : ?>
+		<?php echo $this->AssetCompress->css('bootstrap'); ?>
+	<? endif; ?>
 
 	<!--[if lt IE 9]>
 		<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
