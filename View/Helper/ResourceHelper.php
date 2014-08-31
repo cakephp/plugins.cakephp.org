@@ -56,13 +56,16 @@ class ResourceHelper extends AppHelper {
 		);
 	}
 
-	public function gravatar($username, $gravatar_id = null) {
-		if (empty($gravatar_id)) {
+	public function gravatar($username, $avatar_url, $gravatar_id = null) {
+		if (empty($avatar_url) && empty($gravatar_id)) {
 			return '';
 		}
 
-		$imageUrl = sprintf('https://secure.gravatar.com/avatar/%s', $gravatar_id);
-		return $this->Html->image($imageUrl, array(
+		if (empty($avatar_url)) {
+			$avatar_url = sprintf('https://secure.gravatar.com/avatar/%s', $gravatar_id);
+		}
+
+		return $this->Html->image($avatar_url, array(
 			'alt' => 'Gravatar for ' . $username,
 			'class' => 'img-circle'
 		));

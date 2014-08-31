@@ -35,6 +35,8 @@ class Maintainer extends AppModel {
  */
 	public $hasMany = array('Package');
 
+	public $_Github = null;
+
 /**
  * Override the constructor to provide custom model finds
  * and validation rule internationalization
@@ -218,7 +220,7 @@ class Maintainer extends AppModel {
 				throw new InvalidArgumentException(__('Invalid maintainer'));
 			}
 
-			$query['fields'] = array('id', 'username', 'name', 'alias', 'url', 'twitter_username', 'company', 'location', 'gravatar_id');
+			$query['fields'] = array('id', 'username', 'name', 'alias', 'url', 'twitter_username', 'company', 'location', 'gravatar_id', 'avatar_url');
 			$query['contain'] = array(
 				'Package' => array(
 					'Category',
@@ -271,6 +273,12 @@ class Maintainer extends AppModel {
 			}
 		}
 
+		if (empty($results[0][$this->alias]['avatar_url'])) {
+			try {
+				$this->enqueue('UpdateMaintainerJob', array($results[0][$this->alias]['username']));
+			} catch (Exception $e) {}
+		}
+
 		return $results[0];
 	}
 
@@ -318,5 +326,52 @@ class Maintainer extends AppModel {
 		$keywords = implode(' | ', $keywords);
 
 		return array($title, $description, $keywords);
+	}
+
+	public function retrieveMaintainerData($username) {
+		if (!$this->_Github) {
+			$this->_Github = ClassRegistry::init('Github');
+		}
+
+		$user = $this->_Github->find('user', array('user' => $username));
+		if (empty($user)) {
+			return false;
+		}
+
+		$data = array(
+			'github_id'   => Hash::get($user, 'User.id', ''),
+			'username'    => Hash::get($user, 'User.login', ''),
+			'gravatar_id' => Hash::get($user, 'User.gravatar_id', ''),
+			'avatar_url'  => Hash::get($user, 'User.avatar_url', ''),
+			'name'        => Hash::get($user, 'User.name', ''),
+			'company'     => Hash::get($user, 'User.company', ''),
+			'name'        => Hash::get($user, 'User.name', ''),
+			'url'         => Hash::get($user, 'User.blog', ''),
+			'email'       => Hash::get($user, 'User.email', ''),
+			'location'    => Hash::get($user, 'User.location', ''),
+		);
+
+		foreach (array_keys($data) as $key) {
+			if (empty($data[$key])) {
+				unset($data[$key]);
+			}
+		}
+
+		return $data;
+	}
+
+	public function updateExistingMaintainer($username) {
+		$maintainer = $this->findByUsername($username);
+		if (empty($maintainer)) {
+			return false;
+		}
+
+		$data = $this->retrieveMaintainerData($username);
+		if (empty($data)) {
+			return false;
+		}
+
+		$maintainer['Maintainer'] = array_merge($maintainer['Maintainer'], $data);
+		return $this->save($maintainer);
 	}
 }

@@ -68,26 +68,15 @@ class NewPackageJob extends AppShell {
 	}
 
 	public function createMaintainer($username) {
-		$user = $this->Github->find('user', array('user' => $username));
-
-		$data = array('Maintainer' => array(
-			'github_id'   => (isset($user['User']['id']))          ? $user['User']['id'] : '',
-			'username'    => (isset($user['User']['login']))       ? $user['User']['login'] : '',
-			'gravatar_id' => (isset($user['User']['gravatar_id'])) ? $user['User']['gravatar_id'] : '',
-			'avatar_url'  => (isset($user['User']['avatar_url']))  ? $user['User']['avatar_url'] : '',
-			'name'        => (isset($user['User']['name']))        ? $user['User']['name'] : '',
-			'company'     => (isset($user['User']['company']))     ? $user['User']['company'] : '',
-			'url'         => (isset($user['User']['blog']))        ? $user['User']['blog'] : '',
-			'email'       => (isset($user['User']['email']))       ? $user['User']['email'] : '',
-			'location'    => (isset($user['User']['location']))    ? $user['User']['location'] : ''
-		));
-
-		$this->Maintainer->create();
-		$saved = $this->Maintainer->save($data);
+		$saved = false;
+		$data = $this->Maintainer->retrieveMaintainerData($username);
+		if (!empty($data)) {
+			$this->Maintainer->create();
+			$saved = $this->Maintainer->save(array('Maintainer' => $data));
+		}
 
 		if (!$saved) {
 			$this->out("Error Saving Maintainer");
-			$this->out(sprintf("User: %s", json_encode($user)));
 			$this->out(sprintf("Data: %s", json_encode($data)));
 			$this->out(sprintf("Validation Errors: %s", json_encode($this->Maintainer->validationErrors)));
 		}

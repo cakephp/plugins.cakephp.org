@@ -69,6 +69,18 @@ class MaintainerShell extends AppShell {
 		}
 	}
 
+	public function schedule_update() {
+		$this->Maintainer->updateExistingMaintainer('sjosegonzalez');
+		$maintainers = $this->Maintainer->find('all', array(
+			'contain' => false,
+			'order' => array('Maintainer.username ASC')
+		));
+
+		foreach ($maintainers as $maintainer) {
+			$this->out(sprintf(__('[Maintainer] %s'), $maintainer['Maintainer']['username']));
+			Resque::enqueue('default', 'UpdateMaintainerJob', array($maintainer['Maintainer']['username']));
+		}
+	}
 
 /**
  * Resave's each and every maintainer. Useful for

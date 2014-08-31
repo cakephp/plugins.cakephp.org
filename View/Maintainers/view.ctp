@@ -2,6 +2,7 @@
 	<div class="user-image">
 		<?php echo $this->Resource->gravatar(
 			$maintainer['Maintainer']['username'],
+			$maintainer['Maintainer']['avatar_url'],
 			$maintainer['Maintainer']['gravatar_id']
 		); ?>
 	</div>
