@@ -80,7 +80,8 @@ class MaintainerShell extends AppShell {
 		$p_count = 0;
 		$maintainers = $this->Maintainer->find('all', array(
 			'contain' => false,
-			'order' => array('Maintainer.username ASC')));
+			'order' => array('Maintainer.username ASC')
+		));
 		foreach ($maintainers as $maintainer) {
 			$p_count++;
 			$this->out(sprintf(__('[Maintainer] %s'), $maintainer['Maintainer']['username']));
@@ -96,7 +97,7 @@ class MaintainerShell extends AppShell {
  */
 	public function help() {
 		$help = <<<TEXT
-The Maintainer Shell 
+The Maintainer Shell
 ---------------------------------------------------------------
 Usage: cake maintainer <command> <arg1> <arg2>...
 ---------------------------------------------------------------
