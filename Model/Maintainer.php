@@ -216,7 +216,11 @@ class Maintainer extends AppModel {
  */
 	public function _findView($state, $query, $results = array()) {
 		if ($state == 'before') {
-			if (empty($query['maintainer_id'])) {
+			if (!empty($query[0])) {
+				$query['conditions'] = array("{$this->alias}.{$this->displayField}" => $query[0]);
+			} else if (!empty($query['maintainer_id'])) {
+				$query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $query['maintainer_id']);
+			} else {
 				throw new InvalidArgumentException(__('Invalid maintainer'));
 			}
 
@@ -232,7 +236,6 @@ class Maintainer extends AppModel {
 					),
 				)
 			);
-			$query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $query['maintainer_id']);
 			$query['limit'] = 1;
 			return $query;
 		}
