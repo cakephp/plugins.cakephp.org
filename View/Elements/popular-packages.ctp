@@ -6,15 +6,42 @@
 	</div>
 	<table class="table">
 		<tbody>
-			<tr><td><?php echo $this->Resource->package('DebugKit', 'CakePHP', 'debug_kit'); ?></td></tr>
-			<tr><td><?php echo $this->Resource->package('AssetCompress', 'markstory', 'asset_compress'); ?></td></tr>
-			<tr><td><?php echo $this->Resource->package('Upload', 'josegonzalez', 'cakephp-upload'); ?></td></tr>
-			<tr><td><?php echo $this->Resource->package('Migrations', 'CakeDC', 'migrations'); ?></td></tr>
-			<tr><td><?php echo $this->Resource->package('CRUD Plugin', 'FriendsOfCake', 'crud'); ?></td></tr>
-			<tr><td><?php echo $this->Resource->package('BoostCake', 'slywalker', 'cakephp-plugin-boost_cake'); ?></td></tr>
-			<tr><td><?php echo $this->Resource->package('AppTemplate', 'FriendsOfCake', 'app-template'); ?></td></tr>
-			<tr><td><?php echo $this->Resource->package('CakePDF', 'ceeram', 'CakePdf'); ?></td></tr>
-			<tr><td><?php echo $this->Resource->package('OPAuth', 'uzyn', 'cakephp-opauth'); ?></td></tr>
+			<tr><td>
+				<?php echo $this->Resource->packageLink('DebugKit', 52, 'debug_kit'); ?>
+				<small>Debugging toolbar and enhanced debugging tools</small>
+			</td></tr>
+			<tr><td>
+				<?php echo $this->Resource->packageLink('AssetCompress', 640, 'asset_compress'); ?>
+				<small>An asset compression plugin for CakePHP</small>
+			</td></tr>
+			<tr><td>
+				<?php echo $this->Resource->packageLink('Upload', 678, 'cakephp-upload'); ?>
+				<small>Handles file uploading sans ridiculous automagic</small>
+			</td></tr>
+			<tr><td>
+				<?php echo $this->Resource->packageLink('Migrations', 502, 'migrations'); ?>
+				<small>Migrations Plugin for CakePHP</small>
+			</td></tr>
+			<tr><td>
+				<?php echo $this->Resource->packageLink('CRUDPlugin', 1600, 'crud'); ?>
+				<small>Enables rapid prototyping of production ready code, JSON/XML APIs and more</small>
+			</td></tr>
+			<tr><td>
+				<?php echo $this->Resource->packageLink('BoostCake', 1534, 'cakephp-plugin-boost_cake'); ?>
+				<small>Bootstrap Plugin for CakePHP</small>
+			</td></tr>
+			<tr><td>
+				<?php echo $this->Resource->packageLink('AppTemplate', 1641, 'app-template'); ?>
+				<small>A 2.5 cakephp application template, for use with composer</small>
+			</td></tr>
+			<tr><td>
+				<?php echo $this->Resource->packageLink('CakePDF', 1402, 'CakePdf'); ?>
+				<small>CakePHP plugin for creating and/or rendering PDF</small>
+			</td></tr>
+			<tr><td>
+				<?php echo $this->Resource->packageLink('OPAuth', 1577, 'cakephp-opauth'); ?>
+				<small>Allows simple plug-n-play 3rd-party OAuth integration</small>
+			</td></tr>
 		</tbody>
 	</table>
 </div>

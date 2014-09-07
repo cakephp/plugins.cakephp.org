@@ -56,6 +56,9 @@
 	border-left: 1px solid #ddd;
 	border-right: 1px solid #ddd;
 }
+.packages-home .popular-packages small {
+	display: block;
+}
 .packages-home .search-legend table {
 	font-size: 12px;
 }

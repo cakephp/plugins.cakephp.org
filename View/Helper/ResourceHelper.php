@@ -3,20 +3,13 @@ class ResourceHelper extends AppHelper {
 
 	public $helpers = array('Form', 'Html', 'Text', 'Time');
 
-	public function package($name, $maintainer, $package) {
-		return $this->Html->link($name,
-			array('plugin' => null, 'controller' => 'packages', 'action' => 'utility_redirect', $maintainer, $package),
-			array('class' => 'package_name')
-		);
-	}
-
-	public function packageLink($package) {
-		return $this->Html->link($this->Text->truncate($package['name'], 35), array(
+	public function packageLink($name, $package_id, $slug) {
+		return $this->Html->link($name, array(
 			'plugin' => null,
 			'controller' => 'packages',
 			'action' => 'view',
-			'id' => $package['id'], 'slug' => $package['name']
-		), array('title' => $package['name']));
+			'id' => $package_id, 'slug' => $slug
+		), array('title' => $name));
 	}
 
 	public function packageUrl($package) {
