@@ -26,7 +26,7 @@
     </div>
 </div>
 
-<section class="packages">
+<section class="col-lg-12 packages">
 	<?php
 		if (!empty($maintainer['Package'])) {
 			$packages = array();
