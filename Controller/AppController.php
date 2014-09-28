@@ -1,5 +1,6 @@
 <?php
 App::uses('Controller', 'Controller');
+App::uses('Hash', 'Utility');
 
 class AppController extends Controller {
 
@@ -360,12 +361,11 @@ class AppController extends Controller {
 			$element = 'flash/error';
 
 			if (is_array($message)) {
-				if (isset($message['redirectTo'])) $redirectTo = $message['redirectTo'];
-				if (isset($message['status'])) $status = $message['status'];
-
-				if (isset($message['exit'])) $exit = $message['exit'];
-				if (isset($message['message'])) $message = $message['message'];
-				if (isset($message['element'])) $element = $message['element'];
+				$redirectTo = Hash::get($message, 'redirectTo', $redirectTo);
+				$status = Hash::get($message, 'status', $status);
+				$exit = Hash::get($message, 'exit', $exit);
+				$element = Hash::get($message, 'element', $element);
+				$message = Hash::get($message, 'message', $message);
 			}
 
 			if ($message === null) {
@@ -395,9 +395,7 @@ class AppController extends Controller {
 			}
 
 			list($_status, $_message) = array('success', '');
-			if (!empty($_session['message'])) {
-				$_message = $_session['message'];
-			}
+			$_message = Hash::get($_session, 'message', '');
 
 			if (!empty($_session['params']['class'])) {
 				$_status = $_session['params']['class'];
