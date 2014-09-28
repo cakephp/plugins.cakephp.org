@@ -71,7 +71,11 @@
 	<div class="wrapper">
 		<div class="content container">
 			<?php
-				if ($this->request->param('controller') != 'maintainers') {
+				$isAdmin = $this->request->param('admin');
+				$isMaintainers = $this->request->param('controller') == 'maintainers';
+				$isUsers = $this->request->param('controller') == 'users';
+				$isLogin = $this->request->param('action') == 'login';
+				if (!$isMaintainers && !$isAdmin && !($isUsers && $isLogin)) {
 					echo $this->element('categories', array(), array('cache' => Configure::read('debug') == 0));
 				}
 
