@@ -18,7 +18,6 @@
 				echo $this->Form->input('Package.github', array(
 					'class' => 'form-control github',
 					'div' => false,
-					'label' => false,
 					'placeholder' => __('github repository url'),
 				));
 			?>
