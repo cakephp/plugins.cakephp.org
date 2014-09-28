@@ -13,7 +13,12 @@ class AppController extends Controller {
  * @link http://book.cakephp.org/view/961/components-helpers-and-uses
  */
 	public $components = array(
-		'Auth',
+		'Auth' => array(
+			'flash' => array(
+				'element' => 'flash/error',
+				'key' => 'auth',
+			)
+		),
 		'Cookie',
 		'RequestHandler',
 		'Sanction.Permit' => array(

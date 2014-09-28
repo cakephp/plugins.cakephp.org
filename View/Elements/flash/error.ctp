@@ -1,5 +1,4 @@
-<div class="flash">
-    <div class="message error">
-        <p><?php echo $message; ?></p>
-    </div>
+<div class="alert alert-danger">
+	<a class="close" data-dismiss="alert" href="#">×</a>
+	<?php echo $message; ?>
 </div>
