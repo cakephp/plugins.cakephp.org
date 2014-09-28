@@ -11,6 +11,7 @@ $categories = ClassRegistry::init('Category')->find('list', array(
             <?php foreach ($categories as $slug => $name) : ?>
             <li>
                 <?php echo $this->Html->link($name, array(
+                	'admin' => false,
                     'controller' => 'packages',
                     'action' => 'index',
                     '?' => array('category' => $slug)
