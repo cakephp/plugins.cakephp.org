@@ -91,3 +91,10 @@
 .packages-view .clone-url {
 	padding-top: 16px;
 }
+.packages-admin_categorize form {
+	display: inline-block;
+	margin: 5px 5px 5px 0;
+}
+.packages-admin_categorize .page-title {
+	margin-bottom: 10px;
+}

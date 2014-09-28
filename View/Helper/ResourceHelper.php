@@ -68,7 +68,7 @@ class ResourceHelper extends AppHelper {
 		$text = trim($text);
 		return $this->Html->tag('p', $this->Text->truncate(
 			$this->Text->autoLink($text), 100, array('html' => true)
-		));
+		), array('class' => 'lead'));
 	}
 
 	public function sort($order) {

@@ -8,10 +8,10 @@
 		$package['Maintainer']['username'],
 		$package['Package']['name']
 	); ?></h2>
-	<?php echo $this->Resource->description($package['Package']['description']); ?>
+	<blockquote><?php echo $this->Resource->description($package['Package']['description']); ?></blockquote>
 	<?php echo $this->Html->link('Disable Package', array(
 		'admin' => true, 'action' => 'disable', $package['Package']['id']
-	), array('class' => 'button solid-red')); ?>
+	), array('class' => 'btn btn-danger')); ?>
 </section>
 
 <section>
@@ -28,7 +28,7 @@
 			)); ?>
 			<?php echo $this->Form->button($category_name, array(
 				'div' => false,
-				'class' => 'button big'
+				'class' => 'btn btn-default'
 			)); ?>
 		<?php echo $this->Form->end(); ?>
 	<?php endforeach; ?>
