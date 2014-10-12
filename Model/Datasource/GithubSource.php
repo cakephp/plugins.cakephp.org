@@ -96,13 +96,16 @@ class GithubSource extends DataSource {
 /**
  * Returns an array of sources from github
  *
+ * @param mixed $data Unused in this class.
  * @return array Array of sources from github
  */
 	public function listSources($data = null) {
+		$data;
 		return $this->_sources;
 	}
 
-	public function read(Model $model, $queryData = array(), $recursive = NULL) {
+	public function read(Model $model, $queryData = array(), $recursive = null) {
+		$recursive;
 		if (!$model->findQueryType) {
 			return array();
 		}
@@ -155,22 +158,21 @@ class GithubSource extends DataSource {
  * Retrieves a response from github and caches it for some period of time
  *
  * @param string $request
- * @param string $var
  * @return void
  */
-	protected function _cachedResponse($request, $var = null) {
-		$hash = md5(serialize(array($request, $var)));
+	protected function _cachedResponse($request) {
+		$hash = md5(serialize(array($request)));
 		$response = array();
 
 		$sConfig = $this->sConfig;
 		$token = $this->_token;
 		Cache::set(array('duration' => $this->config['duration']));
-		return Cache::remember($this->config['cacheKey'] . $hash, function() use ($sConfig, $token, $request, $var) {
+		return Cache::remember($this->config['cacheKey'] . $hash, function() use ($sConfig, $token, $request) {
 			sleep(1);
 			$url = sprintf("%s://%s%s",
 				$sConfig['request']['uri']['scheme'],
 				$sConfig['request']['uri']['host'],
-				$request . $var
+				$request
 			);
 
 			if (!empty($token)) {
@@ -179,20 +181,17 @@ class GithubSource extends DataSource {
 
 			$connection = new HttpSocket($sConfig);
 			$response = $connection->get($url);
-			if ($response->code == 404) {
+			if (in_array($response->code, array(403, 404))) {
 				GithubSource::$_error = $response->reasonPhrase;
+				CakeLog::write('github', GithubSource::$_error, null);
 				return false;
 			}
 
 			$response = json_decode($response, true);
-
-			if (!$response) {
-				GithubSource::$_error = 'response was html page';
-				return false;
-			}
-
-			if (isset($response['error'])) {
-				GithubSource::$_error = $response['error'];
+			$error = Hash::get((array)$response, 'error', 'response was html page');
+			if (!$response || isset($response['error'])) {
+				GithubSource::$_error = $error;
+				CakeLog::write('github', GithubSource::$_error, null);
 				return false;
 			}
 
@@ -215,7 +214,7 @@ class GithubSource extends DataSource {
 
 		$response = array();
 		if (isset($queryData['_action']) && !empty($queryData['_action'])) {
-			foreach ($data as $k => $values) {
+			foreach ($data as $values) {
 				$response[] = array($queryData['_action'] => $values);
 			}
 		} else {
@@ -225,25 +224,25 @@ class GithubSource extends DataSource {
 		$data = array();
 		if (Set::numeric(array_keys($response))) {
 			foreach ($response as $key => $record) {
-				foreach ($record as $modelName => $values) {
-					$m = Inflector::singularize(ucfirst($modelName));
-					if ($m == 'Repo') {
-						$m = 'Repository';
-					}
-					$data[$key][$m] = $values;
-				}
+				$data[$key] = $this->_process($record);
 			}
 		} else {
-			foreach ($response as $modelName => $keys) {
-				$m = Inflector::singularize(ucfirst($modelName));
-					if ($m == 'Repo') {
-						$m = 'Repository';
-					}
-				$data[$m] = $keys;
-			}
+			$data = $this->_process($response);
 		}
 
 		return $data;
+	}
+
+	protected function _process($data) {
+		$results = array();
+		foreach ($data as $modelName => $keys) {
+			$m = Inflector::singularize(ucfirst($modelName));
+			if ($m == 'Repo') {
+				$m = 'Repository';
+			}
+			$results[$m] = $keys;
+		}
+		return $results;
 	}
 
 }
