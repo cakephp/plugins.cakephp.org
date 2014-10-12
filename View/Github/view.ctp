@@ -5,7 +5,7 @@
 <?php echo $this->Session->flash(); ?>
 
 <article>
-	<dl class="description"><?php $i = 0; $class = ' class="altrow"';?>
+	<dl class="dl-horizontal"><?php $i = 0; $class = ' class="altrow"';?>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php echo __('Gravatar ID'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
 			<?php echo $user['User']['gravatar_id']; ?>
@@ -45,14 +45,10 @@
 </article>
 <br />
 <article>
-	<div class="meta-package border-radius">
-		<h3><?php echo __('New Packages');?></h3>
+	<div class="panel panel-default">
+		<div class="panel-heading"><?php echo __('New Packages');?></div>
 		<?php if (!empty($repositories)) : ?>
-			<table cellpadding="0" cellspacing="0">
-			<tr>
-					<th><?php echo __('Title'); ?></th>
-					<th class="actions"><?php echo __('Actions');?></th>
-			</tr>
+			<table class="table">
 				<?php $i = 0; foreach ($repositories as $repository): ?>
 				<tr<?php echo ($i++ % 2 == 0) ? ' class="altrow"' : '';?>>
 					<td>
@@ -61,7 +57,7 @@
 					<td class="actions">
 						<?php echo $this->Html->link(__('Add'), array(
 							'action' => 'add_package', $user['User']['login'], $repository['Repository']['name']
-						), array('class' => 'button')); ?>
+						), array('class' => 'btn btn-primary btn-xs')); ?>
 					</td>
 				</tr>
 				<?php endforeach; ?>
@@ -74,13 +70,10 @@
 	</div>
 	<br />
 
-	<div class="meta-package border-radius">
-		<h3><?php echo __('Existing Packages');?></h3>
+	<div class="panel panel-default">
+		<div class="panel-heading"><?php echo __('Existing Packages');?></div>
 		<?php if (!empty($existing['Package'])) : ?>
-			<table cellpadding="0" cellspacing="0">
-			<tr>
-					<th><?php echo __('Title'); ?></th>
-			</tr>
+			<table class="table">
 				<?php $i = 0; foreach ($existing['Package'] as $package): ?>
 				<tr<?php echo ($i++ % 2 == 0) ? ' class="altrow"' : '';?>>
 					<td>
