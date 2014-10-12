@@ -35,6 +35,9 @@
       "index-document": "index.php"
     }
   },
+  "config" : {
+    "bin-dir" : "Console"
+  },
   "repositories": [
     {
       "type": "package",
