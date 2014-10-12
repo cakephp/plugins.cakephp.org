@@ -30,6 +30,8 @@ class GithubSource extends DataSource {
 
 	public $cacheSources = false;
 
+	protected static $_error = null;
+
 	public function __construct($config) {
 		$config = array_merge(array(
 			'host'      => 'api.github.com',
@@ -66,10 +68,16 @@ class GithubSource extends DataSource {
 			unset($this->sConfig['header']['Authorization']);
 		}
 
-		$this->connection = new HttpSocket($this->sConfig);
 		parent::__construct($config);
 	}
 
+	public function __get($name) {
+		if ($name === 'error') {
+			return GithubSource::$_error;
+		}
+
+		trigger_error("Undefined property: GithubSource::$name");
+	}
 
 /**
  * Returns an empty array
@@ -154,43 +162,42 @@ class GithubSource extends DataSource {
 		$hash = md5(serialize(array($request, $var)));
 		$response = array();
 
+		$sConfig = $this->sConfig;
+		$token = $this->_token;
 		Cache::set(array('duration' => $this->config['duration']));
-		if (($response = Cache::read($this->config['cacheKey'] . $hash)) === false) {
+		return Cache::remember($this->config['cacheKey'] . $hash, function() use ($sConfig, $token, $request, $var) {
 			sleep(1);
 			$url = sprintf("%s://%s%s",
-				$this->sConfig['request']['uri']['scheme'],
-				$this->sConfig['request']['uri']['host'],
+				$sConfig['request']['uri']['scheme'],
+				$sConfig['request']['uri']['host'],
 				$request . $var
 			);
 
-			if (!empty($this->_token)) {
-				$url = sprintf("%s?access_token=%s", $url, $this->_token);
+			if (!empty($token)) {
+				$url = sprintf("%s?access_token=%s", $url, $token);
 			}
 
-			$this->connection = new HttpSocket();
-			$response = $this->connection->get($url);
+			$connection = new HttpSocket($sConfig);
+			$response = $connection->get($url);
 			if ($response->code == 404) {
-				$this->error = $response->reasonPhrase;
+				GithubSource::$_error = $response->reasonPhrase;
 				return false;
 			}
 
 			$response = json_decode($response, true);
 
 			if (!$response) {
-				$this->error = 'response was html page';
+				GithubSource::$_error = 'response was html page';
 				return false;
 			}
 
 			if (isset($response['error'])) {
-				$this->error = $response['error'];
+				GithubSource::$_error = $response['error'];
 				return false;
 			}
 
-			if (php_sapi_name() != 'cli') {
-				Cache::write($this->config['cacheKey'] . $hash, $response);
-			}
-		}
-		return $response;
+			return $response;
+		});
 	}
 
 /**
