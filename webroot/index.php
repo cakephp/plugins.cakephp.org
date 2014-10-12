@@ -90,6 +90,15 @@
 		return;
 	}
 
+	// Conditionally serve up assets directly if using the cli-server
+	if (php_sapi_name() == 'cli-server') {
+		$filePath = rtrim(WWW_ROOT, '/') . $_SERVER["REQUEST_URI"];
+
+		if (preg_match('/\.(?:png|jpg|jpeg|gif|css|js|ico|eot|svg|ttf|woff)$/', $_SERVER["REQUEST_URI"]) && file_exists($filePath)) {
+			return false;
+		}
+	}
+
 	App::uses('Dispatcher', 'Routing');
 
 	$Dispatcher = new Dispatcher();
