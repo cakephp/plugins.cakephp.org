@@ -48,7 +48,7 @@ Environment::configure('development',
 		// Feature flags
 		'Feature.auth_required'   => true,
 	),
-	function() {
+	function () {
 		date_default_timezone_set('UTC');
 		if (!defined('FULL_BASE_URL')) {
 			define('FULL_BASE_URL', Configure::read('Settings.FULL_BASE_URL'));

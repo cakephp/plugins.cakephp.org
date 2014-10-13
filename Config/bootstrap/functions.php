@@ -1,7 +1,9 @@
 <?php
 
 function diebug($var = false, $showHtml = true, $showFrom = true, $die = true) {
-  if (Configure::read('debug') == 0) return;
+	if (Configure::read('debug') == 0) {
+		return;
+	}
 
 	$file = '';
 	$line = '';
@@ -36,5 +38,7 @@ TEXT;
 		$var = str_replace(array('<', '>'), array('&lt;', '&gt;'), $var);
 	}
 	printf($template, $file, $line, $var);
-	if ($die) die;
+	if ($die) {
+		die;
+	}
 }

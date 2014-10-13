@@ -1,37 +1,38 @@
 <?php
 class DATABASE_CONFIG {
+
 	public $default = array(
-		'datasource'    => 'Database/Mysql',
-		'persistent'    => false,
-		'host'          => 'localhost',
-		'login'         => 'user',
-		'password'      => 'password',
-		'database'      => 'cakepackages',
-		'prefix'        => '',
-		'encoding'      => 'utf8',
+		'datasource' => 'Database/Mysql',
+		'persistent' => false,
+		'host' => 'localhost',
+		'login' => 'user',
+		'password' => 'password',
+		'database' => 'cakepackages',
+		'prefix' => '',
+		'encoding' => 'utf8',
 	);
 
 	public $test = array(
-		'database'      => 'test',
+		'database' => 'test',
 	);
 
 	public $development = array(
-		'datasource'    => 'Database/MysqlLog',
-		'login'         => 'user',
-		'password'      => 'password',
-		'database'      => 'cakepackages',
+		'datasource' => 'Database/MysqlLog',
+		'login' => 'user',
+		'password' => 'password',
+		'database' => 'cakepackages',
 	);
 
 	public $staging = array(
-		'login'         => 'cakepackages_sta',
-		'password'      => 'cakepackages_sta',
-		'database'      => 'cakepackages_staging',
+		'login' => 'cakepackages_sta',
+		'password' => 'cakepackages_sta',
+		'database' => 'cakepackages_staging',
 	);
 
 	public $production = array(
-		'login'         => 'cakepackages',
-		'password'      => 'cakepackages',
-		'database'      => 'cakepackages',
+		'login' => 'cakepackages',
+		'password' => 'cakepackages',
+		'database' => 'cakepackages',
 	);
 
 	public $test_cakeusers = array(
@@ -44,12 +45,12 @@ class DATABASE_CONFIG {
 	);
 
 	public $production_cakeusers = array(
-		'database'      => 'cakeusers',
+		'database' => 'cakeusers',
 	);
 
 	public $github = array(
-		'datasource'    => 'GithubSource',
-		'token'         => null,
+		'datasource' => 'GithubSource',
+		'token' => null,
 	);
 
 	protected $_skip = array(
@@ -59,10 +60,10 @@ class DATABASE_CONFIG {
 	);
 
 	protected $_environments = array(
-		'development'   => array('development_cakeusers'),
-		'staging'       => array('staging_cakeusers'),
-		'production'    => array('production_cakeusers'),
-		'test'          => array('test_cakeusers'),
+		'development' => array('development_cakeusers'),
+		'staging' => array('staging_cakeusers'),
+		'production' => array('production_cakeusers'),
+		'test' => array('test_cakeusers'),
 	);
 
 /**
@@ -72,7 +73,7 @@ class DATABASE_CONFIG {
  *
  * @todo Support multiple in-environment connections
  */
-	function __construct() {
+	public function __construct() {
 		// once Environment has decided where we at, it will write the name into Configure.
 		if ($environment = Configure::read('Environment.name')) {
 

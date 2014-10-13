@@ -58,7 +58,7 @@ Environment::configure('staging',
 		// Feature flags
 		'Feature.auth_required'   => true,
 	),
-	function() {
+	function () {
 		date_default_timezone_set('UTC');
 
 		Cache::config('default', array('engine' => 'File'));

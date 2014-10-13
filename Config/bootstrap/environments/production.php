@@ -47,7 +47,7 @@ Environment::configure('production',
 		// Feature flags
 		'Feature.auth_required'   => false,
 	),
-	function() {
+	function () {
 		error_reporting(0);
 		date_default_timezone_set('UTC');
 
