@@ -1,4 +1,5 @@
 <?php
+App::uses('Cache', 'Cache');
 App::uses('DataSource', 'Model/Datasource');
 App::uses('HttpSocket', 'Network/Http');
 
