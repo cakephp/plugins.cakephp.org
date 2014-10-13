@@ -323,6 +323,30 @@ class PackageTestCase extends CakeTestCase {
 		$result = $Package->suggest($data);
 		$expected = array('shama', 'chocolate');
 		$this->assertEquals($expected, $result);
+
+		$Package = $this->getMock('Package', array('enqueue'));
+		$Package->useDbConfig = 'test';
+		$Package->expects($this->once())
+			->method('enqueue')
+			->with(
+				$this->equalTo('SuggestPackageJob'),
+				$this->equalTo(array(array(
+					'ipaddress' => null,
+					'username' => 'chobo1210',
+					'repository' => 'Cake-Yaml'
+				)))
+			)
+			->will($this->returnValue(true));
+		$Package->expects($this->once())
+			->method('enqueue')
+			->will($this->returnValue(true));
+
+		$data = array(
+			'github' => 'https://github.com/chobo1210/Cake-Yaml',
+		);
+		$result = $Package->suggest($data);
+		$expected = array('chobo1210', 'Cake-Yaml');
+		$this->assertEquals($expected, $result);
 	}
 /**
  * testSeoView method

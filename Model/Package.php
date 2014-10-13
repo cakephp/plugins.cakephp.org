@@ -1260,10 +1260,8 @@ class Package extends AppModel {
 			return false;
 		}
 
-		if (!preg_match('/(?:\/|\:)([\w-]+\/[\w-]+)/', $data['github'], $matches)) {
-			if (!preg_match('/([\w-]+\/[\w-]+)/', $data['github'], $matches)) {
-				return false;
-			}
+		if (!preg_match('/([\w-]+\/[\w-]+)(?:\.git)?$/', $data['github'], $matches)) {
+			return false;
 		}
 
 		$pieces = explode('/', $matches[1]);
