@@ -35,6 +35,12 @@ class OAuthAuthenticate extends BaseAuthenticate {
 		'sessionKey' => 'OAuth'
 	);
 
+/**
+ * Constructor
+ *
+ * @param ComponentCollection $collection The Component collection used on this request.
+ * @param array $settings Array of settings to use.
+ */
 	public function __construct(ComponentCollection $collection, $settings) {
 		$this->_Collection = $collection;
 		$this->settings = Set::merge($this->settings, $settings);
@@ -45,14 +51,21 @@ class OAuthAuthenticate extends BaseAuthenticate {
 		}
 	}
 
-	public function authenticate(CakeRequest $_request, CakeResponse $_response) {
-		$user = $this->getUser($_request);
+/**
+ * Authenticate a user based on the request information.
+ *
+ * @param CakeRequest $request Request to get authentication information from.
+ * @param CakeResponse $response A response object that can have headers added.
+ * @return mixed Either false on failure, or an array of user data on success.
+ */
+	public function authenticate(CakeRequest $request, CakeResponse $response) {
+		$user = $this->getUser($request);
 		if ($user) {
 			return $user;
 		}
 
-		if (isset($_request->query['code']) && !empty($_request->query['code'])) {
-			$response = $this->_authorizeToken($_request);
+		if (isset($request->query['code']) && !empty($request->query['code'])) {
+			$response = $this->_authorizeToken($request);
 			if ($response) {
 				return $this->_authUser($response);
 			}
@@ -65,7 +78,14 @@ class OAuthAuthenticate extends BaseAuthenticate {
 		));
 	}
 
-	public function _authorizeToken(CakeRequest $_request) {
+/**
+ * Retrieves an authorization token
+ *
+ * @param CakeRequest $request Request to get authentication information from.
+ * @todo  Ensure access_token is in $response
+ * @return array
+ */
+	protected function _authorizeToken(CakeRequest $request) {
 		$request = array(
 			'uri' => array(
 				'host' => $this->settings['paths']['access']['host'],
@@ -74,7 +94,7 @@ class OAuthAuthenticate extends BaseAuthenticate {
 				'port' => $this->settings['paths']['access']['port'],
 			),
 			'body' => array(
-				'code' => $_request->query['code'],
+				'code' => $request->query['code'],
 				'client_id' => $this->settings['consumer_key'],
 				'client_secret' => $this->settings['consumer_secret'],
 			),
@@ -98,12 +118,16 @@ class OAuthAuthenticate extends BaseAuthenticate {
 			return false;
 		}
 
-		// TODO: Ensure access_token is in $response
-
 		return $response;
 	}
 
-	public function _authUser($tokenResponse) {
+/**
+ * Retrieves the user data from the OAuth service
+ *
+ * @param array $tokenResponse An array of token information
+ * @return array
+ */
+	protected function _authUser($tokenResponse) {
 		$request = array(
 			'uri' => array(
 				'host' => $this->settings['paths']['auth']['host'],
@@ -144,7 +168,14 @@ class OAuthAuthenticate extends BaseAuthenticate {
 		return $user[$model];
 	}
 
-	public function getUser($request) {
+/**
+ * Get a user based on information in the request. Primarily used by stateless authentication
+ * systems like basic and digest auth.
+ *
+ * @param CakeRequest $request Request object.
+ * @return mixed Either false or an array of user information
+ */
+	public function getUser(CakeRequest $request) {
 		$user = $this->_Collection->Auth->Session->read($this->settings['sessionKey']);
 		if (!$user) {
 			return false;
@@ -155,6 +186,16 @@ class OAuthAuthenticate extends BaseAuthenticate {
 		return $user[$model];
 	}
 
+/**
+ * Allows you to hook into AuthComponent::logout(),
+ * and implement specialized logout behavior.
+ *
+ * All attached authentication objects will have this method
+ * called when a user logs out.
+ *
+ * @param array $user The user about to be logged out.
+ * @return void
+ */
 	public function logout($user) {
 		$this->_Collection->Auth->Session->delete($this->settings['sessionKey']);
 	}

@@ -23,7 +23,7 @@ class Environment {
 		'server' => 'SERVER_NAME'
 	);
 
-	static function &getInstance() {
+	public static function &getInstance() {
 		static $instance = array();
 		if (!isset($instance[0])) {
 			$Environment = 'Environment';
@@ -36,18 +36,17 @@ class Environment {
 		return $instance[0];
 	}
 
-	static function configure($name, $params, $config = null, $callable = null) 
-	{
+	public static function configure($name, $params, $config = null, $callable = null) {
 		$_this = Environment::getInstance();
 		$_this->environments[$name] = compact('name', 'params', 'config', 'callable');
 	}
 
-	static function start($environment = null) {
+	public static function start($environment = null) {
 		$_this =& Environment::getInstance();
 		$_this->setup($environment);
 	}
 
-	static function is($environment) {
+	public static function is($environment) {
 		$_this =& Environment::getInstance();
 		return ($_this->name === $environment);
 	}
@@ -55,7 +54,6 @@ class Environment {
 	public function __construct() {
 		if (Configure::read('Environment.initialized')) {
 			throw new Exception('Environment can only be initialized once');
-			return false;
 		}
 	}
 

@@ -4,33 +4,33 @@ App::uses('Github', 'Model');
 class PackageData {
 
 	protected $_fileRegex = array(
-		'model'     => array('/^Model\/([\w]+).php$/'),
-		'entity'    => array('/^Model\/Entity\/([\w]+).php$/'),
-		'table'     => array('/^Model\/Table\/([\w]+).php$/'),
-		'view'      => array('/^View\/([\w]+)View.php$/'),
-		'controller'=> array('/^Controller\/([\w]+)Controller.php$/'),
+		'model' => array('/^Model\/([\w]+).php$/'),
+		'entity' => array('/^Model\/Entity\/([\w]+).php$/'),
+		'table' => array('/^Model\/Table\/([\w]+).php$/'),
+		'view' => array('/^View\/([\w]+)View.php$/'),
+		'controller' => array('/^Controller\/([\w]+)Controller.php$/'),
 		'component' => array('/^Controller\/Component\/([\w]+)Controller.php$/'),
-		'behavior'  => array('/^Model\/Behavior\/([\w]+)Behavior.php$/'),
-		'helper'    => array('/^View\/Helper\/([\w]+)Helper.php$/'),
-		'shell'     => array('/^Console\/Command\/([\w]+)Shell.php$/'),
-		'locale'    => array('/^Locale\/([\w\/]+).pot$/', '/Locale\/([\w\/]+).po$/'),
-		'datasource'=> array('/^Model\/Datasource\/([\w]+)Source.php$/', '/^Model\/Database\/([\w]+).php$/'),
-		'tests'     => array('/^Test\/Case\/([\w\/]+)Test.php$/'),
-		'fixture'   => array('/^Test\/Fixture\/([\w]+)Fixture.php$/'),
-		'themed'    => array('/^View\/Themed\/([\w\/]+).ctp$/', '/^Template\/Themed\/([\w\/]+).ctp$/'),
-		'elements'  => array('/^View\/Elements\/([\w\/]+).ctp$/', '/^Template\/Element\/([\w\/]+).ctp$/'),
-		'cell'      => array('/^View\/Cell\/([\w\/]+).php$/'),
-		'vendor'    => array('/^Vendor\/([\w]+).php$/'), //
-		'lib'       => array('/^Lib\/([\w\/]+).php$/'),
-		'log'       => array('/^Lib\/Log\/Engine\/([\w]+).php$/'),
-		'panel'     => array('/^Lib\/Panel\/([\w]+)Panel.php$/'),
-		'config'    => array('/^Config\/([\w_\/]+).php$/'),
-		'resource'  => array('/.js$/', '/.css$/', '/.bmp$/', '/.gif$/', '/.jpeg$/', '/.jpg$/', '/.png$/'),
-		'composer'  => array('/^composer.json$/'),
-		'travis'    => array('/^travis.yml$/'),
-		'license'   => array('/^LICENSE(?:\.txt)?$/'),
-		'plugin'    => array(),
-		'app'       => array('/^app\//'),
+		'behavior' => array('/^Model\/Behavior\/([\w]+)Behavior.php$/'),
+		'helper' => array('/^View\/Helper\/([\w]+)Helper.php$/'),
+		'shell' => array('/^Console\/Command\/([\w]+)Shell.php$/'),
+		'locale' => array('/^Locale\/([\w\/]+).pot$/', '/Locale\/([\w\/]+).po$/'),
+		'datasource' => array('/^Model\/Datasource\/([\w]+)Source.php$/', '/^Model\/Database\/([\w]+).php$/'),
+		'tests' => array('/^Test\/Case\/([\w\/]+)Test.php$/'),
+		'fixture' => array('/^Test\/Fixture\/([\w]+)Fixture.php$/'),
+		'themed' => array('/^View\/Themed\/([\w\/]+).ctp$/', '/^Template\/Themed\/([\w\/]+).ctp$/'),
+		'elements' => array('/^View\/Elements\/([\w\/]+).ctp$/', '/^Template\/Element\/([\w\/]+).ctp$/'),
+		'cell' => array('/^View\/Cell\/([\w\/]+).php$/'),
+		'vendor' => array('/^Vendor\/([\w]+).php$/'), //
+		'lib' => array('/^Lib\/([\w\/]+).php$/'),
+		'log' => array('/^Lib\/Log\/Engine\/([\w]+).php$/'),
+		'panel' => array('/^Lib\/Panel\/([\w]+)Panel.php$/'),
+		'config' => array('/^Config\/([\w_\/]+).php$/'),
+		'resource' => array('/.js$/', '/.css$/', '/.bmp$/', '/.gif$/', '/.jpeg$/', '/.jpg$/', '/.png$/'),
+		'composer' => array('/^composer.json$/'),
+		'travis' => array('/^travis.yml$/'),
+		'license' => array('/^LICENSE(?:\.txt)?$/'),
+		'plugin' => array(),
+		'app' => array('/^app\//'),
 	);
 
 	public function __construct($owner, $name, $Github) {
@@ -39,7 +39,13 @@ class PackageData {
 		$this->Github = $Github;
 	}
 
-	protected function out($message) {
+/**
+ * Logs a debug message
+ *
+ * @param string $message message to log
+ * @return void
+ */
+	public function out($message) {
 		CakeLog::debug($message);
 	}
 
@@ -179,9 +185,8 @@ class PackageData {
 	}
 
 	public function getRepositoryUrl($repo) {
-		 return empty($repo['html_url']) ? null : $repo['html_url'];
+		return empty($repo['html_url']) ? null : $repo['html_url'];
 	}
-
 
 	public function characterize() {
 		$owner = $this->owner;
@@ -205,7 +210,6 @@ class PackageData {
 		}
 		return $types;
 	}
-
 
 	public function fetchType($file) {
 		$type = null;

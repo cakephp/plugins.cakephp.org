@@ -26,26 +26,25 @@
 App::uses('HttpSocket', 'Network/Http');
 class HttpSocketOauth extends HttpSocket {
 
-	/**
-	 * Default OAuth parameters. These get merged into the $request['auth'] param.
-	 *
-	 * @var array
-	 */
+/**
+ * Default OAuth parameters. These get merged into the $request['auth'] param.
+ *
+ * @var array
+ */
 	public $defaults = array(
 		'oauth_version' => '1.0',
 		'oauth_signature_method' => 'HMAC-SHA1',
 	);
 
-	/**
-	 * Overrides HttpSocket::request() to handle cases where
-	 * $request['auth']['method'] is 'OAuth'.
-	 *
-	 * @param array $request As required by HttpSocket::request(). NOTE ONLY
-	 *   THE ARRAY TYPE OF REQUEST IS SUPPORTED
-	 * @return array
-	 */
+/**
+ * Overrides HttpSocket::request() to handle cases where
+ * $request['auth']['method'] is 'OAuth'.
+ *
+ * @param array $request As required by HttpSocket::request(). NOTE ONLY
+ *   THE ARRAY TYPE OF REQUEST IS SUPPORTED
+ * @return array
+ */
 	public function request($request = array()) {
-
 		// If the request does not need OAuth Authorization header, let the parent
 		// deal with it.
 		if (!isset($request['auth']['method']) || $request['auth']['method'] != 'OAuth') {
@@ -65,33 +64,31 @@ class HttpSocketOauth extends HttpSocket {
 		// Now the Authorization header is built, fire the request off to the parent
 		// HttpSocket class request method that we intercepted earlier.
 		return parent::request($request);
-
 	}
 
-	/**
-	 * Returns the OAuth Authorization Header string for a given request array.
-	 *
-	 * This method is called by request but can also be called directly, which is
-	 * useful if you need to get the OAuth Authorization Header string, such as
-	 * when integrating with a service that uses OAuth Echo (Authorization
-	 * Delegation) e.g. Twitpic. In this case you send a normal unauthenticated
-	 * request to the service e.g. Twitpic along with 2 extra headers:
-	 * - X-Auth-Service-Provider - effectively, this is the realm that identity
-	 *   delegation should be sent to - in the case of Twitter, just set this to
-	 *   https://api.twitter.com/1/account/verify_credentials.json;
-	 * - X-Verify-Credentials-Authorization - Consumer should create all the OAuth
-	 *   parameters necessary so it could call
-	 *   https://api.twitter.com/1/account/verify_credentials.json using OAuth in
-	 *   the HTTP header (e.g. it should look like OAuth oauth_consumer_key="...",
-	 *   oauth_token="...", oauth_signature_method="...", oauth_signature="...",
-	 *   oauth_timestamp="...", oauth_nonce="...", oauth_version="...".
-	 *
-	 * @param array $request As required by HttpSocket::request(). NOTE ONLY
-	 *   THE ARRAY TYPE OF REQUEST IS SUPPORTED
-	 * @return String
-	 */
+/**
+ * Returns the OAuth Authorization Header string for a given request array.
+ *
+ * This method is called by request but can also be called directly, which is
+ * useful if you need to get the OAuth Authorization Header string, such as
+ * when integrating with a service that uses OAuth Echo (Authorization
+ * Delegation) e.g. Twitpic. In this case you send a normal unauthenticated
+ * request to the service e.g. Twitpic along with 2 extra headers:
+ * - X-Auth-Service-Provider - effectively, this is the realm that identity
+ *   delegation should be sent to - in the case of Twitter, just set this to
+ *   https://api.twitter.com/1/account/verify_credentials.json;
+ * - X-Verify-Credentials-Authorization - Consumer should create all the OAuth
+ *   parameters necessary so it could call
+ *   https://api.twitter.com/1/account/verify_credentials.json using OAuth in
+ *   the HTTP header (e.g. it should look like OAuth oauth_consumer_key="...",
+ *   oauth_token="...", oauth_signature_method="...", oauth_signature="...",
+ *   oauth_timestamp="...", oauth_nonce="...", oauth_version="...".
+ *
+ * @param array $request As required by HttpSocket::request(). NOTE ONLY
+ *   THE ARRAY TYPE OF REQUEST IS SUPPORTED
+ * @return String
+ */
 	public function authorizationHeader($request) {
-
 		$request['auth'] = array_merge($this->defaults, $request['auth']);
 
 		// Nonce, or number used once is used to distinguish between different
@@ -185,10 +182,10 @@ class HttpSocketOauth extends HttpSocket {
 		// oauth_signature_method auth param in the request array.
 		switch ($request['auth']['oauth_signature_method']) {
 			case 'HMAC-SHA1':
-			$request['auth']['oauth_signature'] = base64_encode(hash_hmac('sha1', $signatureBaseString, $key, true));
+				$request['auth']['oauth_signature'] = base64_encode(hash_hmac('sha1', $signatureBaseString, $key, true));
 			break;
 			default:
-			// @todo implement the other 2 hashing methods
+				// @todo implement the other 2 hashing methods
 			break;
 		}
 
@@ -224,25 +221,25 @@ class HttpSocketOauth extends HttpSocket {
 		return $authorizationHeader;
 	}
 
-	/**
-	 * Builds an Authorization header param string from the supplied name and
-	 * value. See below for example:
-	 *
-	 * @param string $name E.g. 'oauth_signature_method'
-	 * @param string $value E.g. 'HMAC-SHA1'
-	 * @return string E.g. 'oauth_signature_method="HMAC-SHA1"'
-	 */
+/**
+ * Builds an Authorization header param string from the supplied name and
+ * value. See below for example:
+ *
+ * @param string $name E.g. 'oauth_signature_method'
+ * @param string $value E.g. 'HMAC-SHA1'
+ * @return string E.g. 'oauth_signature_method="HMAC-SHA1"'
+ */
 	public function authorizationHeaderParamEncode($name, $value) {
 		return $this->parameterEncode($name) . '="' . $this->parameterEncode($value) . '"';
 	}
 
-	/**
-	 * Converts an associative array of name => value pairs to a numerically
-	 * indexed array of array('name' => '<name>', 'value' => '<value>') elements.
-	 *
-	 * @param array $array Associative array
-	 * @return array
-	 */
+/**
+ * Converts an associative array of name => value pairs to a numerically
+ * indexed array of array('name' => '<name>', 'value' => '<value>') elements.
+ *
+ * @param array $array Associative array
+ * @return array
+ */
 	public function assocToNumericNameValue($array) {
 		$return = array();
 		foreach ($array as $name => $value) {
@@ -254,16 +251,16 @@ class HttpSocketOauth extends HttpSocket {
 		return $return;
 	}
 
-	/**
-	 * User defined function to lexically sort an array of
-	 * array('name' => '<name>', 'value' => '<value>') elements by the value of
-	 * the name key, and if they're the same, then by the value of the value key.
-	 *
-	 * @param array $a Array with key for 'name' and one for 'value'
-	 * @param array $b Array with key for 'name' and one for 'value'
-	 * @return integer 1, 0 or -1 depending on whether a greater than b, less than
-	 *  or the same.
-	 */
+/**
+ * User defined function to lexically sort an array of
+ * array('name' => '<name>', 'value' => '<value>') elements by the value of
+ * the name key, and if they're the same, then by the value of the value key.
+ *
+ * @param array $a Array with key for 'name' and one for 'value'
+ * @param array $b Array with key for 'name' and one for 'value'
+ * @return int 1, 0 or -1 depending on whether a greater than b, less than
+ *  or the same.
+ */
 	public function sortByNameThenByValue($a, $b) {
 		if ($a['name'] == $b['name']) {
 			if ($a['value'] == $b['value']) {
@@ -274,14 +271,14 @@ class HttpSocketOauth extends HttpSocket {
 		return ($a['name'] > $b['name']) ? 1 : -1;
 	}
 
-	/**
-	 * Encodes paramters as per the OAuth spec by utf 8 encoding the param (if it
-	 * is not already utf 8 encoded) and then percent encoding it according to
-	 * RFC3986
-	 *
-	 * @param string $param
-	 * @return string
-	 */
+/**
+ * Encodes paramters as per the OAuth spec by utf 8 encoding the param (if it
+ * is not already utf 8 encoded) and then percent encoding it according to
+ * RFC3986
+ *
+ * @param string $param string to encode
+ * @return string
+ */
 	public function parameterEncode($param) {
 		$encoding = mb_detect_encoding($param);
 		if ($encoding != 'UTF-8') {
