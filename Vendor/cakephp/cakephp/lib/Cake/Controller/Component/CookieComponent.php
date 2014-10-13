@@ -284,7 +284,7 @@ class CookieComponent extends Component {
 			return null;
 		}
 
-		if (!empty($names[1])) {
+		if (!empty($names[1]) && is_array($this->_values[$this->name][$key])) {
 			return Hash::get($this->_values[$this->name][$key], $names[1]);
 		}
 		return $this->_values[$this->name][$key];
@@ -414,7 +414,7 @@ class CookieComponent extends Component {
 		$now = new DateTime();
 
 		if (is_int($expires) || is_numeric($expires)) {
-			return $this->_expires = $now->format('U') + intval($expires);
+			return $this->_expires = $now->format('U') + (int)$expires;
 		}
 		$now->modify($expires);
 		return $this->_expires = $now->format('U');

@@ -207,7 +207,7 @@ class CakeRequest implements ArrayAccess {
 			$query = $_GET;
 		}
 
-		$unsetUrl = '/' . str_replace('.', '_', urldecode($this->url));
+		$unsetUrl = '/' . str_replace(array('.', ' '), '_', urldecode($this->url));
 		unset($query[$unsetUrl]);
 		unset($query[$this->base . $unsetUrl]);
 		if (strpos($this->url, '?') !== false) {
@@ -371,7 +371,7 @@ class CakeRequest implements ArrayAccess {
 	protected function _processFileData($path, $data, $field) {
 		foreach ($data as $key => $fields) {
 			$newPath = $key;
-			if (!empty($path)) {
+			if (strlen($path) > 0) {
 				$newPath = $path . '.' . $key;
 			}
 			if (is_array($fields)) {
@@ -949,7 +949,7 @@ class CakeRequest implements ArrayAccess {
  * @return bool true
  * @throws MethodNotAllowedException
  * @see CakeRequest::allowMethod()
- * @deprecated 2.5 Use CakeRequest::allowMethod() instead.
+ * @deprecated 3.0.0 Since 2.5, use CakeRequest::allowMethod() instead.
  */
 	public function onlyAllow($methods) {
 		if (!is_array($methods)) {

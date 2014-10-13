@@ -23,7 +23,7 @@ App::uses('Hash', 'Utility');
  * Class used for manipulation of arrays.
  *
  * @package       Cake.Utility
- * @deprecated Will be removed in 3.0. Use Hash instead.
+ * @deprecated 3.0.0 Will be removed in 3.0. Use Hash instead.
  */
 class Set {
 
@@ -560,7 +560,7 @@ class Set {
 		}
 
 		foreach ($path as $i => $key) {
-			if (is_numeric($key) && intval($key) > 0 || $key === '0') {
+			if (is_numeric($key) && (int)$key > 0 || $key === '0') {
 				if (isset($data[$key])) {
 					$data = $data[$key];
 				} else {
@@ -657,8 +657,8 @@ class Set {
 		}
 
 		foreach ($path as $i => $key) {
-			if (is_numeric($key) && intval($key) > 0 || $key === '0') {
-				$key = intval($key);
+			if (is_numeric($key) && (int)$key > 0 || $key === '0') {
+				$key = (int)$key;
 			}
 			if ($i === count($path) - 1) {
 				return (is_array($data) && array_key_exists($key, $data));
@@ -910,7 +910,7 @@ class Set {
 	}
 
 /**
- * Expand/unflattens an string to an array
+ * Expand/unflattens a string to an array
  *
  * For example, unflattens an array that was collapsed with `Set::flatten()`
  * into a multi-dimensional array. So, `array('0.Foo.Bar' => 'Far')` becomes

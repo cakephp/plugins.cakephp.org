@@ -624,7 +624,6 @@ class PaginatorHelper extends AppHelper {
  *
  * @param array $options Options for the counter string. See #options for list of keys.
  * @return string Counter string.
- * @deprecated The %page% style placeholders are deprecated.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::counter
  */
 	public function counter($options = array()) {
@@ -741,7 +740,7 @@ class PaginatorHelper extends AppHelper {
 		$out = '';
 
 		if ($modulus && $params['pageCount'] > $modulus) {
-			$half = intval($modulus / 2);
+			$half = (int)($modulus / 2);
 			$end = $params['page'] + $half;
 
 			if ($end > $params['pageCount']) {

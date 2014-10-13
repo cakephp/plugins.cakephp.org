@@ -361,7 +361,7 @@ class App {
  * @param string $plugin CamelCased/lower_cased plugin name to find the path of.
  * @return string full path to the plugin.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::pluginPath
- * @deprecated Use CakePlugin::path() instead.
+ * @deprecated 3.0.0 Use CakePlugin::path() instead.
  */
 	public static function pluginPath($plugin) {
 		return CakePlugin::path($plugin);
@@ -590,7 +590,7 @@ class App {
  * not construct any classes contained in the files. It will only find and require() the file.
  *
  * @param string|array $type The type of Class if passed as a string, or all params can be passed as
- *   an single array to $type.
+ *   a single array to $type.
  * @param string $name Name of the Class or a unique name for the file
  * @param bool|array $parent boolean true if Class Parent should be searched, accepts key => value
  *   array('parent' => $parent, 'file' => $file, 'search' => $search, 'ext' => '$ext');
