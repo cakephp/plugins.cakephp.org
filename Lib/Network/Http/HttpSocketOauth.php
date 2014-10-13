@@ -161,9 +161,7 @@ class HttpSocketOauth extends HttpSocket {
 		// The signature base string consists of the request method (uppercased) and
 		// concatenated with the request URL and normalised request parameters
 		// string, both encoded, and separated by &
-		$signatureBaseString = strtoupper($request['method']) . '&'
-			. $this->parameterEncode($requestUrl) . '&'
-			. $this->parameterEncode($normalisedRequestParams);
+		$signatureBaseString = strtoupper($request['method']) . '&' . $this->parameterEncode($requestUrl) . '&' . $this->parameterEncode($normalisedRequestParams);
 
 		// The signature base string is hashed with a key which is the consumer
 		// secret (assigned to your application by the provider) and the token

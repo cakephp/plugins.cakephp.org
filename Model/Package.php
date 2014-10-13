@@ -128,10 +128,10 @@ class Package extends AppModel {
 
 	public $Github = null;
 
-	public $_HttpSocket = null;
+	public $HttpSocket = null;
 
-	public function __construct($package_id = false, $table = null, $ds = null) {
-		parent::__construct($package_id, $table, $ds);
+	public function __construct($packageId = false, $table = null, $ds = null) {
+		parent::__construct($packageId, $table, $ds);
 		$this->validate = array(
 			'maintainer_id' => array(
 				'numeric' => array(
@@ -165,7 +165,7 @@ class Package extends AppModel {
  * @return array
  * @todo Require that the user not own the package being rated
  */
-	public function _findBookmark($state, $query, $results = array()) {
+	protected function _findBookmark($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query[$this->primaryKey])) {
 				throw new NotFoundException(__("Cannot like a non-existent package"));
@@ -222,7 +222,7 @@ class Package extends AppModel {
 		return $results[0];
 	}
 
-	public function _findCategory($state, $query, $results = array()) {
+	protected function _findCategory($state, $query, $results = array()) {
 		if ($state == 'before') {
 			$query['conditions'] = array(
 				"{$this->alias}.{$this->primaryKey}" => $query[$this->primaryKey],
@@ -238,7 +238,7 @@ class Package extends AppModel {
 		return $results[0];
 	}
 
-	public function _findDownload($state, $query, $results = array()) {
+	protected function _findDownload($state, $query, $results = array()) {
 		if ($state == 'before') {
 			$query['conditions'] = array(
 				"{$this->alias}.{$this->primaryKey}" => $query[$this->primaryKey],
@@ -260,7 +260,7 @@ class Package extends AppModel {
 		);
 	}
 
-	public function _findHome($state, $query, $results = array()) {
+	protected function _findHome($state, $query, $results = array()) {
 		if ($state == 'before') {
 			$query['contain'] = array('Category', 'Maintainer');
 			$query['fields'] = array(
@@ -294,21 +294,21 @@ class Package extends AppModel {
 			}
 			$query['named'] = array_merge(array(
 				'collaborators' => null,
-				'contains'      => array(),
-				'contributors'  => null,
-				'forks'         => null,
-				'has'           => array(),
-				'open_issues'   => null,
-				'query'         => null,
-				'since'         => null,
-				'watchers'      => null,
-				'with'          => array(),
+				'contains' => array(),
+				'contributors' => null,
+				'forks' => null,
+				'has' => array(),
+				'open_issues' => null,
+				'query' => null,
+				'since' => null,
+				'watchers' => null,
+				'with' => array(),
 			), $query['named']);
 
 			$query['named']['has'] = array_merge(
-				(array) $query['named']['with'],
-				(array) $query['named']['contains'],
-				(array) $query['named']['has']
+				(array)$query['named']['with'],
+				(array)$query['named']['contains'],
+				(array)$query['named']['has']
 			);
 
 			$query['conditions'] = array("{$this->alias}.deleted" => false);
@@ -322,7 +322,7 @@ class Package extends AppModel {
 
 			$direction = 'asc';
 			if (!empty($query['named']['direction'])) {
-				$query['named']['direction'] = strtolower((string) $query['named']['direction']);
+				$query['named']['direction'] = strtolower((string)$query['named']['direction']);
 				if ($query['named']['direction'] == 'dsc' || $query['named']['direction'] == 'des') {
 					$query['named']['direction'] = 'desc';
 				}
@@ -348,15 +348,15 @@ class Package extends AppModel {
 			}
 
 			if ($query['named']['collaborators'] !== null) {
-				$query['conditions']["{$this->alias}.collaborators >="] = (int) $query['named']['collaborators'];
+				$query['conditions']["{$this->alias}.collaborators >="] = (int)$query['named']['collaborators'];
 			}
 
 			if ($query['named']['contributors'] !== null) {
-				$query['conditions']["{$this->alias}.contributors >="] = (int) $query['named']['contributors'];
+				$query['conditions']["{$this->alias}.contributors >="] = (int)$query['named']['contributors'];
 			}
 
 			if ($query['named']['forks'] !== null) {
-				$query['conditions']["{$this->alias}.forks >="] = (int) $query['named']['forks'];
+				$query['conditions']["{$this->alias}.forks >="] = (int)$query['named']['forks'];
 			}
 
 			if (!empty($query['named']['has'])) {
@@ -405,7 +405,7 @@ class Package extends AppModel {
 			}
 
 			if ($query['named']['open_issues'] !== null) {
-				$query['conditions']["{$this->alias}.open_issues <="] = (int) $query['named']['open_issues'];
+				$query['conditions']["{$this->alias}.open_issues <="] = (int)$query['named']['open_issues'];
 			}
 
 			if ($query['named']['query'] !== null) {
@@ -422,7 +422,7 @@ class Package extends AppModel {
 			}
 
 			if ($query['named']['watchers'] !== null) {
-				$query['conditions']["{$this->alias}.watchers >="] = (int) $query['named']['watchers'];
+				$query['conditions']["{$this->alias}.watchers >="] = (int)$query['named']['watchers'];
 			}
 
 			if (!empty($query['operation'])) {
@@ -450,7 +450,7 @@ class Package extends AppModel {
 		return $results;
 	}
 
-	public function _findListformaintainer($state, $query, $results = array()) {
+	protected function _findListformaintainer($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query[0])) {
 				throw new InvalidArgumentException(__('Invalid package'));
@@ -482,7 +482,7 @@ class Package extends AppModel {
  * @return array
  * @todo Require that the user not own the package being rated
  */
-	public function _findRate($state, $query, $results = array()) {
+	protected function _findRate($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query[$this->primaryKey])) {
 				throw new NotFoundException(__("Cannot like a non-existent package"));
@@ -539,7 +539,7 @@ class Package extends AppModel {
 		return $results[0];
 	}
 
-	public function _findRedirect($state, $query, $results = array()) {
+	protected function _findRedirect($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query['maintainer']) || empty($query['package'])) {
 				throw new InvalidArgumentException(__('Invalid find params'));
@@ -559,7 +559,7 @@ class Package extends AppModel {
 		return $results[0];
 	}
 
-	public function _findUncategorized($state, $query, $results = array()) {
+	protected function _findUncategorized($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query['user_id'])) {
 				throw new UnauthorizedException(__("You must be logged in in order to rate packages"));
@@ -583,7 +583,7 @@ class Package extends AppModel {
 		return $results[0];
 	}
 
-	public function _findView($state, $query, $results = array()) {
+	protected function _findView($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query['package_id'])) {
 				throw new InvalidArgumentException(__('Invalid package'));
@@ -710,8 +710,8 @@ class Package extends AppModel {
  * @param integer $id
  * @return boolean
  */
-	public function broken($package_id) {
-		$this->id = $package_id;
+	public function broken($packageId) {
+		$this->id = $packageId;
 		return $this->saveField('deleted', true);
 	}
 
@@ -722,9 +722,9 @@ class Package extends AppModel {
  * @param boolean $enable
  * @return boolean true if enabled or false if disabled
  */
-	public function enable($package_id = null, $enable = null) {
-		if ($package_id !== null) {
-			$this->id = $package_id;
+	public function enable($packageId = null, $enable = null) {
+		if ($packageId !== null) {
+			$this->id = $packageId;
 		}
 
 		if (isset($enable)) {
@@ -757,7 +757,9 @@ class Package extends AppModel {
  * @return array
  */
 	public function fixRepositoryUrl($package = null) {
-		if (!$package) return false;
+		if (!$package) {
+			return false;
+		}
 
 		if (!is_array($package)) {
 			$package = $this->find('first', array(
@@ -766,14 +768,16 @@ class Package extends AppModel {
 				'fields' => array('name', 'repository_url')
 			));
 		}
-		if (!$package) return false;
+		if (!$package) {
+			return false;
+		}
 
-		$package[$this->alias]['repository_url']	= array();
-		$package[$this->alias]['repository_url'][]	  = "git://github.com";
-		$package[$this->alias]['repository_url'][]	  = $package['Maintainer']['username'];
-		$package[$this->alias]['repository_url'][]	  = $package[$this->alias]['name'];
-		$package[$this->alias]['repository_url']	= implode("/", $package[$this->alias]['repository_url']);
-		$package[$this->alias]['repository_url']   .= '.git';
+		$package[$this->alias]['repository_url'] = array();
+		$package[$this->alias]['repository_url'][] = "git://github.com";
+		$package[$this->alias]['repository_url'][] = $package['Maintainer']['username'];
+		$package[$this->alias]['repository_url'][] = $package[$this->alias]['name'];
+		$package[$this->alias]['repository_url'] = implode("/", $package[$this->alias]['repository_url']);
+		$package[$this->alias]['repository_url'] .= '.git';
 		return $this->save($package);
 	}
 
@@ -788,7 +792,7 @@ class Package extends AppModel {
 		}
 
 		$id = Hash::get($data, "{$this->alias}.{$this->primaryKey}", null);
-		$category_id = Hash::get($data, "{$this->alias}.category_id", null);
+		$categoryId = Hash::get($data, "{$this->alias}.category_id", null);
 
 		if (!$id && $this->id) {
 			$id = $this->id;
@@ -798,30 +802,30 @@ class Package extends AppModel {
 			throw new NotFoundException(__("Cannot bookmark a non-existent package"));
 		}
 
-		if (!$category_id) {
+		if (!$categoryId) {
 			throw new UnauthorizedException(__("Invalid category"));
 		}
 
 		$package = $this->find('category', compact('id'));
-		if ($package['Package']['category_id'] == $category_id) {
+		if ($package['Package']['category_id'] == $categoryId) {
 			return $id;
 		}
 
 		$this->id = $id;
-        if ($this->saveField('category_id', $category_id)) {
-        	return $id;
-        }
+		if ($this->saveField('category_id', $categoryId)) {
+			return $id;
+		}
 
-	    throw new BadRequestException(__("Unable to categorize package #%d", $id));
+		throw new BadRequestException(__("Unable to categorize package #%d", $id));
 	}
 /**
  * Favorites a package for the specified user
  *
  * @param int $id Package ID
- * @param int $user_id ID referencing a specific User
+ * @param int $userId ID referencing a specific User
  * @return boolean
  **/
-	public function favoritePackage($id = null, $user_id = null) {
+	public function favoritePackage($id = null, $userId = null) {
 		if (!$id && $this->id) {
 			$id = $this->id;
 		}
@@ -830,16 +834,19 @@ class Package extends AppModel {
 			throw new NotFoundException(__("Cannot bookmark a non-existent package"));
 		}
 
-		if (!$user_id) {
+		if (!$userId) {
 			throw new UnauthorizedException(__("You must be logged in in order to bookmark packages"));
 		}
 
 		$action = 'add';
-		$package = $this->find('bookmark', compact('id', 'user_id'));
+		$package = $this->find('bookmark', array(
+			'id' => $id,
+			'user_id' => $userId,
+		));
 		if ($package['Favorite']) {
 			$action = 'remove';
 			$result = $this->Favorite->deleteAll(array(
-				'Favorite.user_id' => $user_id,
+				'Favorite.user_id' => $userId,
 				'Favorite.model' => $this->name,
 				'Favorite.type' => 'bookmark',
 				'Favorite.foreign_key' => $id,
@@ -848,7 +855,7 @@ class Package extends AppModel {
 				return false;
 			}
 		} else {
-			$result = $this->saveFavorite($user_id, $this->name, 'bookmark', $id);
+			$result = $this->saveFavorite($userId, $this->name, 'bookmark', $id);
 			if ($result) {
 				return true;
 			}
@@ -861,11 +868,11 @@ class Package extends AppModel {
  * Actually rates a package
  *
  * @param int $id Package ID
- * @param int $user_id ID referencing a specific User
+ * @param int $userId ID referencing a specific User
  * @param string $rating either "up" or "down"
  * @return boolean
  */
-	public function ratePackage($id = null, $user_id = null) {
+	public function ratePackage($id = null, $userId = null) {
 		if (!$id && $this->id) {
 			$id = $this->id;
 		}
@@ -874,20 +881,23 @@ class Package extends AppModel {
 			throw new NotFoundException(__("Cannot like a non-existent package"));
 		}
 
-		if (!$user_id) {
+		if (!$userId) {
 			throw new UnauthorizedException(__("You must be logged in in order to like packages"));
 		}
 
 		$action = 'like';
-		$package = $this->find('rate', compact('id', 'user_id'));
+		$package = $this->find('rate', array(
+			'id' => $id,
+			'user_id' => $userId
+		));
 		if ($package['Rating']) {
 			$action = 'dislike';
-			$result = $this->removeRating($id, $user_id);
+			$result = $this->removeRating($id, $userId);
 			if ($result !== false) {
 				return false;
 			}
 		} else {
-			$result = $this->saveRating($id, $user_id, 1);
+			$result = $this->saveRating($id, $userId, 1);
 			if ($result) {
 				return true;
 			}
@@ -1103,21 +1113,24 @@ class Package extends AppModel {
 /**
  * Categories
  *
- * @param integer $user_id
+ * @param integer $userId
  * @return array
  */
-	public function categories($user_id = null) {
+	public function categories($userId = null) {
 		$categories = $this->Category->find('list', array(
 			'order' => array('Category.name')
 		));
 		$diff = array_diff($this->categories, $categories);
 		if (!empty($diff)) {
-			if (!$user_id) {
+			if (!$userId) {
 				throw new UnauthorizedException(__('You must be logged in to add categories'));
 			}
 			$data = array();
 			foreach ($diff as $name) {
-				$data[]['Category'] = compact('user_id', 'name');
+				$data[]['Category'] = array(
+					'user_id' => $userId,
+					'name' => $name,
+				);
 			}
 			$result = $this->Category->saveAll($data);
 			if (!$result) {
@@ -1235,23 +1248,23 @@ class Package extends AppModel {
 			return array($items, $options['cache']);
 		}
 
-		if (!$this->_HttpSocket) {
-			$this->_HttpSocket = new HttpSocket();
+		if (!$this->HttpSocket) {
+			$this->HttpSocket = new HttpSocket();
 		}
 
-		if (!$this->_HttpSocket) {
+		if (!$this->HttpSocket) {
 			return array($items, $options['cache']);
 		}
 
 		try {
-			$result = $this->_HttpSocket->request(array('uri' => $options['uri']));
+			$result = $this->HttpSocket->request(array('uri' => $options['uri']));
 		} catch (SocketException $e) {
 			return array($items, $options['cache']);
 		}
 
-		$code = $this->_HttpSocket->response['status']['code'];
+		$code = $this->HttpSocket->response['status']['code'];
 		$isError = is_array($result) && isset($result['Html']);
-		if ($code != 404  && $result && !$isError) {
+		if ($code != 404 && $result && !$isError) {
 			$xmlError = libxml_use_internal_errors(true);
 			$result = simplexml_load_string($result['body']);
 			libxml_use_internal_errors($xmlError);
@@ -1344,35 +1357,34 @@ class Package extends AppModel {
 		);
 	}
 
-	public function stringToColor($text, $min_brightness = 50, $spec = 9) {
+	public function stringToColor($text, $minBrightness = 50, $spec = 9) {
 		// Check inputs
-		if (!is_int($min_brightness)) {
-			throw new Exception("$min_brightness is not an integer");
+		if (!is_int($minBrightness)) {
+			throw new Exception("$minBrightness is not an integer");
 		}
 		if (!is_int($spec)) {
 			throw new Exception("$spec is not an integer");
 		}
-		if ($spec < 2 or $spec > 10) {
+		if ($spec < 2 || $spec > 10) {
 			throw new Exception("$spec is out of range");
 		}
-		if ($min_brightness < 0 or $min_brightness > 255) {
-			throw new Exception("$min_brightness is out of range");
+		if ($minBrightness < 0 || $minBrightness > 255) {
+			throw new Exception("$minBrightness is out of range");
 		}
 
-
-		$hash = md5($text);  //Gen hash of text
+		$hash = md5($text); // Gen hash of text
 		$colors = array();
 		for ($i = 0; $i < 3; $i++) {
-			//convert hash into 3 decimal values between 0 and 255
-			$colors[$i] = max(array(round(((hexdec(substr($hash, $spec * $i, $spec))) / hexdec(str_pad('', $spec, 'F'))) * 255), $min_brightness));
+			// convert hash into 3 decimal values between 0 and 255
+			$colors[$i] = max(array(round(((hexdec(substr($hash, $spec * $i, $spec))) / hexdec(str_pad('', $spec, 'F'))) * 255), $minBrightness));
 		}
 
-		//only check brightness requirements if min_brightness is about 100
-		if ($min_brightness > 0) {
-			//loop until brightness is above or equal to min_brightness
-			while (array_sum($colors) / 3 < $min_brightness) {
+		// only check brightness requirements if minBrightness is about 100
+		if ($minBrightness > 0) {
+			// loop until brightness is above or equal to minBrightness
+			while (array_sum($colors) / 3 < $minBrightness) {
 				for ($i = 0; $i < 3; $i++) {
-					$colors[$i] += 10;	//increase each color by 10
+					$colors[$i] += 10;	// increase each color by 10
 				}
 			}
 		}
@@ -1380,17 +1392,18 @@ class Package extends AppModel {
 		$output = '';
 
 		for ($i = 0; $i < 3; $i++) {
-			$output .= str_pad(dechex($colors[$i]),2,0,STR_PAD_LEFT);  //convert each color to hex and append to output
+			// convert each color to hex and append to output
+			$output .= str_pad(dechex($colors[$i]), 2, 0, STR_PAD_LEFT);
 		}
 
-		return '#'.$output;
+		return '#' . $output;
 	}
 
 /**
  * Get Next Page
  *
  * @param array $params
- * @param boolean $next
+ * @param bool $next
  * @return array
  */
 	public function getNextPage($params, $next = true) {
@@ -1398,12 +1411,12 @@ class Package extends AppModel {
 			return false;
 		}
 
-		$params = (array) $params;
+		$params = (array)$params;
 
 		if (empty($params['page'])) {
 			$params['page'] = 2;
 		} else {
-			$params['page'] = (int) $params['page'] + 1;
+			$params['page'] = (int)$params['page'] + 1;
 		}
 
 		return $params;

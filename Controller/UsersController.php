@@ -304,9 +304,7 @@ class UsersController extends AppController {
  *
  * @return void
  */
-	// @codingStandardsIgnoreStart
 	public function _seoRegister() {
-		// @codingStandardsIgnoreEnd
 		$this->Sham->setMeta('title', 'Become a Member');
 		$this->Sham->setMeta('description', 'User registration');
 	}
@@ -316,9 +314,7 @@ class UsersController extends AppController {
  *
  * @return void
  */
-	// @codingStandardsIgnoreStart
 	public function _seoFallback() {
-		// @codingStandardsIgnoreEnd
 		if (!$this->Sham->getMeta('title')) {
 			$this->Sham->setMeta('title', Inflector::humanize($this->request->params['action']) . ' | CakePackages');
 		}
