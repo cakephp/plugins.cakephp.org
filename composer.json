@@ -1,61 +1,67 @@
 {
-  "name": "cakephp/cakepackages",
-  "description": "self-contained application that automatically tracks cakephp developer's open source code repositories, including applications and plugins",
-  "type": "project",
-  "keywords" : [],
-  "homepage" : "http://plugins.cakephp.org",
-  "license" : "MIT",
-  "require" : {
-    "php" : ">=5.3",
-    "composer/installers" : "~1.0",
-    "cssmin/cssmin": "*",
-    "rgrove/jsmin-php": "*",
-    "cakephp/cakephp": "2.5.5",
-
-    "markstory/asset_compress": "v0.15",
-
-    "cakephp/debug_kit" : "2.2.4",
-
-    "josegonzalez/cakephp-environments": "1.0.0",
-
-    "cakedc/migrations": "2.3.1",
-
-    "josegonzalez/cakephp-sanction": "2.1.0",
-    "josegonzalez/cakephp-sham": "1.0.0",
-    "cakedc/tags": "1.6.0",
-    "cakedc/utils": "1.4.3"
-  },
-  "config": {
-    "preferred-install": "dist",
-    "vendor-dir": "Vendor"
-  },
-  "extra": {
-    "heroku": {
-      "document-root": "webroot",
-      "index-document": "index.php"
-    }
-  },
-  "config" : {
-    "bin-dir" : "Console"
-  },
-  "repositories": [
-    {
-      "type": "package",
-      "package": {
-        "name": "cssmin/cssmin",
-        "version": "3.0.1",
-        "dist": { "url": "http://cssmin.googlecode.com/files/cssmin-v3.0.1.php", "type": "file" },
-        "autoload": { "classmap": [ "cssmin-v3.0.1.php" ] }
-      }
+    "name": "cakephp/cakepackages",
+    "description": "self-contained application that automatically tracks cakephp developer's open source code repositories, including applications and plugins",
+    "type": "project",
+    "keywords": [],
+    "homepage": "http://plugins.cakephp.org",
+    "license": "MIT",
+    "require": {
+        "php": ">=5.3",
+        "composer/installers": "~1.0",
+        "cssmin/cssmin": "*",
+        "rgrove/jsmin-php": "*",
+        "cakephp/cakephp": "2.5.5",
+        "markstory/asset_compress": "v0.15",
+        "cakephp/debug_kit": "2.2.4",
+        "josegonzalez/cakephp-environments": "1.0.0",
+        "cakedc/migrations": "2.3.1",
+        "josegonzalez/cakephp-sanction": "2.1.0",
+        "josegonzalez/cakephp-sham": "1.0.0",
+        "cakedc/tags": "1.6.0",
+        "cakedc/utils": "1.4.3",
+        "phpunit/phpunit": "3.7.*"
     },
-    {
-      "type": "package",
-      "package": {
-        "name": "rgrove/jsmin-php",
-        "version": "1.1.2",
-        "dist": { "url": "https://raw.github.com/rgrove/jsmin-php/master/jsmin.php", "type": "file" },
-        "autoload": { "classmap": [ "jsmin.php" ] }
-      }
-    }
-  ]
+    "config": {
+        "bin-dir": "Console"
+    },
+    "extra": {
+        "heroku": {
+            "document-root": "webroot",
+            "index-document": "index.php"
+        }
+    },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "cssmin/cssmin",
+                "version": "3.0.1",
+                "dist": {
+                    "url": "http://cssmin.googlecode.com/files/cssmin-v3.0.1.php",
+                    "type": "file"
+                },
+                "autoload": {
+                    "classmap": [
+                        "cssmin-v3.0.1.php"
+                    ]
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "rgrove/jsmin-php",
+                "version": "1.1.2",
+                "dist": {
+                    "url": "https://raw.github.com/rgrove/jsmin-php/master/jsmin.php",
+                    "type": "file"
+                },
+                "autoload": {
+                    "classmap": [
+                        "jsmin.php"
+                    ]
+                }
+            }
+        }
+    ]
 }
