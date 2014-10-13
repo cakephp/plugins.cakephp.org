@@ -1,6 +1,8 @@
 <?php
 // From Console/cake.php
 define('DS', DIRECTORY_SEPARATOR);
+
+$ds = DIRECTORY_SEPARATOR;
 $dispatcher = 'Cake' . $ds . 'Console' . $ds . 'ShellDispatcher.php';
 $root = dirname(dirname(dirname(__FILE__)));
 $app_dir = basename(dirname(dirname(__FILE__)));
