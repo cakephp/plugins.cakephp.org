@@ -24,8 +24,8 @@ class Github extends AppModel {
  * @param string $table Name of database table to use.
  * @param string $ds DataSource connection name.
  */
-	public function __construct($id = false, $table = null, $ds = null) {
-		parent::__construct($id, $table, $ds);
+	public function __construct($model_id = false, $table = null, $datasource = null) {
+		parent::__construct($model_id, $table, $datasource);
 
 		$this->findMethods['repository'] = true;
 		$this->findMethods['user'] = true;
@@ -51,7 +51,7 @@ class Github extends AppModel {
 		}
 
 		$results = array();
-		foreach ($repositories as $key => $repository) {
+		foreach ($repositories as $repository) {
 			if (!in_array(strtolower($repository['Repository']['name']), $packages) && ($repository['Repository']['fork'] != 1)) {
 				$results[] = $repository;
 			}
@@ -70,7 +70,7 @@ class Github extends AppModel {
 			$maintainers[$i]['Repository'] = array();
 			if (!empty($repos)) {
 				$packages = $Package->find('listformaintainer', $maintainer['Maintainer']['id']);
-				foreach ($repos as $j => $repo) {
+				foreach ($repos as $repo) {
 					if (!in_array($repo['Repository']['name'], $packages) && $repo['Repository']['fork'] != true) {
 						$maintainers[$i]['Repository'][] = $repo['Repository'];
 					}
@@ -85,7 +85,7 @@ class Github extends AppModel {
 		$_action = 'following';
 		$following = $this->find('users', compact('user', '_action'));
 		ClassRegistry::init('Maintainer');
-		$maintainer = &new Maintainer;
+		$maintainer = new Maintainer;
 		$maintainers = $maintainer->find('list', array('fields' => array('username')));
 		$maintainers = array_values($maintainers);
 		foreach ($following['Users']['User'] as $key => &$user) {
