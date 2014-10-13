@@ -59,7 +59,7 @@ class UsersController extends AppController {
 /**
  * beforeFilter callback
  *
- * @var array
+ * @return void
  */
 	public function beforeFilter() {
 		if ($this->request->action == 'login') {
@@ -152,8 +152,6 @@ class UsersController extends AppController {
  * Handles the trigger of the reset, also takes the token, validates it and let the user enter
  * a new password.
  *
- * @param string $token Token
- * @param string $user User Data
  * @return void
  */
 	public function forgot_password() {
@@ -179,7 +177,6 @@ class UsersController extends AppController {
  * a new password.
  *
  * @param string $token Token
- * @param string $user User Data
  * @return void
  */
 	public function reset_password($token = null) {
@@ -205,7 +202,6 @@ class UsersController extends AppController {
 /**
  * Confirm email action
  *
- * @param string $type Type, deprecated, will be removed. Its just still there for a smooth transistion.
  * @param string $token Token
  * @return void
  */
@@ -253,7 +249,6 @@ class UsersController extends AppController {
 /**
  * Edit
  *
- * @param string $id User ID
  * @return void
  */
 	public function edit() {
@@ -276,8 +271,8 @@ class UsersController extends AppController {
 /**
  * Sets the cookie to remember the user
  *
- * @param array Cookie component properties as array, like array('domain' => 'yourdomain.com')
- * @param string Cookie data keyname for the userdata, its default is "User". This is set to User and NOT using the model alias to make sure it works with different apps with different user models across different (sub)domains.
+ * @param array $options Cookie component properties as array, like array('domain' => 'yourdomain.com')
+ * @param string $cookieKey Cookie data keyname for the userdata, its default is "User". This is set to User and NOT using the model alias to make sure it works with different apps with different user models across different (sub)domains.
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html
  */
@@ -304,7 +299,14 @@ class UsersController extends AppController {
 		unset($this->request->data[$this->modelClass]['remember_me']);
 	}
 
+/**
+ * Sets some meta headers for the response
+ *
+ * @return void
+ */
+	// @codingStandardsIgnoreStart
 	public function _seoRegister() {
+		// @codingStandardsIgnoreEnd
 		$this->Sham->setMeta('title', 'Become a Member');
 		$this->Sham->setMeta('description', 'User registration');
 	}
@@ -314,7 +316,9 @@ class UsersController extends AppController {
  *
  * @return void
  */
+	// @codingStandardsIgnoreStart
 	public function _seoFallback() {
+		// @codingStandardsIgnoreEnd
 		if (!$this->Sham->getMeta('title')) {
 			$this->Sham->setMeta('title', Inflector::humanize($this->request->params['action']) . ' | CakePackages');
 		}

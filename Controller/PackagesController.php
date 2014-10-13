@@ -1,5 +1,6 @@
 <?php
 class PackagesController extends AppController {
+
 /**
  * helpers
  *
@@ -36,7 +37,7 @@ class PackagesController extends AppController {
  *
  * @var array
  */
-	public $_ajax = array(
+	protected $_ajax = array(
 		'bookmark',
 		'home',
 		'index',
@@ -46,6 +47,8 @@ class PackagesController extends AppController {
 
 /**
  * Default page for entire application
+ *
+ * @return void
  */
 	public function home() {
 	}
@@ -53,8 +56,8 @@ class PackagesController extends AppController {
 /**
  * Index page that also provides search functionality
  *
- * @param string $search String to search by
  * @todo refactor this to use something like Sphinx
+ * @return void
  */
 	public function index() {
 		if ($this->request->is('post')) {
@@ -96,6 +99,7 @@ class PackagesController extends AppController {
  *
  * @param string $maintainer Maintainer name
  * @param string $package Package name
+ * @return void
  */
 	public function utility_redirect($maintainer = null, $package = null) {
 		try {
@@ -117,16 +121,18 @@ class PackagesController extends AppController {
 /**
  * Allows viewing of a particular package
  *
- * @param string $package_id Package id
- * @param string $slug Package slug
+ * @return void
  */
 	public function view() {
-		$package_id = $this->request->param('id');
+		$packageId = $this->request->param('id');
 		$slug = $this->request->param('slug');
-		$user_id = AuthComponent::user('id');
+		$userId = AuthComponent::user('id');
 
 		try {
-			$package = $this->Package->find('view', compact('package_id', 'user_id'));
+			$package = $this->Package->find('view', array(
+				'package_id' => $packageId,
+				'user_id' => $userId,
+			));
 		} catch (Exception $e) {
 			$this->Session->setFlash($e->getMessage(), 'flash/error');
 			return $this->redirect($this->redirectTo);
@@ -143,6 +149,11 @@ class PackagesController extends AppController {
 		$this->set(compact('disqus', 'package'));
 	}
 
+/**
+ * Redirects to the home page
+ *
+ * @return void
+ */
 	public function categories() {
 		return $this->redirect(array('action' => 'home'));
 	}
@@ -150,8 +161,9 @@ class PackagesController extends AppController {
 /**
  * Redirects to proper download url
  *
- * @param int $id
+ * @param int $id package id
  * @todo Track downloads for packages
+ * @return void
  */
 	public function download($id = null) {
 		if (!$id) {
@@ -164,13 +176,13 @@ class PackagesController extends AppController {
 			$branch = $this->request->params['named']['branch'];
 		}
 
-		$download_url = $this->Package->find('download', compact('id', 'branch'));
-		if (!$download_url) {
+		$downloadUrl = $this->Package->find('download', compact('id', 'branch'));
+		if (!$downloadUrl) {
 			$this->Session->setFlash('Invalid Package download', 'flash/error');
 			return $this->redirect($this->referer('/', true));
 		}
 
-		return $this->redirect($download_url);
+		return $this->redirect($downloadUrl);
 	}
 
 /**
@@ -221,6 +233,11 @@ class PackagesController extends AppController {
 		return $this->redirect($this->referer('/', true));
 	}
 
+/**
+ * This action allows users to suggest new packages for inclusion on the site
+ *
+ * @return void
+ */
 	public function suggest() {
 		if ($this->_isFromForm('Package')) {
 			$result = $this->Package->suggest($this->request->data['Package']);
@@ -237,6 +254,8 @@ class PackagesController extends AppController {
 
 /**
  * admin_index
+ *
+ * @return void
  */
 	public function admin_index() {
 		$this->Package->enableSoftDeletable(array('find'), false);
@@ -250,7 +269,8 @@ class PackagesController extends AppController {
 /**
  * admin_edit
  *
- * @param integer $id
+ * @param int $id package id
+ * @return void
  */
 	public function admin_edit($id = null) {
 		$this->Package->enableSoftDeletable(array('find'), false);
@@ -270,7 +290,8 @@ class PackagesController extends AppController {
 /**
  * disable
  *
- * @param integer $id
+ * @param int $id package id
+ * @return void
  */
 	public function admin_disable($id = null) {
 		$enabled = $this->Package->enable($id);
@@ -285,7 +306,8 @@ class PackagesController extends AppController {
 /**
  * update github info for package(s)
  *
- * @param integer $id
+ * @param int $id package id
+ * @return void
  */
 	public function admin_update($id = null) {
 		if ($id) {
@@ -307,10 +329,11 @@ class PackagesController extends AppController {
 /**
  * admin_categorize
  *
- * @param integer $id
+ * @param int $id package id
+ * @return void
  */
 	public function admin_categorize($id = null) {
-		$user_id = $this->Auth->user('id');
+		$userId = $this->Auth->user('id');
 
 		if ($this->_isFromForm('Package')) {
 			try {
@@ -321,9 +344,12 @@ class PackagesController extends AppController {
 			}
 		}
 
-		$categories = $this->Package->categories($user_id);
+		$categories = $this->Package->categories($userId);
 		try {
-			$package = $this->Package->find('uncategorized', compact('id', 'user_id'));
+			$package = $this->Package->find('uncategorized', array(
+				'id' => $id,
+				'user_id' => $userId
+			));
 		} catch (Exception $e) {
 			$this->Session->setFlash($e->getMessage(), 'flash/error');
 		}
@@ -332,6 +358,8 @@ class PackagesController extends AppController {
 
 /**
  * Ability to kick off admin jobs
+ *
+ * @return void
  */
 	public function admin_jobs() {
 		if ($this->_isFromForm('Package')) {
@@ -350,6 +378,8 @@ class PackagesController extends AppController {
  * Sets SEO information for any
  * of the package search pages,
  * as well as the home page
+ *
+ * @return void
  */
 	public function _seoIndex() {
 		if ($this->_originalAction == 'home') {
@@ -384,6 +414,8 @@ class PackagesController extends AppController {
 
 /**
  * Sets seo information for the suggest page
+ *
+ * @return void
  */
 	public function _seoSuggest() {
 		$this->Sham->loadBySlug('packages/suggest');
@@ -396,6 +428,8 @@ class PackagesController extends AppController {
 
 /**
  * Sets SEO information for a specific package page
+ *
+ * @return void
  */
 	public function _seoView() {
 		$package = $this->viewVars['package'];

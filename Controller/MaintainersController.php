@@ -3,6 +3,8 @@ class MaintainersController extends AppController {
 
 /**
  * Paginates the current maintainers
+ *
+ * @return void
  */
 	public function index() {
 		return $this->redirect(array(
@@ -14,7 +16,8 @@ class MaintainersController extends AppController {
 /**
  * Redirects to the :id-:slug url
  *
- * @param string $maintainer Maintainer name
+ * @param string $username Maintainer name
+ * @return void
  */
 	public function utility_redirect($username = null) {
 		try {
@@ -35,14 +38,16 @@ class MaintainersController extends AppController {
 /**
  * Allows the viewing of a user
  *
- * @param string $username Username
+ * @return void
  */
 	public function view() {
-		$maintainer_id = $this->request->param('id');
+		$maintainerId = $this->request->param('id');
 		$slug = $this->request->param('slug');
 
 		try {
-			$maintainer = $this->Maintainer->find('view', compact('maintainer_id'));
+			$maintainer = $this->Maintainer->find('view', array(
+				'maintainer_id' => $maintainerId
+			));
 		} catch (Exception $e) {
 			$this->Session->setFlash($e->getMessage(), 'flash/error');
 			return $this->redirect($this->redirectTo);
@@ -58,6 +63,11 @@ class MaintainersController extends AppController {
 		$this->set(compact('maintainer'));
 	}
 
+/**
+ * Sets seo information for the index page
+ *
+ * @return void
+ */
 	public function _seoIndex() {
 		$keywords = array();
 		$keywords[] = 'cakephp developers';
@@ -71,6 +81,11 @@ class MaintainersController extends AppController {
 		$this->Sham->setMeta('canonical', '/');
 	}
 
+/**
+ * Sets seo information for the view page
+ *
+ * @return void
+ */
 	public function _seoView() {
 		$maintainer = $this->viewVars['maintainer'];
 		$canonical = 'maintainer/' . $maintainer['Maintainer']['username'];

@@ -71,7 +71,7 @@ class AppController extends Controller {
  *
  * @var array
  */
-	public $_blacklistVars = array('_meta', '_bodyId', '_bodyClass');
+	public $blacklistVars = array('_meta', '_bodyId', '_bodyClass');
 
 /**
  * Whitelist of actions allowing ajax support
@@ -90,6 +90,9 @@ class AppController extends Controller {
 /**
  * Object constructor - Adds the Debugkit panel if in development mode
  *
+ * @param CakeRequest $request Request object for this controller. Can be null for testing,
+ *  but expect that features that use the request parameters will not work.
+ * @param CakeResponse $response Response object for this controller.
  * @return void
  */
 	public function __construct($request = null, $response = null) {
@@ -167,8 +170,8 @@ class AppController extends Controller {
  *
  * @param mixed $url A string or array-based URL pointing to another location within the app,
  *     or an absolute URL
- * @param integer $status Optional HTTP status code (eg: 404)
- * @param boolean $exit If true, exit() will be called after the redirect
+ * @param int $status Optional HTTP status code (eg: 404)
+ * @param bool $exit If true, exit() will be called after the redirect
  * @return mixed void if $exit = false. Terminates script if $exit = true
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::redirect
  */
@@ -207,8 +210,6 @@ class AppController extends Controller {
  * Internally redirects one action to another. Does not perform another HTTP request unlike Controller::redirect()
  *
  * @param string $action The new action to be 'redirected' to
- * @param mixed  Any other parameters passed to this method will be passed as
- *    parameters to the new action.
  * @return mixed Returns the return value of the called action
  */
 	public function setAction($action) {
@@ -219,24 +220,24 @@ class AppController extends Controller {
 /**
  * Setup Theme
  *
- * @return boolean True if theme set, false otherwise
+ * @return bool True if theme set, false otherwise
  **/
-	public function _setupTheme() {
+	protected function _setupTheme() {
 		if (($theme = Configure::read('Config.theme')) === null) {
 			return false;
 		}
 
-		$is_available = Cache::read('Theme.is_available');
-		if (!$is_available) {
+		$isAvailable = Cache::read('Theme.isAvailable');
+		if (!$isAvailable) {
 			$path = App::themePath($theme);
-			$is_available = file_exists($path . 'README.textile') ? 'yes' : 'no';
-			Cache::write('Theme.is_available', $is_available);
+			$isAvailable = file_exists($path . 'README.textile') ? 'yes' : 'no';
+			Cache::write('Theme.isAvailable', $isAvailable);
 		}
 
-		if ($is_available === 'yes') {
+		if ($isAvailable === 'yes') {
 			$this->theme = $theme;
 		}
-		return $is_available === 'yes';
+		return $isAvailable === 'yes';
 	}
 
 /**
@@ -293,7 +294,7 @@ class AppController extends Controller {
  *
  * Sanction.Permit handles permissions for us
  *
- * @return boolean true
+ * @return bool true
  */
 	public function isAuthorized() {
 		return true;
@@ -384,6 +385,12 @@ class AppController extends Controller {
 		}
 	}
 
+/**
+ * Forces a request to respond via ajax
+ *
+ * @param string $type type of the request
+ * @return void
+ */
 	protected function _respondAs($type) {
 		if ($type == 'ajax') {
 			$this->viewClass = 'Ajax';
@@ -411,6 +418,12 @@ class AppController extends Controller {
 		}
 	}
 
+/**
+ * Checks if this is a form request with certain data
+ *
+ * @param string $name Name to use to check against request data
+ * @return bool
+ */
 	protected function _isFromForm($name = null) {
 		$isPost = $this->request->is('post');
 		$isPut = $this->request->is('put');

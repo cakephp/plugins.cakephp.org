@@ -23,6 +23,7 @@ class GithubController extends AppController {
  * when attempting to search for them
  *
  * @link http://book.cakephp.org/view/984/Callbacks
+ * @return void
  */
 	public function beforeFilter() {
 		parent::beforeFilter();
@@ -31,6 +32,8 @@ class GithubController extends AppController {
 
 /**
  * Paginates a set of maintainers with related repository information attached
+ *
+ * @return void
  */
 	public function index() {
 		$this->paginate = array('limit' => 2);
@@ -46,6 +49,7 @@ class GithubController extends AppController {
  * github information inline
  *
  * @param string $username Github username
+ * @return void
  */
 	public function view($username = null) {
 		$user = $this->Github->find('user', array('user' => $username));
@@ -71,6 +75,7 @@ class GithubController extends AppController {
  *
  * @param string $username Github username
  * @param string $package Name of repository belonging to user
+ * @return void
  */
 	public function add_package($username = null, $package = null) {
 		$this->_redirectUnless($username, __('Invalid user'));
@@ -89,6 +94,7 @@ class GithubController extends AppController {
  * Allows the viewing of an arbitrary github user
  *
  * @param string $username Github username
+ * @return void
  */
 	public function github($username = null) {
 		$user = $this->Github->find('user', array('user' => $username));

@@ -18,6 +18,7 @@ class ApiController extends AppController {
  * Used to ensure that json responses are handled correctly by the action
  *
  * @link http://book.cakephp.org/view/984/Callbacks
+ * @return void
  */
 	public function beforeRender() {
 		parent::beforeRender();
@@ -29,6 +30,8 @@ class ApiController extends AppController {
 
 /**
  * Returns a set of packages that may match an install query
+ *
+ * @return void
  */
 	public function one_install() {
 		if (empty($this->request->params['url']['package'])) {
@@ -40,10 +43,12 @@ class ApiController extends AppController {
 			'request' => $this->request->params['url']
 		));
 
-		if (!$results) $results = array();
+		if (!$results) {
+			$results = array();
+		}
 
 		$results = array_merge($this->status[200], array(
-			'count'   => count($results),
+			'count' => count($results),
 			'results' => $results
 		));
 		return $this->set(compact('results'));
