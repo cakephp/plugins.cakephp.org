@@ -5,16 +5,12 @@ php:
   - 5.4
 
 env:
-  - CAKE_VERSION=master DB=mysql
-  - CAKE_VERSION=2.4.7 DB=mysql
+  - DB=mysql
+  - PHPCS=true
 
 before_script:
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"
-  - git clone git://github.com/cakephp/cakephp ../cakephp && cd ../cakephp && git checkout $CAKE_VERSION
-  - rm -rf app/ && cp -R ../cakepackages app
-  - composer global require 'phpunit/phpunit=3.7.33'
-  - ln -s ~/.composer/vendor/phpunit/phpunit/PHPUnit ./app/Vendor/PHPUnit
-  - chmod -R 777 app/tmp
+  - chmod -R 777 tmp
   - set +H
   - echo "<?php
     class DATABASE_CONFIG {
@@ -61,10 +57,10 @@ before_script:
         \$this->{\$source} = \$config;
       }
     }
-    }" > app/Config/database.php
+    }" > Config/database.php
 
 script:
-  - ./lib/Cake/Console/cake test app AllTests --stderr
+  - sh -c "if [ '$PHPCS' = 'true' ]; then ./Console/phpcs --standard=CakePHP; else ./Console/cake test app AllTests --stderr; fi"
 
 notifications:
   email: false
