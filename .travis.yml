@@ -61,7 +61,7 @@ before_script:
     }" > Config/database.php
 
 script:
-  - sh -c "if [ '$PHPCS' = 'true' ]; then ./Vendor/squizlabs/php_codesniffer/scripts/phpcs --standard=CakePHP Config/* Controller/* Lib/* Model/* Test/* View/* -np; else ./Console/cake test app AllTests --stderr; fi"
+  - sh -c "if [ '$PHPCS' = 'true' ]; then ./Vendor/squizlabs/php_codesniffer/scripts/phpcs --standard=CakePHP Controller/* Lib/* Model/* Test/* View/* -np; else ./Console/cake test app AllTests --stderr; fi"
 
 notifications:
   email: false
