@@ -6,7 +6,6 @@ class UpdatePackageJob extends AppShell {
     public $uses = array('Package');
 
     public function work() {
-    	$this->out(sprintf('CAKE_VERSION: %s', Configure::version()));
         $id = $this->args[0];
         $this->out(sprintf('Retrieving package %d', $id));
         $package = $this->Package->find('first', array(
