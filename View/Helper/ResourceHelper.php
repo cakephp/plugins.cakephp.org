@@ -78,7 +78,7 @@ class ResourceHelper extends AppHelper {
 		$order = null;
 
 		$output = array();
-		foreach (Package::$_validShownOrders as $sort => $name) {
+		foreach (Package::$validShownOrders as $sort => $name) {
 			if ($sort == $sortField) {
 				$output[] = $this->Html->link($name, array('?' => array_merge(
 					(array)$this->_View->request->query,

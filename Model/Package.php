@@ -105,7 +105,7 @@ class Package extends AppModel {
 		'open_issues', 'watchers'
 	);
 
-	protected static $_validShownOrders = array(
+	public static $validShownOrders = array(
 		'username' => 'Name',
 		'created' => 'Created',
 		'forks' => 'Forks',
