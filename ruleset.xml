@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<ruleset name="MyCakePHP">
+ <description>Ignores the ValidFunctionNameSniff as it breaks a component that relies on not routing public methods beginning with underscores.</description>
+ <rule ref="CakePHP">
+  <exclude name="CakePHP/Sniffs/NamingConventions/ValidFunctionNameSniff.php"/>
+ </rule>
+</ruleset>
