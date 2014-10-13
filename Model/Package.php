@@ -130,8 +130,8 @@ class Package extends AppModel {
 
 	public $_HttpSocket = null;
 
-	public function __construct($id = false, $table = null, $ds = null) {
-		parent::__construct($id, $table, $ds);
+	public function __construct($package_id = false, $table = null, $ds = null) {
+		parent::__construct($package_id, $table, $ds);
 		$this->validate = array(
 			'maintainer_id' => array(
 				'numeric' => array(
@@ -275,8 +275,8 @@ class Package extends AppModel {
 
 		foreach ($results as $i => $result) {
 			$results[$i]['Category']['color'] = '';
-			if (!empty($results[$i]['Category']['slug'])) {
-				$results[$i]['Category']['color'] = $this->packageColor($results[$i]['Category']['slug']);
+			if (!empty($result['Category']['slug'])) {
+				$results[$i]['Category']['color'] = $this->packageColor($result['Category']['slug']);
 			}
 		}
 
@@ -431,17 +431,15 @@ class Package extends AppModel {
 			return $results;
 		}
 
-		$colors = array();
-
 		foreach ($results as $i => $result) {
-			$results[$i]['Package']['description'] = trim($results[$i]['Package']['description']);
-			if (empty($results[$i]['Package']['description'])) {
+			$results[$i]['Package']['description'] = trim($result['Package']['description']);
+			if (empty($result['Package']['description'])) {
 				$results[$i]['Package']['description'] = 'No description available';
 			}
 
 			$results[$i]['Category']['color'] = '';
-			if (!empty($results[$i]['Category']['slug'])) {
-				$results[$i]['Category']['color'] = $this->packageColor($results[$i]['Category']['slug']);
+			if (!empty($result['Category']['slug'])) {
+				$results[$i]['Category']['color'] = $this->packageColor($result['Category']['slug']);
 			}
 		}
 
@@ -708,8 +706,8 @@ class Package extends AppModel {
  * @param integer $id
  * @return boolean
  */
-	public function broken($id) {
-		$this->id = $id;
+	public function broken($package_id) {
+		$this->id = $package_id;
 		return $this->saveField('deleted', true);
 	}
 
@@ -720,21 +718,23 @@ class Package extends AppModel {
  * @param boolean $enable
  * @return boolean true if enabled or false if disabled
  */
-	public function enable($id = null, $enable = null) {
-		if (isset($id)) {
-			$this->id = $id;
+	public function enable($package_id = null, $enable = null) {
+		if ($package_id !== null) {
+			$this->id = $package_id;
 		}
+
 		if (isset($enable)) {
 			if ($enable) {
 				$this->undelete($this->id);
 				return true;
-			} else {
-				$this->saveField('deleted', true);
-				return false;
 			}
+
+			$this->saveField('deleted', true);
+			return false;
 		}
+
 		$this->enableSoftDeletable(array('find'), false);
-		$package = $this->findById($id);
+		$package = $this->findById($this->id);
 		$this->enableSoftDeletable(array('find'), true);
 		if ($package) {
 			if ($package[$this->alias]['deleted']) {
@@ -783,16 +783,8 @@ class Package extends AppModel {
 			throw new NotFoundException(__("Cannot bookmark a non-existent package"));
 		}
 
-		$id = null;
-		$category_id = null;
-
-		if (!empty($data[$this->alias][$this->primaryKey])) {
-			$id = $data[$this->alias][$this->primaryKey];
-		}
-
-		if (!empty($data[$this->alias]['category_id'])) {
-			$category_id = $data[$this->alias]['category_id'];
-		}
+		$id = Hash::get($data, "{$this->alias}.{$this->primaryKey}", null);
+		$category_id = Hash::get($data, "{$this->alias}.category_id", null);
 
 		if (!$id && $this->id) {
 			$id = $this->id;
@@ -809,12 +801,12 @@ class Package extends AppModel {
 		$package = $this->find('category', compact('id'));
 		if ($package['Package']['category_id'] == $category_id) {
 			return $id;
-		} else {
-			$this->id = $id;
-	        if ($this->saveField('category_id', $category_id)) {
-	        	return $id;
-	        }
-	    }
+		}
+
+		$this->id = $id;
+        if ($this->saveField('category_id', $category_id)) {
+        	return $id;
+        }
 
 	    throw new BadRequestException(__("Unable to categorize package #%d", $id));
 	}
@@ -1013,7 +1005,7 @@ class Package extends AppModel {
 			}
 
 			$query = ' ' . trim($query, $options['trim']);
-			foreach ($matches as $k => $value) {
+			foreach ($matches as $value) {
 				$key = strtolower($value[1]);
 				if (!in_array($key, $options['allowed'])) {
 					$query .= ' ' . $key . ':' . $value[2];
