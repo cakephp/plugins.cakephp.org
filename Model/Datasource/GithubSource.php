@@ -1,6 +1,7 @@
 <?php
 App::uses('Cache', 'Cache');
 App::uses('DataSource', 'Model/Datasource');
+App::uses('Hash', 'Utility');
 App::uses('HttpSocket', 'Network/Http');
 
 class GithubSource extends DataSource {
