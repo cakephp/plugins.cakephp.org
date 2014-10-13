@@ -20,16 +20,23 @@
 $ds = DIRECTORY_SEPARATOR;
 $dispatcher = 'Cake' . $ds . 'Console' . $ds . 'ShellDispatcher.php';
 $root = dirname(dirname(dirname(__FILE__)));
-$app_dir = define('APP_DIR', basename(dirname(dirname(__FILE__))));
-
+$app_dir = basename(dirname(dirname(__FILE__)));
+$cake_core_include_path = $root . $ds . $app_dir . $ds . 'Vendor' . $ds . 'cakephp' . $ds . 'cakephp' . $ds . 'lib';
 if (!defined('CAKE_CORE_INCLUDE_PATH')) {
-	define('CAKE_CORE_INCLUDE_PATH', $root . $ds . $app_dir . $ds . 'Vendor' . $ds . 'cakephp' . $ds . 'cakephp' . $ds . 'lib');
+	define('CAKE_CORE_INCLUDE_PATH', $cake_core_include_path);
+	define('CAKEPHP_SHELL', true);
+	if (!defined('DS')) {
+		define('DS', DIRECTORY_SEPARATOR);
+	}
+	if (!defined('CORE_PATH')) {
+		define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
+	}
 }
 
 if (function_exists('ini_set')) {
   // the following line differs from its sibling
   // /lib/Cake/Console/Templates/skel/Console/cake.php
-  ini_set('include_path', $root . $ds . $app_dir . $ds . 'Vendor' . $ds . 'cakephp' . $ds . 'cakephp' . $ds . 'lib' . PATH_SEPARATOR . ini_get('include_path'));
+  ini_set('include_path', $cake_core_include_path . PATH_SEPARATOR . ini_get('include_path'));
 }
 
 if (!include $dispatcher) {
