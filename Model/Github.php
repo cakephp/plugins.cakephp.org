@@ -27,6 +27,7 @@ class Github extends AppModel {
 	public function __construct($model_id = false, $table = null, $datasource = null) {
 		parent::__construct($model_id, $table, $datasource);
 
+		$this->findMethods['files'] = true;
 		$this->findMethods['repository'] = true;
 		$this->findMethods['user'] = true;
 	}
@@ -94,6 +95,19 @@ class Github extends AppModel {
 			}
 		}
 		return $following['Users']['User'];
+	}
+
+	public function afterFind($results, $primary = false) {
+		$files = Hash::get($results, 'File.tree');
+		if ($files === null) {
+			return $files;
+		}
+
+		$results = array();
+		foreach ($files as $file) {
+			$results[] = array('File' => $file);
+		}
+		return $results;
 	}
 
 /**

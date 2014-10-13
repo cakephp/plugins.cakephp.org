@@ -19,6 +19,7 @@ class GithubSource extends DataSource {
 	);
 
 	protected $mapping = array(
+		'files' => '/repos/:owner/:repo/git/trees/master?recursive=1',
 		'repository' => '/repos/:owner/:repo/:_action',
 		'user' => '/users/:user/:_action',
 	);

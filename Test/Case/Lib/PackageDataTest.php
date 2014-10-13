@@ -83,4 +83,39 @@ class PackageDataTest extends CakeTestCase {
 		$this->assertEquals(array('deleted' => true), $data);
 	}
 
+	public function testCharacterize() {
+		$username = 'cakephp';
+		$repository = 'debug_kit';
+
+		$testData = $this->getTestData('files', $username, $repository);
+		$this->Github->expects($this->at(0))
+					 ->method('find')
+					 ->will($this->returnValue($testData));
+
+		$packageData = $this->mockPackageData(
+			$this->Github,
+			$username,
+			$repository
+		);
+		$actual = $packageData->characterize();
+		$expected = array(
+			'contains_behavior' => true,
+			'contains_tests' => true,
+			'contains_lib' => true,
+			'contains_controller' => true,
+			'contains_elements' => true,
+			'contains_helper' => true,
+			'contains_resource' => true,
+			'contains_panel' => true,
+			'contains_log' => true,
+			'contains_model' => true,
+			'contains_locale' => true,
+			'contains_composer' => true,
+			'contains_shell' => true,
+		 );
+
+		$this->assertCount(13, $actual);
+		$this->assertEquals($expected, $actual);
+	}
+
 }
