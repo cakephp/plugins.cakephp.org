@@ -61,6 +61,7 @@ class Article extends CakeTestModel {
  * CakePackagesTaggableBehavior Test
  */
 class CakePackagesTaggableBehaviorTest extends CakeTestCase {
+
 /**
  * Fixtures associated with this test case
  *

@@ -27,7 +27,7 @@ class User extends AppModel {
 		'resetPassword' => true,
 		'unverifiedToken' => true,
 		'validateToken' => true,
-		'view'  => true,
+		'view' => true,
 	);
 
 /**
@@ -65,7 +65,7 @@ class User extends AppModel {
 				'rule' => array('alphaNumeric'),
 				'message' => 'The username must be alphanumeric.'),
 			'unique_username' => array(
-				'rule'=>array('isUnique', 'username'),
+				'rule' => array('isUnique', 'username'),
 				'message' => 'This username is already in use.'),
 			'username_min' => array(
 				'rule' => array('minLength', '3'),
@@ -157,7 +157,7 @@ class User extends AppModel {
  * @return mixed array of results or false if none found
  * @return array
  */
-	public function _findForgotpassword($state, $query, $results = array()) {
+	protected function _findForgotpassword($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query[0])) {
 				throw new InvalidArgumentException(__('Invalid email address'));
@@ -175,7 +175,7 @@ class User extends AppModel {
 		}
 	}
 
-	public function _findResetPassword($state, $query, $results = array()) {
+	protected function _findResetPassword($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query['token'])) {
 				throw new InvalidArgumentException(__('Invalid email address'));
@@ -198,7 +198,7 @@ class User extends AppModel {
 		}
 	}
 
-	public function _findUnverifiedToken($state, $query, $results = array()) {
+	protected function _findUnverifiedToken($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query['token'])) {
 				throw new InvalidArgumentException(__('Invalid token'));
@@ -221,7 +221,7 @@ class User extends AppModel {
 		}
 	}
 
-	public function _findValidateToken($state, $query, $results = array()) {
+	protected function _findValidateToken($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query['token'])) {
 				throw new InvalidArgumentException(__('Invalid token'));
@@ -243,7 +243,7 @@ class User extends AppModel {
 		}
 	}
 
-	public function _findView($state, $query, $results = array()) {
+	protected function _findView($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query['slug'])) {
 				throw new InvalidArgumentException(__('Invalid user'));
@@ -353,7 +353,7 @@ class User extends AppModel {
 		$token = $this->_generateToken();
 		$user['password_token'] = $token;
 		$user['email_token_expires'] = date('Y-m-d H:i:s', $sixtyMins);
- 		if (!$this->save(array('User' => $user), false)) {
+		if (!$this->save(array('User' => $user), false)) {
 			return false;
 		}
 
@@ -539,7 +539,6 @@ class User extends AppModel {
 			'callbacks' => false
 		));
 	}
-
 
 /**
  * Optional data manipulation before the registration record is saved

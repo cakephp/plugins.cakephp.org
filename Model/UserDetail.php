@@ -129,7 +129,7 @@ class UserDetail extends AppModel {
 		}
 	}
 
-	public function _findSections($state, $query, $results = array()) {
+	protected function _findSections($state, $query, $results = array()) {
 		if ($state == 'before') {
 			$query['conditions'] = array(
 				"{$this->alias}.user_id" => $query['userId'],
@@ -147,7 +147,7 @@ class UserDetail extends AppModel {
 		return $results;
 	}
 
-	public function _findDetail($state, $query, $results = array()) {
+	protected function _findDetail($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query['userId']) || empty($query['field'])) {
 				throw new InvalidArgumentException(__('Invalid detail'));
@@ -181,7 +181,7 @@ class UserDetail extends AppModel {
 		$results = $this->find('sections', compact('userId', 'section'));
 
 		if (!empty($results)) {
-			foreach($results as $result) {
+			foreach ($results as $result) {
 				list($prefix, $field) = explode('.', $result[$this->alias]['field']);
 				$details[$prefix][$field] = $result[$this->alias]['value'];
 			}
@@ -219,17 +219,17 @@ class UserDetail extends AppModel {
 		}
 
 		if (!empty($data) && is_array($data)) {
-			foreach($data as $model => $details) {
+			foreach ($data as $model => $details) {
 				if ($model == $this->alias) {
 					// Save the details
-					foreach($details as $key => $value) {
+					foreach ($details as $key => $value) {
 						// Quickfix for date inputs - TODO Try to use $this->deconstruct()?
 						if (is_array($value) && array_keys($value) == array('month', 'day', 'year')) {
-							$value = $value['year'] . '-' . $value['month'] . '-' .  $value['day'];
+							$value = $value['year'] . '-' . $value['month'] . '-' . $value['day'];
 						}
 						$newDetail = array();
 						$field = $section . '.' . $key;
- 						try {
+						try {
 							$detail = $this->find('detail', compact('userId', 'field'));
 							$this->create();
 							$newDetail[$model]['id'] = $detail[$this->alias]['id'];

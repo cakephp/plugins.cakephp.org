@@ -6,6 +6,7 @@
  *
  */
 class AllTests extends CakeTestSuite {
+
 /**
  * Suite define the tests for this suite
  *
@@ -16,4 +17,5 @@ class AllTests extends CakeTestSuite {
 		$suite->addTestDirectoryRecursive(TESTS . 'Case');
 		return $suite;
 	}
+
 }

@@ -33,26 +33,26 @@ class Package extends AppModel {
 	);
 
 	public $findMethods = array(
-		'bookmark'          => true,
-		'category'          => true,
-		'download'          => true,
-		'home'              => true,
-		'index'             => true,
+		'bookmark' => true,
+		'category' => true,
+		'download' => true,
+		'home' => true,
+		'index' => true,
 		'listformaintainer' => true,
-		'rate'              => true,
-		'redirect'          => true,
-		'uncategorized'     => true,
-		'view'              => true,
+		'rate' => true,
+		'redirect' => true,
+		'uncategorized' => true,
+		'view' => true,
 	);
 
-	static $_allowedFilters = array(
+	public static $allowedFilters = array(
 		'collaborators', 'contains', 'contributors',
 		'direction', 'forks', 'has', 'open_issues',
 		'query', 'sort', 'since', 'watchers', 'with',
 		'category'
 	);
 
-	public $_categories = array(
+	public $categories = array(
 		'Admin Interface',
 		'Anti-spam',
 		'API Creation',
@@ -97,15 +97,15 @@ class Package extends AppModel {
 		'WYSIWYG editors',
 	);
 
-	static $_categoryColors = array();
+	protected static $_categoryColors = array();
 
-	static $_validOrders = array(
+	protected static $_validOrders = array(
 		'collaborators', 'contributors',
 		'created', 'forks', 'last_pushed_at',
 		'open_issues', 'watchers'
 	);
 
-	static $_validShownOrders = array(
+	protected static $_validShownOrders = array(
 		'username' => 'Name',
 		'created' => 'Created',
 		'forks' => 'Forks',
@@ -118,7 +118,7 @@ class Package extends AppModel {
  *
  * @var array
  */
-	public $_validTypes = array(
+	public $validTypes = array(
 		'model', 'controller', 'view',
 		'behavior', 'component', 'helper',
 		'shell', 'theme', 'datasource',
@@ -147,12 +147,12 @@ class Package extends AppModel {
 			),
 		);
 		$this->tabs = array(
-			'ratings'    => array('text' => __('Rating'),       'sort' => 'rating'),
-			'watchers'   => array('text' => __('Watchers'),     'sort' => 'watchers', 'direction' => 'desc'),
-			'title'      => array('text' => __('Title'),        'sort' => 'name'),
-			'maintainer' => array('text' => __('Maintainer'),   'sort' => 'Maintainer.name'),
-			'date'       => array('text' => __('Date Created'), 'sort' => 'created_at'),
-			'updated'    => array('text' => __('Date Updated'), 'sort' => 'last_pushed_at'),
+			'ratings' => array('text' => __('Rating'), 'sort' => 'rating'),
+			'watchers' => array('text' => __('Watchers'), 'sort' => 'watchers', 'direction' => 'desc'),
+			'title' => array('text' => __('Title'), 'sort' => 'name'),
+			'maintainer' => array('text' => __('Maintainer'), 'sort' => 'Maintainer.name'),
+			'date' => array('text' => __('Date Created'), 'sort' => 'created_at'),
+			'updated' => array('text' => __('Date Updated'), 'sort' => 'last_pushed_at'),
 		);
 	}
 
@@ -362,7 +362,7 @@ class Package extends AppModel {
 			if (!empty($query['named']['has'])) {
 				foreach ($query['named']['has'] as $has) {
 					$has = inflector::singularize(strtolower($has));
-					if (in_array($has, $this->_validTypes)) {
+					if (in_array($has, $this->validTypes)) {
 						$query['conditions'][] = array(
 							'Tag.keyname' => $has,
 							'Tag.identifier' => 'contains',
@@ -1110,7 +1110,7 @@ class Package extends AppModel {
 		$categories = $this->Category->find('list', array(
 			'order' => array('Category.name')
 		));
-		$diff = array_diff($this->_categories, $categories);
+		$diff = array_diff($this->categories, $categories);
 		if (!empty($diff)) {
 			if (!$user_id) {
 				throw new UnauthorizedException(__('You must be logged in to add categories'));
@@ -1124,7 +1124,7 @@ class Package extends AppModel {
 				throw new OutOfBoundsException(__('Unable to create missing categories'));
 			}
 		}
-		return $this->_categories = $this->Category->find('list', array(
+		return $this->categories = $this->Category->find('list', array(
 			'order' => array('Category.name')
 		));
 	}
@@ -1185,7 +1185,7 @@ class Package extends AppModel {
 		$keywords[] = 'cakephp package';
 		$keywords[] = 'cakephp';
 
-		foreach ($this->_validTypes as $type) {
+		foreach ($this->validTypes as $type) {
 			if (isset($package['Package']['contains_' . $type]) && $package['Package']['contains_' . $type] == 1) {
 				$keywords[] = $type;
 			}

@@ -163,7 +163,7 @@ class CakePackagesTaggableBehavior extends TaggableBehavior {
  * @param boolean $primary
  */
 	public function afterFind(Model $model, $results, $primary = false) {
-		$validTypes = !empty($model->_validTypes) ? $model->_validTypes : array();
+		$validTypes = !empty($model->validTypes) ? $model->validTypes : array();
 		extract($this->settings[$model->alias]);
 		foreach ($results as $key => $row) {
 			foreach ($validTypes as $type) {

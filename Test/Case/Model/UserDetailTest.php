@@ -6,6 +6,7 @@ App::uses('UserDetail', 'Model');
  *
  */
 class UserDetailTestCase extends CakeTestCase {
+
 /**
  * Fixtures
  *

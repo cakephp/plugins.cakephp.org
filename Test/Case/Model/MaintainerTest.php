@@ -6,6 +6,7 @@ App::uses('Maintainer', 'Model');
  *
  */
 class MaintainerTestCase extends CakeTestCase {
+
 /**
  * Fixtures
  *

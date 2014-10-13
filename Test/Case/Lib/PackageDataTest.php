@@ -15,7 +15,7 @@ class PackageDataTest extends CakeTestCase {
 		unset($this->Github);
 	}
 
-	protected function mockPackageData($githubModel, $username, $repository) {
+	protected function _mockPackageData($githubModel, $username, $repository) {
 		$PackageData = $this->getMock(
 			'PackageData',
 			array('out'),
@@ -27,7 +27,7 @@ class PackageDataTest extends CakeTestCase {
 		return $PackageData;
 	}
 
-	protected function getTestData($type, $username, $repository) {
+	protected function _getTestData($type, $username, $repository) {
 		$dir = sprintf('%sTest%sData%s%s%s%s', APP, DS, DS, $username, DS, $repository);
 		$path = sprintf('%s%s%s.json', $dir, DS, $type);
 		$contents = file_get_contents($path);
@@ -38,20 +38,20 @@ class PackageDataTest extends CakeTestCase {
 		$username = 'cakephp';
 		$repository = 'debug_kit';
 
-		$testData = $this->getTestData('repository', $username, $repository);
+		$testData = $this->_getTestData('repository', $username, $repository);
 		$this->Github->expects($this->at(0))
-					 ->method('find')
-					 ->will($this->returnValue($testData));
-		$testData = $this->getTestData('contributors', $username, $repository);
+			->method('find')
+			->will($this->returnValue($testData));
+		$testData = $this->_getTestData('contributors', $username, $repository);
 		$this->Github->expects($this->at(1))
-					 ->method('find')
-					 ->will($this->returnValue($testData));
-		$testData = $this->getTestData('collaborators', $username, $repository);
+			->method('find')
+			->will($this->returnValue($testData));
+		$testData = $this->_getTestData('collaborators', $username, $repository);
 		$this->Github->expects($this->at(2))
-					 ->method('find')
-					 ->will($this->returnValue($testData));
+			->method('find')
+			->will($this->returnValue($testData));
 
-		$packageData = $this->mockPackageData(
+		$packageData = $this->_mockPackageData(
 			$this->Github,
 			$username,
 			$repository
@@ -68,12 +68,12 @@ class PackageDataTest extends CakeTestCase {
 		$username = 'cakephp';
 		$repository = 'foobar';
 
-		$testData = $this->getTestData('repository', $username, $repository);
+		$testData = $this->_getTestData('repository', $username, $repository);
 		$this->Github->expects($this->at(0))
-					 ->method('find')
-					 ->will($this->returnValue($testData));
+			->method('find')
+			->will($this->returnValue($testData));
 
-		$packageData = $this->mockPackageData(
+		$packageData = $this->_mockPackageData(
 			$this->Github,
 			$username,
 			$repository
@@ -87,12 +87,12 @@ class PackageDataTest extends CakeTestCase {
 		$username = 'cakephp';
 		$repository = 'debug_kit';
 
-		$testData = $this->getTestData('files', $username, $repository);
+		$testData = $this->_getTestData('files', $username, $repository);
 		$this->Github->expects($this->at(0))
-					 ->method('find')
-					 ->will($this->returnValue($testData));
+			->method('find')
+			->will($this->returnValue($testData));
 
-		$packageData = $this->mockPackageData(
+		$packageData = $this->_mockPackageData(
 			$this->Github,
 			$username,
 			$repository
@@ -112,7 +112,7 @@ class PackageDataTest extends CakeTestCase {
 			'contains_locale' => true,
 			'contains_composer' => true,
 			'contains_shell' => true,
-		 );
+		);
 
 		$this->assertCount(13, $actual);
 		$this->assertEquals($expected, $actual);

@@ -108,7 +108,7 @@ $this->Html->addCrumb($package['Package']['name'], $this->Resource->packageUrl($
 					<tr>
 						<td>Repo Url</td>
 						<td>
-							<?php echo $this->Resource->github_url(
+							<?php echo $this->Resource->githubUrl(
 								$package['Maintainer']['username'],
 								$package['Package']['name']
 							); ?>
@@ -119,7 +119,7 @@ $this->Html->addCrumb($package['Package']['name'], $this->Resource->packageUrl($
 						<td>
 							<form role="form">
 								<div class="form-group">
-									<?php echo $this->Resource->clone_url(
+									<?php echo $this->Resource->cloneUrl(
 										$package['Maintainer']['username'],
 										$package['Package']['name']
 									); ?>
@@ -157,19 +157,19 @@ $this->Html->addCrumb($package['Package']['name'], $this->Resource->packageUrl($
 						<tr>
 							<td>Related:</td>
 							<td>
-								<?php echo $this->Resource->github_url(
+								<?php echo $this->Resource->githubUrl(
 									'kamisama',
 									'DebugKitEx',
 									'DebugKitEx Plugin (Cache, NoSQL, and CakeResque panels)'
 								); ?>
 								<br />
-								<?php echo $this->Resource->github_url(
+								<?php echo $this->Resource->githubUrl(
 									'steinkel',
 									'LogMail',
 									'LogMail Plugin (store and view sent emails in the database)'
 								); ?>
 								<br />
-								<?php echo $this->Resource->github_url(
+								<?php echo $this->Resource->githubUrl(
 									'oldskool',
 									'DebugPlus',
 									'DebugPlus Plugin (Logs and Model viewing panels)'

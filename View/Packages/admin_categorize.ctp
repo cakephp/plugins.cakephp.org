@@ -4,7 +4,7 @@
 	}
 ?>
 <section class="page-title clearfix">
-	<h2><?php echo $this->Resource->github_url(
+	<h2><?php echo $this->Resource->githubUrl(
 		$package['Maintainer']['username'],
 		$package['Package']['name']
 	); ?></h2>

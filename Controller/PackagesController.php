@@ -62,7 +62,7 @@ class PackagesController extends AppController {
 	public function index() {
 		if ($this->request->is('post')) {
 			list($data, $query) = $this->Package->cleanParams($this->request->data, array(
-				'allowed' => Package::$_allowedFilters,
+				'allowed' => Package::$allowedFilters,
 				'rinse' => false,
 			));
 			return $this->redirect(array('?' => $data, 'escape' => false));
@@ -70,7 +70,7 @@ class PackagesController extends AppController {
 
 		list($this->request->data, $query) = $this->Package->cleanParams(
 			$this->request->query, array(
-				'allowed' => Package::$_allowedFilters,
+				'allowed' => Package::$allowedFilters,
 				'coalesce' => true,
 			)
 		);
@@ -284,7 +284,7 @@ class PackagesController extends AppController {
 			$this->request->data = $this->Package->findById($id);
 		}
 		$this->set('categories', $this->Package->categories());
-		$this->set('validTypes', $this->Package->_validTypes);
+		$this->set('validTypes', $this->Package->validTypes);
 	}
 
 /**

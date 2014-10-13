@@ -18,13 +18,13 @@ class GithubSource extends DataSource {
 		'users',
 	);
 
-	protected $mapping = array(
+	protected $_mapping = array(
 		'files' => '/repos/:owner/:repo/git/trees/master?recursive=1',
 		'repository' => '/repos/:owner/:repo/:_action',
 		'user' => '/users/:user/:_action',
 	);
 
-	public $_schema = array(
+	protected $_schema = array(
 		'githubs' => array(),
 		'users' => array(),
 		'issues' => array(),
@@ -37,12 +37,12 @@ class GithubSource extends DataSource {
 
 	public function __construct($config) {
 		$config = array_merge(array(
-			'host'      => 'api.github.com',
-			'port'      => 443,
-			'token'     => null,
-			'database'  => 'api/v3/json',
-			'cacheKey'  => 'github',
-			'duration'  => '+2 days'
+			'host' => 'api.github.com',
+			'port' => 443,
+			'token' => null,
+			'database' => 'api/v3/json',
+			'cacheKey' => 'github',
+			'duration' => '+2 days'
 		), $config);
 
 		$this->sConfig = array(
@@ -88,7 +88,7 @@ class GithubSource extends DataSource {
  * @param Object $model Model object to describe
  * @return array empty array
  */
-	function describe($model) {
+	public function describe($model) {
 		$table = Inflector::tableize($model->alias);
 		if (isset($this->_schema[$table])) {
 			return $this->_schema[$table];
@@ -118,7 +118,7 @@ class GithubSource extends DataSource {
 		);
 		$queryData = array_diff_key($queryData, array_combine($remove, $remove));
 
-		$path = $this->mapping[$model->findQueryType];
+		$path = $this->_mapping[$model->findQueryType];
 		foreach ($queryData as $key => $value) {
 			$path = str_replace(':' . $key, $value, $path);
 		}
@@ -137,7 +137,7 @@ class GithubSource extends DataSource {
  */
 	public function query() {
 		$queryArgs = func_get_args();
-		$method    = $queryArgs[0];
+		$method = $queryArgs[0];
 		$arguments = $queryArgs[1];
 
 		if (substr($method, 0, 5) !== '_find') {
@@ -170,7 +170,7 @@ class GithubSource extends DataSource {
 		$sConfig = $this->sConfig;
 		$token = $this->_token;
 		Cache::set(array('duration' => $this->config['duration']));
-		return Cache::remember($this->config['cacheKey'] . $hash, function() use ($sConfig, $token, $request) {
+		return Cache::remember($this->config['cacheKey'] . $hash, function () use ($sConfig, $token, $request) {
 			sleep(1);
 			$url = sprintf("%s://%s%s",
 				$sConfig['request']['uri']['scheme'],

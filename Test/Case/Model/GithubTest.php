@@ -6,6 +6,7 @@ App::uses('Github', 'Model');
  *
  */
 class GithubTestCase extends CakeTestCase {
+
 /**
  * Fixtures
  *

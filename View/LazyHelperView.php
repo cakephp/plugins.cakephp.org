@@ -45,14 +45,14 @@ class LazyHelperView extends View {
  * Stores our array of known helpers.
  *
  * @var array
- * @access protected
  */
-    protected $_helpers = array();
+	protected $_helpers = array();
 
 /**
  * Constructor for LazyHelperView sets $this->theme.
  *
  * @param Controller $controller Controller object to be rendered.
+ * @return void
  */
 	public function __construct($controller) {
 		parent::__construct($controller);
@@ -78,7 +78,7 @@ class LazyHelperView extends View {
 
 			if ($plugin) {
 				$this->{$class} = $this->Helpers->load($properties['class'], $properties['settings']);
-			} else if (isset($properties['settings']['load']) && $properties['settings']['load'] === true) {
+			} elseif (isset($properties['settings']['load']) && $properties['settings']['load'] === true) {
 				$this->{$class} = $this->Helpers->load($properties['class'], $properties['settings']);
 			}
 		}
@@ -91,9 +91,8 @@ class LazyHelperView extends View {
  * If the requested $variable matches a known helper we will attempt to
  * load it up for the caller.
  *
- * @param string $variable
+ * @param string $helperName name of helper to load
  * @return mixed
- * @access public
  */
 	public function __get($helperName) {
 		if (isset($this->_helpers[$helperName])) {

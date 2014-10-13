@@ -7,6 +7,7 @@ App::uses('AuthComponent', 'Controller/Component');
  *
  */
 class UserTestCase extends CakeTestCase {
+
 /**
  * Fixtures
  *

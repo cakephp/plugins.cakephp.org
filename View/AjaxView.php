@@ -57,7 +57,7 @@ class AjaxView extends View {
 				} else {
 					$this->_blacklistVars = array_merge(
 						$this->_blacklistVars,
-						(array) $controller->blacklistVars
+						(array)$controller->blacklistVars
 					);
 				}
 			}
@@ -109,10 +109,10 @@ class AjaxView extends View {
 
 		$content = array(
 			'validationErrors' => $this->validationErrors,
-			'data'             => $this->data,
-			'message'          => $this->viewVars['_message'],
-			'status'           => $this->viewVars['_status'],
-			'content'          => array(),
+			'data' => $this->data,
+			'message' => $this->viewVars['_message'],
+			'status' => $this->viewVars['_status'],
+			'content' => array(),
 		);
 
 		if ($this->_blacklistVars) {
@@ -136,7 +136,6 @@ class AjaxView extends View {
  * Method to set headers
  * @param mixed $header
  * @param boolean $boolean
- * @access protected
  */
 	protected function _header($header, $boolean = true) {
 		if (is_array($header)) {
@@ -155,9 +154,8 @@ class AjaxView extends View {
 
 /**
  * Method to output headers
- * @access protected
  */
-	public function _output() {
+	protected function _output() {
 		foreach ($this->_headers as $key => $value) {
 			$header = key($value);
 			header($header, $value[$header]);

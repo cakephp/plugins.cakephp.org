@@ -24,7 +24,7 @@ class AddGithubStuffToMaintainers extends CakeMigration {
 		),
 		'down' => array(
 			'drop_field' => array(
-				'maintainers' => array('github_id', 'avatar_url',),
+				'maintainers' => array('github_id', 'avatar_url'),
 			),
 		),
 	);
@@ -33,7 +33,7 @@ class AddGithubStuffToMaintainers extends CakeMigration {
  * Before migration callback
  *
  * @param string $direction, up or down direction of migration process
- * @return boolean Should process continue
+ * @return bool Should process continue
  */
 	public function before($direction) {
 		return true;
@@ -43,7 +43,7 @@ class AddGithubStuffToMaintainers extends CakeMigration {
  * After migration callback
  *
  * @param string $direction, up or down direction of migration process
- * @return boolean Should process continue
+ * @return bool Should process continue
  */
 	public function after($direction) {
 		return true;

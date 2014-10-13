@@ -5,7 +5,6 @@ class AddedNewIndexAndCollationInPackagesTable extends CakeMigration {
  * Migration description
  *
  * @var string
- * @access public
  */
 	public $description = '';
 
@@ -13,13 +12,12 @@ class AddedNewIndexAndCollationInPackagesTable extends CakeMigration {
  * Actions to be performed
  *
  * @var array $migration
- * @access public
  */
 	public $migration = array(
 		'up' => array(
 			'alter_field' => array(
 				'packages' => array(
-					'category_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+					'category_id' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 36, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 				),
 			),
 			'create_field' => array(
@@ -33,7 +31,7 @@ class AddedNewIndexAndCollationInPackagesTable extends CakeMigration {
 		'down' => array(
 			'alter_field' => array(
 				'packages' => array(
-					'category_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 36, 'collate' => NULL, 'comment' => ''),
+					'category_id' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 36, 'collate' => null, 'comment' => ''),
 				),
 			),
 			'drop_field' => array(
@@ -46,8 +44,7 @@ class AddedNewIndexAndCollationInPackagesTable extends CakeMigration {
  * Before migration callback
  *
  * @param string $direction, up or down direction of migration process
- * @return boolean Should process continue
- * @access public
+ * @return bool Should process continue
  */
 	public function before($direction) {
 		return true;
@@ -57,8 +54,7 @@ class AddedNewIndexAndCollationInPackagesTable extends CakeMigration {
  * After migration callback
  *
  * @param string $direction, up or down direction of migration process
- * @return boolean Should process continue
- * @access public
+ * @return bool Should process continue
  */
 	public function after($direction) {
 		return true;

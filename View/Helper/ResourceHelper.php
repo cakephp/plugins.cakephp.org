@@ -3,12 +3,12 @@ class ResourceHelper extends AppHelper {
 
 	public $helpers = array('Form', 'Html', 'Text', 'Time');
 
-	public function packageLink($name, $package_id, $slug) {
+	public function packageLink($name, $packageId, $slug) {
 		return $this->Html->link($name, array(
 			'plugin' => null,
 			'controller' => 'packages',
 			'action' => 'view',
-			'id' => $package_id, 'slug' => $slug
+			'id' => $packageId, 'slug' => $slug
 		), array('title' => $name));
 	}
 
@@ -21,7 +21,7 @@ class ResourceHelper extends AppHelper {
 		));
 	}
 
-	public function github_url($maintainer, $package, $name = null) {
+	public function githubUrl($maintainer, $package, $name = null) {
 		$link = "https://github.com/{$maintainer}/{$package}";
 		if ($name === null) {
 			$name = $link;
@@ -34,7 +34,7 @@ class ResourceHelper extends AppHelper {
 		));
 	}
 
-	public function clone_url($maintainer, $name) {
+	public function cloneUrl($maintainer, $name) {
 		return $this->Form->input('clone', array(
 			'class' => 'form-control',
 			'div' => false,
@@ -43,22 +43,16 @@ class ResourceHelper extends AppHelper {
 		));
 	}
 
-	public function __n($value, $singular, $plural) {
-		return $this->Html->tag('div',
-			$value . ' ' . __n($singular, $plural, $value)
-		);
-	}
-
-	public function gravatar($username, $avatar_url, $gravatar_id = null) {
-		if (empty($avatar_url) && empty($gravatar_id)) {
+	public function gravatar($username, $avatarUrl, $gravatarId = null) {
+		if (empty($avatarUrl) && empty($gravatarId)) {
 			return '';
 		}
 
-		if (empty($avatar_url)) {
-			$avatar_url = sprintf('https://secure.gravatar.com/avatar/%s', $gravatar_id);
+		if (empty($avatarUrl)) {
+			$avatarUrl = sprintf('https://secure.gravatar.com/avatar/%s', $gravatarId);
 		}
 
-		return $this->Html->image($avatar_url, array(
+		return $this->Html->image($avatarUrl, array(
 			'alt' => 'Gravatar for ' . $username,
 			'class' => 'img-circle'
 		));
@@ -87,12 +81,12 @@ class ResourceHelper extends AppHelper {
 		foreach (Package::$_validShownOrders as $sort => $name) {
 			if ($sort == $sortField) {
 				$output[] = $this->Html->link($name, array('?' => array_merge(
-					(array) $this->_View->request->query,
+					(array)$this->_View->request->query,
 					compact('sort', 'direction', 'order')
 				)), array('class' => 'active ' . $direction));
 			} else {
 				$output[] = $this->Html->link($name, array('?' => array_merge(
-					(array) $this->_View->request->query,
+					(array)$this->_View->request->query,
 					array('sort' => $sort, 'direction' => 'desc', 'order' => $order)
 				)));
 			}

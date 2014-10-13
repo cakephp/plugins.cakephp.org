@@ -9,7 +9,7 @@ class AppHelper extends Helper {
  * @param string $name name of $for_layout variable
  * @param mixed $content Contents to set for_layout
  */
-	public function for_layout($name, $content) {
+	public function forLayout($name, $content) {
 		$this->_View->set("{$name}_for_layout", $content);
 	}
 
@@ -25,8 +25,8 @@ class AppHelper extends Helper {
 			$contents = $alternate;
 		}
 
-		$this->for_layout('title', $contents);
-		$this->for_layout('h2', "<h2>{$contents}</h2>");
+		$this->forLayout('title', $contents);
+		$this->forLayout('h2', "<h2>{$contents}</h2>");
 	}
 
 /**

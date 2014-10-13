@@ -236,7 +236,7 @@ class PackageTestCase extends CakeTestCase {
 			'notallowed' => 'bad!'
 		);
 		$result = $this->Package->cleanParams($data, array(
-			'allowed' => Package::$_allowedFilters,
+			'allowed' => Package::$allowedFilters,
 			'coalesce' => true,
 		));
 		$expected = array(
@@ -257,7 +257,7 @@ class PackageTestCase extends CakeTestCase {
 		$this->assertTrue(in_array('Uncategorized', $result));
 		$result = $this->Package->categories();
 		$this->assertEquals(43, count($result));
-		$this->assertEquals(43, count($this->Package->_categories));
+		$this->assertEquals(43, count($this->Package->categories));
 	}
 /**
  * testSuggest method

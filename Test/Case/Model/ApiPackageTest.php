@@ -6,6 +6,7 @@ App::uses('ApiPackage', 'Model');
  *
  */
 class ApiPackageTestCase extends CakeTestCase {
+
 /**
  * Fixtures
  *
