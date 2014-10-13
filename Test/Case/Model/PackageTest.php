@@ -367,9 +367,9 @@ m Test/Case/Model/Datasource/FtpSourceTest.php
 </feed>'
 		);
 
-		$this->Package->_HttpSocket = $this->getMock('HttpSocket', array('request'));
-		$this->Package->_HttpSocket->response = $response;
-		$this->Package->_HttpSocket->expects($this->once())
+		$this->Package->HttpSocket = $this->getMock('HttpSocket', array('request'));
+		$this->Package->HttpSocket->response = $response;
+		$this->Package->HttpSocket->expects($this->once())
 			->method('request')
 			->with($this->equalTo(array(
 				'uri' => 'https://github.com/shama/chocolate/commits/master.atom',
