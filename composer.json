@@ -19,7 +19,8 @@
         "josegonzalez/cakephp-sham": "1.0.0",
         "cakedc/tags": "1.6.0",
         "cakedc/utils": "1.4.3",
-        "phpunit/phpunit": "3.7.*"
+        "phpunit/phpunit": "3.7.*",
+        "cakephp/cakephp-codesniffer": "~0.1"
     },
     "config": {
         "bin-dir": "Console"
