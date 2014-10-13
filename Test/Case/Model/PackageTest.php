@@ -49,23 +49,6 @@ class PackageTestCase extends CakeTestCase {
 	}
 
 /**
- * testSetupRepository method
- *
- * @return void
- */
-	public function testSetupRepository() {
-		$Package = $this->getMock('Package', array('_shell_exec'));
-		$Package->useDbConfig = 'test';
-		$Package->expects($this->exactly(2))
-			->method('_shell_exec')
-			->will($this->returnValue('success'));
-		$result = $Package->setupRepository(1);
-		$expected = array(1, TMP . 'repos/s/shama/chocolate');
-		$this->assertEquals($expected, $result);
-		$this->assertTrue( file_exists(dirname($result[1])) );
-
-	}
-/**
  * testBroken method
  *
  * @return void
@@ -101,24 +84,6 @@ class PackageTestCase extends CakeTestCase {
 		$this->assertEmpty($result);
 	}
 
-/**
- * testCharacterize method
- *
- * @return void
- */
-	public function testCharacterize() {
-		$Package = $this->getMock('Package', array('_shell_exec'));
-		$Package->useDbConfig = 'test';
-		$Package->expects($this->any())
-			->method('_shell_exec')
-			->will($this->returnValue('success'));
-
-		$repo = $Package->setupRepository(1);
-		mkdir($repo[1], 0755, true);
-
-		$result = $Package->characterize(1);
-		$this->assertTrue(count($result['Package']) > 1);
-	}
 /**
  * testFixRepositoryUrl method
  *

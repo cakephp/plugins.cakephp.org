@@ -37,12 +37,6 @@ class NewPackageJob extends AppShell {
 			return $this->out('Package not saved');
 		}
 
-		// $id = $this->Maintainer->Package->getLastInsertID();
-		// $package = $this->Maintainer->Package->setupRepository($id);
-		// if ($package) {
-		// 	$this->Maintainer->Package->characterize($package);
-		// }
-
 		$this->out('Package saved');
 	}
 

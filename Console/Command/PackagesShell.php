@@ -35,7 +35,6 @@ class PackagesShell extends AppShell {
 		while (empty($this->command)) {
 			$this->out("Packages Shell");
 			$this->hr();
-			$this->out("[C]haracterize Packages");
 			$this->out("[E]xistence Check");
 			$this->out("[F]ix Repository Urls");
 			$this->out("[G]it Clone Repositories");
@@ -51,9 +50,6 @@ class PackagesShell extends AppShell {
 		}
 
 		switch ($this->command) {
-			case 'c' :
-				$this->characterize();
-				break;
 			case 'e' :
 				$this->existenceCheck();
 				break;
@@ -196,32 +192,6 @@ class PackagesShell extends AppShell {
 
 		$this->out(__('* Successfully reset all characteristics'));
 		$this->_stop();
-	}
-
-/**
- * Checks and updates attributes on every package by
- * recursing through all letter folders and checking
- * each individual user
- *
- * @return void
- * @author Jose Diaz-Gonzalez
- */
-	public function characterize() {
-		$count = 0;
-		$this->Package->Behaviors->detach('SoftDeletable');
-		$packages = $this->Package->find('list', array(
-			'order' => 'Package.id'
-		));
-		foreach ($packages as $id => $name) {
-			$this->out(sprintf("[SCAN] %s", $name));
-			if ($this->Package->characterize($id)) {
-				$this->out(" [COMPLETE]");
-				$count++;
-			} else {
-				$this->out(" [FAIL]");
-			}
-		}
-		$this->out(sprintf(__('* Checked %s of %s repositories'), $count, count($packages)));
 	}
 
 /**

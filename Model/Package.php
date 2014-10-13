@@ -1,5 +1,4 @@
 <?php
-App::uses('Characterizer', 'Lib');
 App::uses('PackageData', 'Lib');
 App::uses('DebugTimer', 'DebugKit.Lib');
 App::uses('HttpSocket', 'Network/Http');
@@ -41,7 +40,6 @@ class Package extends AppModel {
 		'index'             => true,
 		'listformaintainer' => true,
 		'rate'              => true,
-		'repoclone'         => true,
 		'redirect'          => true,
 		'uncategorized'     => true,
 		'view'              => true,
@@ -127,8 +125,6 @@ class Package extends AppModel {
 		'lib', 'test', 'vendor',
 		'app', 'config', 'resource',
 	);
-
-	public $_Folder = null;
 
 	public $_Github = null;
 
@@ -561,39 +557,6 @@ class Package extends AppModel {
 		return $results[0];
 	}
 
-/**
- * Find repoclone type
- *
- * @param string $state
- * @param array $query
- * @param array $results
- * @return array
- */
-	public function _findRepoclone($state, $query, $results = array()) {
-		if ($state == 'before') {
-			if (empty($query[0])) {
-				throw new InvalidArgumentException(__('Invalid package'));
-			}
-
-			$query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $query[0]);
-			$query['contain'] = array('Maintainer.username');
-			$query['fields'] = array(
-				$this->primaryKey,
-				'name',
-				'repository_url',
-				'maintainer_id',
-			);
-			$query['limit'] = 1;
-			$query['order'] = array("{$this->alias}.{$this->primaryKey} ASC");
-			return $query;
-		}
-
-		if (empty($results[0])) {
-			throw new NotFoundException(__('Invalid package'));
-		}
-		return $results[0];
-	}
-
 	public function _findUncategorized($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query['user_id'])) {
@@ -740,67 +703,6 @@ class Package extends AppModel {
 	}
 
 /**
- * Setup a repo
- *
- * @param integer $id
- * @return array
- */
-	public function setupRepository($id = null) {
-		if (!$id) {
-			return false;
-		}
-
-		$package = $this->find('repoclone', $id);
-		if (!$package) {
-			return false;
-		}
-
-		if (!$this->_Folder) {
-			$this->_Folder = new Folder();
-		}
-
-		$path = rtrim(trim(TMP), DS) . DS
-				. 'repos' . DS
-				. strtolower($package['Maintainer']['username'][0]) . DS
-				. $package['Maintainer']['username'];
-		if (!file_exists($path)) {
-			$this->_Folder->create($path);
-		}
-
-		$this->_Folder->cd($path);
-		$read = $this->_Folder->read();
-
-		if (!in_array($package['Package']['name'], $read['0'])) {
-			$paths = Configure::read('paths');
-			if ($paths) {
-				putenv('PATH=' . implode(':', $paths) . ':' . getenv('PATH'));
-			}
-			$var = $this->_shell_exec(sprintf("cd %s && git clone %s %s%s%s 2>&1 1> /dev/null",
-				$path,
-				$package['Package']['repository_url'],
-				$path,
-				DS,
-				$package['Package']['name']
-			));
-
-			if (stristr($var, 'fatal')) {
-				$this->log($var);
-				return false;
-			}
-		}
-
-		$var = $this->_shell_exec(sprintf("cd %s && git pull",
-			$path . DS . $package['Package']['name']
-		));
-		if (stristr($var, 'fatal')) {
-			$this->log($var);
-			return false;
-		}
-
-		return array($package[$this->alias][$this->primaryKey], $path . DS . $package[$this->alias][$this->displayField]);
-	}
-
-/**
  * Mark a package as deleted/broken
  *
  * @param integer $id
@@ -842,27 +744,6 @@ class Package extends AppModel {
 			}
 		}
 		return null;
-	}
-
-/**
- * Characterize a package
- *
- * @param integer $id
- * @return array
- */
-	public function characterize($id) {
-		$this->Behaviors->detach('SoftDeletable');
-		list($package_id, $path) = $this->setupRepository($id);
-		if (!$package_id || !$path) {
-			return !$this->broken($id);
-		}
-
-		$characterizer = new Characterizer($path);
-		$data = $characterizer->classify();
-		$this->create(false);
-		return $this->save(array('Package' => array_merge(
-			$data, array($this->primaryKey => $package_id, 'deleted' => false)
-		)));
 	}
 
 /**
@@ -1537,10 +1418,4 @@ class Package extends AppModel {
 		return static::$_categoryColors[$slug];
 	}
 
-/**
- * Wrapper for shell_exec() method for testing
- */
-	protected function _shell_exec($cmd) {
-		return shell_exec($cmd);
-	}
 }
