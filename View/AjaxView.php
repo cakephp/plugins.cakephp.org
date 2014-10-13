@@ -51,13 +51,13 @@ class AjaxView extends View {
  */
 	public function __construct(Controller $controller = null) {
 		if (is_object($controller)) {
-			if (isset($controller->_blacklistVars)) {
-				if ($controller->_blacklistVars === false) {
+			if (isset($controller->blacklistVars)) {
+				if ($controller->blacklistVars === false) {
 					$this->_blacklistVars = false;
 				} else {
 					$this->_blacklistVars = array_merge(
 						$this->_blacklistVars,
-						(array) $controller->_blacklistVars
+						(array) $controller->blacklistVars
 					);
 				}
 			}
