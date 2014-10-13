@@ -41,11 +41,11 @@ class ApiPackage extends AppModel {
  * Custom find that attaches may "source" to the returned results
  *
  * @param string $state Either "before" or "after"
- * @param array $query
+ * @param array $query Query.
+ * @param array $results Results.
  * @return mixed array of results or false if none found
- * @return void
  */
-	public function _findInstall($state, $query, $results = array()) {
+	protected function _findInstall($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (!empty($query['request']['package'])) {
 				$query['conditions'] = array(

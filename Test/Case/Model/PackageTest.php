@@ -155,8 +155,8 @@ class PackageTestCase extends CakeTestCase {
  * @return void
  */
 	public function testUpdateAttributes() {
-		$this->Package->_Github = $this->getMock('Github', array('find'));
-		$this->Package->_Github
+		$this->Package->Github = $this->getMock('Github', array('find'));
+		$this->Package->Github
 			->expects($this->at(0))
 			->method('find')
 			->with($this->equalTo('repository'))
@@ -173,12 +173,12 @@ class PackageTestCase extends CakeTestCase {
 					'pushed_at' => '2012-12-31T04:42:44Z',
 				),
 			)));
-		$this->Package->_Github
+		$this->Package->Github
 			->expects($this->at(1))
 			->method('find')
 			->with($this->equalTo('repository'))
 			->will($this->returnValue(array()));
-		$this->Package->_Github
+		$this->Package->Github
 			->expects($this->at(2))
 			->method('find')
 			->with($this->equalTo('repository'))
@@ -203,8 +203,8 @@ class PackageTestCase extends CakeTestCase {
  * @todo Finish with Github model
  */
 	public function testFindOnGithub() {
-		$this->Package->_Github = $this->getMock('Github', array('find'));
-		$this->Package->_Github
+		$this->Package->Github = $this->getMock('Github', array('find'));
+		$this->Package->Github
 			->expects($this->once())
 			->method('find')
 			->with($this->equalTo('repository'))

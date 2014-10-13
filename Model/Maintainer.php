@@ -35,7 +35,7 @@ class Maintainer extends AppModel {
  */
 	public $hasMany = array('Package');
 
-	public $_Github = null;
+	public $Github = null;
 
 /**
  * Override the constructor to provide custom model finds
@@ -83,11 +83,13 @@ class Maintainer extends AppModel {
  * Finds a given maintainer by name as well as their packages
  *
  * @param string $state Either "before" or "after"
- * @param array $query
+ * @param array $query Query
+ * @param array $results Results
  * @return mixed array of results or false if none found
- * @return array
+ * @throws InvalidArgumentException If there is no user name passed
+ * @throws NotFoundException If there are no results
  */
-	public function _findExisting($state, $query, $results = array()) {
+	protected function _findExisting($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query[0])) {
 				throw new InvalidArgumentException(__('Nonexistent user'));
@@ -109,24 +111,31 @@ class Maintainer extends AppModel {
  * Finds maintainers for pagination
  *
  * @param string $state Either "before" or "after"
- * @param array $query
+ * @param array $query Query
+ * @param array $results Results
  * @return mixed array of results or false if none found
- * @return array
  */
-	public function _findIndex($state, $query, $results = array()) {
+	protected function _findIndex($state, $query, $results = array()) {
 		if ($state == 'before') {
 			$query['fields'] = array('id', 'username', 'name', 'alias', 'url', 'twitter_username', 'company', 'location', 'gravatar_id');
 			$query['contain'] = false;
-			if (!empty($query['operation'])) {
-				return $query;
-			}
 			return $query;
 		}
 
 		return $results;
 	}
 
-	public function _findRedirect($state, $query, $results = array()) {
+/**
+ * Finds a redirect for a given username
+ *
+ * @param string $state Either "before" or "after"
+ * @param array $query Query
+ * @param array $results Results
+ * @return mixed array of results or false if none found
+ * @throws InvalidArgumentException If there is no username passed
+ * @throws NotFoundException If there are no results
+ */
+	protected function _findRedirect($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query['username'])) {
 				throw new InvalidArgumentException(__('Invalid find params'));
@@ -139,7 +148,7 @@ class Maintainer extends AppModel {
 		}
 
 		if (empty($results[0])) {
-			throw new NotFoundException(__('Invalid package'));
+			throw new NotFoundException(__('Invalid maintainer'));
 		}
 
 		return $results[0];
@@ -149,27 +158,29 @@ class Maintainer extends AppModel {
  * Finds the current user for the dashboard
  *
  * @param string $state Either "before" or "after"
- * @param array $query
+ * @param array $query Query
+ * @param array $results Results
  * @return mixed array of results or false if none found
- * @return array
+ * @throws InvalidArgumentException If there is no maintainer id passed
+ * @throws NotFoundException If there are no results
  */
-	public function _findUser($state, $query, $results = array()) {
+	protected function _findUser($state, $query, $results = array()) {
 		if ($state == 'before') {
-			$user_id = false;
+			$maintainerId = false;
 			if (!empty($query[0])) {
-				$user_id = $query[0];
-			} elseif (!empty($query['id'])){
-				$user_id = $query['id'];
+				$maintainerId = $query[0];
+			} elseif (!empty($query['id'])) {
+				$maintainerId = $query['id'];
 			} else {
-				$user_id = AuthComponent::user('id');
+				$maintainerId = AuthComponent::user('id');
 			}
 
-			if (empty($user_id)) {
+			if (empty($maintainerId)) {
 				throw new InvalidArgumentException(__('Invalid maintainer'));
 			}
 
 			$query['contain'] = false;
-			$query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $user_id);
+			$query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $maintainerId);
 			$query['limit'] = 1;
 			return $query;
 		}
@@ -184,11 +195,13 @@ class Maintainer extends AppModel {
  * Finds a user by username
  *
  * @param string $state Either "before" or "after"
- * @param array $query
+ * @param array $query Query
+ * @param array $results Results
  * @return mixed array of results or false if none found
- * @return array
+ * @throws InvalidArgumentException If there is no maintainer id passed
+ * @throws NotFoundException If there are no results
  */
-	public function _findUsername($state, $query, $results = array()) {
+	protected function _findUsername($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (empty($query[0])) {
 				throw new InvalidArgumentException(__('Invalid maintainer'));
@@ -210,15 +223,17 @@ class Maintainer extends AppModel {
  * Finds a user by name for the /maintainers/view action
  *
  * @param string $state Either "before" or "after"
- * @param array $query
+ * @param array $query Query.
+ * @param array $results Results
  * @return mixed array of results or false if none found
- * @return array
+ * @throws InvalidArgumentException If there is no maintainer id passed
+ * @throws NotFoundException If there are no results
  */
-	public function _findView($state, $query, $results = array()) {
+	protected function _findView($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (!empty($query[0])) {
 				$query['conditions'] = array("{$this->alias}.{$this->displayField}" => $query[0]);
-			} else if (!empty($query['maintainer_id'])) {
+			} elseif (!empty($query['maintainer_id'])) {
 				$query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $query['maintainer_id']);
 			} else {
 				throw new InvalidArgumentException(__('Invalid maintainer'));
@@ -279,7 +294,9 @@ class Maintainer extends AppModel {
 		if (empty($results[0][$this->alias]['avatar_url'])) {
 			try {
 				$this->enqueue('UpdateMaintainerJob', array($results[0][$this->alias]['username']));
-			} catch (Exception $e) {}
+			} catch (Exception $e) {
+
+			}
 		}
 
 		return $results[0];
@@ -288,7 +305,13 @@ class Maintainer extends AppModel {
 /**
  * Ensure the uri is valid if it's been specified
  *
- * @return void
+ * Called before each save operation, after validation. Return a non-true result
+ * to halt the save.
+ *
+ * @param array $options Options passed from Model::save().
+ * @return bool True if the operation should continue, false if it should abort
+ * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#beforesave
+ * @see Model::save()
  */
 	public function beforeSave($options = array()) {
 		if (!empty($this->data[$this->alias]['url'])) {
@@ -302,7 +325,7 @@ class Maintainer extends AppModel {
 /**
  * Returns SEO for a maintainer
  *
- * @param array $maintainer
+ * @param array $maintainer array of maintainer information
  * @return array
  */
 	public function seoView($maintainer) {
@@ -331,27 +354,33 @@ class Maintainer extends AppModel {
 		return array($title, $description, $keywords);
 	}
 
+/**
+ * Gets github user information
+ *
+ * @param string $username Name of a maintainer
+ * @return mixed array of results or false if none found
+ */
 	public function retrieveMaintainerData($username) {
-		if (!$this->_Github) {
-			$this->_Github = ClassRegistry::init('Github');
+		if (!$this->Github) {
+			$this->Github = ClassRegistry::init('Github');
 		}
 
-		$user = $this->_Github->find('user', array('user' => $username));
+		$user = $this->Github->find('user', array('user' => $username));
 		if (empty($user)) {
 			return false;
 		}
 
 		$data = array(
-			'github_id'   => Hash::get($user, 'User.id', ''),
-			'username'    => Hash::get($user, 'User.login', ''),
+			'github_id' => Hash::get($user, 'User.id', ''),
+			'username' => Hash::get($user, 'User.login', ''),
 			'gravatar_id' => Hash::get($user, 'User.gravatar_id', ''),
-			'avatar_url'  => Hash::get($user, 'User.avatar_url', ''),
-			'name'        => Hash::get($user, 'User.name', ''),
-			'company'     => Hash::get($user, 'User.company', ''),
-			'name'        => Hash::get($user, 'User.name', ''),
-			'url'         => Hash::get($user, 'User.blog', ''),
-			'email'       => Hash::get($user, 'User.email', ''),
-			'location'    => Hash::get($user, 'User.location', ''),
+			'avatar_url' => Hash::get($user, 'User.avatar_url', ''),
+			'name' => Hash::get($user, 'User.name', ''),
+			'company' => Hash::get($user, 'User.company', ''),
+			'name' => Hash::get($user, 'User.name', ''),
+			'url' => Hash::get($user, 'User.blog', ''),
+			'email' => Hash::get($user, 'User.email', ''),
+			'location' => Hash::get($user, 'User.location', ''),
 		);
 
 		foreach (array_keys($data) as $key) {
@@ -363,6 +392,12 @@ class Maintainer extends AppModel {
 		return $data;
 	}
 
+/**
+ * Updates an existing maintainer with github info
+ *
+ * @param string $username Name of a maintainer
+ * @return mixed array of results or false if none found
+ */
 	public function updateExistingMaintainer($username) {
 		$maintainer = $this->findByUsername($username);
 		if (empty($maintainer)) {

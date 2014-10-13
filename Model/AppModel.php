@@ -28,7 +28,7 @@ class AppModel extends Model {
  * Number of associations to recurse through during find calls. Fetches only
  * the first level by default.
  *
- * @var integer
+ * @var int
  * @link http://book.cakephp.org/view/1057/Model-Attributes#recursive-1063
  */
 	public $recursive = -1;
@@ -48,6 +48,8 @@ class AppModel extends Model {
 
 /**
  * Return all the available jobs
+ *
+ * @return array
  */
 	public function getJobs() {
 		return $this->_jobs;
@@ -56,8 +58,9 @@ class AppModel extends Model {
 /**
  * Enqueues a job in resque
  *
+ * @param string $name name of job
+ * @param array $arguments array of arguments for the job
  * @return void
- * @author
  **/
 	public function enqueue($name, $arguments) {
 		array_unshift($arguments, 'work');
@@ -67,8 +70,9 @@ class AppModel extends Model {
 /**
  * Helper for firing jobs
  *
- * @param array $data
- * @return boolean
+ * @param array $data array of data to pass into a job
+ * @return bool
+ * @throws CakeException If if the job is invalid, could not be loaded or could not be enqueued
  */
 	public function fireJob($data = array()) {
 		if (isset($data['job'])) {
@@ -78,7 +82,6 @@ class AppModel extends Model {
 		}
 		if (empty($data[$this->alias]['job'])) {
 			throw new CakeException(__('Invalid job.'));
-			return false;
 		}
 
 		foreach ($data[$this->alias] as $key => $val) {
@@ -100,13 +103,11 @@ class AppModel extends Model {
 		unset($data[$this->alias]['job']);
 
 		$data = array_values($data[$this->alias]);
-		if (!$this->enqueue($job, $data)) {
-			throw new CakeException(__('Job could not be enqueued.'));
-		} else {
+		if ($this->enqueue($job, $data)) {
 			return true;
 		}
 
-		return false;
+		throw new CakeException(__('Job could not be enqueued.'));
 	}
 
 /**
@@ -133,7 +134,7 @@ class AppModel extends Model {
 	public function get($method) {
 		$params = func_get_args();
 		array_shift($params);
-		$method ='_get' . ucfirst($method);
+		$method = '_get' . ucfirst($method);
 
 		if (!method_exists($this, $method)) {
 			return false;

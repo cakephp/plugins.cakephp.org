@@ -20,20 +20,28 @@ class Github extends AppModel {
 /**
  * Override the constructor to provide custom model finds
  *
- * @param mixed $id Set this ID for this model on startup, can also be an array of options, see above.
+ * @param mixed $modelId Set this ID for this model on startup, can also be an array of options, see above.
  * @param string $table Name of database table to use.
- * @param string $ds DataSource connection name.
+ * @param string $datasource DataSource connection name.
  */
-	public function __construct($model_id = false, $table = null, $datasource = null) {
-		parent::__construct($model_id, $table, $datasource);
+	public function __construct($modelId = false, $table = null, $datasource = null) {
+		parent::__construct($modelId, $table, $datasource);
 
 		$this->findMethods['files'] = true;
 		$this->findMethods['repository'] = true;
 		$this->findMethods['user'] = true;
 	}
 
-	public function _getNewRepositories($user = null) {
-		if (!$user) return false;
+/**
+ * Retrieves new repositories for a given user
+ *
+ * @param string $user username
+ * @return mixed false if no repositories, array otherwise
+ */
+	protected function _getNewRepositories($user = null) {
+		if (!$user) {
+			return false;
+		}
 
 		$_action = 'repos';
 		$repositories = $this->find('user', compact('user', '_action'));
@@ -60,8 +68,10 @@ class Github extends AppModel {
 		return $results;
 	}
 
-	public function _getRelatedRepositories($maintainers = array()) {
-		if (!$maintainers) return false;
+	protected function _getRelatedRepositories($maintainers = array()) {
+		if (!$maintainers) {
+			return false;
+		}
 
 		$Package = ClassRegistry::init('Package');
 		foreach ($maintainers as $i => $maintainer) {
@@ -82,7 +92,7 @@ class Github extends AppModel {
 		return $maintainers;
 	}
 
-	public function _getUnlisted($user = 'josegonzalez') {
+	protected function _getUnlisted($user = 'josegonzalez') {
 		$_action = 'following';
 		$following = $this->find('users', compact('user', '_action'));
 		ClassRegistry::init('Maintainer');
@@ -113,9 +123,9 @@ class Github extends AppModel {
 /**
  * Add a new package for an existing user
  *
- * @param string $username
- * @param string $name
- * @return boolean
+ * @param string $username name of user
+ * @param string $name package name
+ * @return bool
  */
 	public function savePackage($username, $name) {
 		return $this->enqueue('NewPackageJob', array($username, $name));

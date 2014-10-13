@@ -126,7 +126,7 @@ class Package extends AppModel {
 		'app', 'config', 'resource',
 	);
 
-	public $_Github = null;
+	public $Github = null;
 
 	public $_HttpSocket = null;
 
@@ -159,9 +159,9 @@ class Package extends AppModel {
 /**
  * Find a ratable package
  *
- * @param string $state
- * @param array $query
- * @param array $results
+ * @param string $state Either "before" or "after"
+ * @param array $query Query
+ * @param array $results Results
  * @return array
  * @todo Require that the user not own the package being rated
  */
@@ -283,7 +283,11 @@ class Package extends AppModel {
 		return $results;
 	}
 
-	public function _findIndex($state, $query, $results = array()) {
+	public function findIndex($state, $query, $results = array()) {
+		return $this->_findIndex($state, $query, $results);
+	}
+
+	protected function _findIndex($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (!isset($query['named'])) {
 				$query['named'] = array();
@@ -898,16 +902,19 @@ class Package extends AppModel {
  * @param array $package
  * @return array
  */
-	public function updateAttributes($package) {
-		if (!$this->_Github) {
-			$this->_Github = ClassRegistry::init('Github');
+	public function updateAttributes($package, $packageData = null) {
+		if (!$this->Github) {
+			$this->Github = ClassRegistry::init('Github');
 		}
 
-		$packageData = new PackageData(
-			$package['Maintainer']['username'],
-			$package[$this->alias]['name'],
-			$this->_Github
-		);
+		if ($packageData === null) {
+			$packageData = new PackageData(
+				$package['Maintainer']['username'],
+				$package[$this->alias]['name'],
+				$this->Github
+			);
+		}
+
 		$data = $packageData->retrieve();
 		if ($data === false) {
 			return;
@@ -945,11 +952,11 @@ class Package extends AppModel {
 			return false;
 		}
 
-		if (!$this->_Github) {
-			$this->_Github = ClassRegistry::init('Github');
+		if (!$this->Github) {
+			$this->Github = ClassRegistry::init('Github');
 		}
 
-		$response = $this->_Github->find('repository', array(
+		$response = $this->Github->find('repository', array(
 			'owner' => $package['Maintainer']['username'],
 			'repo' => $package[$this->alias]['name']
 		));

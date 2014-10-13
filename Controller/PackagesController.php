@@ -82,7 +82,7 @@ class PackagesController extends AppController {
 			'named' => $this->request->data
 		);
 
-		$order = $this->Package->_findIndex('before', $this->paginate);
+		$order = $this->Package->findIndex('before', $this->paginate);
 		$order = $order['order'][0][0];
 
 		$packages = $this->Package->find('index', array(
