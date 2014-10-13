@@ -1,22 +1,29 @@
 <?php
 // From Console/cake.php
 define('DS', DIRECTORY_SEPARATOR);
-$dispatcher = getenv('CAKE') . 'Console' . DS . 'ShellDispatcher.php';
-$found = false;
-$paths = explode(PATH_SEPARATOR, ini_get('include_path'));
+$dispatcher = 'Cake' . $ds . 'Console' . $ds . 'ShellDispatcher.php';
+$root = dirname(dirname(dirname(__FILE__)));
+$app_dir = basename(dirname(dirname(__FILE__)));
+$cake_core_include_path = $root . $ds . $app_dir . $ds . 'Vendor' . $ds . 'cakephp' . $ds . 'cakephp' . $ds . 'lib';
 
-foreach ($paths as $path) {
-  if (file_exists($path . DS . $dispatcher)) {
-    $found = $path;
-  }
+if (!defined('CAKE_CORE_INCLUDE_PATH')) {
+	define('CAKE_CORE_INCLUDE_PATH', $cake_core_include_path);
+	define('CAKEPHP_SHELL', true);
+	if (!defined('DS')) {
+		define('DS', DIRECTORY_SEPARATOR);
+	}
+	if (!defined('CORE_PATH')) {
+		define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
+	}
 }
 
-if (!$found && function_exists('ini_set')) {
-  $root = dirname(dirname(dirname(__FILE__)));
-  ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . dirname(getenv('CAKE')));
+if (function_exists('ini_set')) {
+  // the following line differs from its sibling
+  // /lib/Cake/Console/Templates/skel/Console/cake.php
+  ini_set('include_path', $cake_core_include_path . PATH_SEPARATOR . ini_get('include_path'));
 }
 
-if (!require_once($dispatcher)) {
+if (!include $dispatcher) {
   trigger_error('Could not locate CakePHP core files.', E_USER_ERROR);
 }
 
@@ -36,11 +43,11 @@ foreach ($dirs as $dir) {
   @mkdir(TMP . $dir);
 }
 
-unset($paths, $path, $found, $dispatcher, $root, $dirs, $dir);
+unset($dispatcher, $root, $app_dir, $ds, $cake_core_include_path, $dirs);
 
 // From ShellDipatcher::_boostrap
 
-define('ROOT', dirname(dirname(getenv('CAKE'))));
+define('ROOT', dirname(dirname(dirname(__FILE__))));
 define('APP_DIR', basename(dirname(dirname(__FILE__))));
 define('APP', ROOT . DS . APP_DIR . DS);
 define('WWW_ROOT', APP . 'webroot' . DS);

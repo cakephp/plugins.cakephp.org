@@ -42,6 +42,6 @@ if (function_exists('ini_set')) {
 if (!include $dispatcher) {
   trigger_error('Could not locate CakePHP core files.', E_USER_ERROR);
 }
-unset($paths, $path, $dispatcher, $root, $app_dir, $ds);
+unset($dispatcher, $root, $app_dir, $ds, $cake_core_include_path);
 
 return ShellDispatcher::run($argv);
