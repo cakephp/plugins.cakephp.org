@@ -10,6 +10,7 @@ env:
 
 before_script:
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"
+  - sh -c "if [ '$PHPCS' = 'true' ]; then ./Vendor/squizlabs/php_codesniffer/scripts/phpcs --config-set installed_paths vendor/cakephp/cakephp-codesniffer; fi"
   - chmod -R 777 tmp
   - set +H
   - echo "<?php
