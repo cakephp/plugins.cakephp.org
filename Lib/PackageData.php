@@ -77,7 +77,7 @@ class PackageData {
 		$this->out(sprintf('Repo Data: %s', json_encode($repo)));
 		if (empty($repo['Repository'])) {
 			$this->out('No repo data found! Exiting...');
-			return false;
+			throw new NotFoundException('No repo data found! Exiting...');
 		}
 
 		if (!empty($repo['Repository']['message'])) {
@@ -88,7 +88,7 @@ class PackageData {
 			}
 
 			$this->out('No repo data found! Exiting...');
-			return false;
+			throw new NotFoundException($repo['Repository']['message']);
 		}
 
 		return $repo['Repository'];
