@@ -51,7 +51,7 @@ $this->Html->addCrumb($package['Package']['name'], $this->Resource->packageUrl($
 						<td><?php echo $package['Maintainer']['username'] ?></td>
 					</tr>
 					<tr>
-						<td>Last Updated</td>
+						<td>Last Pushed At</td>
 						<td><?php echo $this->Time->format('Y-m-d', $package['Package']['last_pushed_at']); ?></td>
 					</tr>
 					<tr>
