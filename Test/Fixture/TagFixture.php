@@ -55,9 +55,9 @@ class TagFixture extends CakeTestFixture {
 		),
 		array(
 			'id'  => 'tag-2',
-			'identifier'  => null,
-			'name'  => 'rad',
-			'keyname'  => 'rad',
+			'identifier'  => 'contains',
+			'name'  => 'theme',
+			'keyname'  => 'theme',
 			'occurrence' => 1,
 			'created'  => '2008-06-01 18:18:15',
 			'modified'  => '2008-06-01 18:18:15'

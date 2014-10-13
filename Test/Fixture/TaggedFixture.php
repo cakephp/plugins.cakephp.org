@@ -67,7 +67,7 @@ class TaggedFixture extends CakeTestFixture {
 		array(
 			'id' => '49357f3f-c66c-4300-a128-a85d4a35e6b6',
 			'foreign_key' => 1,
-			'tag_id' => 'tag-2', // rad
+			'tag_id' => 'tag-2', // theme
 			'model' => 'Package',
 			'language' => 'eng',
 			'created' => '2008-12-02 12:32:31 ',

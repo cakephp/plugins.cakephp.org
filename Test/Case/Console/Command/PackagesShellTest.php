@@ -21,7 +21,13 @@ class PackagesShellTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->Shell = new PackagesShell();
+		$this->Shell = $this->getMock(
+			'PackagesShell',
+			array('out')
+		);
+		$this->Shell->expects($this->any())
+			->method('out')
+			->will($this->returnValue(null));
 		$this->Shell->initialize();
 	}
 
@@ -42,7 +48,7 @@ class PackagesShellTest extends CakeTestCase {
 	public function testConvertContainFields() {
 		$this->Shell->convertContainFields();
 		$this->Shell->Package->contain(array('Tag'));
-		$result = $this->Shell->Package->findById(3);
+		$result = $this->Shell->Package->findById(1);
 		$this->assertTrue($result['Package']['contains_model']);
 		$this->assertTrue($result['Package']['contains_theme']);
 	}
