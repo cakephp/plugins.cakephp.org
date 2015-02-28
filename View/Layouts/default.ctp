@@ -17,9 +17,9 @@
 
 	<?php if ($this->theme == 'Csf' && CakePlugin::loaded('Csfnavbar')) : ?>
 		<?php echo $this->AssetCompress->css('csfbootstrap'); ?>
-	<? else : ?>
+	<?php else : ?>
 		<?php echo $this->AssetCompress->css('bootstrap'); ?>
-	<? endif; ?>
+	<?php endif; ?>
 
 	<!--[if lt IE 9]>
 		<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
