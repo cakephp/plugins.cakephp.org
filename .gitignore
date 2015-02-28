@@ -1,3 +1,5 @@
 View/Themed/Csf
 Plugin/Csfnavbar
 tmp/asset_compress_build_time
+tmp/logs/*.log
+.DS_Store
