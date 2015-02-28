@@ -6,7 +6,8 @@
  * @author Jose Diaz-Gonzalez
  * @version $Id$
  **/
-class MaintainerShell extends AppShell {
+class MaintainerShell extends AppShell
+{
 
 /**
  * Contains tasks to load and instantiate
@@ -14,7 +15,7 @@ class MaintainerShell extends AppShell {
  * @var array
  * @access public
  */
-	var $tasks = array();
+    public $tasks = array();
 
 /**
  * Contains models to load and instantiate
@@ -22,65 +23,68 @@ class MaintainerShell extends AppShell {
  * @var array
  * @access public
  */
-	var $uses = array('Maintainer');
+    public $uses = array('Maintainer');
 
 /**
  * Override main
  *
  * @access public
  */
-	public function main() {
-		if (!empty($this->params[0])) {
-			$this->command = substr($this->params[0], 0, 1);
-		}
+    public function main()
+    {
+        if (!empty($this->params[0])) {
+            $this->command = substr($this->params[0], 0, 1);
+        }
 
-		$this->__run();
-	}
+        $this->__run();
+    }
 
 /**
  * Main application flow control.
  *
  * @return void
  */
-	protected function __run() {
-		$validCommands = array('r', 'q');
+    protected function __run()
+    {
+        $validCommands = array('r', 'q');
 
-		while (empty($this->command)) {
-			$this->out("Package Shell");
-			$this->hr();
-			$this->out("[R]esave");
-			$this->out("[Q]uit");
-			$temp = $this->in("What command would you like to perform?", $validCommands, 'i');
-			if (in_array(strtolower($temp), $validCommands)) {
-				$this->command = $temp;
-			} else {
-				$this->out("Try again.");
-			}
-		}
+        while (empty($this->command)) {
+            $this->out("Package Shell");
+            $this->hr();
+            $this->out("[R]esave");
+            $this->out("[Q]uit");
+            $temp = $this->in("What command would you like to perform?", $validCommands, 'i');
+            if (in_array(strtolower($temp), $validCommands)) {
+                $this->command = $temp;
+            } else {
+                $this->out("Try again.");
+            }
+        }
 
-		switch ($this->command) {
-			case 'r' :
-				$this->maintainer_resave();
-				break;
-			case 'q' :
-				$this->out(__("Exit"));
-				$this->_stop();
-				break;
-		}
-	}
+        switch ($this->command) {
+            case 'r':
+                $this->maintainer_resave();
+                break;
+            case 'q':
+                $this->out(__("Exit"));
+                $this->_stop();
+                break;
+        }
+    }
 
-	public function schedule_update() {
-		$this->Maintainer->updateExistingMaintainer('sjosegonzalez');
-		$maintainers = $this->Maintainer->find('all', array(
-			'contain' => false,
-			'order' => array('Maintainer.username ASC')
-		));
+    public function schedule_update()
+    {
+        $this->Maintainer->updateExistingMaintainer('sjosegonzalez');
+        $maintainers = $this->Maintainer->find('all', array(
+            'contain' => false,
+            'order' => array('Maintainer.username ASC')
+        ));
 
-		foreach ($maintainers as $maintainer) {
-			$this->out(sprintf(__('[Maintainer] %s'), $maintainer['Maintainer']['username']));
-			Resque::enqueue('default', 'UpdateMaintainerJob', array($maintainer['Maintainer']['username']));
-		}
-	}
+        foreach ($maintainers as $maintainer) {
+            $this->out(sprintf(__('[Maintainer] %s'), $maintainer['Maintainer']['username']));
+            Resque::enqueue('default', 'UpdateMaintainerJob', array($maintainer['Maintainer']['username']));
+        }
+    }
 
 /**
  * Resave's each and every maintainer. Useful for
@@ -88,27 +92,29 @@ class MaintainerShell extends AppShell {
  *
  * @return void
  */
-	public function resave() {
-		$p_count = 0;
-		$maintainers = $this->Maintainer->find('all', array(
-			'contain' => false,
-			'order' => array('Maintainer.username ASC')
-		));
-		foreach ($maintainers as $maintainer) {
-			$p_count++;
-			$this->out(sprintf(__('[Maintainer] %s'), $maintainer['Maintainer']['username']));
-			$this->Maintainer->save($maintainer);
-		}
-		$this->out(sprintf(__('* Resaved %s maintainers'), $p_count));
-	}
+    public function resave()
+    {
+        $p_count = 0;
+        $maintainers = $this->Maintainer->find('all', array(
+            'contain' => false,
+            'order' => array('Maintainer.username ASC')
+        ));
+        foreach ($maintainers as $maintainer) {
+            $p_count++;
+            $this->out(sprintf(__('[Maintainer] %s'), $maintainer['Maintainer']['username']));
+            $this->Maintainer->save($maintainer);
+        }
+        $this->out(sprintf(__('* Resaved %s maintainers'), $p_count));
+    }
 
 /**
  * Displays help contents
  *
  * @access public
  */
-	public function help() {
-		$help = <<<TEXT
+    public function help()
+    {
+        $help = <<<TEXT
 The Maintainer Shell
 ---------------------------------------------------------------
 Usage: cake maintainer <command> <arg1> <arg2>...
@@ -118,12 +124,11 @@ Params:
 
 Commands:
 
-    maintainer help
-        shows this help message.
+        maintainer help
+                shows this help message.
 
 TEXT;
-		$this->out($help);
-		$this->_stop();
-	}
-
+        $this->out($help);
+        $this->_stop();
+    }
 }

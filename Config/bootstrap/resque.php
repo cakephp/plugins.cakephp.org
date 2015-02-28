@@ -3,7 +3,7 @@ App::uses('Hash', 'Utility');
 
 // Output debug info as log in CLI
 if (php_sapi_name() == 'cli') {
-	Debugger::outputAs('log');
+    Debugger::outputAs('log');
 }
 
 $cakeResque = Configure::read('Resque');
@@ -12,7 +12,7 @@ $cakeResqueOverrides = Configure::read('ResqueOverrides');
 Configure::write('Resque', Hash::merge((array)$cakeResque, $cakeResqueOverrides));
 
 CakePlugin::load(array(
-	'Resque' => array('bootstrap' => true)
+    'Resque' => array('bootstrap' => true)
 ));
 
 Configure::write('Resque', Hash::merge((array)$cakeResque, $cakeResqueOverrides));

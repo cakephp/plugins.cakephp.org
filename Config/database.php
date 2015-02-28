@@ -53,13 +53,13 @@ class DATABASE_CONFIG
         'token' => null,
     );
 
-    protected $_skip = array(
-        '_skip', 'default', 'github', '_environments',
+    protected $skip = array(
+        'skip', 'default', 'github', 'environments',
         'test_cakeusers', 'development_cakeusers',
         'staging_cakeusers', 'production_cakeusers',
     );
 
-    protected $_environments = array(
+    protected $environments = array(
         'development' => array('development_cakeusers'),
         'staging' => array('staging_cakeusers'),
         'production' => array('production_cakeusers'),
@@ -87,8 +87,8 @@ class DATABASE_CONFIG
             $this->default = array_merge($this->default, $this->{$environment});
 
             // Merge environment with the environment-specific configurations
-            if (isset($this->_environments[$environment])) {
-                foreach ($this->_environments[$environment] as $name) {
+            if (isset($this->environments[$environment])) {
+                foreach ($this->environments[$environment] as $name) {
                     $this->$name = array_merge($this->default, $this->$name);
                 }
             }
@@ -96,7 +96,7 @@ class DATABASE_CONFIG
 
         // if everything above went smooth, $this->default now has the correct login info.
         foreach (get_object_vars($this) as $name => $config) {
-            if (in_array($name, $this->_skip)) {
+            if (in_array($name, $this->skip)) {
                 continue;
             }
 

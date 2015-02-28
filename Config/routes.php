@@ -26,33 +26,37 @@
  * its action called 'display', and we pass a param to select the view file
  * to use (in this case, /app/views/pages/home.ctp)...
  */
-	Router::parseExtensions('json');
+Router::parseExtensions('json');
 
-	Router::connect('/1/:action/*', array('controller' => 'api', 'one' => true));
+Router::connect('/1/:action/*', array('controller' => 'api', 'one' => true));
 
-	Router::connect('/', array('controller' => 'packages', 'action' => 'home'));
+Router::connect('/', array('controller' => 'packages', 'action' => 'home'));
 
-	Router::connect('/p/:id-:slug',
-		array('controller' => 'packages', 'action' => 'view'),
-		array('id' => '[0-9]+', 'slug' => '[\w_-]+')
-	);
+Router::connect(
+    '/p/:id-:slug',
+    array('controller' => 'packages', 'action' => 'view'),
+    array('id' => '[0-9]+', 'slug' => '[\w_-]+')
+);
 
-	Router::connect('/m/:id-:slug',
-		array('controller' => 'maintainers', 'action' => 'view'),
-		array('id' => '[0-9]+', 'slug' => '[\w_-]+')
-	);
+Router::connect(
+    '/m/:id-:slug',
+    array('controller' => 'maintainers', 'action' => 'view'),
+    array('id' => '[0-9]+', 'slug' => '[\w_-]+')
+);
 
-	Router::connect('/login', array('controller' => 'users', 'action' => 'login'));
+Router::connect('/login', array('controller' => 'users', 'action' => 'login'));
 
-	Router::connect('/suggest', array('controller' => 'packages', 'action' => 'suggest'));
+Router::connect('/suggest', array('controller' => 'packages', 'action' => 'suggest'));
 
-	Router::connect('/admin', array('controller' => 'users', 'action' => 'admin'));
-	Router::connect('/package/*', array('controller' => 'packages', 'action' => 'utility_redirect'));
-	Router::connect('/maintainer/*', array('controller' => 'maintainers', 'action' => 'view'));
+Router::connect('/admin', array('controller' => 'users', 'action' => 'admin'));
+Router::connect('/package/*', array('controller' => 'packages', 'action' => 'utility_redirect'));
+Router::connect('/maintainer/*', array('controller' => 'maintainers', 'action' => 'view'));
 
-	App::uses('PageRoute', 'PageRoute.Routing/Route');
-	Router::connect('/:page', array('controller' => 'pages', 'action' => 'display'),
-		array('routeClass' => 'PageRoute')
-	);
+App::uses('PageRoute', 'PageRoute.Routing/Route');
+Router::connect(
+    '/:page',
+    array('controller' => 'pages', 'action' => 'display'),
+    array('routeClass' => 'PageRoute')
+);
 
-	require CAKE . 'Config' . DS . 'routes.php';
+require CAKE . 'Config' . DS . 'routes.php';
