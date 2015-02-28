@@ -18,23 +18,23 @@ App::uses('Inflector', 'Utility');
  * @package cakepackages.controller
  * @subpackage cakepackages.controller
  */
-class UsersController extends AppController {
-
+class UsersController extends AppController
+{
 /**
  * Helpers
  *
  * @var array
  */
-	public $helpers = array(
-		'Html',
-		'Form',
-		'Session',
-		'Time',
-		'Text',
-		'Utils.Gravatar' => array(
-			'default' => 'monsterid'
-		),
-	);
+    public $helpers = array(
+        'Html',
+        'Form',
+        'Session',
+        'Time',
+        'Text',
+        'Utils.Gravatar' => array(
+            'default' => 'monsterid'
+        ),
+    );
 
 /**
  * Constructor
@@ -43,111 +43,117 @@ class UsersController extends AppController {
  *  but expect that features that use the request parameters will not work.
  * @param CakeResponse $response Response object for this controller.
  */
-	public function __construct($request, $response) {
-		$this->_setupHelpers();
-		parent::__construct($request, $response);
-	}
+    public function __construct($request, $response)
+    {
+        $this->_setupHelpers();
+        parent::__construct($request, $response);
+    }
 
 /**
  * Setup helpers based on plugin availability
  *
  * @return void
  */
-	protected function _setupHelpers() {
-		if (App::import('Helper', 'Goodies.Gravatar')) {
-			$this->helpers[] = 'Goodies.Gravatar';
-		}
-	}
+    protected function _setupHelpers()
+    {
+        if (App::import('Helper', 'Goodies.Gravatar')) {
+            $this->helpers[] = 'Goodies.Gravatar';
+        }
+    }
 
 /**
  * beforeFilter callback
  *
  * @return void
  */
-	public function beforeFilter() {
-		if ($this->request->action == 'login') {
-			if (!empty($this->request->data)) {
-				$this->tmpData = $this->request->data;
-			}
-		}
+    public function beforeFilter()
+    {
+        if ($this->request->action == 'login') {
+            if (!empty($this->request->data)) {
+                $this->tmpData = $this->request->data;
+            }
+        }
 
-		$this->set('model', $this->modelClass);
-		parent::beforeFilter();
-		if ($this->request->action == 'view' || $this->request->action == 'profile') {
-			array_push($this->helpers, 'Timezone', 'Time');
-		}
-	}
+        $this->set('model', $this->modelClass);
+        parent::beforeFilter();
+        if ($this->request->action == 'view' || $this->request->action == 'profile') {
+            array_push($this->helpers, 'Timezone', 'Time');
+        }
+    }
 
 /**
  * Common login action
  *
  * @return void
  */
-	public function login() {
-		if ($this->request->is('post')) {
-			if ($this->Auth->login()) {
-				$this->User->loggedIn();
+    public function login()
+    {
+        if ($this->request->is('post')) {
+            if ($this->Auth->login()) {
+                $this->User->loggedIn();
 
-				if ($this->request->here == $this->Auth->loginRedirect) {
-					$this->Auth->loginRedirect = '/';
-				}
+                if ($this->request->here == $this->Auth->loginRedirect) {
+                    $this->Auth->loginRedirect = '/';
+                }
 
-				$this->Session->setFlash(sprintf(__("%s, you have successfully logged in"), $this->Auth->user('username')), 'flash/success');
-				if (!empty($this->request->data)) {
-					$data = $this->request->data[$this->modelClass];
-					$this->_setCookie();
-				}
+                $this->Session->setFlash(sprintf(__("%s, you have successfully logged in"), $this->Auth->user('username')), 'flash/success');
+                if (!empty($this->request->data)) {
+                    $data = $this->request->data[$this->modelClass];
+                    $this->_setCookie();
+                }
 
-				if (empty($data['return_to'])) {
-					$redirect = $this->Session->read('Auth.redirect');
-					$data['return_to'] = $redirect ? $redirect : $this->Auth->redirect();
-				}
+                if (empty($data['return_to'])) {
+                    $redirect = $this->Session->read('Auth.redirect');
+                    $data['return_to'] = $redirect ? $redirect : $this->Auth->redirect();
+                }
 
-				$this->redirect($data['return_to']);
-			}
-			$this->Session->setFlash(__('Unable to log you in with these credentials'), 'flash/error');
-		}
+                $this->redirect($data['return_to']);
+            }
+            $this->Session->setFlash(__('Unable to log you in with these credentials'), 'flash/error');
+        }
 
-		if (isset($this->request->params['url']['return_to'])) {
-			$this->set('return_to', urldecode($this->request->params['url']['return_to']));
-		} else {
-			$this->set('return_to', false);
-		}
-	}
+        if (isset($this->request->params['url']['return_to'])) {
+            $this->set('return_to', urldecode($this->request->params['url']['return_to']));
+        } else {
+            $this->set('return_to', false);
+        }
+    }
 
 /**
  * Common logout action
  *
  * @return void
  */
-	public function logout() {
-		$user = $this->Auth->user();
-		$this->Session->destroy();
-		$this->Cookie->destroy();
-		$this->Session->setFlash(sprintf(
-			__('%s, you have successfully logged out'),
-			$user['username']
-		), 'flash/info');
-		$this->redirect($this->Auth->logout());
-	}
+    public function logout()
+    {
+        $user = $this->Auth->user();
+        $this->Session->destroy();
+        $this->Cookie->destroy();
+        $this->Session->setFlash(sprintf(
+            __('%s, you have successfully logged out'),
+            $user['username']
+        ), 'flash/info');
+        $this->redirect($this->Auth->logout());
+    }
 
 /**
  * User register action
  *
  * @return void
  */
-	public function register() {
-		if (!empty($this->request->data)) {
-			if ($this->User->register($this->request->data)) {
-				$this->Session->setFlash(__('Your account has been created. You should receive an e-mail shortly to authenticate your account. Once validated you will be able to login.'), 'flash/success');
-				$this->redirect(array('action' => 'login'));
-			} else {
-				unset($this->request->data[$this->modelClass]['password']);
-				unset($this->request->data[$this->modelClass]['temppassword']);
-				$this->Session->setFlash(__('Your account could not be created. Please, try again.'), 'flash/error');
-			}
-		}
-	}
+    public function register()
+    {
+        if (!empty($this->request->data)) {
+            if ($this->User->register($this->request->data)) {
+                $this->Session->setFlash(__('Your account has been created. You should receive an e-mail shortly to authenticate your account. Once validated you will be able to login.'), 'flash/success');
+                $this->redirect(array('action' => 'login'));
+            } else {
+                unset($this->request->data[$this->modelClass]['password']);
+                unset($this->request->data[$this->modelClass]['temppassword']);
+                $this->Session->setFlash(__('Your account could not be created. Please, try again.'), 'flash/error');
+            }
+        }
+    }
 
 /**
  * Reset Password Action
@@ -157,21 +163,22 @@ class UsersController extends AppController {
  *
  * @return void
  */
-	public function forgot_password() {
-		if (!empty($this->data)) {
-			try {
-				if ($this->User->forgotPassword($this->data)) {
-					$this->Session->setFlash(__('An email has been sent with instructions for resetting your password'), 'flash/success');
-					$this->redirect(array('controller' => 'users', 'action' => 'login'));
-				} else {
-					$this->Session->setFlash(__('Error resetting password'), 'flash/error');
-				}
-			} catch (Exception $e) {
-				$this->Session->setFlash($e->getMessage(), 'flash/error');
-				$this->redirect(array('controller' => 'users', 'action' => 'forgot_password'));
-			}
-		}
-	}
+    public function forgot_password()
+    {
+        if (!empty($this->data)) {
+            try {
+                if ($this->User->forgotPassword($this->data)) {
+                    $this->Session->setFlash(__('An email has been sent with instructions for resetting your password'), 'flash/success');
+                    $this->redirect(array('controller' => 'users', 'action' => 'login'));
+                } else {
+                    $this->Session->setFlash(__('Error resetting password'), 'flash/error');
+                }
+            } catch (Exception $e) {
+                $this->Session->setFlash($e->getMessage(), 'flash/error');
+                $this->redirect(array('controller' => 'users', 'action' => 'forgot_password'));
+            }
+        }
+    }
 
 /**
  * Reset Password Action
@@ -182,25 +189,26 @@ class UsersController extends AppController {
  * @param string $token Token
  * @return void
  */
-	public function reset_password($token = null) {
-		try {
-			$user = $this->User->find('resetPassword', $token);
-		} catch (Exception $e) {
-			$this->Session->setFlash(__('Invalid password reset token, try again.'), 'flash/error');
-			$this->redirect(array('action' => 'forgot_password'));
-		}
+    public function reset_password($token = null)
+    {
+        try {
+            $user = $this->User->find('resetPassword', $token);
+        } catch (Exception $e) {
+            $this->Session->setFlash(__('Invalid password reset token, try again.'), 'flash/error');
+            $this->redirect(array('action' => 'forgot_password'));
+        }
 
-		if (!empty($this->request->data)) {
-			if ($this->User->resetPassword(Set::merge($user, $this->request->data))) {
-				$this->Session->setFlash(__('Password changed, you can now login with your new password.'), 'flash/success');
-				$this->redirect($this->Auth->loginAction);
-			} else {
-				$this->Session->setFlash(__('Unable to update password, please try again.'), 'flash/error');
-			}
-		}
+        if (!empty($this->request->data)) {
+            if ($this->User->resetPassword(Set::merge($user, $this->request->data))) {
+                $this->Session->setFlash(__('Password changed, you can now login with your new password.'), 'flash/success');
+                $this->redirect($this->Auth->loginAction);
+            } else {
+                $this->Session->setFlash(__('Unable to update password, please try again.'), 'flash/error');
+            }
+        }
 
-		$this->set('token', $token);
-	}
+        $this->set('token', $token);
+    }
 
 /**
  * Confirm email action
@@ -208,16 +216,17 @@ class UsersController extends AppController {
  * @param string $token Token
  * @return void
  */
-	public function verify($token = null) {
-		try {
-			$this->User->isValidEmail($token);
-			$this->Session->setFlash(__('Your e-mail has been validated!'), 'flash/success');
-			return $this->redirect(array('action' => 'login'));
-		} catch (RuntimeException $e) {
-			$this->Session->setFlash($e->getMessage(), 'flash/error');
-			return $this->redirect('/');
-		}
-	}
+    public function verify($token = null)
+    {
+        try {
+            $this->User->isValidEmail($token);
+            $this->Session->setFlash(__('Your e-mail has been validated!'), 'flash/success');
+            return $this->redirect(array('action' => 'login'));
+        } catch (RuntimeException $e) {
+            $this->Session->setFlash($e->getMessage(), 'flash/error');
+            return $this->redirect('/');
+        }
+    }
 
 /**
  * Displays the current user public profile
@@ -225,10 +234,11 @@ class UsersController extends AppController {
  * @return void
  * @see UsersController::view
  */
-	public function profile() {
-		$this->setAction('view', $this->Auth->user('slug'));
-		$this->set('title_for_layout', __('My Profile'));
-	}
+    public function profile()
+    {
+        $this->setAction('view', $this->Auth->user('slug'));
+        $this->set('title_for_layout', __('My Profile'));
+    }
 
 /**
  * Shows a users profile
@@ -236,40 +246,42 @@ class UsersController extends AppController {
  * @param string $slug User Slug
  * @return void
  */
-	public function view($slug = null) {
-		try {
-			$user = $this->User->find('view', $slug);
-			$this->set(compact('user'));
-		} catch (Exception $e) {
-			$this->Session->setFlash($e->getMessage());
-			$this->redirect('/');
-		}
+    public function view($slug = null)
+    {
+        try {
+            $user = $this->User->find('view', $slug);
+            $this->set(compact('user'));
+        } catch (Exception $e) {
+            $this->Session->setFlash($e->getMessage());
+            $this->redirect('/');
+        }
 
-		$name = $user[$this->modelClass]['username'];
-		$this->set('title_for_layout', sprintf(__('%s\'s profile page'), $name));
-	}
+        $name = $user[$this->modelClass]['username'];
+        $this->set('title_for_layout', sprintf(__('%s\'s profile page'), $name));
+    }
 
 /**
  * Edit
  *
  * @return void
  */
-	public function edit() {
-		if (!empty($this->request->data)) {
-			if ($this->User->UserDetail->saveSection($this->Auth->user('id'), $this->request->data, 'User')) {
-				$this->Session->setFlash(__('Profile saved.'), 'flash/success');
-			} else {
-				$this->Session->setFlash(__('Could not save your profile.'), 'flash/error');
-			}
-		} else {
-			$this->request->data = $this->User->find('first', array(
-				'conditions' => array($this->User->alias . '.id' => $this->Auth->user('id')),
-				'contain' => array('UserDetail')
-			));
-		}
-		$this->set('title_for_layout', __('Edit account information'));
-		$this->_setLanguages();
-	}
+    public function edit()
+    {
+        if (!empty($this->request->data)) {
+            if ($this->User->UserDetail->saveSection($this->Auth->user('id'), $this->request->data, 'User')) {
+                $this->Session->setFlash(__('Profile saved.'), 'flash/success');
+            } else {
+                $this->Session->setFlash(__('Could not save your profile.'), 'flash/error');
+            }
+        } else {
+            $this->request->data = $this->User->find('first', array(
+                'conditions' => array($this->User->alias . '.id' => $this->Auth->user('id')),
+                'contain' => array('UserDetail')
+            ));
+        }
+        $this->set('title_for_layout', __('Edit account information'));
+        $this->_setLanguages();
+    }
 
 /**
  * Sets the cookie to remember the user
@@ -279,50 +291,52 @@ class UsersController extends AppController {
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html
  */
-	protected function _setCookie($options = array(), $cookieKey = 'User') {
-		if (empty($this->request->data[$this->modelClass]['remember_me'])) {
-			$this->Cookie->delete($cookieKey);
-		} else {
-			$validProperties = array('domain', 'key', 'name', 'path', 'secure', 'time');
-			$defaults = array(
-				'name' => 'rememberMe');
+    protected function _setCookie($options = array(), $cookieKey = 'User')
+    {
+        if (empty($this->request->data[$this->modelClass]['remember_me'])) {
+            $this->Cookie->delete($cookieKey);
+        } else {
+            $validProperties = array('domain', 'key', 'name', 'path', 'secure', 'time');
+            $defaults = array(
+                'name' => 'rememberMe');
 
-			$options = array_merge($defaults, $options);
-			foreach ($options as $key => $value) {
-				if (in_array($key, $validProperties)) {
-					$this->Cookie->{$key} = $value;
-				}
-			}
+            $options = array_merge($defaults, $options);
+            foreach ($options as $key => $value) {
+                if (in_array($key, $validProperties)) {
+                    $this->Cookie->{$key} = $value;
+                }
+            }
 
-			$cookieData = array(
-				'username' => $this->request->data[$this->modelClass]['username'],
-				'password' => $this->request->data[$this->modelClass]['password']);
-			$this->Cookie->write($cookieKey, $cookieData, true, '1 Month');
-		}
-		unset($this->request->data[$this->modelClass]['remember_me']);
-	}
-
-/**
- * Sets some meta headers for the response
- *
- * @return void
- */
-	public function _seoRegister() {
-		$this->Sham->setMeta('title', 'Become a Member');
-		$this->Sham->setMeta('description', 'User registration');
-	}
+            $cookieData = array(
+                'username' => $this->request->data[$this->modelClass]['username'],
+                'password' => $this->request->data[$this->modelClass]['password']);
+            $this->Cookie->write($cookieKey, $cookieData, true, '1 Month');
+        }
+        unset($this->request->data[$this->modelClass]['remember_me']);
+    }
 
 /**
  * Sets some meta headers for the response
  *
  * @return void
  */
-	public function _seoFallback() {
-		if (!$this->Sham->getMeta('title')) {
-			$this->Sham->setMeta('title', Inflector::humanize($this->request->params['action']) . ' | CakePackages');
-		}
+    public function _seoRegister()
+    {
+        $this->Sham->setMeta('title', 'Become a Member');
+        $this->Sham->setMeta('description', 'User registration');
+    }
 
-		parent::_seoFallback();
-	}
+/**
+ * Sets some meta headers for the response
+ *
+ * @return void
+ */
+    public function _seoFallback()
+    {
+        if (!$this->Sham->getMeta('title')) {
+            $this->Sham->setMeta('title', Inflector::humanize($this->request->params['action']) . ' | CakePackages');
+        }
 
+        parent::_seoFallback();
+    }
 }
