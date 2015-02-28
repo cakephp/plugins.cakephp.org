@@ -53,5 +53,17 @@ Environment::configure('development',
 		if (!defined('FULL_BASE_URL')) {
 			define('FULL_BASE_URL', Configure::read('Settings.FULL_BASE_URL'));
 		}
+
+		$engine = 'File';
+		if (extension_loaded('apc') && function_exists('apc_dec') && (php_sapi_name() !== 'cli' || ini_get('apc.enable_cli'))) {
+			$engine = 'Apc';
+		}
+
+		Cache::config('default', array(
+			'engine' => $engine,
+			'duration' => 3600,
+			'probability' => 100,
+			'prefix' => 'plugins_DEFAULT_',
+		));
 	}
 );
