@@ -9,6 +9,9 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('AppController', 'Controller');
+App::uses('Inflector', 'Utility');
+
 /**
  * Packages app specific User controller
  *

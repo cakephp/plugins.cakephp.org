@@ -1,4 +1,6 @@
 <?php
+App::uses('AppController', 'Controller');
+
 class ApiController extends AppController {
 
 /**
