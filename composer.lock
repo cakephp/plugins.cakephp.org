@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "682543d1f97ea9fedcf8bd6216eb2570",
+    "hash": "1cf1d29dee8eac2ab6a8888024bc27bf",
     "packages": [
         {
             "name": "cakedc/migrations",
@@ -43,6 +43,48 @@
                 "migrations"
             ],
             "time": "2014-07-09 23:50:13"
+        },
+        {
+            "name": "cakedc/ratings",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/CakeDC/ratings.git",
+                "reference": "da2ed709e5f7c2f9ed005ec784178a60e6bbd3bb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/CakeDC/ratings/zipball/da2ed709e5f7c2f9ed005ec784178a60e6bbd3bb",
+                "reference": "da2ed709e5f7c2f9ed005ec784178a60e6bbd3bb",
+                "shasum": ""
+            },
+            "require": {
+                "composer/installers": "*",
+                "php": ">=5.2.8"
+            },
+            "type": "cakephp-plugin",
+            "extra": {
+                "installer-name": "Ratings"
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Cake Development Corporation",
+                    "email": "team@cakedc.com",
+                    "homepage": "http://cakedc.com"
+                }
+            ],
+            "description": "Ratings Plugin for CakePHP.",
+            "homepage": "http://github.com/CakeDC/ratings",
+            "keywords": [
+                "cakephp",
+                "plugin",
+                "ratings"
+            ],
+            "time": "2014-07-22 20:17:39"
         },
         {
             "name": "cakedc/tags",
@@ -1082,6 +1124,7 @@
     "minimum-stability": "stable",
     "stability-flags": [],
     "prefer-stable": false,
+    "prefer-lowest": false,
     "platform": {
         "php": ">=5.3"
     },

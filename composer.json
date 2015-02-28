@@ -20,7 +20,8 @@
         "cakedc/tags": "1.6.0",
         "cakedc/utils": "1.4.3",
         "phpunit/phpunit": "3.7.*",
-        "cakephp/cakephp-codesniffer": "~0.1"
+        "cakephp/cakephp-codesniffer": "~0.1",
+        "cakedc/ratings": "1.2.0"
     },
     "config": {
         "bin-dir": "Console"

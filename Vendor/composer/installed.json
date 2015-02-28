@@ -1112,5 +1112,49 @@
             "codesniffer",
             "framework"
         ]
+    },
+    {
+        "name": "cakedc/ratings",
+        "version": "1.2.0",
+        "version_normalized": "1.2.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/CakeDC/ratings.git",
+            "reference": "da2ed709e5f7c2f9ed005ec784178a60e6bbd3bb"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/CakeDC/ratings/zipball/da2ed709e5f7c2f9ed005ec784178a60e6bbd3bb",
+            "reference": "da2ed709e5f7c2f9ed005ec784178a60e6bbd3bb",
+            "shasum": ""
+        },
+        "require": {
+            "composer/installers": "*",
+            "php": ">=5.2.8"
+        },
+        "time": "2014-07-22 20:17:39",
+        "type": "cakephp-plugin",
+        "extra": {
+            "installer-name": "Ratings"
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Cake Development Corporation",
+                "email": "team@cakedc.com",
+                "homepage": "http://cakedc.com"
+            }
+        ],
+        "description": "Ratings Plugin for CakePHP.",
+        "homepage": "http://github.com/CakeDC/ratings",
+        "keywords": [
+            "cakephp",
+            "plugin",
+            "ratings"
+        ]
     }
 ]
