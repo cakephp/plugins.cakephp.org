@@ -1,6 +1,3 @@
-[submodule "Plugin/Ratings"]
-	path = Plugin/Ratings
-	url = git://github.com/CakeDC/ratings.git
 [submodule "Plugin/Favorites"]
 	path = Plugin/Favorites
 	url = git://github.com/CakeDC/favorites.git
