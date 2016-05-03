@@ -1,15 +1,15 @@
 <?php
 App::uses('Sanitize', 'Utility');
 
-class Maintainer extends AppModel {
-
+class Maintainer extends AppModel
+{
 /**
  * Name of the model.
  *
  * @var string
  * @link http://book.cakephp.org/view/1057/Model-Attributes#name-1068
  */
-	public $name = 'Maintainer';
+    public $name = 'Maintainer';
 
 /**
  * Custom display field name. Display fields are used by Scaffold, in SELECT boxes' OPTION elements.
@@ -17,7 +17,7 @@ class Maintainer extends AppModel {
  * @var string
  * @link http://book.cakephp.org/view/1057/Model-Attributes#displayField-1062
  */
-	public $displayField = 'username';
+    public $displayField = 'username';
 
 /**
  * Detailed list of belongsTo associations.
@@ -25,7 +25,7 @@ class Maintainer extends AppModel {
  * @var array
  * @link http://book.cakephp.org/2.0/en/models/associations-linking-models-together.html#belongsto
  */
-	public $belongsTo = array('User');
+    public $belongsTo = array('User');
 
 /**
  * Detailed list of hasMany associations.
@@ -33,51 +33,52 @@ class Maintainer extends AppModel {
  * @var array
  * @link http://book.cakephp.org/view/1043/hasMany
  */
-	public $hasMany = array('Package');
+    public $hasMany = array('Package');
 
-	public $Github = null;
+    public $Github = null;
 
 /**
  * Override the constructor to provide custom model finds
  * and validation rule internationalization
  *
- * @param mixed $id Set this ID for this model on startup, can also be an array of options, see above.
+ * @param mixed $maintainerId Set this ID for this model on startup, can also be an array of options, see above.
  * @param string $table Name of database table to use.
- * @param string $ds DataSource connection name.
+ * @param string $datasource DataSource connection name.
  */
-	public function __construct($id = false, $table = null, $ds = null) {
-		parent::__construct($id, $table, $ds);
-		$this->order = "`{$this->alias}`.`{$this->displayField}` asc";
-		$this->validate = array(
-			'username' => array(
-				'alphanumeric' => array(
-					'rule' => '/[\w_-]+/i',
-					'message' => __('must contain only letters and numbers'),
-				),
-				'isUnique' => array(
-					'rule' => array('isUnique'),
-					'message' => __('must be a unique maintainer'),
-				),
-				'required' => array(
-					'rule' => array('notempty'),
-					'message' => __('cannot be left empty'),
-				),
-			),
-			'twitter_username' => array(
-				'alphanumeric' => array(
-					'rule' => array('alphanumeric'),
-					'message' => __('must contain only letters and numbers'),
-					'allowEmpty' => true,
-				),
-			),
-		);
-		$this->findMethods['existing'] = true;
-		$this->findMethods['index'] = true;
-		$this->findMethods['redirect'] = true;
-		$this->findMethods['username'] = true;
-		$this->findMethods['user'] = true;
-		$this->findMethods['view'] = true;
-	}
+    public function __construct($maintainerId = false, $table = null, $datasource = null)
+    {
+        parent::__construct($maintainerId, $table, $datasource);
+        $this->order = "`{$this->alias}`.`{$this->displayField}` asc";
+        $this->validate = array(
+            'username' => array(
+                'alphanumeric' => array(
+                    'rule' => '/[\w_-]+/i',
+                    'message' => __('must contain only letters and numbers'),
+                ),
+                'isUnique' => array(
+                    'rule' => array('isUnique'),
+                    'message' => __('must be a unique maintainer'),
+                ),
+                'required' => array(
+                    'rule' => array('notempty'),
+                    'message' => __('cannot be left empty'),
+                ),
+            ),
+            'twitter_username' => array(
+                'alphanumeric' => array(
+                    'rule' => array('alphanumeric'),
+                    'message' => __('must contain only letters and numbers'),
+                    'allowEmpty' => true,
+                ),
+            ),
+        );
+        $this->findMethods['existing'] = true;
+        $this->findMethods['index'] = true;
+        $this->findMethods['redirect'] = true;
+        $this->findMethods['username'] = true;
+        $this->findMethods['user'] = true;
+        $this->findMethods['view'] = true;
+    }
 
 /**
  * Finds a given maintainer by name as well as their packages
@@ -89,23 +90,24 @@ class Maintainer extends AppModel {
  * @throws InvalidArgumentException If there is no user name passed
  * @throws NotFoundException If there are no results
  */
-	protected function _findExisting($state, $query, $results = array()) {
-		if ($state == 'before') {
-			if (empty($query[0])) {
-				throw new InvalidArgumentException(__('Nonexistent user'));
-			}
+    protected function _findExisting($state, $query, $results = array())
+    {
+        if ($state == 'before') {
+            if (empty($query[0])) {
+                throw new InvalidArgumentException(__('Nonexistent user'));
+            }
 
-			$query['contain'] = array('Package');
-			$query['conditions'] = array("{$this->alias}.{$this->displayField}" => $query[0]);
-			$query['limit'] = 1;
-			return $query;
-		}
+            $query['contain'] = array('Package');
+            $query['conditions'] = array("{$this->alias}.{$this->displayField}" => $query[0]);
+            $query['limit'] = 1;
+            return $query;
+        }
 
-		if (empty($results[0])) {
-			throw new NotFoundException(__('Nonexistent user'));
-		}
-		return $results[0];
-	}
+        if (empty($results[0])) {
+            throw new NotFoundException(__('Nonexistent user'));
+        }
+        return $results[0];
+    }
 
 /**
  * Finds maintainers for pagination
@@ -115,15 +117,16 @@ class Maintainer extends AppModel {
  * @param array $results Results
  * @return mixed array of results or false if none found
  */
-	protected function _findIndex($state, $query, $results = array()) {
-		if ($state == 'before') {
-			$query['fields'] = array('id', 'username', 'name', 'alias', 'url', 'twitter_username', 'company', 'location', 'gravatar_id');
-			$query['contain'] = false;
-			return $query;
-		}
+    protected function _findIndex($state, $query, $results = array())
+    {
+        if ($state == 'before') {
+            $query['fields'] = array('id', 'username', 'name', 'alias', 'url', 'twitter_username', 'company', 'location', 'gravatar_id');
+            $query['contain'] = false;
+            return $query;
+        }
 
-		return $results;
-	}
+        return $results;
+    }
 
 /**
  * Finds a redirect for a given username
@@ -135,24 +138,25 @@ class Maintainer extends AppModel {
  * @throws InvalidArgumentException If there is no username passed
  * @throws NotFoundException If there are no results
  */
-	protected function _findRedirect($state, $query, $results = array()) {
-		if ($state == 'before') {
-			if (empty($query['username'])) {
-				throw new InvalidArgumentException(__('Invalid find params'));
-			}
+    protected function _findRedirect($state, $query, $results = array())
+    {
+        if ($state == 'before') {
+            if (empty($query['username'])) {
+                throw new InvalidArgumentException(__('Invalid find params'));
+            }
 
-			$query['conditions'] = array(
-				"{$this->alias}.{$this->displayField}" => $query['username'],
-			);
-			return $query;
-		}
+            $query['conditions'] = array(
+                "{$this->alias}.{$this->displayField}" => $query['username'],
+            );
+            return $query;
+        }
 
-		if (empty($results[0])) {
-			throw new NotFoundException(__('Invalid maintainer'));
-		}
+        if (empty($results[0])) {
+            throw new NotFoundException(__('Invalid maintainer'));
+        }
 
-		return $results[0];
-	}
+        return $results[0];
+    }
 
 /**
  * Finds the current user for the dashboard
@@ -164,32 +168,33 @@ class Maintainer extends AppModel {
  * @throws InvalidArgumentException If there is no maintainer id passed
  * @throws NotFoundException If there are no results
  */
-	protected function _findUser($state, $query, $results = array()) {
-		if ($state == 'before') {
-			$maintainerId = false;
-			if (!empty($query[0])) {
-				$maintainerId = $query[0];
-			} elseif (!empty($query['id'])) {
-				$maintainerId = $query['id'];
-			} else {
-				$maintainerId = AuthComponent::user('id');
-			}
+    protected function _findUser($state, $query, $results = array())
+    {
+        if ($state == 'before') {
+            $maintainerId = false;
+            if (!empty($query[0])) {
+                $maintainerId = $query[0];
+            } elseif (!empty($query['id'])) {
+                $maintainerId = $query['id'];
+            } else {
+                $maintainerId = AuthComponent::user('id');
+            }
 
-			if (empty($maintainerId)) {
-				throw new InvalidArgumentException(__('Invalid maintainer'));
-			}
+            if (empty($maintainerId)) {
+                throw new InvalidArgumentException(__('Invalid maintainer'));
+            }
 
-			$query['contain'] = false;
-			$query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $maintainerId);
-			$query['limit'] = 1;
-			return $query;
-		}
+            $query['contain'] = false;
+            $query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $maintainerId);
+            $query['limit'] = 1;
+            return $query;
+        }
 
-		if (empty($results[0])) {
-			throw new NotFoundException(__('Invalid user'));
-		}
-		return $results[0];
-	}
+        if (empty($results[0])) {
+            throw new NotFoundException(__('Invalid user'));
+        }
+        return $results[0];
+    }
 
 /**
  * Finds a user by username
@@ -201,23 +206,24 @@ class Maintainer extends AppModel {
  * @throws InvalidArgumentException If there is no maintainer id passed
  * @throws NotFoundException If there are no results
  */
-	protected function _findUsername($state, $query, $results = array()) {
-		if ($state == 'before') {
-			if (empty($query[0])) {
-				throw new InvalidArgumentException(__('Invalid maintainer'));
-			}
+    protected function _findUsername($state, $query, $results = array())
+    {
+        if ($state == 'before') {
+            if (empty($query[0])) {
+                throw new InvalidArgumentException(__('Invalid maintainer'));
+            }
 
-			$query['contain'] = false;
-			$query['conditions'] = array("{$this->alias}.{$this->displayField}" => $query[0]);
-			$query['limit'] = 1;
-			return $query;
-		}
+            $query['contain'] = false;
+            $query['conditions'] = array("{$this->alias}.{$this->displayField}" => $query[0]);
+            $query['limit'] = 1;
+            return $query;
+        }
 
-		if (empty($results[0])) {
-			throw new NotFoundException(__('Invalid maintainer'));
-		}
-		return $results[0];
-	}
+        if (empty($results[0])) {
+            throw new NotFoundException(__('Invalid maintainer'));
+        }
+        return $results[0];
+    }
 
 /**
  * Finds a user by name for the /maintainers/view action
@@ -229,78 +235,79 @@ class Maintainer extends AppModel {
  * @throws InvalidArgumentException If there is no maintainer id passed
  * @throws NotFoundException If there are no results
  */
-	protected function _findView($state, $query, $results = array()) {
-		if ($state == 'before') {
-			if (!empty($query[0])) {
-				$query['conditions'] = array("{$this->alias}.{$this->displayField}" => $query[0]);
-			} elseif (!empty($query['maintainer_id'])) {
-				$query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $query['maintainer_id']);
-			} else {
-				throw new InvalidArgumentException(__('Invalid maintainer'));
-			}
+    protected function _findView($state, $query, $results = array())
+    {
+        if ($state == 'before') {
+            if (!empty($query[0])) {
+                $query['conditions'] = array("{$this->alias}.{$this->displayField}" => $query[0]);
+            } elseif (!empty($query['maintainer_id'])) {
+                $query['conditions'] = array("{$this->alias}.{$this->primaryKey}" => $query['maintainer_id']);
+            } else {
+                throw new InvalidArgumentException(__('Invalid maintainer'));
+            }
 
-			$query['fields'] = array('id', 'username', 'name', 'alias', 'url', 'twitter_username', 'company', 'location', 'gravatar_id', 'avatar_url');
-			$query['contain'] = array(
-				'Package' => array(
-					'Category',
-					'conditions' => array('Package.deleted' => 0),
-					'order' => array('Package.watchers desc'),
-					'fields' => array(
-						$this->Package->primaryKey, 'maintainer_id',
-						'name', 'description', 'last_pushed_at', 'watchers'
-					),
-				)
-			);
-			$query['limit'] = 1;
-			return $query;
-		}
+            $query['fields'] = array('id', 'username', 'name', 'alias', 'url', 'twitter_username', 'company', 'location', 'gravatar_id', 'avatar_url');
+            $query['contain'] = array(
+                'Package' => array(
+                    'Category',
+                    'conditions' => array('Package.deleted' => 0),
+                    'order' => array('Package.watchers desc'),
+                    'fields' => array(
+                        $this->Package->primaryKey, 'maintainer_id',
+                        'name', 'description', 'last_pushed_at', 'watchers',
+                    ),
+                )
+            );
+            $query['limit'] = 1;
+            return $query;
+        }
 
-		if (empty($results[0])) {
-			throw new NotFoundException(__('Invalid maintainer'));
-		}
+        if (empty($results[0])) {
+            throw new NotFoundException(__('Invalid maintainer'));
+        }
 
-		$url = $results[0]['Maintainer']['url'];
-		if (strlen($url) && !strpos($url, '://')) {
-			$results[0]['Maintainer']['url'] = 'http://' . $url;
-		}
+        $url = $results[0]['Maintainer']['url'];
+        if (strlen($url) && !strpos($url, '://')) {
+            $results[0]['Maintainer']['url'] = 'http://' . $url;
+        }
 
-		$results[0][$this->alias]['has_summary'] = false;
-		$summaryFields = array('company', 'location', 'url', 'twitter_username');
-		foreach ($summaryFields as $field) {
-			if (!empty($results[0][$this->alias][$field])) {
-				$results[0][$this->alias]['has_summary'] = true;
-				break;
-			}
-		}
+        $results[0][$this->alias]['has_summary'] = false;
+        $summaryFields = array('company', 'location', 'url', 'twitter_username');
+        foreach ($summaryFields as $field) {
+            if (!empty($results[0][$this->alias][$field])) {
+                $results[0][$this->alias]['has_summary'] = true;
+                break;
+            }
+        }
 
-		if ($results[0][$this->alias]['has_summary']) {
-			$results[0][$this->alias]['package_count'] = count($results[0]['Package']);
-		}
+        if ($results[0][$this->alias]['has_summary']) {
+            $results[0][$this->alias]['package_count'] = count($results[0]['Package']);
+        }
 
-		if (!empty($results[0]['Package'])) {
-			foreach ($results[0]['Package'] as $i => $result) {
-				$results[0]['Package'][$i]['description'] = trim($results[0]['Package'][$i]['description']);
-				if (empty($results[0]['Package'][$i]['description'])) {
-					$results[0]['Package'][$i]['description'] = 'No description available';
-				}
+        if (!empty($results[0]['Package'])) {
+            foreach ($results[0]['Package'] as $i => $result) {
+                $results[0]['Package'][$i]['description'] = trim($result['Package'][$i]['description']);
+                if (empty($results[0]['Package'][$i]['description'])) {
+                    $results[0]['Package'][$i]['description'] = 'No description available';
+                }
 
-				$results[0]['Package'][$i]['Category']['color'] = '';
-				if (!empty($results[0]['Package'][$i]['Category']['slug'])) {
-					$results[0]['Package'][$i]['Category']['color'] = $this->Package->packageColor($results[0]['Package'][$i]['Category']['slug']);
-				}
-			}
-		}
+                $results[0]['Package'][$i]['Category']['color'] = '';
+                if (!empty($results[0]['Package'][$i]['Category']['slug'])) {
+                    $results[0]['Package'][$i]['Category']['color'] = $this->Package->packageColor($result['Package'][$i]['Category']['slug']);
+                }
+            }
+        }
 
-		if (empty($results[0][$this->alias]['avatar_url'])) {
-			try {
-				$this->enqueue('UpdateMaintainerJob', array($results[0][$this->alias]['username']));
-			} catch (Exception $e) {
+        if (empty($results[0][$this->alias]['avatar_url'])) {
+            try {
+                $this->enqueue('UpdateMaintainerJob', array($results[0][$this->alias]['username']));
+            } catch (Exception $e) {
 
-			}
-		}
+            }
+        }
 
-		return $results[0];
-	}
+        return $results[0];
+    }
 
 /**
  * Ensure the uri is valid if it's been specified
@@ -313,14 +320,15 @@ class Maintainer extends AppModel {
  * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#beforesave
  * @see Model::save()
  */
-	public function beforeSave($options = array()) {
-		if (!empty($this->data[$this->alias]['url'])) {
-			if (!strpos($this->data[$this->alias]['url'], '://')) {
-				$this->data[$this->alias]['url'] = 'http://' . $this->data[$this->alias]['url'];
-			}
-		}
-		return true;
-	}
+    public function beforeSave($options = array())
+    {
+        if (!empty($this->data[$this->alias]['url'])) {
+            if (!strpos($this->data[$this->alias]['url'], '://')) {
+                $this->data[$this->alias]['url'] = 'http://' . $this->data[$this->alias]['url'];
+            }
+        }
+        return true;
+    }
 
 /**
  * Returns SEO for a maintainer
@@ -328,31 +336,32 @@ class Maintainer extends AppModel {
  * @param array $maintainer array of maintainer information
  * @return array
  */
-	public function seoView($maintainer) {
-		if ($maintainer['Maintainer']['name']) {
-			$name = $maintainer['Maintainer']['name'];
-		} else {
-			$name = $maintainer['Maintainer']['username'];
-		}
+    public function seoView($maintainer)
+    {
+        if ($maintainer['Maintainer']['name']) {
+            $name = $maintainer['Maintainer']['name'];
+        } else {
+            $name = $maintainer['Maintainer']['username'];
+        }
 
-		$title = array();
-		$title[] = Sanitize::clean($name);
-		$title[] = 'CakePHP Package Maintainer';
-		$title[] = 'CakePackages';
-		$title = implode(' | ', $title);
+        $title = array();
+        $title[] = Sanitize::clean($name);
+        $title[] = 'CakePHP Package Maintainer';
+        $title[] = 'CakePackages';
+        $title = implode(' | ', $title);
 
-		$description = Sanitize::clean($name) . ' - CakePHP Package on CakePackages';
+        $description = Sanitize::clean($name) . ' - CakePHP Package on CakePackages';
 
-		$keywords = array();
-		if (!empty($maintainer['Package'])) {
-			$keywords = array_slice(Set::classicExtract($maintainer, 'Package.{n}.name'), 0, 5);
-		}
-		$keywords[] = 'cakephp package';
-		$keywords[] = 'cakephp';
-		$keywords = implode(' | ', $keywords);
+        $keywords = array();
+        if (!empty($maintainer['Package'])) {
+            $keywords = array_slice(Set::classicExtract($maintainer, 'Package.{n}.name'), 0, 5);
+        }
+        $keywords[] = 'cakephp package';
+        $keywords[] = 'cakephp';
+        $keywords = implode(' | ', $keywords);
 
-		return array($title, $description, $keywords);
-	}
+        return array($title, $description, $keywords);
+    }
 
 /**
  * Gets github user information
@@ -360,37 +369,38 @@ class Maintainer extends AppModel {
  * @param string $username Name of a maintainer
  * @return mixed array of results or false if none found
  */
-	public function retrieveMaintainerData($username) {
-		if (!$this->Github) {
-			$this->Github = ClassRegistry::init('Github');
-		}
+    public function retrieveMaintainerData($username)
+    {
+        if (!$this->Github) {
+            $this->Github = ClassRegistry::init('Github');
+        }
 
-		$user = $this->Github->find('user', array('user' => $username));
-		if (empty($user)) {
-			return false;
-		}
+        $user = $this->Github->find('user', array('user' => $username));
+        if (empty($user)) {
+            return false;
+        }
 
-		$data = array(
-			'github_id' => Hash::get($user, 'User.id', ''),
-			'username' => Hash::get($user, 'User.login', ''),
-			'gravatar_id' => Hash::get($user, 'User.gravatar_id', ''),
-			'avatar_url' => Hash::get($user, 'User.avatar_url', ''),
-			'name' => Hash::get($user, 'User.name', ''),
-			'company' => Hash::get($user, 'User.company', ''),
-			'name' => Hash::get($user, 'User.name', ''),
-			'url' => Hash::get($user, 'User.blog', ''),
-			'email' => Hash::get($user, 'User.email', ''),
-			'location' => Hash::get($user, 'User.location', ''),
-		);
+        $data = array(
+            'github_id' => Hash::get($user, 'User.id', ''),
+            'username' => Hash::get($user, 'User.login', ''),
+            'gravatar_id' => Hash::get($user, 'User.gravatar_id', ''),
+            'avatar_url' => Hash::get($user, 'User.avatar_url', ''),
+            'name' => Hash::get($user, 'User.name', ''),
+            'company' => Hash::get($user, 'User.company', ''),
+            'name' => Hash::get($user, 'User.name', ''),
+            'url' => Hash::get($user, 'User.blog', ''),
+            'email' => Hash::get($user, 'User.email', ''),
+            'location' => Hash::get($user, 'User.location', ''),
+        );
 
-		foreach (array_keys($data) as $key) {
-			if (empty($data[$key])) {
-				unset($data[$key]);
-			}
-		}
+        foreach (array_keys($data) as $key) {
+            if (empty($data[$key])) {
+                unset($data[$key]);
+            }
+        }
 
-		return $data;
-	}
+        return $data;
+    }
 
 /**
  * Updates an existing maintainer with github info
@@ -398,18 +408,19 @@ class Maintainer extends AppModel {
  * @param string $username Name of a maintainer
  * @return mixed array of results or false if none found
  */
-	public function updateExistingMaintainer($username) {
-		$maintainer = $this->findByUsername($username);
-		if (empty($maintainer)) {
-			return false;
-		}
+    public function updateExistingMaintainer($username)
+    {
+        $maintainer = $this->findByUsername($username);
+        if (empty($maintainer)) {
+            return false;
+        }
 
-		$data = $this->retrieveMaintainerData($username);
-		if (empty($data)) {
-			return false;
-		}
+        $data = $this->retrieveMaintainerData($username);
+        if (empty($data)) {
+            return false;
+        }
 
-		$maintainer['Maintainer'] = array_merge($maintainer['Maintainer'], $data);
-		return $this->save($maintainer);
-	}
+        $maintainer['Maintainer'] = array_merge($maintainer['Maintainer'], $data);
+        return $this->save($maintainer);
+    }
 }
