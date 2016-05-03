@@ -43,10 +43,6 @@ $this->Html->addCrumb($package['Package']['name'], $this->Resource->packageUrl($
                         <td><?php echo $package['Package']['watchers'] ?></td>
                     </tr>
                     <tr>
-                        <td>Watchers</td>
-                        <td><?php echo $package['Package']['watchers'] ?></td>
-                    </tr>
-                    <tr>
                         <td>Issues</td>
                         <td><?php echo $package['Package']['open_issues'] ?></td>
                     </tr>
