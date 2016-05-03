@@ -390,6 +390,24 @@ class PackagesController extends AppController
         return $this->redirect($this->referer());
     }
 
+
+/**
+ * admin_version
+ *
+ * @param int $id package id
+ * @return void
+ */
+    public function admin_clear_version($id = null, $version = null)
+    {
+        try {
+            $this->Package->clearVersions($id, $version);
+            $this->Session->setFlash(__('Cleared package #%d versions', $id), 'flash/success');
+        } catch (Exception $e) {
+            $this->Session->setFlash($e->getMessage(), 'flash/error');
+        }
+        return $this->redirect($this->referer());
+    }
+
 /**
  * Ability to kick off admin jobs
  *

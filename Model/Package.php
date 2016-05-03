@@ -1004,8 +1004,46 @@ class Package extends AppModel
             return true;
         }
 
-        throw new BadRequestException(__("Unable to categorize package #%d", $packageId));
+        throw new BadRequestException(__("Unable to version package #%d", $packageId));
     }
+
+/**
+ * Clears package versions
+ *
+ * @return boolean
+ **/
+    public function clearVersions($packageId)
+    {
+        if (!$packageId && $this->id) {
+            $packageId = $this->id;
+        }
+
+        if (!$packageId) {
+            throw new NotFoundException(__("Cannot clear versions for a non-existent package"));
+        }
+
+        $package = $this->find('first', ['conditions' => ["{$this->alias}.id" => $packageId]]);
+        if (empty($package)) {
+            throw new NotFoundException(__("Cannot clear version for a non-existent package"));
+        }
+
+        $this->id = $packageId;
+        $tags = array();
+        $package['Package']['tags'] = explode(',', $package['Package']['tags']);
+        foreach ($package['Package']['tags'] as $tag) {
+            if (strstr($tag, 'version')) {
+                continue;
+            }
+            $tags[] = $tag;
+        }
+        $package['Package']['tags'] = implode(',', $tags);
+        if ($this->save($package)) {
+            return true;
+        }
+
+        throw new BadRequestException(__("Unable to clear version for  package #%d", $packageId));
+    }
+
 
 /**
  * Update Attributes from Github

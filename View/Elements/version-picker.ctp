@@ -28,4 +28,10 @@ echo $this->Html->link(
     array('admin' => true, 'controller' => 'packages', 'action' => 'version', $package['Package']['id'], '3'),
     array('class' => 'btn btn-success btn-sm')
 );
+echo $this->Html->link(
+    __('Clear versions'),
+    array('admin' => true, 'controller' => 'packages', 'action' => 'clear_version', $package['Package']['id']),
+    array('class' => 'btn btn-default btn-sm')
+);
+
 ?>
