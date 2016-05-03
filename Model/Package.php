@@ -9,7 +9,8 @@ App::uses('Folder', 'Utility');
 /**
  * Package Model
  */
-class Package extends AppModel {
+class Package extends AppModel
+{
 
     public $name = 'Package';
 
@@ -131,8 +132,9 @@ class Package extends AppModel {
 
     public $HttpSocket = null;
 
-    public function __construct($packageId = false, $table = null, $ds = null) {
-        parent::__construct($packageId, $table, $ds);
+    public function __construct($packageId = false, $table = null, $datasource = null)
+    {
+        parent::__construct($packageId, $table, $datasource);
         $this->validate = array(
             'maintainer_id' => array(
                 'numeric' => array(
@@ -166,7 +168,8 @@ class Package extends AppModel {
  * @return array
  * @todo Require that the user not own the package being rated
  */
-    protected function _findBookmark($state, $query, $results = array()) {
+    protected function _findBookmark($state, $query, $results = array())
+    {
         if ($state == 'before') {
             if (empty($query[$this->primaryKey])) {
                 throw new NotFoundException(__("Cannot like a non-existent package"));
@@ -223,7 +226,8 @@ class Package extends AppModel {
         return $results[0];
     }
 
-    protected function _findCategory($state, $query, $results = array()) {
+    protected function _findCategory($state, $query, $results = array())
+    {
         if ($state == 'before') {
             $query['conditions'] = array(
                 "{$this->alias}.{$this->primaryKey}" => $query[$this->primaryKey],
@@ -239,7 +243,8 @@ class Package extends AppModel {
         return $results[0];
     }
 
-    protected function _findDownload($state, $query, $results = array()) {
+    protected function _findDownload($state, $query, $results = array())
+    {
         if ($state == 'before') {
             $query['conditions'] = array(
                 "{$this->alias}.{$this->primaryKey}" => $query[$this->primaryKey],
@@ -261,7 +266,8 @@ class Package extends AppModel {
         );
     }
 
-    protected function _findHome($state, $query, $results = array()) {
+    protected function _findHome($state, $query, $results = array())
+    {
         if ($state == 'before') {
             $query['contain'] = array('Category', 'Maintainer');
             $query['fields'] = array(
@@ -284,11 +290,13 @@ class Package extends AppModel {
         return $results;
     }
 
-    public function findIndex($state, $query, $results = array()) {
+    public function findIndex($state, $query, $results = array())
+    {
         return $this->_findIndex($state, $query, $results);
     }
 
-    protected function _findIndex($state, $query, $results = array()) {
+    protected function _findIndex($state, $query, $results = array())
+    {
         if ($state == 'before') {
             if (!isset($query['named'])) {
                 $query['named'] = array();
@@ -460,7 +468,8 @@ class Package extends AppModel {
         return $results;
     }
 
-    protected function _findListformaintainer($state, $query, $results = array()) {
+    protected function _findListformaintainer($state, $query, $results = array())
+    {
         if ($state == 'before') {
             if (empty($query[0])) {
                 throw new InvalidArgumentException(__('Invalid package'));
@@ -492,7 +501,8 @@ class Package extends AppModel {
  * @return array
  * @todo Require that the user not own the package being rated
  */
-    protected function _findRate($state, $query, $results = array()) {
+    protected function _findRate($state, $query, $results = array())
+    {
         if ($state == 'before') {
             if (empty($query[$this->primaryKey])) {
                 throw new NotFoundException(__("Cannot like a non-existent package"));
@@ -549,7 +559,8 @@ class Package extends AppModel {
         return $results[0];
     }
 
-    protected function _findRedirect($state, $query, $results = array()) {
+    protected function _findRedirect($state, $query, $results = array())
+    {
         if ($state == 'before') {
             if (empty($query['maintainer']) || empty($query['package'])) {
                 throw new InvalidArgumentException(__('Invalid find params'));
@@ -569,7 +580,8 @@ class Package extends AppModel {
         return $results[0];
     }
 
-    protected function _findUncategorized($state, $query, $results = array()) {
+    protected function _findUncategorized($state, $query, $results = array())
+    {
         if ($state == 'before') {
             if (empty($query['user_id'])) {
                 throw new UnauthorizedException(__("You must be logged in in order to categorize packages"));
@@ -593,7 +605,8 @@ class Package extends AppModel {
         return $results[0];
     }
 
-    protected function _findUnversioned($state, $query, $results = array()) {
+    protected function _findUnversioned($state, $query, $results = array())
+    {
         if ($state == 'before') {
             if (empty($query['user_id'])) {
                 throw new UnauthorizedException(__("You must be logged in in order to version packages"));
@@ -617,7 +630,8 @@ class Package extends AppModel {
         return $results[0];
     }
 
-    protected function _findView($state, $query, $results = array()) {
+    protected function _findView($state, $query, $results = array())
+    {
         if ($state == 'before') {
             if (empty($query['package_id'])) {
                 throw new InvalidArgumentException(__('Invalid package'));
@@ -731,7 +745,8 @@ class Package extends AppModel {
         return $results[0];
     }
 
-    public function shouldForceUpdate($lastModified) {
+    public function shouldForceUpdate($lastModified)
+    {
         $date = new DateTime();
         $lastModifiedDate = new DateTime($lastModified);
         $interval = $date->diff($lastModifiedDate);
@@ -744,7 +759,8 @@ class Package extends AppModel {
  * @param integer $id
  * @return boolean
  */
-    public function broken($packageId) {
+    public function broken($packageId)
+    {
         $this->id = $packageId;
         return $this->saveField('deleted', true);
     }
@@ -756,7 +772,8 @@ class Package extends AppModel {
  * @param boolean $enable
  * @return boolean true if enabled or false if disabled
  */
-    public function enable($packageId = null, $enable = null) {
+    public function enable($packageId = null, $enable = null)
+    {
         if ($packageId !== null) {
             $this->id = $packageId;
         }
@@ -790,7 +807,8 @@ class Package extends AppModel {
  * @param mixed $package
  * @return array
  */
-    public function fixRepositoryUrl($package = null) {
+    public function fixRepositoryUrl($package = null)
+    {
         if (!$package) {
             return false;
         }
@@ -820,19 +838,20 @@ class Package extends AppModel {
  *
  * @return boolean
  **/
-    public function categorizePackage($data = array()) {
+    public function categorizePackage($data = array())
+    {
         if (empty($data[$this->alias])) {
             throw new NotFoundException(__("Cannot bookmark a non-existent package"));
         }
 
-        $id = Hash::get($data, "{$this->alias}.{$this->primaryKey}", null);
+        $packageId = Hash::get($data, "{$this->alias}.{$this->primaryKey}", null);
         $categoryId = Hash::get($data, "{$this->alias}.category_id", null);
 
-        if (!$id && $this->id) {
-            $id = $this->id;
+        if (!$packageId && $this->id) {
+            $packageId = $this->id;
         }
 
-        if (!$id) {
+        if (!$packageId) {
             throw new NotFoundException(__("Cannot categorize a non-existent package"));
         }
 
@@ -840,32 +859,33 @@ class Package extends AppModel {
             throw new UnauthorizedException(__("Invalid category"));
         }
 
-        $package = $this->find('category', compact('id'));
+        $package = $this->find('category', ['id' => $packageId]);
         if ($package['Package']['category_id'] == $categoryId) {
-            return $id;
+            return $packageId;
         }
 
-        $this->id = $id;
+        $this->id = $packageId;
         if ($this->saveField('category_id', $categoryId)) {
-            return $id;
+            return $packageId;
         }
 
-        throw new BadRequestException(__("Unable to categorize package #%d", $id));
+        throw new BadRequestException(__("Unable to categorize package #%d", $packageId));
     }
 
 /**
  * Favorites a package for the specified user
  *
- * @param int $id Package ID
+ * @param int $packageId Package ID
  * @param int $userId ID referencing a specific User
  * @return boolean
  **/
-    public function favoritePackage($id = null, $userId = null) {
-        if (!$id && $this->id) {
-            $id = $this->id;
+    public function favoritePackage($packageId = null, $userId = null)
+    {
+        if (!$packageId && $this->id) {
+            $packageId = $this->id;
         }
 
-        if (!$id) {
+        if (!$packageId) {
             throw new NotFoundException(__("Cannot bookmark a non-existent package"));
         }
 
@@ -875,7 +895,7 @@ class Package extends AppModel {
 
         $action = 'add';
         $package = $this->find('bookmark', array(
-            'id' => $id,
+            'id' => $packageId,
             'user_id' => $userId,
         ));
         if ($package['Favorite']) {
@@ -884,13 +904,13 @@ class Package extends AppModel {
                 'Favorite.user_id' => $userId,
                 'Favorite.model' => $this->name,
                 'Favorite.type' => 'bookmark',
-                'Favorite.foreign_key' => $id,
+                'Favorite.foreign_key' => $packageId,
             ), false, false);
             if ($result !== false) {
                 return false;
             }
         } else {
-            $result = $this->saveFavorite($userId, $this->name, 'bookmark', $id);
+            $result = $this->saveFavorite($userId, $this->name, 'bookmark', $packageId);
             if ($result) {
                 return true;
             }
@@ -902,17 +922,18 @@ class Package extends AppModel {
 /**
  * Actually rates a package
  *
- * @param int $id Package ID
+ * @param int $packageId Package ID
  * @param int $userId ID referencing a specific User
  * @param string $rating either "up" or "down"
  * @return boolean
  */
-    public function ratePackage($id = null, $userId = null) {
-        if (!$id && $this->id) {
-            $id = $this->id;
+    public function ratePackage($packageId = null, $userId = null)
+    {
+        if (!$packageId && $this->id) {
+            $packageId = $this->id;
         }
 
-        if (!$id) {
+        if (!$packageId) {
             throw new NotFoundException(__("Cannot like a non-existent package"));
         }
 
@@ -922,17 +943,17 @@ class Package extends AppModel {
 
         $action = 'like';
         $package = $this->find('rate', array(
-            'id' => $id,
+            'id' => $packageId,
             'user_id' => $userId
         ));
         if ($package['Rating']) {
             $action = 'dislike';
-            $result = $this->removeRating($id, $userId);
+            $result = $this->removeRating($packageId, $userId);
             if ($result !== false) {
                 return false;
             }
         } else {
-            $result = $this->saveRating($id, $userId, 1);
+            $result = $this->saveRating($packageId, $userId, 1);
             if ($result) {
                 return true;
             }
@@ -947,7 +968,8 @@ class Package extends AppModel {
  * @param array $package
  * @return array
  */
-    public function updateAttributes($package, $packageData = null) {
+    public function updateAttributes($package, $packageData = null)
+    {
         if (!$this->Github) {
             $this->Github = ClassRegistry::init('Github');
         }
@@ -984,7 +1006,8 @@ class Package extends AppModel {
  * @param integer $package
  * @return boolean
  */
-    public function findOnGithub($package = null) {
+    public function findOnGithub($package = null)
+    {
         if (!is_array($package)) {
             $package = $this->find('first', array(
                 'conditions' => array("{$this->alias}.{$this->primaryKey}" => $package),
@@ -1016,7 +1039,8 @@ class Package extends AppModel {
  * @param array $options
  * @return array
  */
-    public function cleanParams($named, $options = array()) {
+    public function cleanParams($named, $options = array())
+    {
         $coalesce = '';
 
         if (empty($named)) {
@@ -1145,7 +1169,8 @@ class Package extends AppModel {
         return array($named, trim($coalesce));
     }
 
-    public function versions($userId = null) {
+    public function versions($userId = null)
+    {
         return array(
             '2.x',
             '3.x',
@@ -1158,7 +1183,8 @@ class Package extends AppModel {
  * @param integer $userId
  * @return array
  */
-    public function categories($userId = null) {
+    public function categories($userId = null)
+    {
         $categories = $this->Category->find('list', array(
             'order' => array('Category.name')
         ));
@@ -1190,7 +1216,8 @@ class Package extends AppModel {
  * @param array $data
  * @return array
  */
-    public function suggest($data) {
+    public function suggest($data)
+    {
         if (empty($data['github'])) {
             return false;
         }
@@ -1224,7 +1251,8 @@ class Package extends AppModel {
  * @param array $package
  * @return array
  */
-    public function seoView($package) {
+    public function seoView($package)
+    {
         $title = array();
         $title[] = Sanitize::clean($package['Package']['name'] . ' by ' . $package['Maintainer']['username']);
         $title[] = 'CakePHP Plugins and Applications';
@@ -1257,7 +1285,8 @@ class Package extends AppModel {
  * @param array $options
  * @return array
  */
-    public function rss($package, $options = array()) {
+    public function rss($package, $options = array())
+    {
         $options = array_merge(array(
             'allowed' => array('id', 'link', 'title', 'updated'),
             'cache' => null,
@@ -1275,7 +1304,8 @@ class Package extends AppModel {
         }
 
         if (!$options['uri']) {
-            $options['uri'] = sprintf("https://github.com/%s/%s/commits/master.atom",
+            $options['uri'] = sprintf(
+                "https://github.com/%s/%s/commits/master.atom",
                 $package['Maintainer']['username'],
                 $package['Package']['name']
             );
@@ -1381,7 +1411,8 @@ class Package extends AppModel {
  * @param array $package
  * @return array
  */
-    public function disqus($package = array()) {
+    public function disqus($package = array())
+    {
         return array(
             'disqus_shortname' => Configure::read('Disqus.disqus_shortname'),
             'disqus_identifier' => $package[$this->alias][$this->primaryKey],
@@ -1399,7 +1430,8 @@ class Package extends AppModel {
         );
     }
 
-    public function stringToColor($text, $minBrightness = 50, $spec = 9) {
+    public function stringToColor($text, $minBrightness = 50, $spec = 9)
+    {
         // Check inputs
         if (!is_int($minBrightness)) {
             throw new Exception("$minBrightness is not an integer");
@@ -1448,7 +1480,8 @@ class Package extends AppModel {
  * @param bool $next
  * @return array
  */
-    public function getNextPage($params, $next = true) {
+    public function getNextPage($params, $next = true)
+    {
         if ($next === false) {
             return false;
         }
@@ -1464,12 +1497,12 @@ class Package extends AppModel {
         return $params;
     }
 
-    public function packageColor($slug) {
+    public function packageColor($slug)
+    {
         if (empty(static::$_categoryColors[$slug])) {
             static::$_categoryColors[$slug] = $this->stringToColor($slug);
         }
 
         return static::$_categoryColors[$slug];
     }
-
 }
