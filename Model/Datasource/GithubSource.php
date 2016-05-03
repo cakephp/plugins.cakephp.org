@@ -178,12 +178,13 @@ class GithubSource extends DataSource {
 				$request
 			);
 
+            $query = array();
 			if (!empty($token)) {
-				$url = sprintf("%s?access_token=%s", $url, $token);
+				$query = array("access_token" => $token);
 			}
 
-			$connection = new HttpSocket($sConfig);
-			$response = $connection->get($url);
+			$connection = new HttpSocket();
+			$response = $connection->get($url, $query);
 			if (in_array($response->code, array(403, 404))) {
 				GithubSource::$_error = $response->reasonPhrase;
 				CakeLog::write('github', GithubSource::$_error, null);
