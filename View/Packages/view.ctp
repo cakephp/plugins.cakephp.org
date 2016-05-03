@@ -25,6 +25,8 @@ $this->Html->addCrumb($package['Package']['name'], $this->Resource->packageUrl($
             ); ?>
         </div>
 
+        <?php echo $this->element('version-picker', array('package' => $package)); ?>
+
         <div class="panel panel-default">
             <div class="panel-heading clearfix">
                 <h3 class="panel-title pull-left">

@@ -19,9 +19,7 @@
                         ); ?>
                     <?php endif; ?>
 					<p class="description">
-                        <?php
-                            echo $this->element('version-picker', array('package' => $package));
-                        ?>
+                        <?php echo $this->element('version-picker', array('package' => $package)); ?>
 						<?php if (!empty($package['Category']['slug'])) : ?>
 							<a href="/packages?category=<?php echo $package['Category']['slug']; ?>" class="label category-label" style="background-color:<?php echo $package['Category']['color']; ?>">
 								<?php echo $package['Category']['name']; ?>
