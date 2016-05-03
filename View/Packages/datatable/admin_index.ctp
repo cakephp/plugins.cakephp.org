@@ -16,7 +16,7 @@ foreach($dtResults as $result) {
 	$created = $this->Time->format('Y-m-d', $created);
 	$last_pushed_at = $this->Time->format('Y-m-d', $last_pushed_at);
 
-	$actions = $this->Html->link(__('Edit'), array('action' => 'edit', $id)) . '&nbsp;|&nbsp;';
+	$actions = $this->Html->link(__('Edit'), array('action' => 'edit', $id), array('class' => 'btn btn-default')) . '&nbsp;&nbsp;&nbsp;';
 	if (empty($deleted)) {
 		$label = __('Disable');
 	} else {
@@ -25,10 +25,10 @@ foreach($dtResults as $result) {
 	$actions .= $this->Html->link(
 		$label,
 		array('action' => 'disable', $id),
-		array(),
+		array('class' => 'btn btn-primary'),
 		'Are you sure you want to ' . strtolower($label) . ' package #' . $id . '?'
 	);
-	
+
 	$this->dtResponse['aaData'][] = array(
 		$id,
 		$name,
