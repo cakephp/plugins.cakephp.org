@@ -9,9 +9,31 @@
 		$package['Package']['name']
 	); ?></h2>
 	<blockquote><?php echo $this->Resource->description($package['Package']['description']); ?></blockquote>
-	<?php echo $this->Html->link('Disable Package', array(
+	<?php
+    echo $this->Html->link('Disable Package', array(
 		'admin' => true, 'action' => 'disable', $package['Package']['id']
-	), array('class' => 'btn btn-danger')); ?>
+	), array('class' => 'btn btn-danger'));
+    echo $this->Html->link(
+        __('1.2'),
+        array('admin' => true, 'action' => 'version', $package['Package']['id'], '1.2'),
+        array('class' => 'btn btn-danger btn-sm')
+    );
+    echo $this->Html->link(
+        __('1.3'),
+        array('admin' => true, 'action' => 'version', $package['Package']['id'], '1.3'),
+        array('class' => 'btn btn-warning btn-sm')
+    );
+    echo $this->Html->link(
+        __('2.x'),
+        array('admin' => true, 'action' => 'version', $package['Package']['id'], '2'),
+        array('class' => 'btn btn-info btn-sm')
+    );
+    echo $this->Html->link(
+        __('3.x'),
+        array('admin' => true, 'action' => 'version', $package['Package']['id'], '3'),
+        array('class' => 'btn btn-success btn-sm')
+    );
+    ?>
 </section>
 
 <section>
