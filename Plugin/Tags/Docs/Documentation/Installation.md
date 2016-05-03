@@ -3,6 +3,12 @@ Installation
 
 To install the plugin, place the files in a directory labelled "Tags/" in your "app/Plugin/" directory.
 
+Then, include the following line in your `app/Config/bootstrap.php` to load the plugin in your application.
+
+```
+CakePlugin::load('Tags');
+```
+
 Git Submodule
 -------------
 
@@ -49,7 +55,8 @@ To set up the **Tags** plugin tables run this command:
 Alternately you can use the build in [Schema Shell](http://book.cakephp.org/2.0/en/console-and-shells/schema-management-and-migrations.html) of CakePHP:
 
 ```
-.\Console\cake schema create --plugin Tags
+./Console/cake schema create tag --plugin Tags
+
 ```
 
 

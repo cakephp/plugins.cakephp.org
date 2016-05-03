@@ -81,7 +81,7 @@ class AclBehavior extends ModelBehavior {
 			$type = $this->_typeMaps[$this->settings[$model->name]['type']];
 			if (is_array($type)) {
 				trigger_error(__d('cake_dev', 'AclBehavior is setup with more then one type, please specify type parameter for node()'), E_USER_WARNING);
-				return null;
+				return array();
 			}
 		}
 		if (empty($ref)) {
@@ -104,7 +104,7 @@ class AclBehavior extends ModelBehavior {
 			$types = array($types);
 		}
 		foreach ($types as $type) {
-			$parent = $model->parentNode();
+			$parent = $model->parentNode($type);
 			if (!empty($parent)) {
 				$parent = $this->node($model, $parent, $type);
 			}

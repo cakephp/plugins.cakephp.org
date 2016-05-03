@@ -16,7 +16,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-App::uses('String', 'Utility');
+App::uses('CakeText', 'Utility');
 App::uses('Hash', 'Utility');
 
 /**
@@ -97,7 +97,7 @@ class Set {
  *
  * @param string $class A class name of the type of object to map to
  * @param string $tmp A temporary class name used as $class if $class is an array
- * @return object Hierarchical object
+ * @return object|null Hierarchical object
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::map
  */
 	public static function map($class = 'stdClass', $tmp = 'stdClass') {
@@ -228,7 +228,7 @@ class Set {
  * @param array $data Source array from which to extract the data
  * @param string $format Format string into which values will be inserted, see sprintf()
  * @param array $keys An array containing one or more Set::extract()-style key paths
- * @return array An array of strings extracted from $keys and formatted with $format
+ * @return array|null An array of strings extracted from $keys and formatted with $format, otherwise null.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::format
  */
 	public static function format($data, $format, $keys) {
@@ -236,7 +236,7 @@ class Set {
 		$count = count($keys);
 
 		if (!$count) {
-			return;
+			return null;
 		}
 
 		for ($i = 0; $i < $count; $i++) {
@@ -549,7 +549,7 @@ class Set {
 			return null;
 		}
 		if (is_string($path) && strpos($path, '{') !== false) {
-			$path = String::tokenize($path, '.', '{', '}');
+			$path = CakeText::tokenize($path, '.', '{', '}');
 		} elseif (is_string($path)) {
 			$path = explode('.', $path);
 		}

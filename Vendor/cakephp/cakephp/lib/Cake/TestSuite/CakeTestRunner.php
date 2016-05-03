@@ -15,7 +15,9 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-require_once 'PHPUnit/TextUI/TestRunner.php';
+if (!defined('__PHPUNIT_PHAR__')) {
+	require_once 'PHPUnit/TextUI/TestRunner.php';
+}
 
 App::uses('CakeFixtureManager', 'TestSuite/Fixture');
 
@@ -46,7 +48,7 @@ class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
  */
 	public function doRun(PHPUnit_Framework_Test $suite, array $arguments = array()) {
 		if (isset($arguments['printer'])) {
-			self::$versionStringPrinted = true;
+			static::$versionStringPrinted = true;
 		}
 
 		$fixture = $this->_getFixtureManager($arguments);

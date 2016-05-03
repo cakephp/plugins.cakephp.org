@@ -310,17 +310,42 @@ class PHP_CodeSniffer_CLI
             echo 'by Squiz (http://www.squiz.net)'.PHP_EOL;
             exit(0);
         case 'config-set':
-            $key   = $_SERVER['argv'][($pos + 1)];
-            $value = $_SERVER['argv'][($pos + 2)];
-            PHP_CodeSniffer::setConfigData($key, $value);
+            $key     = $_SERVER['argv'][($pos + 1)];
+            $value   = $_SERVER['argv'][($pos + 2)];
+            $current = PHP_CodeSniffer::getConfigData($key);
+
+            try {
+                PHP_CodeSniffer::setConfigData($key, $value);
+            } catch (Exception $e) {
+                echo $e->getMessage().PHP_EOL;
+                exit(2);
+            }
+
+            if ($current === null) {
+                echo "Config value \"$key\" added successfully".PHP_EOL;
+            } else {
+                echo "Config value \"$key\" updated successfully; old value was \"$current\"".PHP_EOL;
+            }
             exit(0);
         case 'config-delete':
-            $key = $_SERVER['argv'][($pos + 1)];
-            PHP_CodeSniffer::setConfigData($key, null);
+            $key     = $_SERVER['argv'][($pos + 1)];
+            $current = PHP_CodeSniffer::getConfigData($key);
+            if ($current === null) {
+                echo "Config value \"$key\" has not been set".PHP_EOL;
+            } else {
+                try {
+                    PHP_CodeSniffer::setConfigData($key, null);
+                } catch (Exception $e) {
+                    echo $e->getMessage().PHP_EOL;
+                    exit(2);
+                }
+
+                echo "Config value \"$key\" removed successfully; old value was \"$current\"".PHP_EOL;
+            }
             exit(0);
         case 'config-show':
             $data = PHP_CodeSniffer::getAllConfigData();
-            print_r($data);
+            $this->printConfigData($data);
             exit(0);
         case 'runtime-set':
             $key   = $_SERVER['argv'][($pos + 1)];
@@ -809,6 +834,37 @@ class PHP_CodeSniffer_CLI
         ob_end_clean();
 
     }//end explainStandard()
+
+
+    /**
+     * Prints out the gathered config data.
+     *
+     * @param array $data The config data to print.
+     *
+     * @return void
+     */
+    public function printConfigData($data)
+    {
+        $max  = 0;
+        $keys = array_keys($data);
+        foreach ($keys as $key) {
+            $len = strlen($key);
+            if (strlen($key) > $max) {
+                $max = $len;
+            }
+        }
+
+        if ($max == 0) {
+            return;
+        }
+
+        $max += 2;
+        ksort($data);
+        foreach ($data as $name => $value) {
+            echo str_pad($name.': ', $max).$value.PHP_EOL;
+        }
+
+    }//end printConfigData()
 
 
     /**

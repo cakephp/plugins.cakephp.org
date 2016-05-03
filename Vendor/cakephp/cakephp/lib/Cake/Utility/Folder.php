@@ -64,7 +64,7 @@ class Folder {
 	public $sort = false;
 
 /**
- * Mode to be used on create. Does nothing on windows platforms.
+ * Mode to be used on create. Does nothing on Windows platforms.
  *
  * @var int
  * http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::$mode
@@ -263,7 +263,7 @@ class Folder {
  * Returns true if given $path is a Windows path.
  *
  * @param string $path Path to check
- * @return bool true if windows path, false otherwise
+ * @return bool true if Windows path, false otherwise
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::isWindowsPath
  */
 	public static function isWindowsPath($path) {
@@ -278,7 +278,29 @@ class Folder {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::isAbsolute
  */
 	public static function isAbsolute($path) {
-		return !empty($path) && ($path[0] === '/' || preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) === '\\\\');
+		if (empty($path)) {
+			return false;
+		}
+
+		return $path[0] === '/' ||
+			preg_match('/^[A-Z]:\\\\/i', $path) ||
+			substr($path, 0, 2) === '\\\\' ||
+			static::isRegisteredStreamWrapper($path);
+	}
+
+/**
+ * Returns true if given $path is a registered stream wrapper.
+ *
+ * @param string $path Path to check
+ * @return boo true If path is registered stream wrapper.
+ */
+	public static function isRegisteredStreamWrapper($path) {
+		if (preg_match('/^[A-Z]+(?=:\/\/)/i', $path, $matches) &&
+			in_array($matches[0], stream_get_wrappers())
+		) {
+			return true;
+		}
+		return false;
 	}
 
 /**
@@ -487,10 +509,13 @@ class Folder {
 	}
 
 /**
- * Create a directory structure recursively. Can be used to create
- * deep path structures like `/foo/bar/baz/shoe/horn`
+ * Create a directory structure recursively.
  *
- * @param string $pathname The directory structure to create
+ * Can be used to create deep path structures like `/foo/bar/baz/shoe/horn`
+ *
+ * @param string $pathname The directory structure to create. Either an absolute or relative
+ *   path. If the path is relative and exists in the process' cwd it will not be created.
+ *   Otherwise relative paths will be prefixed with the current pwd().
  * @param int $mode octal value 0755
  * @return bool Returns TRUE on success, FALSE on failure
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::create
@@ -498,6 +523,10 @@ class Folder {
 	public function create($pathname, $mode = false) {
 		if (is_dir($pathname) || empty($pathname)) {
 			return true;
+		}
+
+		if (!static::isAbsolute($pathname)) {
+			$pathname = static::addPathElement($this->pwd(), $pathname);
 		}
 
 		if (!$mode) {
@@ -575,7 +604,7 @@ class Folder {
 			$path = $this->pwd();
 		}
 		if (!$path) {
-			return null;
+			return false;
 		}
 		$path = Folder::slashTerm($path);
 		if (is_dir($path)) {
@@ -792,13 +821,13 @@ class Folder {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::realpath
  */
 	public function realpath($path) {
-		$path = str_replace('/', DS, trim($path));
 		if (strpos($path, '..') === false) {
 			if (!Folder::isAbsolute($path)) {
 				$path = Folder::addPathElement($this->path, $path);
 			}
 			return $path;
 		}
+		$path = str_replace('/', DS, trim($path));
 		$parts = explode(DS, $path);
 		$newparts = array();
 		$newpath = '';

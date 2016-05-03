@@ -1,4 +1,9 @@
-[![Build Status](https://travis-ci.org/josegonzalez/cakephp-environments.png?branch=master)](https://travis-ci.org/josegonzalez/cakephp-environments) [![Coverage Status](https://coveralls.io/repos/josegonzalez/cakephp-environments/badge.png?branch=master)](https://coveralls.io/r/josegonzalez/cakephp-environments?branch=master) [![Total Downloads](https://poser.pugx.org/josegonzalez/cakephp-environments/d/total.png)](https://packagist.org/packages/josegonzalez/cakephp-environments) [![Latest Stable Version](https://poser.pugx.org/josegonzalez/cakephp-environments/v/stable.png)](https://packagist.org/packages/josegonzalez/cakephp-environments)
+[![Build Status](https://img.shields.io/travis/josegonzalez/cakephp-environments/master.svg?style=flat-square)](https://travis-ci.org/josegonzalez/cakephp-environments) 
+[![Coverage Status](https://img.shields.io/coveralls/josegonzalez/cakephp-environments.svg?style=flat-square)](https://coveralls.io/r/josegonzalez/cakephp-environments?branch=master) 
+[![Total Downloads](https://img.shields.io/packagist/dt/josegonzalez/cakephp-environments.svg?style=flat-square)](https://packagist.org/packages/josegonzalez/cakephp-environments) 
+[![Latest Stable Version](https://img.shields.io/packagist/v/josegonzalez/cakephp-environments.svg?style=flat-square)](https://packagist.org/packages/josegonzalez/cakephp-environments) 
+[![Documentation Status](https://readthedocs.org/projects/cakephp-environments/badge/?version=latest&style=flat-square)](https://readthedocs.org/projects/cakephp-environments/?badge=latest)
+[![Gratipay](https://img.shields.io/gratipay/josegonzalez.svg?style=flat-square)](https://gratipay.com/~josegonzalez/)
 
 # Environments Plugin
 
@@ -76,6 +81,10 @@ Your `environments.php` should contain the following:
 
 	Environment::start();
 
+Then, you need to include the `environments.php` file you created in your application, for example in `bootstrap.php`:
+
+	include dirname(__FILE__) . DS . 'bootstrap' . DS . 'environments.php';
+
 This will:
 
 - Load the environments plugin in cases where it may not already be loaded
@@ -127,7 +136,7 @@ Example usage of the `Environment::configure()` call is available in the `Config
 
 ### Database Switching
 
-You may wish to set database connection information based upon the current environment. The following is the preferred method:
+You may wish to set database connection information based upon the current environment. You can set your `app/Config/database.php` to the following contents:
 
 	<?php
 	class DATABASE_CONFIG {

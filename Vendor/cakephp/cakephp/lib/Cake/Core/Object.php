@@ -18,7 +18,6 @@ App::uses('CakeLog', 'Log');
 App::uses('Dispatcher', 'Routing');
 App::uses('Router', 'Routing');
 App::uses('Set', 'Utility');
-App::uses('CakeLog', 'Log');
 
 /**
  * Object class provides a few generic methods used in several subclasses.
@@ -32,7 +31,6 @@ class Object {
 
 /**
  * Constructor, no-op
- *
  */
 	public function __construct() {
 	}
@@ -197,8 +195,7 @@ class Object {
 	protected function _mergeVars($properties, $class, $normalize = true) {
 		$classProperties = get_class_vars($class);
 		foreach ($properties as $var) {
-			if (
-				isset($classProperties[$var]) &&
+			if (isset($classProperties[$var]) &&
 				!empty($classProperties[$var]) &&
 				is_array($this->{$var}) &&
 				$this->{$var} != $classProperties[$var]

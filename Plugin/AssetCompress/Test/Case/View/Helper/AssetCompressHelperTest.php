@@ -1,5 +1,6 @@
 <?php
 App::uses('AssetConfig', 'AssetCompress.Lib');
+App::uses('AssetCompiler', 'AssetCompress.Lib');
 App::uses('AssetCompressHelper', 'AssetCompress.View/Helper');
 
 App::uses('HtmlHelper', 'View/Helper');
@@ -392,27 +393,44 @@ class AssetCompressHelperTest extends CakeTestCase {
 	}
 
 	public function testRawAssets() {
-		$config = $this->Helper->config();
+		$Config = AssetConfig::buildFromIniFile($this->_testFiles . 'Config' . DS . 'config.ini');
+
+		$paths = array(
+			$this->_testFiles . 'js' . DS
+		);
+
+		$helper = $this->getMock('AssetCompressHelper', array('_getScanner'), array(new View(), array('noconfig' => true)));
+		$helper->config($Config);
+
+		$scanner = $this->getMock('AssetScanner', array('_getWebroot'), array($paths, null));
+		$scanner
+			->expects($this->any())
+			->method('_getWebroot')
+			->will($this->returnValue($this->_testFiles));
+		$helper
+			->expects($this->any())
+			->method('_getScanner')
+			->will($this->returnValue($scanner));
+
+		$config = $helper->config();
 		$config->addTarget('raw.js', array(
 			'files' => array('classes/base_class.js', 'classes/base_class_two.js')
 		));
-		$config->paths('js', null, array(
-			$this->_testFiles . 'js' . DS
-		));
+		$config->paths('js', null, $paths);
 
-		$result = $this->Helper->script('raw.js', array('raw' => true));
+		$result = $helper->script('raw.js', array('raw' => true));
 		$expected = array(
 			array(
 				'script' => array(
 					'type' => 'text/javascript',
-					'src' => 'js/classes/base_class.js'
+					'src' => '/js/classes/base_class.js'
 				),
 			),
 			'/script',
 			array(
 				'script' => array(
 					'type' => 'text/javascript',
-					'src' => 'js/classes/base_class_two.js'
+					'src' => '/js/classes/base_class_two.js'
 				),
 			),
 			'/script',
@@ -546,4 +564,182 @@ class AssetCompressHelperTest extends CakeTestCase {
 		$this->Helper->url('nope.js');
 	}
 
+/**
+ * test in development script links are created
+ *
+ * @return void
+ */
+	public function testInlineCssDevelopment() {
+		$config = $this->Helper->config();
+		$config->paths('css', null, array(
+			$this->_testFiles . 'css' . DS
+		));
+
+		$config->addTarget('nav.css', array(
+			'files' => array('nav.css')
+		));
+
+		Configure::write('debug', 1);
+		$results = $this->Helper->inlineCss('nav.css');
+
+		$expected = <<<EOF
+<style type="text/css">@import url("reset/reset.css");
+#nav {
+	width:100%;
+}</style>
+EOF;
+		$this->assertEquals($expected, $results);
+	}
+
+/**
+ * test inline css is generated
+ *
+ * @return void
+ */
+	public function testInlineCss() {
+		$config = $this->Helper->config();
+		$config->paths('css', null, array(
+			$this->_testFiles . 'css' . DS
+		));
+
+		$config->addTarget('nav.css', array(
+			'files' => array('nav.css')
+		));
+
+		Configure::write('debug', 0);
+
+		$expected = <<<EOF
+<style type="text/css">@import url("reset/reset.css");
+#nav {
+	width:100%;
+}</style>
+EOF;
+
+		$result = $this->Helper->inlineCss('nav.css');
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test inlineCss() with multiple input files.
+ *
+ * @return void
+ */
+	public function testInlineCssMultiple() {
+		$config = $this->Helper->config();
+		$config->paths('css', null, array(
+			$this->_testFiles . 'css' . DS
+		));
+
+		$config->addTarget('nav.css', array(
+			'files' => array('nav.css', 'has_import.css')
+		));
+
+		Configure::write('debug', 0);
+
+		$expected = <<<EOF
+<style type="text/css">@import url("reset/reset.css");
+#nav {
+	width:100%;
+}
+
+@import "nav.css";
+@import "theme:theme.css";
+body {
+	color:#f00;
+	background:#000;
+}</style>
+EOF;
+
+		$result = $this->Helper->inlineCss('nav.css');
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test in development script links are created
+ *
+ * @return void
+ */
+	public function testInlineScriptDevelopment() {
+		$config = $this->Helper->config();
+		$config->set('js.filters', array());
+
+		$config->paths('js', null, array(
+			$this->_testFiles . 'js' . DS . 'classes'
+		));
+
+		$config->addTarget('all.js', array(
+			'files' => array('base_class.js')
+		));
+
+		Configure::write('debug', 1);
+		$results = $this->Helper->inlineScript('all.js');
+
+		$expected = <<<EOF
+<script>var BaseClass = new Class({
+
+});</script>
+EOF;
+
+		$this->assertEquals($expected, $results);
+	}
+
+/**
+ * test inline javascript is generated
+ *
+ * @return void
+ */
+	public function testInlineScript() {
+		$config = $this->Helper->config();
+		$config->set('js.filters', array());
+		$config->paths('js', null, array(
+			$this->_testFiles . 'js' . DS . 'classes'
+		));
+
+		$config->addTarget('all.js', array(
+			'files' => array('base_class.js')
+		));
+
+		Configure::write('debug', 0);
+
+		$expected = <<<EOF
+<script>var BaseClass = new Class({
+
+});</script>
+EOF;
+
+		$result = $this->Helper->inlineScript('all.js');
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test inline javascript for multiple files is generated
+ *
+ * @return void
+ */
+	public function testInlineScriptMultiple() {
+		$config = $this->Helper->config();
+		$config->set('js.filters', array());
+		$config->paths('js', null, array(
+			$this->_testFiles . 'js' . DS . 'classes'
+		));
+
+		$config->addTarget('all.js', array(
+			'files' => array('base_class.js', 'base_class_two.js')
+		));
+
+		Configure::write('debug', 0);
+
+		$expected = <<<EOF
+<script>var BaseClass = new Class({
+
+});
+//= require "base_class"
+var BaseClassTwo = BaseClass.extend({
+
+});</script>
+EOF;
+
+		$result = $this->Helper->inlineScript('all.js');
+		$this->assertEquals($expected, $result);
+	}
 }

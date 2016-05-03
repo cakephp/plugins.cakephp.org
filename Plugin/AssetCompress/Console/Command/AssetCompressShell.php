@@ -113,11 +113,25 @@ class AssetCompressShell extends AppShell {
 			$this->err('No ' . $ext . ' build files defined, skipping');
 			return;
 		}
+		$this->_clearPath(CACHE . 'asset_compress' . DS, $themes, $targets);
+
 		$path = $this->_Config->cachePath($ext);
 		if (!file_exists($path)) {
 			$this->err('Build directory ' . $path . ' for ' . $ext . ' does not exist.');
 			return;
 		}
+		$this->_clearPath($path, $themes, $targets);
+	}
+
+/**
+ * Clear a path of build targets.
+ *
+ * @param string $path The path to clear.
+ * @param array $themes The themes to clear.
+ * @param array $targets The build targets to clear.
+ * @return void
+ */
+	protected function _clearPath($path, $themes, $targets) {
 		$dir = new DirectoryIterator($path);
 		foreach ($dir as $file) {
 			$name = $base = $file->getFilename();
@@ -125,9 +139,8 @@ class AssetCompressShell extends AppShell {
 				continue;
 			}
 			// timestampped files.
-			if (preg_match('/^.*\.v\d+\.[a-z]+$/', $name)) {
-				list($base, $v, $ext) = explode('.', $name, 3);
-				$base = $base . '.' . $ext;
+			if (preg_match('/^(.*)\.v\d+(\.[a-z]+)$/', $name, $matches)) {
+				$base = $matches[1] . $matches[2];
 			}
 			// themed files
 			foreach ($themes as $theme) {

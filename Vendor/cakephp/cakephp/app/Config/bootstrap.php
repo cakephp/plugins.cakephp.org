@@ -48,7 +48,6 @@ Cache::config('default', array('engine' => 'File'));
  *     'Vendor'                    => array('/path/to/vendors/', '/next/path/to/vendors/'),
  *     'Plugin'                    => array('/path/to/plugins/', '/next/path/to/plugins/'),
  * ));
- *
  */
 
 /**
@@ -57,7 +56,6 @@ Cache::config('default', array('engine' => 'File'));
  *
  * Inflector::rules('singular', array('rules' => array(), 'irregular' => array(), 'uninflected' => array()));
  * Inflector::rules('plural', array('rules' => array(), 'irregular' => array(), 'uninflected' => array()));
- *
  */
 
 /**
@@ -66,8 +64,13 @@ Cache::config('default', array('engine' => 'File'));
  * advanced ways of loading plugins
  *
  * CakePlugin::loadAll(); // Loads all plugins at once
- * CakePlugin::load('DebugKit'); //Loads a single plugin named DebugKit
+ * CakePlugin::load('DebugKit'); // Loads a single plugin named DebugKit
+ */
+
+/**
+ * To prefer app translation over plugin translation, you can set
  *
+ * Configure::write('I18n.preferApp', true);
  */
 
 /**

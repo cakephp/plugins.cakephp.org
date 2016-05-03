@@ -15,7 +15,6 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-
 App::uses('HttpResponse', 'Network/Http');
 
 /**
@@ -268,10 +267,19 @@ class HttpResponseTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $r);
 
-		$header = "Multi-Line: I am a \r\nmulti line\t\r\nfield value.\r\nSingle-Line: I am not\r\n";
+		$header = "Date:Sat, 07 Apr 2007 10:10:25 GMT\r\nLink: \r\nX-Total-Count: 19\r\n";
 		$r = $this->HttpResponse->parseHeader($header);
 		$expected = array(
-			'Multi-Line' => "I am a\r\nmulti line\r\nfield value.",
+			'Date' => 'Sat, 07 Apr 2007 10:10:25 GMT',
+			'Link' => '',
+			'X-Total-Count' => '19',
+		);
+		$this->assertEquals($expected, $r);
+
+		$header = "Multi-Line: I am a\r\n multi line \r\n\tfield value.\r\nSingle-Line: I am not\r\n";
+		$r = $this->HttpResponse->parseHeader($header);
+		$expected = array(
+			'Multi-Line' => "I am a multi line field value.",
 			'Single-Line' => 'I am not'
 		);
 		$this->assertEquals($expected, $r);
@@ -453,12 +461,13 @@ class HttpResponseTest extends CakeTestCase {
 /**
  * testDecodeChunkedBodyError method
  *
- * @expectedException SocketException
  * @return void
  */
 	public function testDecodeChunkedBodyError() {
 		$encoded = "19\r\nThis is a chunked message\r\nE\r\n\nThat is cool\n\r\n";
-		$this->HttpResponse->decodeChunkedBody($encoded);
+		$result = $this->HttpResponse->decodeChunkedBody($encoded);
+		$expected = "This is a chunked message\nThat is cool\n";
+		$this->assertEquals($expected, $result['body']);
 	}
 
 /**

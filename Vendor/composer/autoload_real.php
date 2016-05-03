@@ -27,28 +27,30 @@ class ComposerAutoloaderInit3ccc97d385067be7e111c5d57317be8c
         array_push($includePaths, get_include_path());
         set_include_path(join(PATH_SEPARATOR, $includePaths));
 
-        $map = require __DIR__ . '/autoload_namespaces.php';
-        foreach ($map as $namespace => $path) {
-            $loader->set($namespace, $path);
-        }
+        $useStaticLoader = PHP_VERSION_ID >= 50600 && !defined('HHVM_VERSION');
+        if ($useStaticLoader) {
+            require_once __DIR__ . '/autoload_static.php';
 
-        $map = require __DIR__ . '/autoload_psr4.php';
-        foreach ($map as $namespace => $path) {
-            $loader->setPsr4($namespace, $path);
-        }
+            call_user_func(\Composer\Autoload\ComposerStaticInit3ccc97d385067be7e111c5d57317be8c::getInitializer($loader));
+        } else {
+            $map = require __DIR__ . '/autoload_namespaces.php';
+            foreach ($map as $namespace => $path) {
+                $loader->set($namespace, $path);
+            }
 
-        $classMap = require __DIR__ . '/autoload_classmap.php';
-        if ($classMap) {
-            $loader->addClassMap($classMap);
+            $map = require __DIR__ . '/autoload_psr4.php';
+            foreach ($map as $namespace => $path) {
+                $loader->setPsr4($namespace, $path);
+            }
+
+            $classMap = require __DIR__ . '/autoload_classmap.php';
+            if ($classMap) {
+                $loader->addClassMap($classMap);
+            }
         }
 
         $loader->register(true);
 
         return $loader;
     }
-}
-
-function composerRequire3ccc97d385067be7e111c5d57317be8c($file)
-{
-    require $file;
 }

@@ -86,9 +86,9 @@ class ExceptionRenderer {
  * If the error is a CakeException it will be converted to either a 400 or a 500
  * code error depending on the code used to construct the error.
  *
- * @param Exception $exception Exception
+ * @param Exception|ParseError $exception Exception
  */
-	public function __construct(Exception $exception) {
+	public function __construct($exception) {
 		$this->controller = $this->_getController($exception);
 
 		if (method_exists($this->controller, 'appError')) {
@@ -153,9 +153,20 @@ class ExceptionRenderer {
 			try {
 				$controller = new CakeErrorController($request, $response);
 				$controller->startupProcess();
+				$startup = true;
 			} catch (Exception $e) {
-				if (!empty($controller) && $controller->Components->enabled('RequestHandler')) {
+				$startup = false;
+			}
+			// Retry RequestHandler, as another aspect of startupProcess()
+			// could have failed. Ignore any exceptions out of startup, as
+			// there could be userland input data parsers.
+			if ($startup === false &&
+				!empty($controller) &&
+				$controller->Components->enabled('RequestHandler')
+			) {
+				try {
 					$controller->RequestHandler->startup($controller);
+				} catch (Exception $e) {
 				}
 			}
 		}

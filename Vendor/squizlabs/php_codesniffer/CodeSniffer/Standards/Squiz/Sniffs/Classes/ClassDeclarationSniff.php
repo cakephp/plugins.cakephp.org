@@ -62,7 +62,7 @@ class Squiz_Sniffs_Classes_ClassDeclarationSniff extends PSR2_Sniffs_Classes_Cla
 
     }//end process()
 
-    
+
     /**
      * Processes the opening section of a class declaration.
      *
@@ -113,6 +113,9 @@ class Squiz_Sniffs_Classes_ClassDeclarationSniff extends PSR2_Sniffs_Classes_Cla
     public function processClose(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
+        if (isset($tokens[$stackPtr]['scope_closer']) === false) {
+            return;
+        }
 
         $closeBrace = $tokens[$stackPtr]['scope_closer'];
         if ($tokens[($closeBrace - 1)]['code'] === T_WHITESPACE) {
@@ -162,8 +165,9 @@ class Squiz_Sniffs_Classes_ClassDeclarationSniff extends PSR2_Sniffs_Classes_Cla
         // Check the closing brace is on it's own line, but allow
         // for comments like "//end class".
         $nextContent = $phpcsFile->findNext(T_COMMENT, ($closeBrace + 1), null, true);
-        if ($tokens[$nextContent]['content'] !== $phpcsFile->eolChar && $tokens[$nextContent]['line'] === $tokens[$closeBrace]['line']) {
-            $type  = strtolower($tokens[$stackPtr]['content']);
+        if ($tokens[$nextContent]['content'] !== $phpcsFile->eolChar
+            && $tokens[$nextContent]['line'] === $tokens[$closeBrace]['line']
+        ) {
             $error = 'Closing %s brace must be on a line by itself';
             $data  = array($tokens[$stackPtr]['content']);
             $phpcsFile->addError($error, $closeBrace, 'CloseBraceSameLine', $data);

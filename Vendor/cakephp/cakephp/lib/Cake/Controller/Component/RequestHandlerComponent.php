@@ -32,7 +32,6 @@ App::uses('Xml', 'Utility');
  *
  * @package       Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/request-handling.html
- *
  */
 class RequestHandlerComponent extends Component {
 
@@ -162,7 +161,7 @@ class RequestHandlerComponent extends Component {
 		$accepts = $this->response->mapType($accept);
 		$preferedTypes = current($accepts);
 		if (array_intersect($preferedTypes, array('html', 'xhtml'))) {
-			return null;
+			return;
 		}
 
 		$extensions = Router::extensions();
@@ -229,7 +228,7 @@ class RequestHandlerComponent extends Component {
  */
 	public function convertXml($xml) {
 		try {
-			$xml = Xml::build($xml);
+			$xml = Xml::build($xml, array('readFile' => false));
 			if (isset($xml->data)) {
 				return Xml::toArray($xml->data);
 			}
@@ -280,7 +279,7 @@ class RequestHandlerComponent extends Component {
  * "304 Not Modified" header.
  *
  * @param Controller $controller Controller instance.
- * @return bool false if the render process should be aborted
+ * @return bool False if the render process should be aborted.
  */
 	public function beforeRender(Controller $controller) {
 		if ($this->settings['checkHttpCache'] && $this->response->checkNotModified($this->request)) {
@@ -724,7 +723,7 @@ class RequestHandlerComponent extends Component {
  * Maps a content type alias back to its mime-type(s)
  *
  * @param string|array $alias String alias to convert back into a content type. Or an array of aliases to map.
- * @return string Null on an undefined alias. String value of the mapped alias type. If an
+ * @return string|null Null on an undefined alias. String value of the mapped alias type. If an
  *   alias maps to more than one content type, the first one will be returned.
  */
 	public function mapAlias($alias) {

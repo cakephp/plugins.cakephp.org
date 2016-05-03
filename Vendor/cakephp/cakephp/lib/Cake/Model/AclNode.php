@@ -39,7 +39,6 @@ class AclNode extends Model {
 
 /**
  * Constructor
- *
  */
 	public function __construct() {
 		$config = Configure::read('Acl.database');
@@ -116,8 +115,7 @@ class AclNode extends Model {
 			$result = $db->read($this, $queryData, -1);
 			$path = array_values($path);
 
-			if (
-				!isset($result[0][$type]) ||
+			if (!isset($result[0][$type]) ||
 				(!empty($path) && $result[0][$type]['alias'] != $path[count($path) - 1]) ||
 				(empty($path) && $result[0][$type]['alias'] != $start)
 			) {

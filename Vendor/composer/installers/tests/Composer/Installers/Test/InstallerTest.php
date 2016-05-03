@@ -85,12 +85,14 @@ class InstallerTest extends TestCase
     {
         return array(
             array('agl-module', true),
+            array('aimeos-extension', true),
             array('annotatecms-module', true),
             array('annotatecms-component', true),
             array('annotatecms-service', true),
             array('bitrix-module', true),
             array('bitrix-component', true),
             array('bitrix-theme', true),
+            array('bonefish-package', true),
             array('cakephp', false),
             array('cakephp-', false),
             array('cakephp-app', false),
@@ -108,13 +110,20 @@ class InstallerTest extends TestCase
             array('craft-plugin', true),
             array('croogo-plugin', true),
             array('croogo-theme', true),
+            array('dokuwiki-plugin', true),
+            array('dokuwiki-template', true),
             array('drupal-module', true),
             array('dolibarr-module', true),
             array('elgg-plugin', true),
             array('fuel-module', true),
             array('fuel-package', true),
+            array('fuel-theme', true),
+            array('fuelphp-component', true),
             array('hurad-plugin', true),
             array('hurad-theme', true),
+            array('imagecms-template', true),
+            array('imagecms-module', true),
+            array('imagecms-library', true),
             array('joomla-library', true),
             array('kirby-plugin', true),
             array('kohana-module', true),
@@ -138,6 +147,8 @@ class InstallerTest extends TestCase
             array('phpbb-extension', true),
             array('pimcore-plugin', true),
             array('ppi-module', true),
+            array('prestashop-module', true),
+            array('prestashop-theme', true),
             array('puppet-module', true),
             array('redaxo-addon', true),
             array('redaxo-bestyle-plugin', true),
@@ -148,17 +159,26 @@ class InstallerTest extends TestCase
             array('shopware-theme', true),
             array('silverstripe-module', true),
             array('silverstripe-theme', true),
+            array('smf-module', true),
+            array('smf-theme', true),
             array('symfony1-plugin', true),
+            array('thelia-module', true),
+            array('thelia-frontoffice-template', true),
+            array('thelia-backoffice-template', true),
+            array('thelia-email-template', true),
             array('tusk-task', true),
             array('tusk-asset', true),
             array('typo3-flow-plugin', true),
             array('typo3-cms-extension', true),
+            array('whmcs-gateway', true),
             array('wolfcms-plugin', true),
             array('wordpress-plugin', true),
             array('wordpress-core', false),
             array('zend-library', true),
             array('zikula-module', true),
             array('zikula-theme', true),
+            array('kodicms-plugin', true),
+            array('kodicms-media', true),
         );
     }
 
@@ -184,12 +204,14 @@ class InstallerTest extends TestCase
     {
         return array(
             array('agl-module', 'More/MyTestPackage/', 'agl/my_test-package'),
+            array('aimeos-extension', 'ext/ai-test/', 'author/ai-test'),
             array('annotatecms-module', 'addons/modules/my_module/', 'vysinsky/my_module'),
             array('annotatecms-component', 'addons/components/my_component/', 'vysinsky/my_component'),
             array('annotatecms-service', 'addons/services/my_service/', 'vysinsky/my_service'),
-            array('bitrix-module', 'local/modules/my_module/', 'author/my_module'),
-            array('bitrix-component', 'local/components/my_component/', 'author/my_component'),
-            array('bitrix-theme', 'local/templates/my_theme/', 'author/my_theme'),
+            array('bitrix-module', 'bitrix/modules/my_module/', 'author/my_module'),
+            array('bitrix-component', 'bitrix/components/my_component/', 'author/my_component'),
+            array('bitrix-theme', 'bitrix/templates/my_theme/', 'author/my_theme'),
+            array('bonefish-package', 'Packages/bonefish/package/', 'bonefish/package'),
             array('cakephp-plugin', 'Plugin/Ftp/', 'shama/ftp'),
             array('chef-cookbook', 'Chef/mre/my_cookbook/', 'mre/my_cookbook'),
             array('chef-role', 'Chef/roles/my_role/', 'mre/my_role'),
@@ -202,6 +224,8 @@ class InstallerTest extends TestCase
             array('craft-plugin', 'craft/plugins/my_plugin/', 'mdcpepper/my_plugin'),
             array('croogo-plugin', 'Plugin/Sitemaps/', 'fahad19/sitemaps'),
             array('croogo-theme', 'View/Themed/Readable/', 'rchavik/readable'),
+            array('dokuwiki-plugin', 'lib/plugins/someplugin/', 'author/someplugin'),
+            array('dokuwiki-template', 'lib/tpl/sometemplate/', 'author/sometemplate'),
             array('dolibarr-module', 'htdocs/custom/my_module/', 'shama/my_module'),
             array('drupal-module', 'modules/my_module/', 'shama/my_module'),
             array('drupal-theme', 'themes/my_module/', 'shama/my_module'),
@@ -210,8 +234,13 @@ class InstallerTest extends TestCase
             array('elgg-plugin', 'mod/sample_plugin/', 'test/sample_plugin'),
             array('fuel-module', 'fuel/app/modules/module/', 'fuel/module'),
             array('fuel-package', 'fuel/packages/orm/', 'fuel/orm'),
-            array('hurad-plugin', 'Plugin/Akismet/', 'atkrad/akismet'),
-            array('hurad-theme', 'View/Themed/Hurad2013/', 'atkrad/Hurad2013'),
+            array('fuel-theme', 'fuel/app/themes/theme/', 'fuel/theme'),
+            array('fuelphp-component', 'components/demo/', 'fuelphp/demo'),
+            array('hurad-plugin', 'plugins/Akismet/', 'atkrad/akismet'),
+            array('hurad-theme', 'plugins/Hurad2013/', 'atkrad/Hurad2013'),
+            array('imagecms-template', 'templates/my_template/', 'shama/my_template'),
+            array('imagecms-module', 'application/modules/my_module/', 'shama/my_module'),
+            array('imagecms-library', 'application/libraries/my_library/', 'shama/my_library'),
             array('joomla-plugin', 'plugins/my_plugin/', 'shama/my_plugin'),
             array('kirby-plugin', 'site/plugins/my_plugin/', 'shama/my_plugin'),
             array('kohana-module', 'modules/my_package/', 'shama/my_package'),
@@ -235,7 +264,10 @@ class InstallerTest extends TestCase
             array('moodle-mod', 'mod/my_package/', 'shama/my_package'),
             array('october-module', 'modules/my_plugin/', 'shama/my_plugin'),
             array('october-plugin', 'plugins/shama/my_plugin/', 'shama/my_plugin'),
+            array('october-theme', 'themes/my_theme/', 'shama/my_theme'),
             array('piwik-plugin', 'plugins/VisitSummary/', 'shama/visit-summary'),
+            array('prestashop-module', 'modules/a-module/', 'vendor/a-module'),
+            array('prestashop-theme', 'themes/a-theme/', 'vendor/a-theme'),
             array('phpbb-extension', 'ext/test/foo/', 'test/foo'),
             array('phpbb-style', 'styles/foo/', 'test/foo'),
             array('phpbb-language', 'language/foo/', 'test/foo'),
@@ -256,18 +288,27 @@ class InstallerTest extends TestCase
             array('silverstripe-module', 'framework/', 'silverstripe/framework', '3.0.0-rc1'),
             array('silverstripe-module', 'framework/', 'silverstripe/framework', 'my/branch'),
             array('silverstripe-theme', 'themes/my_theme/', 'shama/my_theme'),
+            array('smf-module', 'Sources/my_module/', 'shama/my_module'),
+            array('smf-theme', 'Themes/my_theme/', 'shama/my_theme'),
             array('symfony1-plugin', 'plugins/sfShamaPlugin/', 'shama/sfShamaPlugin'),
             array('symfony1-plugin', 'plugins/sfShamaPlugin/', 'shama/sf-shama-plugin'),
+            array('thelia-module', 'local/modules/my_module/', 'shama/my_module'),
+            array('thelia-frontoffice-template', 'templates/frontOffice/my_template_fo/', 'shama/my_template_fo'),
+            array('thelia-backoffice-template', 'templates/backOffice/my_template_bo/', 'shama/my_template_bo'),
+            array('thelia-email-template', 'templates/email/my_template_email/', 'shama/my_template_email'),
             array('tusk-task', '.tusk/tasks/my_task/', 'shama/my_task'),
             array('typo3-flow-package', 'Packages/Application/my_package/', 'shama/my_package'),
             array('typo3-flow-build', 'Build/my_package/', 'shama/my_package'),
             array('typo3-cms-extension', 'typo3conf/ext/my_extension/', 'shama/my_extension'),
+            array('whmcs-gateway', 'modules/gateways/gateway_name/', 'vendor/gateway_name'),
             array('wolfcms-plugin', 'wolf/plugins/my_plugin/', 'shama/my_plugin'),
             array('wordpress-plugin', 'wp-content/plugins/my_plugin/', 'shama/my_plugin'),
             array('wordpress-muplugin', 'wp-content/mu-plugins/my_plugin/', 'shama/my_plugin'),
             array('zend-extra', 'extras/library/zend_test/', 'shama/zend_test'),
             array('zikula-module', 'modules/my-test_module/', 'my/test_module'),
             array('zikula-theme', 'themes/my-test_theme/', 'my/test_theme'),
+            array('kodicms-media', 'cms/media/vendor/my_media/', 'shama/my_media'),
+            array('kodicms-plugin', 'cms/plugins/my_plugin/', 'shama/my_plugin'),
         );
     }
 
@@ -343,6 +384,27 @@ class InstallerTest extends TestCase
         ));
         $result = $installer->getInstallPath($package);
         $this->assertEquals('my/custom/path/my_plugin/', $result);
+    }
+
+    /**
+     * testVendorPath
+     */
+    public function testVendorPath()
+    {
+        $installer = new Installer($this->io, $this->composer);
+        $package = new Package('penyaskito/my_module', '1.0.0', '1.0.0');
+        $package->setType('drupal-module');
+        $consumerPackage = new RootPackage('drupal/drupal', '1.0.0', '1.0.0');
+        $this->composer->setPackage($consumerPackage);
+        $consumerPackage->setExtra(array(
+          'installer-paths' => array(
+            'modules/custom/{$name}/' => array(
+              'vendor:penyaskito'
+            ),
+          ),
+        ));
+        $result = $installer->getInstallPath($package);
+        $this->assertEquals('modules/custom/my_module/', $result);
     }
 
     /**

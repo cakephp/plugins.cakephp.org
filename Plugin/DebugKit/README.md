@@ -11,14 +11,53 @@ The master branch has the following requirements:
 
 ## Installation
 
-* Clone/Copy the files in this directory into `app/Plugin/DebugKit`
+_[Using [Composer](http://getcomposer.org/)]_
 
-This can be done with the git submodule command
-```sh
-git submodule add https://github.com/cakephp/debug_kit.git app/Plugin/DebugKit
+Add the plugin to your project's `composer.json` - something like this:
+
+```javascript
+{
+  "require": {
+    "cakephp/debug_kit": "2.2.*"
+  }
+}
 ```
 
-* Ensure the plugin is loaded in `app/Config/bootstrap.php` by calling `CakePlugin::load('DebugKit');`
+Because this plugin has the type `cakephp-plugin` set in it's own `composer.json`, composer knows to install it inside your `/Plugin` directory, rather than in the usual vendors file. It is recommended that you add `/Plugin/DebugKit` to your .gitignore file. (Why? [read this](http://getcomposer.org/doc/faqs/should-i-commit-the-dependencies-in-my-vendor-directory.md).)
+
+> Consider using "require-dev" if you only want to include DebugKit for your development environment.
+
+_[Manual]_
+
+* Download the [DebugKit archive](https://github.com/cakephp/debug_kit/zipball/2.2).
+* Unzip that download.
+* Rename the resulting folder to `DebugKit`
+* Then copy this folder into `app/Plugin/`
+
+_[GIT Submodule]_
+
+In your app directory type:
+
+```bash
+git submodule add --branch 2.2 git://github.com/cakephp/debug_kit.git Plugin/DebugKit
+git submodule init
+git submodule update
+```
+
+_[GIT Clone]_
+
+In your plugin directory type
+
+```bash
+git clone --single-branch --branch 2.2 git://github.com/cakephp/debug_kit.git DebugKit
+```
+
+### Enable plugin
+
+* In 2.x you need to enable the plugin your `app/Config/bootstrap.php` file. If you are already using `CakePlugin::loadAll();`, then the following is not necessary.:
+```php
+    CakePlugin::load('DebugKit');
+```
 * Include the toolbar component in your `app/Controller/AppController.php`:
 ```php
 class AppController extends Controller {
@@ -29,19 +68,6 @@ class AppController extends Controller {
 * Make sure to remove the 'sql_dump' element from your layout (usually
   `app/View/Layouts/default.ctp`), if you want to experience the awesome that is
   the DebugKit SQL log.
-
-### Using Composer
-
-Ensure `require` is present in `composer.json`. This will install the plugin into `Plugin/DebugKit`:
-
-```json
-{
-    "require": {
-        "cakephp/debug_kit": "2.2.*"
-    }
-}
-```
-Consider using "require-dev" if you only want to include DebugKit for your development environment.
 
 ## Reporting Issues
 
@@ -270,4 +296,4 @@ the toolbar in your browser:
 - [FirePHP for chrome](https://chrome.google.com/webstore/detail/firephp-for-chrome/goajlbdffkligccnfgibeilhdnnpaead)
 - [FirePHP for firefox](https://addons.mozilla.org/en-US/firefox/addon/firephp/)
 
-Once you have installed the correct extension, you should see the toolbar data output on each ajax request.
+Once you have installed the correct extension, you should see the toolbar data output on each AJAX request.

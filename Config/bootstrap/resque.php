@@ -1,4 +1,5 @@
 <?php
+App::uses('Debugger', 'Utility');
 App::uses('Hash', 'Utility');
 
 // Output debug info as log in CLI
