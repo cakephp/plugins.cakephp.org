@@ -1,4 +1,4 @@
-<?php echo $this->Form->create(false, array('action' => 'index', 'class' => 'form search-bar', 'role' => 'form'));?>
+<?php echo $this->Form->create(false, array('url' => ['action' => 'index'], 'class' => 'form search-bar', 'role' => 'form'));?>
 	<div class="form-group has-feedback">
 		<?php
 			echo $this->Form->input('query', array(
