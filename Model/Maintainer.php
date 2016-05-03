@@ -287,14 +287,14 @@ class Maintainer extends AppModel
 
         if (!empty($results[0]['Package'])) {
             foreach ($results[0]['Package'] as $i => $result) {
-                $results[0]['Package'][$i]['description'] = trim($result['Package'][$i]['description']);
+                $results[0]['Package'][$i]['description'] = trim($result[0]['Package'][$i]['description']);
                 if (empty($results[0]['Package'][$i]['description'])) {
                     $results[0]['Package'][$i]['description'] = 'No description available';
                 }
 
                 $results[0]['Package'][$i]['Category']['color'] = '';
                 if (!empty($results[0]['Package'][$i]['Category']['slug'])) {
-                    $results[0]['Package'][$i]['Category']['color'] = $this->Package->packageColor($result['Package'][$i]['Category']['slug']);
+                    $results[0]['Package'][$i]['Category']['color'] = $this->Package->packageColor($results[0]['Package'][$i]['Category']['slug']);
                 }
             }
         }
