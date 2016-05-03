@@ -350,6 +350,7 @@ end
 namespace :asset do
   desc 'Clears assets'
   task :clear do
+    run "mkdir -p #{current_release}/tmp/cache/asset_compress"
     run "cd #{current_release} && CAKE_ENV=#{deploy_env} #{deploy_to}/lib/Cake/Console/cake -app #{current_release} AssetCompress.asset_compress clear"
   end
 
@@ -365,8 +366,9 @@ namespace :asset do
 
   desc 'Rebuilds assets'
   task :rebuild do
-    run "cd #{current_release} && CAKE_ENV=#{deploy_env} #{deploy_to}/lib/Cake/Console/cake -app #{current_release} AssetCompress.asset_compress clear"
-    run "cd #{current_release} && CAKE_ENV=#{deploy_env} #{deploy_to}/lib/Cake/Console/cake -app #{current_release} AssetCompress.asset_compress build"
+    run "mkdir -p #{current_release}/tmp/cache/asset_compress"
+    top.asset.clear
+    top.asset.build
   end
 end
 
