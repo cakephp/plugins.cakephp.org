@@ -1,5 +1,5 @@
 <div class="clearfix columns">
-	<table class="datatable">
+	<table class="datatable table table-striped table-hover table-condensed">
 		<thead><?php
 			echo $this->Html->tableHeaders(array(
 				'Id', 'Name', 'By', 'Added On', 'Last Updated', 'Enabled?', 'Actions',
