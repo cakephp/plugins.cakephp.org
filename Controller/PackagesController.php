@@ -374,6 +374,23 @@ class PackagesController extends AppController
     }
 
 /**
+ * admin_version
+ *
+ * @param int $id package id
+ * @return void
+ */
+    public function admin_version($id = null, $version = null)
+    {
+        try {
+            $this->Package->versionPackage($id, $version);
+            $this->Session->setFlash(__('Versioned package #%d', $id), 'flash/success');
+        } catch (Exception $e) {
+            $this->Session->setFlash($e->getMessage(), 'flash/error');
+        }
+        return $this->redirect($this->referer());
+    }
+
+/**
  * Ability to kick off admin jobs
  *
  * @return void

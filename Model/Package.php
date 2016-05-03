@@ -326,6 +326,7 @@ class Package extends AppModel
             $query['fields'] = array(
                 "{$this->alias}.{$this->primaryKey}", "{$this->alias}.name",
                 "{$this->alias}.description", "{$this->alias}.watchers", "{$this->alias}.modified",
+                "{$this->alias}.tags",
                 'Category.name', 'Category.slug',
                 'Maintainer.username',
             );
@@ -381,10 +382,13 @@ class Package extends AppModel
                 }
 
                 if (!empty($query['named']['version'])) {
-                    $query['conditions'][] = array(
-                        'Tag.keyname LIKE' => $query['named']['version'] . '%',
-                        'Tag.identifier' => 'version',
-                    );
+                    $query['named']['version'] = str_replace(['.x', '.'], '', $query['named']['version']);
+                    if (array($query['named']['version'], ['12', '13', '2', '3'])) {
+                        $query['conditions'][] = array(
+                            'Tag.keyname LIKE' => $query['named']['version'] . '%',
+                            'Tag.identifier' => 'version',
+                        );
+                    }
                 }
 
                 $query['joins'][] = array(
@@ -739,6 +743,11 @@ class Package extends AppModel
             }
         }
 
+        $results[0]['Category']['color'] = '';
+        if (!empty($results[0]['Category']['slug'])) {
+            $results[0]['Category']['color'] = $this->packageColor($results[0]['Category']['slug']);
+        }
+
         DebugTimer::start('app.Package::rss', __d('app', 'Package::rss()'));
         list($results[0]['Rss'], $results[0]['Cache']) = $this->rss($results[0]);
         DebugTimer::stop('app.Package::rss');
@@ -960,6 +969,42 @@ class Package extends AppModel
         }
 
         throw new BadRequestException(__("Unable to %s package", $action));
+    }
+
+/**
+ * Tags a package with a version. Packages can be tagged mulitple versions
+ *
+ * @return boolean
+ **/
+    public function versionPackage($packageId, $version)
+    {
+        if (!$packageId && $this->id) {
+            $packageId = $this->id;
+        }
+
+        if (!$packageId) {
+            throw new NotFoundException(__("Cannot version a non-existent package"));
+        }
+
+        $package = $this->find('first', ['conditions' => ["{$this->alias}.id" => $packageId]]);
+        if (empty($package)) {
+            throw new NotFoundException(__("Cannot version a non-existent package"));
+        }
+
+        $this->id = $packageId;
+        if (empty($package['Package']['tags'])) {
+            $package['Package']['tags'] = 'version:' . $version;
+        } else {
+            $package['Package']['tags'] .= ',version:' . $version;
+        }
+        $package['Package']['tags'] = explode(',', $package['Package']['tags']);
+        $package['Package']['tags'] = array_unique($package['Package']['tags']);
+        $package['Package']['tags'] = implode(',', $package['Package']['tags']);
+        if ($this->save($package)) {
+            return true;
+        }
+
+        throw new BadRequestException(__("Unable to categorize package #%d", $packageId));
     }
 
 /**

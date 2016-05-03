@@ -38,6 +38,10 @@
 				<td><strong>has behavior/helper/...</strong></td>
 				<td>has:component</td>
 			</tr>
+			<tr>
+				<td><strong>version number</strong></td>
+				<td>version:3</td>
+			</tr>
 		</tbody>
 	</table>
 </div>
