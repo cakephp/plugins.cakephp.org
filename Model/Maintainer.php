@@ -255,6 +255,7 @@ class Maintainer extends AppModel
                     'fields' => array(
                         $this->Package->primaryKey, 'maintainer_id',
                         'name', 'description', 'last_pushed_at', 'watchers',
+                        'tags',
                     ),
                 )
             );
