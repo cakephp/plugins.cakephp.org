@@ -6,3 +6,4 @@ tmp/logs/*.log
 tmp/cache/debug_kit/*
 tmp/cache/models/*
 tmp/cache/persistent/*
+tmp/cache/asset_compress
