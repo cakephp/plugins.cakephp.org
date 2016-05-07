@@ -19,28 +19,24 @@
 				<small>Handles file uploading sans ridiculous automagic</small>
 			</td></tr>
 			<tr><td>
-				<?php echo $this->Resource->packageLink('Migrations', 502, 'migrations'); ?>
-				<small>Migrations Plugin for CakePHP</small>
-			</td></tr>
-			<tr><td>
 				<?php echo $this->Resource->packageLink('CRUDPlugin', 1600, 'crud'); ?>
 				<small>Enables rapid prototyping of production ready code, JSON/XML APIs and more</small>
 			</td></tr>
 			<tr><td>
-				<?php echo $this->Resource->packageLink('BoostCake', 1534, 'cakephp-plugin-boost_cake'); ?>
+				<?php echo $this->Resource->packageLink('BootstrapUI', 1911, 'bootstrap-ui'); ?>
 				<small>Bootstrap Plugin for CakePHP</small>
-			</td></tr>
-			<tr><td>
-				<?php echo $this->Resource->packageLink('AppTemplate', 1641, 'app-template'); ?>
-				<small>A 2.5 cakephp application template, for use with composer</small>
 			</td></tr>
 			<tr><td>
 				<?php echo $this->Resource->packageLink('CakePDF', 1402, 'CakePdf'); ?>
 				<small>CakePHP plugin for creating and/or rendering PDF</small>
 			</td></tr>
 			<tr><td>
-				<?php echo $this->Resource->packageLink('OPAuth', 1577, 'cakephp-opauth'); ?>
-				<small>Allows simple plug-n-play 3rd-party OAuth integration</small>
+				<?php echo $this->Resource->packageLink('Footprint', 1852, 'Footprint'); ?>
+				<small>Allow passing currently logged in user to model layer</small>
+			</td></tr>
+			<tr><td>
+				<?php echo $this->Resource->packageLink('JwtAuth', 1764, 'cakephp-jwt-auth'); ?>
+				<small>Authentication using JSON Web Tokens</small>
 			</td></tr>
 		</tbody>
 	</table>
