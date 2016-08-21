@@ -1,12 +1,3 @@
-[submodule "Plugin/Favorites"]
-	path = Plugin/Favorites
-	url = git://github.com/CakeDC/favorites.git
-[submodule "Plugin/Categories"]
-	path = Plugin/Categories
-	url = git://github.com/josegonzalez/categories.git
-[submodule "Plugin/DataTable"]
-	path = Plugin/DataTable
-	url = git://github.com/josegonzalez/cakephp-datatable.git
 [submodule "Plugin/Resque"]
 	path = Plugin/Resque
 	url = git://github.com/josegonzalez/Cake-Resque.git
