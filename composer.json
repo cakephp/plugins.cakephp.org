@@ -21,7 +21,10 @@
         "cakedc/utils": "1.4.3",
         "phpunit/phpunit": "3.7.*",
         "cakephp/cakephp-codesniffer": "~0.1",
-        "cakedc/ratings": "1.2.0"
+        "cakedc/ratings": "1.2.0",
+        "cakedc/favorites": "dev-master#855f117bade5cf05892e22e3f088ec356b5a1ec0",
+        "cakedc/categories": "dev-master#8804f244d02192642c9ffcca9a72e61438edb489",
+        "tigrang/cakephp-datatable": "dev-master#ff3b2d5485ba66903700acb6c92a98a4eac59306"
     },
     "config": {
         "bin-dir": "Console"
@@ -64,6 +67,14 @@
                     ]
                 }
             }
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/CakeDC/categories"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/josegonzalez/favorites"
         }
     ]
 }
