@@ -1,0 +1,59 @@
+{
+    "name": "josegonzalez/app",
+    "description": "CakePHP skeleton app",
+    "homepage": "https://github.com/josegonzalez/app",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=5.5.9",
+        "ext-intl": "*",
+        "ext-mbstring": "*",
+        "ext-pdo_sqlite": "*",
+        "ext-pdo_mysql": "*",
+        "ext-pdo_pgsql": "*",
+        "cakephp/cakephp": "~3.3",
+        "mobiledetect/mobiledetectlib": "2.*",
+        "cakephp/migrations": "~1.0",
+        "cakephp/plugin-installer": "*",
+        "josegonzalez/dotenv": "2.*",
+        "friendsofcake/crud": "4.*",
+        "friendsofcake/crud-view": "0.*",
+        "friendsofcake/bootstrap-ui": "0.*",
+        "friendsofcake/search": "1.*",
+        "markstory/asset_compress": "3.*",
+        "josegonzalez/cakephp-upload": "3.*",
+        "josegonzalez/cakephp-queuesadilla": "0.2.*",
+        "josegonzalez/queuesadilla": "*",
+        "josegonzalez/php-error-handlers": "0.*"
+    },
+    "require-dev": {
+        "psy/psysh": "@stable",
+        "cakephp/debug_kit": "~3.2",
+        "cakephp/bake": "~1.1",
+        "cakephp/cakephp-codesniffer": "~2.1"
+    },
+    "suggest": {
+        "phpunit/phpunit": "Allows automated tests to be run without system-wide install."
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\Test\\": "tests",
+            "Cake\\Test\\": "./vendor/cakephp/cakephp/tests"
+        }
+    },
+    "scripts": {
+        "compile": [
+            "bin/cake migrations migrate"
+        ],
+        "post-install-cmd": "App\\Console\\Installer::postInstall",
+        "post-create-project-cmd": "App\\Console\\Installer::postInstall",
+        "post-autoload-dump": "Cake\\Composer\\Installer\\PluginInstaller::postAutoloadDump"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
