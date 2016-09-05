@@ -211,6 +211,9 @@ if (Configure::read('debug')) {
     Plugin::load('DebugKit', ['bootstrap' => true]);
 }
 
+// Site info
+Configure::load('site');
+
 // Handle the CakeQueuesadilla
 Plugin::load('Josegonzalez/CakeQueuesadilla');
 \Josegonzalez\CakeQueuesadilla\Queue\Queue::config(Configure::consume('Queuesadilla'));

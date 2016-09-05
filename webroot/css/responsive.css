@@ -1,0 +1,1041 @@
+@media (max-width: 767px) {
+/*CSS LIDO EM DISPOSITIVOS ATÉ 767 PX DE LARGURA*/
+    .title-home h1 {
+    	font-size: 22px;
+	    margin-bottom: 5px;
+	    font-weight: 300;
+	    line-height: 22px;
+	}
+
+	.logo-cake img {
+		margin-top: 20px;
+    	margin-bottom: 14px;
+	}
+
+	.navbar-right {
+	float: right!important;
+    margin-right: -15px;
+	}
+
+	.title-home h3 {
+		font-size: 40px;
+	    font-weight: 200;
+	    letter-spacing: 0.01em;
+	}
+
+	.btn-fest {
+		margin-bottom: 70px;
+	}
+
+	.box-data {
+		margin: 0 30px;
+	}
+
+	.sub-fest {
+		font-size: 32px;
+		margin: 0;
+	}
+
+	.sub-expertise {
+		font-size: 33px;
+    	margin-bottom: 5px;
+	}
+
+	.btn-expertise {
+		margin-bottom: 60px;
+	}
+
+	.icon-expertise-2 {
+		text-align: left;
+	}
+
+	.box-services-d:hover .icon-expertise-2 {
+		text-align: left;
+	}
+
+	.title-expertise {
+		line-height: 1;
+    	padding-top: 10px;
+    	padding-bottom: 5px;
+	}
+
+	#companies h3 {
+		font-size: 50px;
+	}
+
+	.title-red {
+	    font-size: 40px;
+	}
+
+	#quote h4 {
+		font-size: 35px;
+	}
+
+	#quote h5 {
+		text-align: left;
+	    line-height: 1;
+	    margin-top: 30px;
+	}
+
+	#quote h6 {
+		text-align: left;
+	}
+
+	.subtitle-black {
+		font-size: 30px;
+    	line-height: 34px;
+	}
+
+	.icon-sharing {
+		font-size: 276px;
+    	margin-top: 538px;
+	}
+
+	#sharing {
+		padding-bottom: 222px;
+	}
+
+	.social iframe {
+		    margin: 5px;
+	}
+
+	.social {
+		margin-bottom: 20px;
+	}
+
+	.footer-social {
+		text-align: center;
+    	padding: 0 !important;
+    	width: 100%;
+	}
+
+	.footer-social > li {
+		display: inline-block;
+	    padding: 13px 14px 10px;
+	    background: #272727;
+	    margin: 7px 5px;
+	    border-radius: 6px;
+	}
+
+	.search-form {
+		top: -21px;
+	}
+
+	.icon-social, .icon-irc, .icon-social-q {
+		margin-bottom: 30px;
+	}
+
+	.submenu {
+		background-color: #D33C44;
+	}
+
+	#wrap input[type="text"]:focus {
+		width: 300px;
+	}
+
+	#wrap input[type="text"] {
+		font-size: 16px;
+		height: 60px;
+	}
+
+	#wrap input[type="submit"] {
+		height: 58px;
+	}
+
+	.nav-up {
+		top: -600px;
+	}
+
+	.menu-title-m {
+		margin-top: 180px;
+	}
+
+	.logo {
+		padding: 14px 0;
+	}
+
+	.toggle-menu .fa {
+		margin: 21px 0;
+	}
+
+	#sub {
+		margin-top: 60px;
+	}
+
+	#fb-root-face {
+		margin-bottom: 12px;
+	}
+
+	#cakefest p {
+		text-align: center;
+	}
+
+	.sub-expertise {
+		text-align: center;
+	}
+
+	#expertise p {
+		text-align: center;
+	}
+
+	.icon-expertise-2 {
+		text-align: center;
+	}
+
+	.title-expertise{
+		text-align: center;
+	}
+
+	.box-services-d:hover .icon-expertise-2 {
+    	text-align: center;
+	}
+
+	.git-frame iframe{
+		padding-left: 34%;
+	}
+
+	.social-footer a {
+		padding: 10px 6px;
+	}
+
+	.phone-support i {
+		font-size: 23px;
+	    padding: 11px 18px 10px;
+	    vertical-align: 3px;
+	}
+
+	.phone-support h6 {
+		font-size: 30px;
+    	padding: 5px 20px;
+	}
+
+	.skype-support i {
+	    vertical-align: 1px;
+    	font-size: 23px;
+	}
+
+	.skype-support h6 {
+	    padding: 6px 20px 5px;
+    	font-size: 30px;
+	}
+
+	.t-support h3{
+	    line-height: 40px;
+	    font-size: 40px;
+	}
+
+	.t-support h5{
+	    line-height: 27px;
+	    font-size: 18px;
+	    margin-top: 15px;
+	}
+
+	.phone-support-number {
+		font-size: 20px;
+	}
+
+	.phone-support-i {
+		font-size: 20px;
+	}
+
+
+	/* ---------------------- COOK BOOK ------------------------- */
+
+
+	#cookbook {
+		padding-top: 50px;
+	}
+
+	.nav-btn {
+    	padding-top: 73px;
+    	padding-bottom: 17px;
+	}
+
+	.read-the-book a {
+		    margin: 15px 5px 22px;
+	}
+
+	.btn-nav {
+		    font-size: 11px;
+	}
+
+	#slideout {
+		bottom: 0;
+	}
+
+	#slideout_inner {
+		bottom: 0;
+	}
+
+	#slideout-2 {
+		bottom: 0;
+	}
+
+	#slideout_inner-2 {
+		bottom: 0;
+	}
+
+	/* ---------------------- VIDEOS ------------------------- */
+
+	#videos-full {
+		margin-top: 60px !important;
+	}
+
+	.page-breadcrumbs-wrapper {
+		top: 0;
+	}
+
+	.pagination > li > a {
+		padding: 5px 10px;
+		font-size: 15px;
+	}
+
+	.pagination > li > a > .fa {
+		font-size: 12px;
+	}
+
+	.page-breadcrumbs a {
+		padding: 10px;
+	}
+
+	.title-videos h3 {
+	    font-size: 25px;
+	}
+
+	.title-videos h1 {
+	    font-size: 35px;
+	    margin-top: -30px;
+	}
+
+	.submenu-videos {
+		text-align: center;
+		float: none;
+		padding-right: 0;
+	}
+
+	.portfolio-filter li {
+		padding: 0 5px;
+	}
+
+
+	/* ---------------------- SHOWCASE ------------------------- */
+
+	.show-title {
+		padding-top: 120px;
+	}
+
+	.showcase-cases {
+		padding: 0;
+	}
+
+	.showcase-cases > div{
+		padding: 0;
+	}
+
+	.featured-case h3 {
+    	text-align: center;
+    	margin: 0;
+    	margin-top: 30px;
+	}
+
+	.featured-case h4 {
+		font-size: 20px;
+    	text-align: center;
+	}
+
+	.title-showcase h3 {
+		font-size: 25px;
+    	line-height: 40px;
+    	margin-bottom: 70px;
+	}
+
+	.showcase-cases h4 {
+		text-align: center;
+	}
+
+	.showcase-cases p, .featured-case p, .featured-case-2 p, .featured-case-2 h3, .featured-case-3 h3, .featured-case-3 p, .big-testimonial blockquote {
+		text-align: center;
+	}
+
+	.showcase-cases img {
+		margin-bottom: 20px;
+	}
+
+	.icon-modal-show {
+		margin-bottom: 40px;
+    	margin-top: 20px;
+	}
+
+	.icon-modal-show span {
+		font-size: 140px;
+	}
+
+	.t-modal-show h4 {
+		text-align: center;
+	    font-size: 50px;
+	    margin-bottom: 20px;
+	}
+
+	.t-modal-show span {
+		text-align: center;
+	}
+
+	.t-modal-show p {
+		text-align: center;
+	}
+
+	.control-label-rapid {
+		padding-left: 15px;
+	}
+
+	.form-plugin-rapid {
+		margin-bottom: 0;
+	}
+
+	.icon-dc-modal span {
+		font-size: 40px;
+	}
+
+
+	/* ---------------------- CALENDAR ------------------------- */
+
+	.title-calendar h1 {
+		line-height: 55px;
+	}
+
+	.check-calendar h3 {
+		line-height: 30px;
+		margin-bottom: 10px;
+	}
+
+	.check-calendar {
+		padding-bottom: 30px;
+	}
+
+
+	/* ---------------------- GET INVOLVED ------------------------- */
+
+	.get-involved h2 {
+		line-height: 55px;
+	}
+
+	.gray-stripe {
+		padding-top: 120px;
+	}
+
+	.icon-getinvolved {
+		display: block;
+	    margin-top: 30px;
+	    font-size: 110px;
+	}
+
+	/* ---------------------- CERTIFICATION ------------------------- */
+
+	.certification h2 {
+		line-height: 45px;
+	}
+
+	.certification h3 {
+		line-height: 35px;
+	}
+
+	.box-certification {
+		margin-bottom: 60px;
+	}
+
+	/* ---------------------- MY PHP ------------------------- */
+
+	.icon-social-mycake {
+		margin-top: 110px;
+	}
+
+	.mycake-login h4 {
+		line-height: 40px;
+	}
+
+	.title-mycake span {
+		font-size: 80px;
+	    display: block;
+	    margin-top: 50px;
+	}
+
+	.mycake-username h4 {
+		margin-top: 60px;
+	}
+
+	.mycake-profile img {
+		width: 100%;
+	}
+
+	.mycake-edit h6 {
+	    margin-top: 60px;
+	}
+
+	.icon-privacy {
+	    display: block;
+    	margin-top: 25px;
+	}
+
+	.title-mycake h1 {
+		line-height: 50px;
+	}
+
+
+	/* ---------------------- TRADEMARKS ------------------------- */
+
+
+	.t-circle-trade {
+		margin-bottom: 60px;
+	}
+
+	/* ---------------------- ERROR ------------------------- */
+
+	.icon-error span {
+		font-size: 130px;
+	}
+
+	.notfound-padd {
+		padding-top: 170px;
+	    padding-bottom: 50px;
+	}
+
+	/* ---------------------- CART ------------------------- */
+
+	.title-cart {
+	    font-size: 14px;
+	    font-weight: 200;
+	    letter-spacing: 0.01em;
+	    line-height: 35px;
+	    vertical-align: 0px;
+	}
+
+	.shop-cart table .product img {
+		margin-right: 10px;
+	}
+
+
+	/* ---------------------- CONTACT ------------------------- */
+
+	.expertise-contact {
+		margin-bottom: 60px;
+	}
+
+
+	/* ---------------------- BARKERY ------------------------- */
+
+
+	.sub-bakery {
+		display: block;
+    	padding-top: 30px;
+	}
+
+	/* ---------------------- PLUGINS ------------------------- */
+
+	.pop-track-plugin {
+		margin-top: 40px;
+	}
+
+	.cake-pack-plugin {
+		margin-top: 40px;
+	}
+
+	.results-plugin {
+		padding: 25px 0;
+	}
+
+	.plugin-right {
+		text-align: right;
+	}
+
+	.breadcurmbs-plugin a{
+		padding: 0px;
+    	display: inline-block;
+	}
+
+	.title-plugin span {
+		font-size: 80px;
+	    display: block;
+	    margin-top: 50px;
+	}
+
+	/* ---------------------- BLOG RESULTS ------------------------- */
+
+	.t-blog-results h5 {
+		    margin-bottom: 0;
+	}
+
+
+
+	.title-2 {
+		font-size: 25px;
+		line-height: 30px;
+	}
+
+	.title-3 {
+		font-size: 35px;
+		font-weight: 200;
+		letter-spacing: 0.01em;
+		line-height: 35px;
+	}
+
+	/* ---------------------- TEAM ------------------------- */
+
+	.modal-team {
+		    margin-bottom: 0;
+	}
+
+	.t-team h1 {
+		font-size: 40px;
+	}
+
+	.t-team h1 span {
+		font-size: 45px;
+		padding: 0 10px;
+	}
+
+	.t-team h3 {
+		font-size: 25px;
+	}
+
+	/* ---------------------- BUSINESS SOLUTIONS ------------------------- */
+
+	.title-business-dc h5 {
+		text-align: center;
+	}
+
+	.icon-business-dev {
+		font-size: 230px;
+		padding-bottom: 110px;
+	}
+
+	.buss-icon-1 {
+	    padding-top: 60px;
+	    display: block;
+	    padding-bottom: 80px;
+	    font-size: 140px;
+	}
+
+	.buss-icon-2 {
+	    margin-top: 19px;
+	    display: block;
+	    font-size: 140px;
+	    padding-bottom: 30px;
+	}
+
+	.buss-icon-3 {
+	    display: block;
+	    font-size: 110px;
+	    padding-bottom: 10px;
+	    padding-top: 70px;
+	}
+
+	.buss-icon-4 {
+	    padding-top: 70px;
+	}
+
+	.buss-icon-5 {
+	    padding-top: 70px;
+	    text-align: left;
+	    display: block;
+	    padding-bottom: 70px;
+	    font-size: 140px;
+	}
+
+	.buss-icon-6 {
+	    padding-top: 30px;
+	    font-size: 100px;
+	    text-align: left;
+	    display: block;
+	    padding-bottom: 60px;
+	}
+
+	.phone-busi {
+	    font-size: 20px;
+	}
+
+	.phone-icon-busi {
+		font-size: 20px;
+	}
+
+	.premium-contact-busi p {
+		display: block;
+    	margin-bottom: 30px;
+	}
+
+}
+
+
+
+
+
+
+
+
+
+
+@media (min-width: 768px) and (max-width: 991px) {
+/*CSS LIDO EM DISPOSITIVOS ATÉ 991 PX DE LARGURA*/
+	.header-transparent .main-header {
+		background-color: #d33c44;
+	}
+
+	.search-form {
+		top: -21px;
+	}
+
+	.menu > li > a:hover, .menu > li > a:focus, .menu > li:hover > a {
+		color: rgb(202, 202, 202);
+	}
+
+	.align-middle {
+		top: 14%;
+	}
+
+	.box-cakefest {
+	    padding: 120px 10px 80px;
+	    top: 240px;
+	    margin: 0px 90px;
+	}
+
+	.btn-fest {
+		margin-bottom: 70px;
+	}
+
+	.box-data {
+		margin: 0 190px;
+	}
+
+	.btn-expertise {
+		margin-bottom: 50px;
+	}
+
+	.icon-sharing {
+		    margin-top: 350px;
+    font-size: 350px;
+	}
+
+	#sharing {
+		padding-bottom: 160px;
+	}
+
+	.footer-social {
+		text-align: center;
+    	width: 100%;
+    	margin-top: 30px;
+	}
+
+	.fa-menu-title {
+		font-size: 17px;
+	    display: block;
+	    padding-bottom: 8px;
+	}
+
+	.icon-social, .icon-irc, .icon-social-q {
+		margin-bottom: 30px;
+	}
+
+	.social {
+		    margin-bottom: 44px;
+	}
+
+	.menu > li > a {
+		    padding: 25px 25px;
+	}
+
+	#cakefest p {
+		text-align: center;
+	}
+
+	.sub-expertise {
+		text-align: center;
+	}
+
+	#expertise p {
+		text-align: center;
+	}
+
+	.icon-expertise-2 {
+		text-align: center;
+	}
+
+	.title-expertise{
+		text-align: center;
+	}
+
+
+	.box-services-d:hover .icon-expertise-2 {
+    	text-align: center;
+	}
+
+	.social-footer a {
+		padding: 10px 20px;
+	}
+
+	.logo-cake img {
+	    margin-top: 15px;
+	    margin-bottom: 14px;
+	}
+
+	#sub {
+	    margin-top: 60px;
+	}
+
+	#wrap input[type="text"]:focus {
+		width: 450px;
+	}
+
+	#wrap input[type="text"] {
+		font-size: 16px;
+		height: 60px;
+	}
+
+	#wrap input[type="submit"] {
+		height: 58px;
+	}
+
+	/* ---------------------- COOK BOOK ------------------------- */
+
+	#cookbook {
+		padding-top: 50px;
+	}
+	
+	#slideout {
+		bottom: 0;
+	}
+
+	#slideout_inner {
+		bottom: 0;
+	}
+
+	#slideout-2 {
+		bottom: 0;
+	}
+
+	#slideout_inner-2 {
+		bottom: 0;
+	}
+
+	/* ---------------------- SHOWCASE ------------------------- */
+
+	.featured-case h3 {
+		text-align: center;
+	}
+
+	.featured-case h4 {
+		text-align: center;
+	}
+	
+	/* ---------------------- CALENDAR ------------------------- */
+
+	.title-calendar h1 {
+		line-height: 55px;
+	}
+	
+	/* ---------------------- GET INVOLVED ------------------------- */
+
+	.get-involved h2 {
+		line-height: 55px;
+	}
+
+	.icon-getinvolved {
+		display: block;
+	    font-size: 100px;
+	    margin-top: 30px;
+	}
+
+	/* ---------------------- MY CAKE ------------------------- */
+
+	.title-mycake h1 {
+		line-height: 50px;
+	}
+
+	
+	/* ---------------------- TRADEMARKS ------------------------- */
+
+
+
+	.t-circle-trade {
+		margin-bottom: 60px;
+	}
+
+	.box-mark {
+		margin-bottom: 180px;
+	}
+
+
+	/* ---------------------- CART ------------------------- */
+
+	.title-cart {
+	    font-size: 14px;
+	    font-weight: 200;
+	    letter-spacing: 0.01em;
+	    line-height: 35px;
+	    vertical-align: 0px;
+	}
+
+	.shop-cart table .product img {
+		margin-right: 10px;
+	}
+
+	/* ---------------------- CONTACT ------------------------- */
+
+	.expertise-contact {
+		margin-bottom: 50px;
+	}
+
+	/* ---------------------- PLUGINS ------------------------- */
+
+	.pop-track-plugin {
+		margin-top: 40px;
+	}
+
+	.cake-pack-plugin {
+		margin-top: 40px;
+	}
+	
+	.title-plugin span {
+		color: #bdbdb5;
+	    font-size: 90px;
+	    vertical-align: -39px;
+	}
+
+
+	.title-2 {
+		font-size: 25px;
+		line-height: 30px;
+	}
+
+	.title-3 {
+		font-size: 35px;
+		font-weight: 200;
+		letter-spacing: 0.01em;
+		line-height: 35px;
+	}
+
+	/* ---------------------- BUSINESS SOLUTIONS ------------------------- */
+
+	.title-business-dc h5 {
+		    text-align: center;
+	}
+
+	
+}
+
+
+
+
+
+
+
+
+
+
+@media (min-width: 992px) and (max-width: 1199px) {
+/*CSS LIDO EM DISPOSITIVOS ATÉ 1199 PX DE LARGURA*/
+	.menu > li > a {
+		padding: 25px 35px;
+	}
+
+	.menu-fixed .menu > li > a {
+		padding: 25px 25px;
+	}
+
+	.box-cakefest {
+		margin: 0;
+	}
+
+	.icon-fest {
+		font-size: 150px;
+	}
+
+	.box-data h6 span {
+		font-size: 130px;
+	}
+
+	.box-data h6 {
+		padding-bottom: 30px;
+	}
+
+	.box-data h5 {
+		margin: 0;
+    	line-height: 1;
+	}
+
+	.box-data h4 {
+		margin: 0;
+	}
+
+	.icon-sharing {
+    	margin-top: 144px;
+    	font-size: 380px;
+	}
+
+	#sharing {
+		padding-bottom: 150px;
+	}
+
+	.fa-menu-title {
+		font-size: 17px;
+	    display: block;
+	    padding-bottom: 8px;
+	}
+
+	.footer-social {
+		text-align: center;
+	}
+
+	.footer-social > li {
+		    margin-right: 16px;
+	}
+
+	.social {
+		padding-left: 0 !important;
+	}
+
+	.icon-expertise-2 {
+		font-size: 120px;
+	}
+
+
+	/* ---------------------- COOK BOOK ------------------------- */
+
+	.t-language h6 {
+		font-size: 9px;
+	}
+
+	.dropdown > a {
+		font-size: 12px;
+		    padding: 5px 5px !important;
+	}
+
+	.th1-business h1 {
+	  	line-height: 45px;
+	}
+
+	.title-business-dc h5 {
+		    margin-top: 30px;
+	}
+
+	.social-footer a {
+		padding: 10px 12px;
+	}
+
+
+}
+
+@media (min-width: 1200px) {
+  /*CSS LIDO EM DISPOSITIVOS DE MAIS DE 1200 PX DE LARGURA*/
+	.hero, .hero-2 {
+		background-attachment: fixed;
+	}
+
+	.th1-business h1 {
+		line-height: 24px;
+	}
+
+	.social-footer a {
+		padding: 10px 18px;
+	}
+
+  
+}

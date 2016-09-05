@@ -13,6 +13,8 @@
  */
 namespace App\View;
 
+use BootstrapUI\View\UIViewTrait;
+use Cake\Event\EventListenerInterface;
 use Cake\View\View;
 
 /**
@@ -22,8 +24,10 @@ use Cake\View\View;
  *
  * @link http://book.cakephp.org/3.0/en/views.html#the-app-view
  */
-class AppView extends View
+class AppView extends View implements EventListenerInterface
 {
+
+    use UIViewTrait;
 
     /**
      * Initialization hook method.
@@ -36,5 +40,41 @@ class AppView extends View
      */
     public function initialize()
     {
+        \Cake\Log\Log::info(json_encode($this->request));
+        $this->initializeUI(['layout' => $this->layout]);
+        $this->loadHelper('AssetCompress.AssetCompress');
+        $this->loadHelper('Menu');
+        $this->loadHelper('Form');
+        $this->eventManager()->on($this);
+    }
+
+    /**
+     * Returns a list of all events that this View class will listen to.
+     *
+     * @return array List of events this class listens to. Defaults to `[]`.
+     */
+    public function implementedEvents()
+    {
+        return [
+            'View.beforeLayout' => 'beforeLayout',
+        ];
+    }
+
+    /**
+     * View.beforeLayout event
+     *
+     * @param string $layoutFileName Name of layout being rendered
+     * @return void
+     * @throws \Cake\Core\Exception\Exception if there is an error in the view.
+     */
+    public function beforeLayout($layoutFileName)
+    {
+        $controllerName = lcfirst($this->request->params['controller']);
+        $actionName = $this->request->params['action'];
+
+        $this->set([
+            '_bodyId' => $controllerName,
+            '_bodyClass' => "{$controllerName}-{$actionName}",
+        ]);
     }
 }

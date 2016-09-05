@@ -51,12 +51,34 @@ Router::scope('/', function (RouteBuilder $routes) {
      * its action called 'display', and we pass a param to select the view file
      * to use (in this case, src/Template/Pages/home.ctp)...
      */
-    $routes->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
+    $routes->connect('/', ['controller' => 'Packages', 'action' => 'home']);
 
     /**
      * ...and connect the rest of 'Pages' controller's URLs.
      */
     $routes->connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
+
+    $routes->connect('/1/:action/*', ['controller' => 'api', 'one' => true]);
+
+    $routes->connect(
+        '/p/:id-:slug',
+        ['controller' => 'Packages', 'action' => 'view'],
+        ['id' => '[0-9]+', 'slug' => '[\w_-]+']
+    );
+
+    $routes->connect(
+        '/m/:id-:slug',
+        ['controller' => 'Maintainers', 'action' => 'view'],
+        ['id' => '[0-9]+', 'slug' => '[\w_-]+']
+    );
+
+    $routes->connect('/login', ['controller' => 'Users', 'action' => 'login']);
+
+    $routes->connect('/suggest', ['controller' => 'Packages', 'action' => 'suggest']);
+
+    $routes->connect('/admin', ['controller' => 'Users', 'action' => 'admin']);
+    $routes->connect('/package/*', ['controller' => 'Packages', 'action' => 'utility_redirect']);
+    $routes->connect('/maintainer/*', ['controller' => 'Maintainers', 'action' => 'view']);
 
     /**
      * Connect catchall routes for all controllers.

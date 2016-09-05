@@ -1,0 +1,196 @@
+.t-cook-nav a {
+    color: #B8B8AE;
+}
+.search .twitter-typeahead {
+    width: 100%;
+}
+.form-cook {
+    padding: 6px 12px;
+}
+.search-cook {
+    margin-top: 6px;
+}
+.search-cook span {
+    font-size: 26px;
+}
+.standalone-search button, .search-cook button {
+    padding-left: 0;
+    color: #565656;
+    font-size: 23px;
+    border: 0;
+    outline: 0;
+    background: transparent;
+}
+.icon-submenu-cook {
+    padding: 0 6px 0 0;
+}
+.fa-menu-en {
+    vertical-align: 0;
+}
+/* category box */
+.category-container {
+    border: 1px solid #eee;
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #eee;
+    overflow: hidden;
+    padding-bottom: 16px;
+    padding-top: 20px;
+    position: relative;
+}
+.category-container ul {
+    display: inline-block;
+    left: 2%;
+    list-style-type: none;
+    margin-bottom: 0;
+    margin-left: 1%;
+    margin-right: 1%;
+    position: relative;
+    width: 16.8%;
+    -moz-transition: .6s ease-in-out left;
+    -o-transition: .6s ease-in-out left;
+    -webkit-transition: .6s ease-in-out left;
+    transition: .6s ease-in-out left;
+}
+.category-container a {
+    color: #1a1a1a;
+    font-size: 11px;
+    letter-spacing: 1px;
+    overflow: hidden;
+    text-transform: uppercase;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+/* page-related */
+.packages-home .hero {
+    background-image: none;
+    background-color: #bbb;
+    padding: 70px 0 70px 0;
+}
+.packages-home .hero h3 {
+    font-size: 40px;
+    max-width: 810px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+.maintainers-view .hero-2,
+.packages-home .hero-2,
+.packages-index .hero-2,
+.user-details .hero-2,
+.maintainers-view .user-details {
+    background-color: #ececec;
+    border-bottom: 1px solid #d3d3d3;
+    border-top: 1px solid #d3d3d3;
+    margin-bottom: 0;
+    padding-bottom: 70px;
+}
+.maintainers-view .user-details {
+    background-color: #fff;
+}
+.packages-home h3.title-white {
+    margin-bottom: 0;
+}
+.packages-home h4.title-white {
+    font-size: 25px;
+}
+.package-list {
+    padding-top: 5px;
+    margin-bottom: 40px;
+}
+.package-list .package-snippet {
+    background: #fff url(../images/white-cube.2290f4f1.png) no-repeat 0 50%;
+    background-color: #fff;
+    background-image: url(../images/white-cube.ae2a3e5d.svg),linear-gradient(transparent,transparent);
+    background-position: 20px;
+    border: 1px solid #d3d3d3;
+    box-shadow: 1px 1px 2px 1px rgba(0,0,0,.05);
+    height: 120px;
+    margin: 10px 0;
+    padding: 15px 40px;
+    text-align: left;
+}
+.package-list .package-snippet h4 {
+    line-height: 30px;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+.package-list .package-snippet .package-tags {
+    margin-bottom: 0;
+}
+.package-list .package-snippet .package-description {
+    display:inline-block;
+    height: 26px;
+    max-width: 473px;
+    margin-bottom: 0;
+    overflow:hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.packages-index .package-results-header {
+    margin-bottom: 15px;
+    margin-top: 35px;
+    text-align: center;
+}
+.packages-index .package-total {
+    margin-bottom: 35px;
+    text-align: center;
+}
+.packages-view .breadcrumbs {
+    margin-bottom: 0;
+    margin-top: 20px;
+}
+.packages-view .package-header {
+    margin-bottom: 15px;
+    margin-top: 35px;
+    text-align: center;
+}
+.packages-view tr {
+    height: 34px;
+}
+.packages-view .table > tbody > tr > td {
+    padding: 8px;
+}
+.packages-view .clone-url-form .clone-url {
+    background-color: transparent;
+    color: #333;
+    height: 26px;
+    padding: 0;
+}
+.packages-view .clone-url-form .form-group {
+    margin-bottom: 0;
+}
+.packages-view .package-last-fetched {
+    font-size: 85%;
+    margin-bottom: 20px;
+}
+/* Maintainer View */
+.maintainers-view .user-details {
+    padding: 0;
+    position: relative;
+}
+.maintainers-view .user-details .user-image {
+    position: relative;
+    text-align: center;
+    width: 100%;
+    z-index: 1;
+}
+ .maintainers-view .user-image img {
+     clear: both;
+     margin: auto;
+     position: relative;
+     width: 80px;
+ }
+.maintainers-view .user-details .user-info-block {
+    background: rgb(255, 255, 255);
+    width: 100%;
+    z-index: 0;
+}
+.maintainers-view .user-info-block .user-heading {
+    text-align: center;
+    width: 100%;
+}
+.maintainers-view .user-info-block .user-heading .user-username {
+    margin-bottom: 0;
+}
+.maintainers-view .user-info-block .user-heading .user-name {
+    line-height: 26px;
+}

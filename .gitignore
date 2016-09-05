@@ -3,3 +3,6 @@
 /tmp/*
 /logs/*
 .env
+/webroot/cache_css
+/webroot/cache_js
+!empty

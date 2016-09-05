@@ -1,0 +1,382 @@
+body {
+	-webkit-overflow-scrolling:  touch !important;
+}
+
+.alert {
+	margin-top: 25px;
+}
+
+.back-red.view {
+	color: white;
+}
+
+.crud-actions a {
+	margin-right:5px;
+}
+
+.display_archive .campaign a {
+	font-size: 15px;
+	color: #363637;
+	letter-spacing: 0.04em;
+	margin-bottom: 120px;
+	font-weight: normal;
+}
+
+.display_archive .campaign {
+	font-weight: bold;
+	font-size: 15px;
+	height: 30px;
+	font-family: 'Raleway', sans-serif;
+}
+
+.t-videos h4 {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.t-videos {
+	margin-bottom: 30px;
+}
+
+.page-content-trad li {
+	font-size: 12px;
+}
+
+.trademark ol {
+	counter-reset: item;
+	padding-left: 1.2em;
+}
+.trademark li {
+	display: block
+}
+.trademark li:before {
+	content: counters(item, ".") " ";
+	counter-increment: item
+}
+
+.back-red .form-control::-webkit-input-placeholder { color: white; }
+.back-red .form-control:-moz-placeholder { color: white; }
+.back-red .form-control::-moz-placeholder { color: white; }
+.back-red .form-control:-ms-input-placeholder { color: white; }
+
+.mc-field-group {
+	text-align: left;
+}
+
+.form .mc-field-group ul label {
+	display: inline;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+input[type="radio"]:checked:before {
+	background: #505050;
+}
+
+.panel.more-cases {
+	text-transform: none;
+	text-align: left;
+}
+
+.intl-tel-input {
+	width: 100% !important;
+}
+.rapid-contact-feedback {
+	padding:10px;
+	text-align: center;
+	border-radius: 5px;
+}
+i.icon-get {
+	color: #d33c44;
+	font-size: 50px;
+}
+
+.get-involved a {
+	color: #2f85ae;
+}
+
+i.get-social-icon {
+	font-size: 30px;
+	color: #bdbdb5;
+	line-height: 48px;
+	vertical-align: -7px;
+	padding-left: 10px;
+}
+
+i.icon-irc-2 {
+	font-weight: 700;
+	font-size: 20px;
+	color: #bdbdb5;
+	font-style: normal;
+	padding-left: 5px;
+}
+
+i.icon-social {
+	color: #bdbdb5;
+	font-size: 25px;
+}
+
+
+
+
+.stripe-rebra {
+	background: #D33C44;
+	padding-top: 140px;
+}
+
+.title-rebranding h1 {
+	text-align: center;
+	color: white;
+	font-size: 50px;
+	line-height: 55px;
+	letter-spacing: 0.01em;
+	font-weight: 200;
+}
+
+.rebranding h3 {
+	font-size: 30px;
+	line-height: 24px;
+	letter-spacing: 0.05em;
+	font-weight: 200;
+	color: #d33c44;
+}
+
+.rebranding p {
+	line-height: 24px;
+	letter-spacing: 0.05em;
+}
+
+.first-logo-cake {
+	text-align: center;
+	margin-top: 110px;
+}
+
+.logo-cake-2015 {
+	text-align: center;
+	margin-top: 70px;
+}
+
+.rebra-logo-subtext {
+	font-size: 12px;
+	font-style: italic;
+	font-weight: 500;
+	margin-top: 15px;
+}
+
+.rebranding-red h3 {
+	font-size: 30px;
+	line-height: 24px;
+	letter-spacing: 0.05em;
+	font-weight: 200;
+	color: white;
+}
+
+.rebranding-red p {
+	line-height: 24px;
+	letter-spacing: 0.05em;
+	color: white;
+}
+
+.rebra-detail {
+	position: absolute;
+	float: left;
+	top: 12px;
+	left: 0;
+}
+
+.cake-variations {
+	padding-top: 80px;
+	padding-bottom: 60px;
+}
+
+.ibaldo {
+	color: white;
+}
+
+.ibaldo:hover {
+	color: #D33C45;
+}
+
+
+
+
+
+.c-cake {
+	color: #D33C44;
+}
+
+.title-1 {
+	font-size: 50px;
+	font-weight: 200;
+	letter-spacing: 0.01em;
+	line-height: 50px;
+	margin: 0 0 20px 0;
+}
+
+.title-2 {
+	font-size: 35px;
+	font-weight: 200;
+	letter-spacing: 0.01em;
+	line-height: 40px;
+	margin: 0 0 15px;
+}
+
+.title-3 {
+	font-size: 27px;
+	font-weight: 300;
+	letter-spacing: 0.01em;
+	line-height: 40px;
+	margin: 0 0 15px;
+}
+
+.p-cake p{
+	font-size: 14px;
+	line-height: 24px;
+	letter-spacing: 0.05em;
+	font-weight: 400;
+}
+
+
+.t-extral {
+	font-weight: 200;
+}
+
+.mb110 {
+	margin-bottom: 110px !important;
+}
+
+.form-control-mylogin::-webkit-input-placeholder {
+	color: #D33C44;
+	text-align: center;
+	font-size: 15px;
+}
+
+.form-control-mylogin:-moz-placeholder {
+	color: #D33C44;
+	text-align: center;
+	font-size: 15px;
+}
+
+.form-control-mylogin::-moz-placeholder {
+	color: #D33C44;
+	text-align: center;
+	font-size: 15px;
+}
+
+.form-control-mylogin:-ms-input-placeholder {
+	color: #D33C44;
+	text-align: center;
+	font-size: 15px;
+}
+
+.row.col-p30 [class*="col-"].business-solution {
+	padding: 0 20px;
+}
+input#mc-embedded-subscribe {
+	background: white;
+	color: #D33C44;
+	padding: 15px 30px;
+    border-radius: 8px;
+    width: auto;
+}
+
+input[type="radio"]:checked:before {
+	background: #505050;
+}
+
+.error-message {
+	color:red;
+}
+
+.megamenu-list > li.main-title > a:hover,
+.megamenu-list > li.main-title > a:focus {
+	text-indent:0;
+}
+
+.call a {
+	cursor: pointer;
+}
+
+.circle-trade-1.cakedc {
+	background-color: #2F85AE;
+}
+
+.circle-trade-1.sf {
+	background-color: #D6B967;
+}
+
+.circle-trade-1.cakefest {
+	background-color: #1F97A0;
+}
+
+.circle-trade-1.talent {
+	background-color: #34bdd7;
+}
+
+.circle-trade-1.jobs {
+	background-color: #f8c530;
+}
+
+.circle-trade-1.university {
+	background-color: #31bbac;
+}
+.navbar-right .btn-menu {
+	margin-top: 14px;
+}
+
+#socials, .footer-wrapper {
+	z-index: 2;
+}
+
+.fa-menu {
+	padding-right: 5px;
+	font-size: 9px !important;
+}
+
+ul li.hide-me {
+	display: none;
+	padding-left: 25px;
+}
+
+ul li.click-me {
+	cursor: pointer;
+}
+
+ul.changelogs {
+	list-style: none;
+}
+
+@media (min-width:992px) {
+	.premium-contact-busi .info {
+		margin-top: 240px !important;
+	}
+}
+
+.carousel-inner>.item>img.img-responsive, .carousel-inner>.item>a>img.img-responsive {
+	width: 100%;
+
+}
+
+.send-button {
+    padding-top: 40px;
+}
+
+#development-busi .btn-expertise {
+	color: white;
+}
+
+.business-solution-t .t-modal-show h4 {
+    color: white;
+    font-size: 60px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 35px;
+    font-weight: 200;
+    line-height: 24px;
+}
+
+.business-solution-t p.rapid-contact-feedback {
+	margin-top: 15px;
+	color: white;
+}
