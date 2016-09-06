@@ -4,6 +4,9 @@
 .search .twitter-typeahead {
     width: 100%;
 }
+.search .twitter-typeahead .form-group {
+    margin-bottom: 0;
+}
 .form-cook {
     padding: 6px 12px;
 }
