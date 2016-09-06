@@ -11,11 +11,33 @@
                     </h2>
                 </div>
 
+                <?php $searchForm = $searchForm ?: null; ?>
                 <div class="col-md-5 hidden-sm">
-                    <form class="search" action="/packages" method="post">
+                    <?php echo $this->Form->create($searchForm, [
+                        'class' => 'search',
+                        'method' => 'post',
+                        'url' => ['plugin' => null, 'controller' => 'packages', 'action' => 'index'],
+                    ]); ?>
                         <div class="col-md-10 p0">
                             <span class="twitter-typeahead" style="position: relative; display: inline-block;">
-                                <input class="form-control form-cook tt-input" autocomplete="off" type="search" name="query" size="18" placeholder="Plugins Search (ex: debug has:component)" spellcheck="false" dir="auto" style="position: relative; vertical-align: top;">
+                                <?php
+                                    echo $this->Form->input('query', [
+                                        'before' => false,
+                                        'after' => false,
+                                        'class' => 'form-control form-cook tt-input',
+                                        'autocomplete' => 'off',
+                                        'type' => 'search',
+                                        'name' => 'query',
+                                        'size' => '18',
+                                        'placeholder' => __('Plugins Search (ex: debug has:component)'),
+                                        'spellcheck' => 'false',
+                                        'dir' => 'auto',
+                                        'style' => 'position: relative; vertical-align: top;',
+
+                                        'div' => false,
+                                        'label' => false,
+                                    ]);
+                                ?>
                             </span>
                         </div>
                         <div class="col-md-2 p0 search-cook">
@@ -23,7 +45,8 @@
                                 <span class="glyph_range icon-submenu icon-submenu-cook">A</span>
                             </button>
                         </div>
-                    </form>
+                    <?php echo $this->Form->end();?>
+
                 </div>
 
 

@@ -50,13 +50,15 @@ class PackagesController extends AppController
             ])->firstOrFail();
         }
 
-        $search = new SearchForm();
+        $searchForm = new SearchForm();
         // $packages = $this->paginate($this->Packages->find('index', $this->request->data));
         $packages = $this->Packages->find('index', $this->request->data)->all();
+
+        $this->request->data['query'] = $query;
         $this->set([
             'category' => $category,
             'packages' => $packages,
-            'search' => $search,
+            'searchForm' => $searchForm,
         ]);
     }
 
@@ -65,9 +67,9 @@ class PackagesController extends AppController
      */
     public function home()
     {
-        $search = new SearchForm();
+        $searchForm = new SearchForm();
         $suggest = new SuggestForm();
-        $this->set(['search' => $search, 'suggest' => $suggest]);
+        $this->set(['searchForm' => $searchForm, 'suggest' => $suggest]);
     }
 
     /**
