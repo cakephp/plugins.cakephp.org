@@ -4,6 +4,7 @@ namespace App\Model\Table\Finder;
 use Cake\Log\Log;
 use Cake\Network\Exception\NotFoundException;
 use Cake\ORM\Query;
+use Cake\Utility\Inflector;
 use InvalidArgumentException;
 
 trait PackageIndexFinderTrait
@@ -85,44 +86,33 @@ trait PackageIndexFinderTrait
             $query->where(["{$this->alias()}.forks >=" => (int)$options['forks']]);
         }
 
-        // if (!empty($options['has']) || !empty($options['version'])) {
-        //     foreach ($options['has'] as $has) {
-        //         $has = inflector::singularize(strtolower($has));
-        //         if (in_array($has, $this->validTypes)) {
-        //             $query->where([
-        //                 'Tag.keyname' => $has,
-        //                 'Tag.identifier' => 'contains',
-        //             ]);
-        //         }
-        //     }
+        if (!empty($options['version'])) {
+            $options['version'] = str_replace(['.x', '.'], '', $options['version']);
+            if (array($options['version'], ['12', '13', '2', '3'])) {
+                $query->where(["{$this->alias()}.tags LIKE " => '%version:' . $options['version'] . "%" ]);
+            }
+        }
 
-        //     if (!empty($options['version'])) {
-        //         $options['version'] = str_replace(['.x', '.'], '', $options['version']);
-        //         if (array($options['version'], ['12', '13', '2', '3'])) {
-        //             $query->where([
-        //                 'Tag.keyname LIKE' => $options['version'] . '%',
-        //                 'Tag.identifier' => 'version',
-        //             ]);
-        //         }
-        //     }
+        if (!empty($options['has'])) {
+            $query->innerJoin(
+                ['Tagged' => 'tagged'],
+                ['Tagged.foreign_key = Packages.id']
+            );
 
-        //     $query['joins'][] = array(
-        //         'alias' => 'Tagged',
-        //         'table' => 'tagged',
-        //         'type' => 'INNER',
-        //         'conditions' => array(
-        //             '`Tagged`.`foreign_key` = `' . $this->alias() . '`.`id`',
-        //         ),
-        //     );
-        //     $query['joins'][] = array(
-        //         'alias' => 'Tag',
-        //         'table' => 'tags',
-        //         'type' => 'INNER',
-        //         'conditions' => array(
-        //             '`Tagged`.`tag_id` = `Tag`.`id`',
-        //         ),
-        //     );
-        // }
+            foreach ($options['has'] as $has) {
+                $has = Inflector::singularize(strtolower($has));
+                if (in_array($has, $this->validTypes)) {
+                    $query->innerJoin(
+                        [$has . 'Tags' => 'tags'],
+                        [
+                            $has . 'Tags.id = Tagged.tag_id',
+                            $has . "Tags.keyname = '" . $has . "'",
+                            $has . "Tags.identifier = 'contains'",
+                        ]
+                    );
+                }
+            }
+        }
 
         if (!empty($options['category'])) {
             $query->matching('Categories', function ($q) use ($options) {
