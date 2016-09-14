@@ -72,8 +72,7 @@ class PackagesController extends AppController
     public function home()
     {
         $searchForm = new SearchForm();
-        $suggest = new SuggestForm();
-        $this->set(['searchForm' => $searchForm, 'suggest' => $suggest]);
+        $this->set(['searchForm' => $searchForm]);
     }
 
     /**
