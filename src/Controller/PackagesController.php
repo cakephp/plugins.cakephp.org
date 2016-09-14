@@ -31,6 +31,8 @@ class PackagesController extends AppController
 
     /**
      * Handles packages/index
+     *
+     * @return void
      */
     public function index()
     {
@@ -64,6 +66,8 @@ class PackagesController extends AppController
 
     /**
      * Handles packages/home
+     *
+     * @return void
      */
     public function home()
     {
@@ -74,6 +78,8 @@ class PackagesController extends AppController
 
     /**
      * Handles packages/view
+     *
+     * @return void
      */
     public function view()
     {
