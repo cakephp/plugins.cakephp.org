@@ -22,7 +22,7 @@
         "friendsofcake/search": "1.*",
         "markstory/asset_compress": "3.*",
         "josegonzalez/cakephp-upload": "3.*",
-        "josegonzalez/cakephp-queuesadilla": "0.2.*",
+        "josegonzalez/cakephp-queuesadilla": "0.3.*",
         "josegonzalez/queuesadilla": "*",
         "josegonzalez/php-error-handlers": "0.*"
     },
