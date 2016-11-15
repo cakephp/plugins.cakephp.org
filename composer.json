@@ -42,7 +42,7 @@
                 "name": "cssmin/cssmin",
                 "version": "3.0.1",
                 "dist": {
-                    "url": "http://cssmin.googlecode.com/files/cssmin-v3.0.1.php",
+                    "url": "https://github.com/stevecat/alldone/blob/master/package/cssmin-v3.0.1.php",
                     "type": "file"
                 },
                 "autoload": {
@@ -58,7 +58,7 @@
                 "name": "rgrove/jsmin-php",
                 "version": "1.1.2",
                 "dist": {
-                    "url": "https://raw.github.com/rgrove/jsmin-php/master/jsmin.php",
+                    "url": "https://github.com/rgrove/jsmin-php/blob/b85bf4f232698d5846a3656369a4f3a52617b06e/jsmin.php",
                     "type": "file"
                 },
                 "autoload": {
