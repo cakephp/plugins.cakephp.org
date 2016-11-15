@@ -76,7 +76,7 @@ class DATABASE_CONFIG
     public function __construct()
     {
         if (env('DATABASE_URL')) {
-            $dsn = parse_url(env('DATABASE_URL'))
+            $dsn = parse_url(env('DATABASE_URL'));
             $this->default['host'] = $dsn['host'];
             $this->default['login'] = $dsn['user'];
             $this->default['password'] = $dsn['pass'];
