@@ -75,6 +75,15 @@ class DATABASE_CONFIG
  */
     public function __construct()
     {
+        if (env('DATABASE_URL')) {
+            $dsn = parse_url(env('DATABASE_URL'))
+            $this->default['host'] = $dsn['host'];
+            $this->default['login'] = $dsn['user'];
+            $this->default['password'] = $dsn['pass'];
+            $this->default['database'] = substr($dsn['path'], 1);
+            return;
+        }
+
         // once Environment has decided where we at, it will write the name into Configure.
         if ($environment = Configure::read('Environment.name')) {
 
