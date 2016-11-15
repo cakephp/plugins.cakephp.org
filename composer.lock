@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4dd387238e561ca65376d1c59a65aa4f",
-    "content-hash": "c5a481dd23c496c772a815bec17b8493",
+    "hash": "6e3271217e357a121289bed986869671",
+    "content-hash": "6d58882f7636330492d1e3b673f5d263",
     "packages": [
         {
             "name": "cakedc/categories",
@@ -498,7 +498,7 @@
             "version": "3.0.1",
             "dist": {
                 "type": "file",
-                "url": "http://cssmin.googlecode.com/files/cssmin-v3.0.1.php",
+                "url": "https://github.com/stevecat/alldone/blob/master/package/cssmin-v3.0.1.php",
                 "reference": null,
                 "shasum": null
             },
@@ -1093,7 +1093,7 @@
             "version": "1.1.2",
             "dist": {
                 "type": "file",
-                "url": "https://raw.github.com/rgrove/jsmin-php/master/jsmin.php",
+                "url": "https://github.com/rgrove/jsmin-php/blob/b85bf4f232698d5846a3656369a4f3a52617b06e/jsmin.php",
                 "reference": null,
                 "shasum": null
             },
@@ -1181,16 +1181,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.8.9",
+            "version": "v2.8.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "0ceab136f43ed9d3e97b3eea32a7855dc50c121d"
+                "reference": "396784cd06b91f3db576f248f2402d547a077787"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/0ceab136f43ed9d3e97b3eea32a7855dc50c121d",
-                "reference": "0ceab136f43ed9d3e97b3eea32a7855dc50c121d",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/396784cd06b91f3db576f248f2402d547a077787",
+                "reference": "396784cd06b91f3db576f248f2402d547a077787",
                 "shasum": ""
             },
             "require": {
@@ -1226,7 +1226,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-07-17 09:06:15"
+            "time": "2016-10-21 20:59:10"
         },
         {
             "name": "tigrang/cakephp-datatable",
