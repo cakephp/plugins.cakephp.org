@@ -1,4 +1,12 @@
 <?php
+function fromenv($key, $default = null) {
+    $value = env($key);
+    if ($value === null) {
+        $value = $default;
+    }
+    return $value;
+}
+
 Environment::configure(
     'production',
     array('server' => array('plugins.cakephp.org')),
@@ -10,17 +18,17 @@ Environment::configure(
 
         'Disqus.disqus_shortname' => 'cakepackages',
         'Disqus.disqus_developer' => 0,
-        'Email.username'          => 'info@cakepackages.com',
-        'Email.password'          => 'password',
-        'Email.test'              => 'info@cakepackages.com',
-        'Email.from'              => 'info@cakepackages.com',
+        'Email.username'          => fromenv('EMAIL_USERNAME', 'info@cakepackages.com'),
+        'Email.password'          => fromenv('EMAIL_PASSWORD', 'password'),
+        'Email.test'              => fromenv('EMAIL_TEST', 'info@cakepackages.com'),
+        'Email.from'              => fromenv('EMAIL_FROM', 'info@cakepackages.com'),
         'logQueries'              => false,
 
-        'debug'                   => 0,
+        'debug'                   => (bool)fromenv('DEBUG', 0),
         'Cache.disable'           => false,
         'Routing.prefixes'        => array('admin', 'one'),
-        'Security.salt'           => 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi',
-        'Security.cipherSeed'     => '76859309657453542496749683645',
+        'Security.salt'           => fromenv('SECURITY_SALT', 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi'),
+        'Security.cipherSeed'     => fromenv('SECURITY_CIPHER_SEED', '76859309657453542496749683645'),
 
         'Favorites.types'         => array('bookmark' => 'Package'),
         'Favorites.defaultTexts'  => array('bookmark' => __('Bookmark')),
@@ -28,7 +36,7 @@ Environment::configure(
 
         'Category.sluggable'      => array('separator' => '-'),
 
-        'ResqueOverrides.Redis.host'      => 'localhost',
+        'ResqueOverrides.Redis.host'      => fromenv('DOKKU_REDIS_PLUGINS_PORT_6379_TCP_ADDR', 'localhost'),
         'ResqueOverrides.Redis.port'      => 6379,
         'ResqueOverrides.Redis.database'  => 0,
         'ResqueOverrides.Redis.namespace' => 'resque',
