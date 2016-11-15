@@ -29,6 +29,11 @@
     "config": {
         "bin-dir": "Console"
     },
+    "scripts": {
+        "compile": [
+            "bin/cake AssetCompress.asset_compress build"
+        ]
+    },
     "extra": {
         "heroku": {
             "document-root": "webroot",
