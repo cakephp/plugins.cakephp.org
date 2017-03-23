@@ -15,7 +15,7 @@ if (!env('APP_NAME')) {
         function ($data) {
             $keys = [
                 'Debug' => 'debug',
-                'Email.transport' => null,
+                'Email.transport' => 'EmailTransport',
                 'Database.debug.kit' => 'Datasources.debug_kit',
                 'Database.test' => 'Datasources.test',
                 'Database' => 'Datasources.default',
@@ -30,7 +30,17 @@ if (!env('APP_NAME')) {
                 }
                 $value = Hash::get($data, $key);
                 $data = Hash::remove($data, $key);
-                $data = Hash::insert($data, $newKey, $value);
+                if ($value !== null) {
+                    $data = Hash::insert($data, $newKey, $value);
+                }
+            }
+
+            foreach ($data['Email'] as $key => $config) {
+                if (isset($config['profile'])) {
+                    parse_str($config['profile'], $output);
+                    $data['Email'][$key] = array_merge($output, $data['Email'][$key]);
+                    unset($data['Email'][$key]['profile'], $output);
+                }
             }
 
             return $data;
