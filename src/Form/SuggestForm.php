@@ -1,11 +1,11 @@
 <?php
 namespace App\Form;
 
-use Cake\Form\Form;
+use App\Form\BaseForm;
 use Cake\Form\Schema;
 use Cake\Validation\Validator;
 
-class SuggestForm extends Form
+class SuggestForm extends BaseForm
 {
     protected function _buildSchema(Schema $schema)
     {
