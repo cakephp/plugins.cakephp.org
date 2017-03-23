@@ -21,7 +21,7 @@ class ExceptionRenderer extends CoreExceptionRenderer
             ucfirst($this->controller->request->action)
         );
 
-        if (method_exists($this, $renderMethod)) {
+        if (method_exists($this, $renderMethod) && $renderMethod !== 'render') {
             return $this->$renderMethod();
         }
 
