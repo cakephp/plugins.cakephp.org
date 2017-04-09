@@ -73,9 +73,11 @@
         document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
     </script>
     <script type="text/javascript">
-        var pageTracker = _gat._getTracker("UA-743287-4");
-        pageTracker._initData();
-        pageTracker._trackPageview();
+        if (typeof _gat === Object) {
+            var pageTracker = _gat._getTracker("UA-743287-4");
+            pageTracker._initData();
+            pageTracker._trackPageview();
+        }
     </script>
 <?php endif; ?>
 </body>
