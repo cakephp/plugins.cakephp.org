@@ -4,8 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "403b6d6df8939fa05b40d4d69ef83218",
-    "content-hash": "f4c52a4ba2ee38f24562f12d9cd1db0b",
+    "content-hash": "938a642b4e32e612200c9772a593ce38",
     "packages": [
         {
             "name": "airbrake/phpbrake",
@@ -52,7 +51,7 @@
                 "logging",
                 "notifier"
             ],
-            "time": "2015-10-05 12:48:57"
+            "time": "2015-10-05T12:48:57+00:00"
         },
         {
             "name": "aura/installer-default",
@@ -93,7 +92,7 @@
                 "aura",
                 "installer"
             ],
-            "time": "2012-11-26 21:35:57"
+            "time": "2012-11-26T21:35:57+00:00"
         },
         {
             "name": "aura/intl",
@@ -171,7 +170,7 @@
                 "l10n",
                 "localization"
             ],
-            "time": "2014-08-24 00:00:00"
+            "time": "2014-08-24T00:00:00+00:00"
         },
         {
             "name": "bugsnag/bugsnag",
@@ -224,7 +223,7 @@
                 "logging",
                 "tracking"
             ],
-            "time": "2016-07-21 20:18:41"
+            "time": "2016-07-21T20:18:41+00:00"
         },
         {
             "name": "cakephp/cakephp",
@@ -297,7 +296,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2016-09-03 02:17:44"
+            "time": "2016-09-03T02:17:44+00:00"
         },
         {
             "name": "cakephp/chronos",
@@ -352,7 +351,7 @@
                 "datetime",
                 "time"
             ],
-            "time": "2016-07-14 05:16:14"
+            "time": "2016-07-14T05:16:14+00:00"
         },
         {
             "name": "cakephp/migrations",
@@ -402,7 +401,7 @@
                 "cakephp",
                 "migrations"
             ],
-            "time": "2016-06-23 17:18:29"
+            "time": "2016-06-23T17:18:29+00:00"
         },
         {
             "name": "cakephp/plugin-installer",
@@ -442,7 +441,7 @@
                 }
             ],
             "description": "A composer installer for CakePHP 3.0+ plugins.",
-            "time": "2016-04-28 03:01:34"
+            "time": "2016-04-28T03:01:34+00:00"
         },
         {
             "name": "friendsofcake/bootstrap-ui",
@@ -493,7 +492,7 @@
                 "cakephp",
                 "twitter"
             ],
-            "time": "2016-04-06 12:22:58"
+            "time": "2016-04-06T12:22:58+00:00"
         },
         {
             "name": "friendsofcake/crud",
@@ -567,7 +566,7 @@
                 "scaffolding",
                 "update"
             ],
-            "time": "2016-08-27 12:26:00"
+            "time": "2016-08-27T12:26:00+00:00"
         },
         {
             "name": "friendsofcake/crud-view",
@@ -627,7 +626,7 @@
                 "scaffolding",
                 "update"
             ],
-            "time": "2016-08-30 18:08:18"
+            "time": "2016-08-30T18:08:18+00:00"
         },
         {
             "name": "friendsofcake/search",
@@ -672,20 +671,72 @@
                 "cakephp3",
                 "search"
             ],
-            "time": "2016-05-17 15:22:34"
+            "time": "2016-05-17T15:22:34+00:00"
         },
         {
-            "name": "josegonzalez/cakephp-queuesadilla",
-            "version": "0.3.0",
+            "name": "josegonzalez/cakephp-mail-preview",
+            "version": "0.0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/josegonzalez/cakephp-queuesadilla.git",
-                "reference": "14a06ea0f2c98b4abef42592e3174bff96f4b0a7"
+                "url": "https://github.com/josegonzalez/cakephp-mail-preview.git",
+                "reference": "870c7dff7cfac55d193d05b133dfc2be7a2db26e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/josegonzalez/cakephp-queuesadilla/zipball/14a06ea0f2c98b4abef42592e3174bff96f4b0a7",
-                "reference": "14a06ea0f2c98b4abef42592e3174bff96f4b0a7",
+                "url": "https://api.github.com/repos/josegonzalez/cakephp-mail-preview/zipball/870c7dff7cfac55d193d05b133dfc2be7a2db26e",
+                "reference": "870c7dff7cfac55d193d05b133dfc2be7a2db26e",
+                "shasum": ""
+            },
+            "require": {
+                "cakephp/cakephp": "~3.0",
+                "php": ">=5.5"
+            },
+            "require-dev": {
+                "cakephp/cakephp-codesniffer": "dev-master",
+                "phpunit/phpunit": "*",
+                "satooshi/php-coveralls": "dev-master"
+            },
+            "type": "cakephp-plugin",
+            "autoload": {
+                "psr-4": {
+                    "Josegonzalez\\MailPreview\\": "src",
+                    "Josegonzalez\\MailPreview\\Test\\Fixture\\": "tests\\Fixture"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jose Diaz-Gonzalez",
+                    "email": "cakephp+mail-preview@josediazgonzalez.com",
+                    "homepage": "http://josediazgonzalez.com",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "CakePHP plugin for use with previewing emails during development",
+            "homepage": "https://github.com/josegonzalez/cakephp-mail-preview",
+            "keywords": [
+                "cakephp",
+                "email",
+                "mail",
+                "preview"
+            ],
+            "time": "2016-12-21T00:33:33+00:00"
+        },
+        {
+            "name": "josegonzalez/cakephp-queuesadilla",
+            "version": "0.3.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/josegonzalez/cakephp-queuesadilla.git",
+                "reference": "9f9937627ac97d860d63abb53e2aa94449aadb60"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/josegonzalez/cakephp-queuesadilla/zipball/9f9937627ac97d860d63abb53e2aa94449aadb60",
+                "reference": "9f9937627ac97d860d63abb53e2aa94449aadb60",
                 "shasum": ""
             },
             "require": {
@@ -724,7 +775,7 @@
                 "queue",
                 "shell"
             ],
-            "time": "2016-09-14 05:17:38"
+            "time": "2016-09-15T01:11:25+00:00"
         },
         {
             "name": "josegonzalez/cakephp-upload",
@@ -778,7 +829,7 @@
                 "orm",
                 "upload"
             ],
-            "time": "2016-09-13 09:35:57"
+            "time": "2016-09-13T09:35:57+00:00"
         },
         {
             "name": "josegonzalez/dotenv",
@@ -830,7 +881,7 @@
                 "dotenv",
                 "php"
             ],
-            "time": "2016-01-07 16:07:20"
+            "time": "2016-01-07T16:07:20+00:00"
         },
         {
             "name": "josegonzalez/php-error-handlers",
@@ -884,24 +935,24 @@
                 "error",
                 "exception"
             ],
-            "time": "2016-04-20 05:17:23"
+            "time": "2016-04-20T05:17:23+00:00"
         },
         {
             "name": "josegonzalez/queuesadilla",
-            "version": "0.0.3",
+            "version": "0.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/josegonzalez/php-queuesadilla.git",
-                "reference": "d40e08aedb13dc2d9332b77a655ef772e9e2585c"
+                "reference": "a969693be0d320af3bdcd53b9126287b6f905999"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/josegonzalez/php-queuesadilla/zipball/d40e08aedb13dc2d9332b77a655ef772e9e2585c",
-                "reference": "d40e08aedb13dc2d9332b77a655ef772e9e2585c",
+                "url": "https://api.github.com/repos/josegonzalez/php-queuesadilla/zipball/a969693be0d320af3bdcd53b9126287b6f905999",
+                "reference": "a969693be0d320af3bdcd53b9126287b6f905999",
                 "shasum": ""
             },
             "require": {
-                "league/event": "~1.0",
+                "league/event": "~2.0",
                 "php": ">=5.5.0",
                 "psr/log": "~1.0"
             },
@@ -910,6 +961,7 @@
                 "monolog/monolog": "*",
                 "pda/pheanstalk": "dev-master",
                 "phpmd/phpmd": "dev-master",
+                "predis/predis": "~1.0",
                 "satooshi/php-coveralls": "dev-master",
                 "squizlabs/php_codesniffer": "dev-master"
             },
@@ -945,7 +997,7 @@
                 "php",
                 "queue"
             ],
-            "time": "2016-06-30 16:03:37"
+            "time": "2016-09-17T21:14:35+00:00"
         },
         {
             "name": "league/climate",
@@ -996,30 +1048,35 @@
                 "php",
                 "terminal"
             ],
-            "time": "2016-04-04 20:24:59"
+            "time": "2016-04-04T20:24:59+00:00"
         },
         {
             "name": "league/event",
-            "version": "1.0.1",
+            "version": "2.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/event.git",
-                "reference": "9d9bd9e086b3acad09ab03f5317d27511039d71c"
+                "reference": "e4bfc88dbcb60c8d8a2939a71f9813e141bbe4cd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/event/zipball/9d9bd9e086b3acad09ab03f5317d27511039d71c",
-                "reference": "9d9bd9e086b3acad09ab03f5317d27511039d71c",
+                "url": "https://api.github.com/repos/thephpleague/event/zipball/e4bfc88dbcb60c8d8a2939a71f9813e141bbe4cd",
+                "reference": "e4bfc88dbcb60c8d8a2939a71f9813e141bbe4cd",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.4.0"
             },
             "require-dev": {
-                "henrikbjorn/phpspec-code-coverage": "1.0.*@dev",
-                "phpspec/phpspec": "2.0.*@dev"
+                "henrikbjorn/phpspec-code-coverage": "~1.0.1",
+                "phpspec/phpspec": "~2.0.0"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.2-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "League\\Event\\": "src/"
@@ -1041,7 +1098,7 @@
                 "event",
                 "listener"
             ],
-            "time": "2014-10-11 16:18:15"
+            "time": "2015-05-21T12:24:47+00:00"
         },
         {
             "name": "league/flysystem",
@@ -1124,7 +1181,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2016-08-10 08:55:11"
+            "time": "2016-08-10T08:55:11+00:00"
         },
         {
             "name": "m1/env",
@@ -1182,7 +1239,7 @@
                 "parser",
                 "support"
             ],
-            "time": "2016-01-07 13:21:36"
+            "time": "2016-01-07T13:21:36+00:00"
         },
         {
             "name": "markstory/asset_compress",
@@ -1240,7 +1297,7 @@
                 "minifier",
                 "sass"
             ],
-            "time": "2016-08-25 14:08:23"
+            "time": "2016-08-25T14:08:23+00:00"
         },
         {
             "name": "markstory/mini-asset",
@@ -1303,7 +1360,7 @@
                 "psr7",
                 "sass"
             ],
-            "time": "2016-08-13 02:57:13"
+            "time": "2016-08-13T02:57:13+00:00"
         },
         {
             "name": "mindscape/raygun4php",
@@ -1353,7 +1410,7 @@
                 "logging",
                 "raygun"
             ],
-            "time": "2016-08-08 03:20:10"
+            "time": "2016-08-08T03:20:10+00:00"
         },
         {
             "name": "mobiledetect/mobiledetectlib",
@@ -1407,7 +1464,7 @@
                 "mobile detector",
                 "php mobile detect"
             ],
-            "time": "2016-04-24 09:47:16"
+            "time": "2016-04-24T09:47:16+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -1485,7 +1542,7 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2016-07-29 03:23:52"
+            "time": "2016-07-29T03:23:52+00:00"
         },
         {
             "name": "psr/http-message",
@@ -1535,7 +1592,7 @@
                 "request",
                 "response"
             ],
-            "time": "2016-08-06 14:39:51"
+            "time": "2016-08-06T14:39:51+00:00"
         },
         {
             "name": "psr/log",
@@ -1573,7 +1630,7 @@
                 "psr",
                 "psr-3"
             ],
-            "time": "2012-12-21 11:40:51"
+            "time": "2012-12-21T11:40:51+00:00"
         },
         {
             "name": "raven/raven",
@@ -1628,7 +1685,7 @@
                 "logging"
             ],
             "abandoned": "sentry/sentry",
-            "time": "2015-09-09 18:12:58"
+            "time": "2015-09-09T18:12:58+00:00"
         },
         {
             "name": "robmorgan/phinx",
@@ -1689,7 +1746,7 @@
                 "migrations",
                 "phinx"
             ],
-            "time": "2016-03-07 14:09:22"
+            "time": "2016-03-07T14:09:22+00:00"
         },
         {
             "name": "seld/cli-prompt",
@@ -1737,7 +1794,7 @@
                 "input",
                 "prompt"
             ],
-            "time": "2016-04-18 09:31:41"
+            "time": "2016-04-18T09:31:41+00:00"
         },
         {
             "name": "symfony/config",
@@ -1790,7 +1847,7 @@
             ],
             "description": "Symfony Config Component",
             "homepage": "https://symfony.com",
-            "time": "2016-08-27 18:50:07"
+            "time": "2016-08-27T18:50:07+00:00"
         },
         {
             "name": "symfony/console",
@@ -1850,7 +1907,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2016-08-19 06:48:39"
+            "time": "2016-08-19T06:48:39+00:00"
         },
         {
             "name": "symfony/filesystem",
@@ -1899,7 +1956,7 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "https://symfony.com",
-            "time": "2016-07-20 05:44:26"
+            "time": "2016-07-20T05:44:26+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -1958,7 +2015,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2016-05-18 14:26:46"
+            "time": "2016-05-18T14:26:46+00:00"
         },
         {
             "name": "symfony/yaml",
@@ -2007,7 +2064,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-09-02 02:12:52"
+            "time": "2016-09-02T02:12:52+00:00"
         },
         {
             "name": "zendframework/zend-diactoros",
@@ -2057,7 +2114,7 @@
                 "psr",
                 "psr-7"
             ],
-            "time": "2016-09-07 17:57:29"
+            "time": "2016-09-07T17:57:29+00:00"
         }
     ],
     "packages-dev": [
@@ -2106,7 +2163,7 @@
                 "bake",
                 "cakephp"
             ],
-            "time": "2016-09-03 13:29:04"
+            "time": "2016-09-03T13:29:04+00:00"
         },
         {
             "name": "cakephp/cakephp-codesniffer",
@@ -2145,20 +2202,20 @@
                 "codesniffer",
                 "framework"
             ],
-            "time": "2016-09-02 00:41:23"
+            "time": "2016-09-02T00:41:23+00:00"
         },
         {
             "name": "cakephp/debug_kit",
-            "version": "3.3.2",
+            "version": "3.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/debug_kit.git",
-                "reference": "6902a58633d763f85d8f627efe0993b19d9c4b1b"
+                "reference": "7e806572be46795664fe97478a0dc1b22bdf1a2d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/debug_kit/zipball/6902a58633d763f85d8f627efe0993b19d9c4b1b",
-                "reference": "6902a58633d763f85d8f627efe0993b19d9c4b1b",
+                "url": "https://api.github.com/repos/cakephp/debug_kit/zipball/7e806572be46795664fe97478a0dc1b22bdf1a2d",
+                "reference": "7e806572be46795664fe97478a0dc1b22bdf1a2d",
                 "shasum": ""
             },
             "require": {
@@ -2202,7 +2259,7 @@
                 "debug",
                 "kit"
             ],
-            "time": "2016-09-02 00:51:04"
+            "time": "2016-09-17T01:43:23+00:00"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -2235,7 +2292,7 @@
                 "MIT"
             ],
             "description": "implementation of xdg base directory specification for php",
-            "time": "2014-10-24 07:27:01"
+            "time": "2014-10-24T07:27:01+00:00"
         },
         {
             "name": "jakub-onderka/php-console-color",
@@ -2278,7 +2335,7 @@
                     "homepage": "http://www.acci.cz"
                 }
             ],
-            "time": "2014-04-08 15:00:19"
+            "time": "2014-04-08T15:00:19+00:00"
         },
         {
             "name": "jakub-onderka/php-console-highlighter",
@@ -2322,7 +2379,7 @@
                     "homepage": "http://www.acci.cz/"
                 }
             ],
-            "time": "2015-04-20 18:58:01"
+            "time": "2015-04-20T18:58:01+00:00"
         },
         {
             "name": "jdorn/sql-formatter",
@@ -2372,20 +2429,20 @@
                 "highlight",
                 "sql"
             ],
-            "time": "2014-01-12 16:20:24"
+            "time": "2014-01-12T16:20:24+00:00"
         },
         {
             "name": "nikic/php-parser",
-            "version": "v2.1.0",
+            "version": "v2.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "47b254ea51f1d6d5dc04b9b299e88346bf2369e3"
+                "reference": "4dd659edadffdc2143e4753df655d866dbfeedf0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/47b254ea51f1d6d5dc04b9b299e88346bf2369e3",
-                "reference": "47b254ea51f1d6d5dc04b9b299e88346bf2369e3",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/4dd659edadffdc2143e4753df655d866dbfeedf0",
+                "reference": "4dd659edadffdc2143e4753df655d866dbfeedf0",
                 "shasum": ""
             },
             "require": {
@@ -2423,7 +2480,7 @@
                 "parser",
                 "php"
             ],
-            "time": "2016-04-19 13:41:41"
+            "time": "2016-09-16T12:04:44+00:00"
         },
         {
             "name": "psy/psysh",
@@ -2495,7 +2552,7 @@
                 "interactive",
                 "shell"
             ],
-            "time": "2016-03-09 05:03:14"
+            "time": "2016-03-09T05:03:14+00:00"
         },
         {
             "name": "squizlabs/php_codesniffer",
@@ -2573,7 +2630,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2016-09-01 23:53:02"
+            "time": "2016-09-01T23:53:02+00:00"
         },
         {
             "name": "symfony/var-dumper",
@@ -2636,7 +2693,7 @@
                 "debug",
                 "dump"
             ],
-            "time": "2016-08-31 09:05:42"
+            "time": "2016-08-31T09:05:42+00:00"
         }
     ],
     "aliases": [],

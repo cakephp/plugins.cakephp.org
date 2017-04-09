@@ -24,7 +24,8 @@
         "josegonzalez/cakephp-upload": "3.*",
         "josegonzalez/cakephp-queuesadilla": "0.3.*",
         "josegonzalez/queuesadilla": "*",
-        "josegonzalez/php-error-handlers": "0.*"
+        "josegonzalez/php-error-handlers": "0.*",
+        "josegonzalez/cakephp-mail-preview": "^0.0.1"
     },
     "require-dev": {
         "psy/psysh": "@stable",
@@ -49,7 +50,7 @@
     "scripts": {
         "compile": [
             "bin/cake migrations migrate",
-            "bin/cake migrations migrate -p Josegonzalez\\CakeQueuesadilla"
+            "bin/cake migrations migrate -p Josegonzalez/CakeQueuesadilla"
         ],
         "post-install-cmd": "App\\Console\\Installer::postInstall",
         "post-create-project-cmd": "App\\Console\\Installer::postInstall",

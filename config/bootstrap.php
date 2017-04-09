@@ -225,3 +225,5 @@ Plugin::load('CrudView');
 Plugin::load('Josegonzalez/Upload');
 Plugin::load('Migrations');
 Plugin::load('Search');
+
+Plugin::load('Josegonzalez/MailPreview', ['routes' => true]);
