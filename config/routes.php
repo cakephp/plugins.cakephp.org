@@ -75,10 +75,13 @@ Router::scope('/', function (RouteBuilder $routes) {
     $routes->connect('/login', ['controller' => 'Users', 'action' => 'login']);
 
     $routes->connect('/suggest', ['controller' => 'Packages', 'action' => 'suggest']);
-
-    $routes->connect('/admin', ['controller' => 'Users', 'action' => 'admin']);
     $routes->connect('/package/*', ['controller' => 'Packages', 'action' => 'utility_redirect']);
     $routes->connect('/maintainer/*', ['controller' => 'Maintainers', 'action' => 'view']);
+
+    $routes->prefix('admin', function ($routes) {
+        $routes->connect('/', ['controller' => 'Admin', 'action' => 'index']);
+        $routes->fallbacks('DashedRoute');
+    });
 
     /**
      * Connect catchall routes for all controllers.
