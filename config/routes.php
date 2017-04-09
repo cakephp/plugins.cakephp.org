@@ -80,7 +80,7 @@ Router::scope('/', function (RouteBuilder $routes) {
 
     $routes->prefix('admin', function ($routes) {
         $routes->connect('/', ['controller' => 'Admin', 'action' => 'index']);
-        $routes->fallbacks('DashedRoute');
+        $routes->fallbacks(DashedRoute::class);
     });
 
     /**
@@ -99,7 +99,7 @@ Router::scope('/', function (RouteBuilder $routes) {
      * You can remove these routes once you've connected the
      * routes you want in your application.
      */
-    $routes->fallbacks('DashedRoute');
+    $routes->fallbacks(DashedRoute::class);
 });
 
 /**

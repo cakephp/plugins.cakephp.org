@@ -14,6 +14,7 @@ if (!env('APP_NAME')) {
         'josegonzalez\Dotenv\Filter\UnderscoreArrayFilter',
         function ($data) {
             $keys = [
+                'App.fullbaseurl' => 'App.fullBaseUrl',
                 'Debug' => 'debug',
                 'Email.transport' => 'EmailTransport',
                 'Database.debug.kit' => 'Datasources.debug_kit',

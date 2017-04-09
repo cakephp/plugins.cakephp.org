@@ -35,6 +35,8 @@ try {
     // Do not halt if the plugin is missing
 }
 
+Plugin::load('Migrations');
+
 /**
  * Require a file that contains all bake events
  */

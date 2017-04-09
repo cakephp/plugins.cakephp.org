@@ -43,6 +43,24 @@ class AppController extends Controller
     protected $isAdmin = false;
 
     /**
+     * A list of actions where the CrudView.View
+     * listener should be enabled. If an action is
+     * in this list but `isAdmin` is false, the
+     * action will still be rendered via CrudView.View
+     *
+     * @var array
+     */
+    protected $adminActions = [];
+
+    /**
+     * A list of actions that should be allowed for
+     * authenticated users
+     *
+     * @var array
+     */
+    protected $allowedActions = [];
+
+    /**
      * A list of actions where the Crud.SearchListener
      * and Search.PrgComponent should be enabled
      *
@@ -78,19 +96,35 @@ class AppController extends Controller
                 'Crud.Api',
                 'Crud.ApiPagination',
                 'Crud.ApiQueryLog',
-                'CrudView.View',
                 'Crud.RelatedModels',
                 'Crud.Redirect',
             ],
         ]);
 
-        if (in_array($this->request->action, $this->searchActions)) {
+        if ($this->isAdmin || in_array($this->request->action, $this->adminActions)) {
+            $this->Crud->addListener('CrudView.View');
+        }
+
+        if (in_array($this->request->action, $this->searchActions) && $this->modelClass !== null) {
             list($plugin, $tableClass) = pluginSplit($this->modelClass);
-            if (!empty($this->$tableClass) && $this->$tableClass->behaviors()->hasMethod('filterParams')) {
-                $this->Crud->addListener('Crud.Search');
-                $this->loadComponent('Search.Prg');
+            try {
+                if ($this->$tableClass->behaviors()->hasMethod('filterParams')) {
+                    $this->Crud->addListener('Crud.Search');
+                    $this->loadComponent('Search.Prg', [
+                        'actions' => $this->searchActions,
+                    ]);
+                }
+            } catch (MissingModelException $e) {
+            } catch (UnexpectedValueException $e) {
             }
         }
+
+        /*
+         * Enable the following components for recommended CakePHP security settings.
+         * see http://book.cakephp.org/3.0/en/controllers/components/security.html
+         */
+        //$this->loadComponent('Security');
+        //$this->loadComponent('Csrf');
     }
 
     /**
@@ -119,9 +153,9 @@ class AppController extends Controller
         }
 
         $isRest = in_array($this->response->type(), ['application/json', 'application/xml']);
-        $isAdmin = $this->request->prefix == 'admin' || $this->isAdmin;
+        $isAdmin = $this->isAdmin || in_array($this->request->action, $this->adminActions);
         if (!$isRest && $isAdmin) {
-            $this->viewClass = 'CrudView\View\CrudView';
+            $this->viewBuilder()->className('CrudView\View\CrudView');
         }
     }
 
@@ -129,7 +163,7 @@ class AppController extends Controller
      * Before render callback.
      *
      * @param \Cake\Event\Event $event The beforeRender event.
-     * @return void
+     * @return \Cake\Network\Response|null|void
      */
     public function beforeRender(Event $event)
     {
@@ -189,6 +223,11 @@ class AppController extends Controller
      */
     public function isAuthorized($user = null)
     {
-        return true;
+        $action = $this->request->param('action');
+        if (in_array($action, $this->allowedActions)) {
+            return true;
+        }
+
+        return false;
     }
 }

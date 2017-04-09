@@ -13,12 +13,31 @@ A fork of the [official skeleton](https://github.com/cakephp/app) for creating a
 2. Run `php composer.phar create-project --prefer-dist josegonzalez/app [app_name]`.
 
 If Composer is installed globally, run
+
 ```bash
 composer create-project --prefer-dist josegonzalez/app [app_name]
 ```
 
-You should now be able to visit the path to where you installed the app and see
-the setup traffic lights.
+In case you want to use a custom app dir name (e.g. `/myapp/`):
+
+```bash
+composer create-project --prefer-dist cakephp/app myapp
+```
+
+You can now either use your machine's webserver to view the default home page, or start
+up the built-in webserver with:
+
+```bash
+bin/cake server -p 8765
+```
+
+Then visit `http://localhost:8765` to see the welcome page.
+
+## Update
+
+Since this skeleton is a starting point for your application and various files
+would have been modified as per your needs, there isn't a way to provide
+automated upgrades, so you have to do any updates manually.
 
 ## Features
 
@@ -41,6 +60,7 @@ The following is a list of CakePHP plugins that are installed and pre-configured
 - [friendsofcake/crud](https://github.com/FriendsOfCake/crud)
 - [friendsofcake/search](https://github.com/FriendsOfCake/search)
 - [josegonzalez/cakephp-upload](https://github.com/josegonzalez/cakephp-upload)
+- [josegonzalez/cakephp-queuesadilla](https://github.com/josegonzalez/cakephp-queuesadilla)
 - [markstory/asset_compress](https://github.com/markstory/asset_compress)
 
 The following is a list of PHP packages that are installed and pre-configured:
@@ -48,7 +68,6 @@ The following is a list of PHP packages that are installed and pre-configured:
 - [cakephp/cakephp-codesniffer](https://github.com/cakephp/cakephp-codesniffer)
 - [josegonzalez/php-dotenv](https://github.com/josegonzalez/php-dotenv)
 - [josegonzalez/php-error-handers](https://github.com/josegonzalez/php-error-handlers)
-- [josegonzalez/queuesadilla](https://github.com/josegonzalez/php-queuesadilla)
 
 ### Configuration
 
@@ -182,3 +201,9 @@ $queue->push('some_job', [
 ```
 
 See [here](https://github.com/josegonzalez/php-queuesadilla/blob/master/docs/defining-jobs.md) for more information on defining jobs.
+
+### Layout
+
+The app skeleton uses a subset of [Foundation](http://foundation.zurb.com/) CSS
+framework by default. You can, however, replace it with any other library or
+custom styles.
