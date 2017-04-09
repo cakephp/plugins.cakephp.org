@@ -124,13 +124,16 @@ trait PackageIndexFinderTrait
             $query->where(["{$this->alias()}.open_issues <=" => (int)$options['open_issues']]);
         }
 
-        // if ($options['query'] !== null) {
-        //     $query['conditions'][]['OR'] = array(
-        //         "{$this->alias()}.name LIKE" => '%' . $options['query'] . '%',
-        //         "{$this->alias()}.description LIKE" => '%' . $options['query'] . '%',
-        //         "Maintainer.username LIKE" => '%' . $options['query'] . '%',
-        //     );
-        // }
+        if ($options['query'] !== null) {
+            $_query = sprintf('%%%s%%', $options['query']);
+            $query->andWhere(function ($exp, $query) use ($_query) {
+                return $query->newExpr()->add([
+                    "{$this->alias()}.name LIKE" => $_query,
+                    "{$this->alias()}.description LIKE" => $_query,
+                    "Maintainers.username LIKE" => $_query,
+                ])->tieWith('OR');
+            });
+        }
 
         if ($options['since'] !== null) {
             $time = date('Y-m-d H:i:s', strtotime($options['since']));
