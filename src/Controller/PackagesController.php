@@ -19,6 +19,7 @@ class PackagesController extends AppController
     public function initialize()
     {
         parent::initialize();
+        $this->loadComponent('PersistErrors');
         $this->loadComponent('Prg', [
             'allowedFilters' => [
                 'collaborators', 'contains', 'contributors',
@@ -72,7 +73,12 @@ class PackagesController extends AppController
     public function home()
     {
         $searchForm = new SearchForm();
-        $this->set(['searchForm' => $searchForm]);
+        $suggestForm = new SuggestForm();
+        $this->PersistErrors->apply($suggestForm);
+        $this->set([
+            'searchForm' => $searchForm,
+            'suggestForm' => $suggestForm,
+        ]);
     }
 
     /**
@@ -89,5 +95,27 @@ class PackagesController extends AppController
         ])->firstOrFail();
 
         $this->set('package', $package);
+    }
+
+    /**
+     * This action allows users to suggest new packages for inclusion on the site
+     *
+     * @return void
+     */
+    public function suggest()
+    {
+        if (!$this->request->is(['post', 'put'])) {
+            $redirectUrl = $this->referer(['controller' => 'packages', 'action' => 'suggest'], true);
+            return $this->redirect($redirectUrl);
+        }
+
+        $suggestForm = new SuggestForm();
+        if ($suggestForm->execute($this->request->data)) {
+            $this->Flash->success(__('Thanks, your submission will be reviewed shortly!'));
+        } else {
+            $this->PersistErrors->persist($suggestForm);
+            $this->Flash->error(__('There was some sort of error...'));
+        }
+        return $this->redirect($this->referer(null, true));
     }
 }

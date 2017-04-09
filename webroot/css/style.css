@@ -115,7 +115,6 @@
 		margin:0;
 		overflow: hidden;
 		width:100%;
-		height:auto;
 	}
 	::-moz-selection {
 		text-shadow:none;
@@ -197,7 +196,6 @@
 	.bg02 { background-image:url('../images/bg/recipe.jpg'); }
 
 	.bg11 {
-		background-image:url('../images/bg/cakefest.jpg');
 		position: relative;
 	    background-repeat: no-repeat;
 	    background-position: center top;
@@ -6186,7 +6184,6 @@ header {
 }
 
 .hero-2 {
-	background-image: url('../images/bg/cakefest.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     padding: 70px 0 400px 0;

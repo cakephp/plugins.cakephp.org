@@ -3,7 +3,7 @@
 <h4 class="title-white mb30">Let us know about it!</h4>
 
 <?php
-    echo $this->Form->create('Package', [
+    echo $this->Form->create($suggestForm, [
         'class' => 'form',
         'role' => 'form',
         'url' => ['controller' => 'packages', 'action' => 'suggest'],
@@ -11,7 +11,7 @@
 ?>
 <div class="form-group">
     <?php
-        echo $this->Form->input('Package.github', [
+        echo $this->Form->input('github', [
             'label' => false,
             'div' => false,
             'placeholder' => __('github repository url'),

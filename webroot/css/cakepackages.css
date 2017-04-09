@@ -1,3 +1,7 @@
+.has-error .help-block {
+    color: #ffffff;
+    font-weight: bold;
+}
 .t-cook-nav a {
     color: #B8B8AE;
 }
@@ -100,9 +104,7 @@
     margin-bottom: 40px;
 }
 .package-list .package-snippet {
-    background: #fff url(../images/white-cube.2290f4f1.png) no-repeat 0 50%;
     background-color: #fff;
-    background-image: url(../images/white-cube.ae2a3e5d.svg),linear-gradient(transparent,transparent);
     background-position: 20px;
     border: 1px solid #d3d3d3;
     box-shadow: 1px 1px 2px 1px rgba(0,0,0,.05);
