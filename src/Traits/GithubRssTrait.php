@@ -8,7 +8,9 @@ trait GithubRssTrait
 {
     public function rss()
     {
-        $client = new Client();
+        $client = new Client([
+            'timeout' => 2
+        ]);
         $response = $client->get(sprintf(
             'https://api.github.com/repos/%s/%s/events',
             $this->maintainer->username,
