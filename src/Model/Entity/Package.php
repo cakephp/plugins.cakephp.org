@@ -99,7 +99,7 @@ class Package extends Entity
 
     public function cloneUrl()
     {
-        return "git://github.com:{$this->maintainer->username}/{$this->name}.git";
+        return "git@github.com:{$this->maintainer->username}/{$this->name}.git";
     }
 
     public function githubUrl()
