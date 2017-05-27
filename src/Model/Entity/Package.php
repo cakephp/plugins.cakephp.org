@@ -1,6 +1,7 @@
 <?php
 namespace App\Model\Entity;
 
+use App\Traits\ClonedPackageTrait;
 use App\Traits\GithubRssTrait;
 use Cake\Cache\Cache;
 use Cake\ORM\Entity;
@@ -55,6 +56,8 @@ use Cake\Routing\Router;
  */
 class Package extends Entity
 {
+    use ClonedPackageTrait;
+
     use GithubRssTrait {
         rss as _rss;
     }
