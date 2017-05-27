@@ -58,6 +58,15 @@ $this->Html->addCrumb($package->name, $package->route());
                         </td>
                     </tr>
                 <?php endif; ?>
+
+                <?php if (!empty($package->tags)) : ?>
+                    <tr>
+                        <td>Tags</td>
+                        <td>
+                            <?php echo $this->element('site/tags', ['tags' => $package]); ?>
+                        </td>
+                    </tr>
+                <?php endif; ?>
             </tbody>
         </table>
         <div class="package-last-fetched">Last fetched: <?php echo $this->Time->timeAgoInWords($package->modified) ?></div>
