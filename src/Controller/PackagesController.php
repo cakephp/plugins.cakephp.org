@@ -98,6 +98,7 @@ class PackagesController extends AppController
      */
     public function view()
     {
+        $searchForm = new SearchForm();
         $package = $this->Packages->find('view', [
             'package_id' => $this->request->param('id'),
             'slug' => $this->request->param('slug'),
@@ -105,6 +106,7 @@ class PackagesController extends AppController
         ])->firstOrFail();
 
         $this->set('package', $package);
+        $this->set('searchForm', $searchForm);
     }
 
     /**
