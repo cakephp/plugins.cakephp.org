@@ -129,4 +129,50 @@ class ResourceHelper extends AppHelper
 
         return implode(' ', $output);
     }
+
+    public function tagCloud($tags)
+    {
+        $tags = explode(',', $tags);
+        sort($tags);
+
+        $links = [];
+        foreach ($tags as $tag) {
+            $links[] = $this->tagLink($tag);
+        }
+
+        return implode("\n", $links);
+    }
+
+    public function tagLink($tag)
+    {
+        $colorMap = [
+            'version:3' => '#27a4dd',
+            'version:2' => '#9dd5c0',
+            'version:1.3' => '#ffaaa5',
+            'version:1.2' => '#ffd3b6',
+        ];
+        list($key, $value) = explode(':', $tag, 2);
+        $options = ['class' => 'label category-label'];
+        $queryString = [$key => $value];
+        $url = ['controller' => 'packages', 'action' => 'index'];
+
+        if (isset($colorMap[$tag])) {
+            $queryString = ['version' => $key];
+            $options['style'] = sprintf('background-color:%s;', $colorMap[$tag]);
+            $version = strpos($key, '.') === false ? $value . '.x' : $value;
+            return $this->Html->link('version:' . $version, $url, $options);
+        }
+
+        $color = 'black';
+        if (in_array($key, ['has', 'keyword'])) {
+            $color = $key == 'has' ? 'gray' : 'darkgray';
+            $queryString = [
+                $key => [$value]
+            ];
+        }
+
+        $url['?'] = $queryString;
+        $options['style'] = sprintf('background-color:%s;color:white;', $color);
+        return $this->Html->link($tag, $url, $options);
+    }
 }
