@@ -81,7 +81,7 @@ class PrgComponent extends Component
                     continue;
                 }
 
-                if (isset($named[$key]) && $key == 'has') {
+                if (isset($named[$key]) && in_array($key, ['has', 'keyword'])) {
                     if (is_array($named[$key])) {
                         $named[$key][] = trim($value[2], $options['trim']);
                     } elseif (isset($named[$key])) {

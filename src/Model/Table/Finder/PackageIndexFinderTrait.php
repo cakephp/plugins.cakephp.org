@@ -28,22 +28,16 @@ trait PackageIndexFinderTrait
     {
         $options = array_merge([
             'collaborators' => null,
-            'contains' => [],
             'contributors' => null,
             'forks' => null,
             'has' => [],
+            'keyword' => [],
             'open_issues' => null,
             'query' => null,
             'since' => null,
             'version' => null,
             'watchers' => null,
-            'with' => [],
         ], $options);
-        $options['has'] = array_merge(
-            (array)$options['with'],
-            (array)$options['contains'],
-            (array)$options['has']
-        );
 
         $query->find('package');
 
@@ -86,31 +80,53 @@ trait PackageIndexFinderTrait
             $query->where(["{$this->alias()}.forks >=" => (int)$options['forks']]);
         }
 
-        if (!empty($options['version'])) {
-            $options['version'] = str_replace(['.x', '.'], '', $options['version']);
-            if (array($options['version'], ['12', '13', '2', '3'])) {
-                $query->where(["{$this->alias()}.tags LIKE " => '%version:' . $options['version'] . "%" ]);
-            }
-        }
-
-        if (!empty($options['has'])) {
+        if (!empty($options['version']) || !empty($options['has']) || !empty($options['keyword'])) {
             $query->innerJoin(
                 ['Tagged' => 'tagged'],
                 ['Tagged.foreign_key = Packages.id']
             );
+        }
 
+        if (!empty($options['version'])) {
+            $options['version'] = str_replace(['.x', '.'], '', $options['version']);
+            if (array($options['version'], ['12', '13', '2', '3'])) {
+                $query->innerJoin(
+                    ['Tags' => 'tags'],
+                    [
+                        'Tags.id = Tagged.tag_id',
+                        "Tags.keyname = '" . $options['version'] . "'",
+                        "Tags.identifier = 'version'",
+                    ]
+                );
+            }
+        }
+
+        if (!empty($options['has'])) {
             foreach ($options['has'] as $has) {
                 $has = Inflector::singularize(strtolower($has));
                 if (in_array($has, $this->validTypes)) {
                     $query->innerJoin(
-                        [$has . 'Tags' => 'tags'],
+                        ['Tags' => 'tags'],
                         [
-                            $has . 'Tags.id = Tagged.tag_id',
-                            $has . "Tags.keyname = '" . $has . "'",
-                            $has . "Tags.identifier = 'contains'",
+                            'Tags.id = Tagged.tag_id',
+                            "Tags.keyname = '" . $has . "'",
+                            "Tags.identifier = 'has'",
                         ]
                     );
                 }
+            }
+        }
+
+        if (!empty($options['keyword'])) {
+            foreach ($options['keyword'] as $keyword) {
+                $query->innerJoin(
+                    ['Tags' => 'tags'],
+                    [
+                        'Tags.id = Tagged.tag_id',
+                        "Tags.keyname = '" . $keyword . "'",
+                        "Tags.identifier = 'keyword'",
+                    ]
+                );
             }
         }
 

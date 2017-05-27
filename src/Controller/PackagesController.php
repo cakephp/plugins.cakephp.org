@@ -22,10 +22,20 @@ class PackagesController extends AppController
         $this->loadComponent('PersistErrors');
         $this->loadComponent('Prg', [
             'allowedFilters' => [
-                'collaborators', 'contains', 'contributors',
-                'direction', 'forks', 'has', 'open_issues',
-                'query', 'sort', 'since', 'watchers', 'with',
-                'category', 'version',
+                'category',
+                'collaborators',
+                'contributors',
+                'direction',
+                'forks',
+                'has',
+                'keyword',
+                'open_issues',
+                'query',
+                'sort',
+                'since',
+                'watchers',
+                'with',
+                'version',
             ],
         ]);
     }
