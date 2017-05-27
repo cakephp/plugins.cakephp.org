@@ -1,8 +1,8 @@
 <?php
 namespace App\Job;
 
+use App\Traits\LogTrait;
 use Cake\Core\Configure;
-use Cake\Log\LogTrait;
 use Cake\Mailer\Email;
 use Exception;
 use josegonzalez\Queuesadilla\Job\Base;
@@ -128,7 +128,7 @@ class DeferredEmail
             $this->sent = $this->email->send();
         } catch (Exception $e) {
             $this->sent = false;
-            $this->log($e->getMessage());
+            $this->error($e->getMessage());
             // TODO: trigger error handler
         }
 
