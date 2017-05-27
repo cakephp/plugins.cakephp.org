@@ -1,6 +1,9 @@
 <?php
 namespace App\Form;
 
+use Cake\Collection\Collection;
+use Cake\Datasource\EntityInterface;
+
 trait SetErrorsTrait
 {
     public function setErrors($field = null, $errors = null, $overwrite = false)
