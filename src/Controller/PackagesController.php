@@ -64,8 +64,7 @@ class PackagesController extends AppController
         }
 
         $searchForm = new SearchForm();
-        // $packages = $this->paginate($this->Packages->find('index', $this->request->data));
-        $packages = $this->Packages->find('index', $this->request->data)->all();
+        $packages = $this->paginate($this->Packages->find('index', $this->request->data));
 
         $this->request->data['query'] = $query;
         $this->set([
