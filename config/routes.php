@@ -78,6 +78,10 @@ Router::scope('/', function (RouteBuilder $routes) {
     $routes->connect('/package/*', ['controller' => 'Packages', 'action' => 'utility_redirect']);
     $routes->connect('/maintainer/*', ['controller' => 'Maintainers', 'action' => 'view']);
 
+    foreach (['/maintainers', '/maintainers/'] as $url) {
+        $routes->redirect($url, ['controller' => 'Packages', 'action' => 'home'], ['persist' => true]);
+    }
+
     $routes->prefix('admin', function ($routes) {
         $routes->connect('/', ['controller' => 'Admin', 'action' => 'index']);
         $routes->fallbacks(DashedRoute::class);

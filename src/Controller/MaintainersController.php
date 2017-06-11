@@ -18,19 +18,6 @@ class MaintainersController extends AppController
     }
 
     /**
-     * Paginates the current maintainers
-     *
-     * @return \Cake\Network\Response|null
-     */
-    public function index()
-    {
-        return $this->redirect([
-            'controller' => 'packages',
-            'action' => 'home'
-        ]);
-    }
-
-    /**
      * Handles packages/view
      *
      * @return void
