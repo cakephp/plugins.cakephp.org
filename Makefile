@@ -11,7 +11,7 @@ web: ## starts a web process
 ifdef DYNO
 	vendor/bin/heroku-php-nginx -C config/nginx.conf webroot/
 else
-	bin/cake server
+	bin/cake server -p $(PORT)
 endif
 
 worker: ## starts the background worker
