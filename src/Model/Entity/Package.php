@@ -128,4 +128,10 @@ class Package extends Entity
             'disqus_url' => Router::url($this->route(), true),
         ];
     }
+
+    public function maintainerName()
+    {
+        $parts = explode('/', $this->repository_url);
+        return $parts[3];
+    }
 }
