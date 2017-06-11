@@ -10,11 +10,35 @@ use InvalidArgumentException;
 trait PackageIndexFinderTrait
 {
     public $validTypes = array(
-        'model', 'controller', 'view',
-        'behavior', 'component', 'helper',
-        'shell', 'theme', 'datasource',
-        'lib', 'test', 'vendor',
-        'app', 'config', 'resource',
+        'app',
+        'behavior',
+        'cell',
+        'component',
+        'composer',
+        'config',
+        'controller',
+        'datasource',
+        'elements',
+        'entity',
+        'fixture',
+        'helper',
+        'lib',
+        'license',
+        'locale',
+        'log',
+        'model',
+        'panel',
+        'plugin',
+        'readme',
+        'resource',
+        'shell',
+        'table',
+        'test',
+        'theme',
+        'themed',
+        'travis',
+        'vendor',
+        'view',
     );
 
     /**
@@ -80,51 +104,77 @@ trait PackageIndexFinderTrait
             $query->where(["{$this->alias()}.forks >=" => (int)$options['forks']]);
         }
 
-        if (!empty($options['version']) || !empty($options['has']) || !empty($options['keyword'])) {
-            $query->innerJoin(
-                ['Tagged' => 'tagged'],
-                ['Tagged.foreign_key = Packages.id']
-            );
-        }
+        // if (!empty($options['version']) || !empty($options['has']) || !empty($options['keyword'])) {
+        //     $query->innerJoin(
+        //         ['Tagged' => 'tagged'],
+        //         ['Tagged.foreign_key = Packages.id']
+        //     );
+        //     $query->group('Packages.id');
+        // }
 
         if (!empty($options['version'])) {
             $options['version'] = str_replace(['.x', '.'], '', $options['version']);
             if (array($options['version'], ['12', '13', '2', '3'])) {
+                $tableName = 'TagsVersion';
+                $taggedTableName = 'Tagged' . $tableName;
+
                 $query->innerJoin(
-                    ['Tags' => 'tags'],
+                    [$taggedTableName => 'tagged'],
+                    ["${taggedTableName}.foreign_key = Packages.id"]
+                );
+                $query->innerJoin(
+                    [$tableName => 'tags'],
                     [
-                        'Tags.id = Tagged.tag_id',
-                        "Tags.keyname = '" . $options['version'] . "'",
-                        "Tags.identifier = 'version'",
+                        "${tableName}.id = ${taggedTableName}.tag_id",
+                        "${tableName}.keyname = '" . $options['version'] . "'",
+                        "${tableName}.identifier = 'version'",
                     ]
                 );
             }
         }
 
         if (!empty($options['has'])) {
-            foreach ($options['has'] as $has) {
+            foreach ((array)$options['has'] as $has) {
                 $has = Inflector::singularize(strtolower($has));
-                if (in_array($has, $this->validTypes)) {
-                    $query->innerJoin(
-                        ['Tags' => 'tags'],
-                        [
-                            'Tags.id = Tagged.tag_id',
-                            "Tags.keyname = '" . $has . "'",
-                            "Tags.identifier = 'has'",
-                        ]
-                    );
+                if ($has == 'travi') {
+                    $has = 'travis';
                 }
+                if (!in_array($has, $this->validTypes)) {
+                    continue;
+                }
+                $tableName = 'Tags' . ucfirst($has);
+                $taggedTableName = 'Tagged' . $tableName;
+
+                $query->innerJoin(
+                    [$taggedTableName => 'tagged'],
+                    ["${taggedTableName}.foreign_key = Packages.id"]
+                );
+                $query->innerJoin(
+                    [$tableName => 'tags'],
+                    [
+                        "${tableName}.id = ${taggedTableName}.tag_id",
+                        "${tableName}.keyname = '" . $has . "'",
+                        "${tableName}.identifier = 'has'",
+                    ]
+                );
             }
         }
 
         if (!empty($options['keyword'])) {
-            foreach ($options['keyword'] as $keyword) {
+            foreach ((array)$options['keyword'] as $keyword) {
+                $tableName = 'Tags' . ucfirst($keyword);
+                $taggedTableName = 'Tagged' . $tableName;
+
                 $query->innerJoin(
-                    ['Tags' => 'tags'],
+                    [$taggedTableName => 'tagged'],
+                    ["${taggedTableName}.foreign_key = Packages.id"]
+                );
+                $query->innerJoin(
+                    [$tableName => 'tags'],
                     [
-                        'Tags.id = Tagged.tag_id',
-                        "Tags.keyname = '" . $keyword . "'",
-                        "Tags.identifier = 'keyword'",
+                        "${tableName}.id = ${taggedTableName}.tag_id",
+                        "${tableName}.keyname = '" . $keyword . "'",
+                        "${tableName}.identifier = 'keyword'",
                     ]
                 );
             }
