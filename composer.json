@@ -19,13 +19,13 @@
         "cakephp/migrations": "~1.0",
         "cakephp/plugin-installer": "*",
         "josegonzalez/dotenv": "2.*",
-        "friendsofcake/crud": "4.*",
-        "friendsofcake/crud-view": "0.*",
-        "friendsofcake/bootstrap-ui": "0.*",
-        "friendsofcake/search": "1.*",
+        "friendsofcake/crud": "5.1.0",
+        "friendsofcake/crud-view": "0.5.0",
+        "friendsofcake/bootstrap-ui": "1.1.0",
+        "friendsofcake/search": "3.1.0",
         "markstory/asset_compress": "3.*",
-        "josegonzalez/cakephp-upload": "3.*",
-        "josegonzalez/cakephp-queuesadilla": "0.3.*",
+        "josegonzalez/cakephp-upload": "3.6.3",
+        "josegonzalez/cakephp-queuesadilla": "0.4.2",
         "josegonzalez/queuesadilla": "*",
         "josegonzalez/php-error-handlers": "0.*"
     },
@@ -33,7 +33,7 @@
         "psy/psysh": "@stable",
         "cakephp/debug_kit": "~3.2",
         "cakephp/bake": "~1.1",
-        "cakephp/cakephp-codesniffer": "~2.1"
+        "cakephp/cakephp-codesniffer": "3.0.0"
     },
     "suggest": {
         "markstory/asset_compress": "An asset compression plugin which provides file concatenation and a flexible filter system for preprocessing and minification.",
@@ -42,13 +42,15 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src"
+            "App\\": "src",
+            "Users\\": "./plugins/Users/src"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "App\\Test\\": "tests",
-            "Cake\\Test\\": "./vendor/cakephp/cakephp/tests"
+            "Cake\\Test\\": "./vendor/cakephp/cakephp/tests",
+            "Users\\Test\\": "./plugins/Users/tests"
         }
     },
     "scripts": {
