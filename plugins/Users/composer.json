@@ -1,0 +1,26 @@
+{
+    "name": "your-name-here/Users",
+    "description": "Users plugin for CakePHP",
+    "type": "cakephp-plugin",
+    "require": {
+        "php": ">=5.5.9",
+        "cakephp/cakephp": ">=3.3.2 <4.0.0",
+        "friendsofcake/crud": "4.*",
+        "muffin/tokenize": "^1.0",
+        "friendsofcake/crud-users": "^0.5.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Users\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Users\\Test\\": "tests",
+            "Cake\\Test\\": "./vendor/cakephp/cakephp/tests"
+        }
+    }
+}

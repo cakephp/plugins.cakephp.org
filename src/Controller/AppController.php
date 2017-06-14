@@ -189,8 +189,8 @@ class AppController extends Controller
                 'key' => 'auth',
             ],
             'loginAction' => [
-                'plugin' => null,
-                'admin' => false,
+                'plugin' => 'Users',
+                'prefix' => false,
                 'controller' => 'Users',
                 'action' => 'login'
             ],

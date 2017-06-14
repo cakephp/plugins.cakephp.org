@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "d074c19cf31f45b409a62a60fb069265",
+    "content-hash": "371e13abd3fcdf8ec592ba5f95e42a13",
     "packages": [
         {
             "name": "airbrake/phpbrake",
@@ -502,6 +502,59 @@
                 "update"
             ],
             "time": "2017-06-04T08:13:46+00:00"
+        },
+        {
+            "name": "friendsofcake/crud-users",
+            "version": "0.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/FriendsOfCake/crud-users.git",
+                "reference": "5963bcc63f85bdabfe50e71cb4d5c9f95d1ad3d5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/FriendsOfCake/crud-users/zipball/5963bcc63f85bdabfe50e71cb4d5c9f95d1ad3d5",
+                "reference": "5963bcc63f85bdabfe50e71cb4d5c9f95d1ad3d5",
+                "shasum": ""
+            },
+            "require": {
+                "cakephp/cakephp": "~3.0",
+                "friendsofcake/crud": "~5.0"
+            },
+            "require-dev": {
+                "friendsofcake/cakephp-test-utilities": "dev-master",
+                "phpunit/phpunit": "*"
+            },
+            "type": "cakephp-plugin",
+            "autoload": {
+                "psr-4": {
+                    "CrudUsers\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "ADmad",
+                    "homepage": "https://github.com/ADmad",
+                    "role": "Contributor"
+                },
+                {
+                    "name": "Jad Bitar",
+                    "homepage": "http://jadb.io/",
+                    "role": "Author"
+                }
+            ],
+            "description": "Adds basic users support to CakePHP 3 applications that use the Crud plugin.",
+            "homepage": "https://github.com/FriendsOfCake/crud-users",
+            "keywords": [
+                "Users",
+                "cakephp",
+                "crud"
+            ],
+            "time": "2017-06-08T19:29:49+00:00"
         },
         {
             "name": "friendsofcake/crud-view",
@@ -1427,6 +1480,66 @@
                 "psr-3"
             ],
             "time": "2017-03-13T07:08:03+00:00"
+        },
+        {
+            "name": "muffin/tokenize",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/UseMuffin/Tokenize.git",
+                "reference": "fb46915d765daa105a6458fd9f6467535d5f65b3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/UseMuffin/Tokenize/zipball/fb46915d765daa105a6458fd9f6467535d5f65b3",
+                "reference": "fb46915d765daa105a6458fd9f6467535d5f65b3",
+                "shasum": ""
+            },
+            "require-dev": {
+                "cakephp/cakephp": "~3.0",
+                "cakephp/cakephp-codesniffer": "2.*",
+                "cakephp/migrations": "~1.0",
+                "phpunit/phpunit": "@stable"
+            },
+            "type": "cakephp-plugin",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Muffin\\Tokenize\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jad Bitar",
+                    "homepage": "http://jadb.io",
+                    "role": "Author"
+                },
+                {
+                    "name": "ADmad",
+                    "homepage": "https://github.com/ADmad",
+                    "role": "Author"
+                },
+                {
+                    "name": "Others",
+                    "homepage": "https://github.com/usemuffin/tokenize/graphs/contributors"
+                }
+            ],
+            "description": "Security Tokens",
+            "homepage": "https://github.com/usemuffin/tokenize",
+            "keywords": [
+                "cakephp",
+                "muffin",
+                "tokenize"
+            ],
+            "time": "2016-12-04T14:51:04+00:00"
         },
         {
             "name": "psr/http-message",

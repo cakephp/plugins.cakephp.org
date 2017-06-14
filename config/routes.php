@@ -72,7 +72,7 @@ Router::scope('/', function (RouteBuilder $routes) {
         ['id' => '[0-9]+', 'slug' => '[\w_-]+']
     );
 
-    $routes->connect('/login', ['controller' => 'Users', 'action' => 'login']);
+    $routes->connect('/login', ['plugin' => 'Users', 'controller' => 'Users', 'action' => 'login']);
 
     $routes->connect('/suggest', ['controller' => 'Packages', 'action' => 'suggest']);
     $routes->connect('/package/*', ['controller' => 'Packages', 'action' => 'utility_redirect']);

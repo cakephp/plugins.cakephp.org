@@ -232,6 +232,10 @@ Plugin::load('Josegonzalez/CakeQueuesadilla');
 Plugin::load('AssetCompress', ['bootstrap' => true]);
 Plugin::load('BootstrapUI');
 Plugin::load('Crud');
+Plugin::load('CrudUsers');
 Plugin::load('CrudView');
 Plugin::load('Josegonzalez/Upload');
+Plugin::load('Muffin/Tokenize', ['bootstrap' => true, 'routes' => true]);
 Plugin::load('Search');
+
+Plugin::load('Users', ['bootstrap' => false, 'routes' => true]);
