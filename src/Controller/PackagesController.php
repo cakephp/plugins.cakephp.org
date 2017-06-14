@@ -4,9 +4,12 @@ namespace App\Controller;
 use App\Controller\AppController;
 use App\Form\SearchForm;
 use App\Form\SuggestForm;
+use Josegonzalez\CakeQueuesadilla\Traits\QueueTrait;
 
 class PackagesController extends AppController
 {
+    use QueueTrait;
+
     /**
      * Initialization hook method.
      *
@@ -103,6 +106,13 @@ class PackagesController extends AppController
             'slug' => $this->request->param('slug'),
             'user_id' => $this->Auth->user('id'),
         ])->firstOrFail();
+
+        $this->push(['\App\Job\CloneJob', 'perform'], [
+            'package_id' => $this->request->param('id'),
+        ]);
+        $this->push(['\App\Job\ClassifyJob', 'perform'], [
+            'package_id' => $this->request->param('id'),
+        ]);
 
         $this->set('package', $package);
         $this->set('searchForm', $searchForm);
