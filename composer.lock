@@ -4,28 +4,33 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "371e13abd3fcdf8ec592ba5f95e42a13",
+    "content-hash": "7dbd130106d8de1d9726f43e7da82a54",
     "packages": [
         {
             "name": "airbrake/phpbrake",
-            "version": "v0.0.11",
+            "version": "v0.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/airbrake/phpbrake.git",
-                "reference": "eb1cd6ce5142d1fad89987b5db8bbc3083ca8a59"
+                "reference": "cce92a972a72c0c1ea8eef9c21120a8473b32e99"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/airbrake/phpbrake/zipball/eb1cd6ce5142d1fad89987b5db8bbc3083ca8a59",
-                "reference": "eb1cd6ce5142d1fad89987b5db8bbc3083ca8a59",
+                "url": "https://api.github.com/repos/airbrake/phpbrake/zipball/cce92a972a72c0c1ea8eef9c21120a8473b32e99",
+                "reference": "cce92a972a72c0c1ea8eef9c21120a8473b32e99",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.4"
             },
             "require-dev": {
-                "monolog/monolog": "^1.16.0",
-                "phpunit/phpunit": "^4.8.0"
+                "guzzlehttp/guzzle": "^6.2",
+                "monolog/monolog": "^1.22",
+                "phpunit/phpunit": "^5.7",
+                "squizlabs/php_codesniffer": "^2.9"
+            },
+            "suggest": {
+                "guzzlehttp/guzzle": "Allows for implementation of the Guzzle HTTP client"
             },
             "type": "library",
             "extra": {
@@ -51,7 +56,7 @@
                 "logging",
                 "notifier"
             ],
-            "time": "2015-10-05T12:48:57+00:00"
+            "time": "2017-06-13T12:40:33+00:00"
         },
         {
             "name": "aura/intl",
@@ -101,33 +106,37 @@
         },
         {
             "name": "bugsnag/bugsnag",
-            "version": "v2.9.2",
+            "version": "v3.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bugsnag/bugsnag-php.git",
-                "reference": "5ef2dbeec81310a9c6f1af2400dbe8d9af8b07ff"
+                "reference": "4df7153905c3676fff119167ca6f30a25bb9698a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bugsnag/bugsnag-php/zipball/5ef2dbeec81310a9c6f1af2400dbe8d9af8b07ff",
-                "reference": "5ef2dbeec81310a9c6f1af2400dbe8d9af8b07ff",
+                "url": "https://api.github.com/repos/bugsnag/bugsnag-php/zipball/4df7153905c3676fff119167ca6f30a25bb9698a",
+                "reference": "4df7153905c3676fff119167ca6f30a25bb9698a",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.2.0"
+                "composer/ca-bundle": "^1.0",
+                "guzzlehttp/guzzle": "^5.0|^6.0",
+                "php": ">=5.5"
             },
             "require-dev": {
+                "mtdowling/burgomaster": "dev-master#72151eddf5f0cf101502b94bf5031f9c53501a04",
+                "php-mock/php-mock-phpunit": "^1.1",
                 "phpunit/phpunit": "^4.8|^5.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.9-dev"
+                    "dev-master": "3.4-dev"
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "Bugsnag_": "src/"
+                "psr-4": {
+                    "Bugsnag\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -150,7 +159,7 @@
                 "logging",
                 "tracking"
             ],
-            "time": "2016-07-21T20:18:41+00:00"
+            "time": "2017-06-07T23:48:45+00:00"
         },
         {
             "name": "cakephp/cakephp",
@@ -377,6 +386,65 @@
             ],
             "description": "A composer installer for CakePHP 3.0+ plugins.",
             "time": "2017-03-21T13:48:47+00:00"
+        },
+        {
+            "name": "composer/ca-bundle",
+            "version": "1.0.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/composer/ca-bundle.git",
+                "reference": "b17e6153cb7f33c7e44eb59578dc12eee5dc8e12"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/b17e6153cb7f33c7e44eb59578dc12eee5dc8e12",
+                "reference": "b17e6153cb7f33c7e44eb59578dc12eee5dc8e12",
+                "shasum": ""
+            },
+            "require": {
+                "ext-openssl": "*",
+                "ext-pcre": "*",
+                "php": "^5.3.2 || ^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.5",
+                "psr/log": "^1.0",
+                "symfony/process": "^2.5 || ^3.0"
+            },
+            "suggest": {
+                "symfony/process": "This is necessary to reliably check whether openssl_x509_parse is vulnerable on older php versions, but can be ignored on PHP 5.5.6+"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Composer\\CaBundle\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jordi Boggiano",
+                    "email": "j.boggiano@seld.be",
+                    "homepage": "http://seld.be"
+                }
+            ],
+            "description": "Lets you find a path to the system CA bundle, and includes a fallback to the Mozilla CA bundle.",
+            "keywords": [
+                "cabundle",
+                "cacert",
+                "certificate",
+                "ssl",
+                "tls"
+            ],
+            "time": "2017-03-06T11:59:08+00:00"
         },
         {
             "name": "friendsofcake/bootstrap-ui",
@@ -664,6 +732,184 @@
             "time": "2017-04-29T21:50:18+00:00"
         },
         {
+            "name": "guzzlehttp/guzzle",
+            "version": "6.2.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/guzzle.git",
+                "reference": "8d6c6cc55186db87b7dc5009827429ba4e9dc006"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/8d6c6cc55186db87b7dc5009827429ba4e9dc006",
+                "reference": "8d6c6cc55186db87b7dc5009827429ba4e9dc006",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/promises": "^1.0",
+                "guzzlehttp/psr7": "^1.4",
+                "php": ">=5.5"
+            },
+            "require-dev": {
+                "ext-curl": "*",
+                "phpunit/phpunit": "^4.0",
+                "psr/log": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "6.2-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/functions_include.php"
+                ],
+                "psr-4": {
+                    "GuzzleHttp\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "Guzzle is a PHP HTTP client library",
+            "homepage": "http://guzzlephp.org/",
+            "keywords": [
+                "client",
+                "curl",
+                "framework",
+                "http",
+                "http client",
+                "rest",
+                "web service"
+            ],
+            "time": "2017-02-28T22:50:30+00:00"
+        },
+        {
+            "name": "guzzlehttp/promises",
+            "version": "v1.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/promises.git",
+                "reference": "a59da6cf61d80060647ff4d3eb2c03a2bc694646"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/guzzle/promises/zipball/a59da6cf61d80060647ff4d3eb2c03a2bc694646",
+                "reference": "a59da6cf61d80060647ff4d3eb2c03a2bc694646",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GuzzleHttp\\Promise\\": "src/"
+                },
+                "files": [
+                    "src/functions_include.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "Guzzle promises library",
+            "keywords": [
+                "promise"
+            ],
+            "time": "2016-12-20T10:07:11+00:00"
+        },
+        {
+            "name": "guzzlehttp/psr7",
+            "version": "1.4.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/psr7.git",
+                "reference": "f5b8a8512e2b58b0071a7280e39f14f72e05d87c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/f5b8a8512e2b58b0071a7280e39f14f72e05d87c",
+                "reference": "f5b8a8512e2b58b0071a7280e39f14f72e05d87c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0",
+                "psr/http-message": "~1.0"
+            },
+            "provide": {
+                "psr/http-message-implementation": "1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GuzzleHttp\\Psr7\\": "src/"
+                },
+                "files": [
+                    "src/functions_include.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                },
+                {
+                    "name": "Tobias Schultze",
+                    "homepage": "https://github.com/Tobion"
+                }
+            ],
+            "description": "PSR-7 message implementation that also provides common utility methods",
+            "keywords": [
+                "http",
+                "message",
+                "request",
+                "response",
+                "stream",
+                "uri",
+                "url"
+            ],
+            "time": "2017-03-20T17:10:46+00:00"
+        },
+        {
             "name": "josegonzalez/cakephp-queuesadilla",
             "version": "0.4.2",
             "source": {
@@ -771,23 +1017,24 @@
         },
         {
             "name": "josegonzalez/dotenv",
-            "version": "2.1.0",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/josegonzalez/php-dotenv.git",
-                "reference": "ff3461f2960737f54054dff4fef3482a2bb9682b"
+                "reference": "a46e973d6f8ddc2ced8ff79981ef78d2983a09b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/josegonzalez/php-dotenv/zipball/ff3461f2960737f54054dff4fef3482a2bb9682b",
-                "reference": "ff3461f2960737f54054dff4fef3482a2bb9682b",
+                "url": "https://api.github.com/repos/josegonzalez/php-dotenv/zipball/a46e973d6f8ddc2ced8ff79981ef78d2983a09b2",
+                "reference": "a46e973d6f8ddc2ced8ff79981ef78d2983a09b2",
                 "shasum": ""
             },
             "require": {
                 "m1/env": "2.*",
-                "php": ">=5.3.0"
+                "php": ">=7.0.0"
             },
             "require-dev": {
+                "php-mock/php-mock-phpunit": "^1.1",
                 "satooshi/php-coveralls": "1.*",
                 "squizlabs/php_codesniffer": "2.*"
             },
@@ -819,34 +1066,34 @@
                 "dotenv",
                 "php"
             ],
-            "time": "2017-01-03T01:04:05+00:00"
+            "time": "2017-01-03T02:23:08+00:00"
         },
         {
             "name": "josegonzalez/php-error-handlers",
-            "version": "0.0.5",
+            "version": "0.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/josegonzalez/php-error-handlers.git",
-                "reference": "f2c7f1cbfc36598900a43b87f8eb8c01efaa9f43"
+                "reference": "2a2bc4ab49c8170e37d1a24eb38a54713ae268a2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/josegonzalez/php-error-handlers/zipball/f2c7f1cbfc36598900a43b87f8eb8c01efaa9f43",
-                "reference": "f2c7f1cbfc36598900a43b87f8eb8c01efaa9f43",
+                "url": "https://api.github.com/repos/josegonzalez/php-error-handlers/zipball/2a2bc4ab49c8170e37d1a24eb38a54713ae268a2",
+                "reference": "2a2bc4ab49c8170e37d1a24eb38a54713ae268a2",
                 "shasum": ""
             },
             "require": {
-                "airbrake/phpbrake": "^0.0.11",
-                "bugsnag/bugsnag": "2.*",
-                "cakephp/cakephp": "~3.0",
+                "airbrake/phpbrake": "~0.3.0",
+                "bugsnag/bugsnag": "~3.0",
                 "mindscape/raygun4php": "^1.6",
                 "monolog/monolog": "^1.17",
-                "php": ">=5.5",
-                "raven/raven": "^0.13.0"
+                "php": ">=7.0",
+                "sentry/sentry": "^1.7.0"
             },
             "require-dev": {
+                "cakephp/cakephp": "~3.0",
                 "cakephp/cakephp-codesniffer": "dev-master",
-                "phpunit/phpunit": "4.1.*",
+                "phpunit/phpunit": "~6.0",
                 "satooshi/php-coveralls": "dev-master"
             },
             "type": "library",
@@ -873,7 +1120,7 @@
                 "error",
                 "exception"
             ],
-            "time": "2016-04-20T05:17:23+00:00"
+            "time": "2017-06-18T08:18:40+00:00"
         },
         {
             "name": "josegonzalez/queuesadilla",
@@ -1639,61 +1886,6 @@
             "time": "2016-10-10T12:19:37+00:00"
         },
         {
-            "name": "raven/raven",
-            "version": "0.13.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/getsentry/raven-php.git",
-                "reference": "1d5be07afc001df98a3528d1f928eeb2241afce6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/raven-php/zipball/1d5be07afc001df98a3528d1f928eeb2241afce6",
-                "reference": "1d5be07afc001df98a3528d1f928eeb2241afce6",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "php": ">=5.2.4"
-            },
-            "require-dev": {
-                "fabpot/php-cs-fixer": "^1.8.0",
-                "phpunit/phpunit": "^4.6.6"
-            },
-            "bin": [
-                "bin/raven"
-            ],
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "0.13.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Raven_": "lib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD"
-            ],
-            "authors": [
-                {
-                    "name": "David Cramer",
-                    "email": "dcramer@gmail.com"
-                }
-            ],
-            "description": "A PHP client for Sentry (http://getsentry.com)",
-            "homepage": "http://getsentry.com",
-            "keywords": [
-                "log",
-                "logging"
-            ],
-            "abandoned": "sentry/sentry",
-            "time": "2015-09-09T18:12:58+00:00"
-        },
-        {
             "name": "robmorgan/phinx",
             "version": "v0.6.5",
             "source": {
@@ -1806,6 +1998,71 @@
                 "prompt"
             ],
             "time": "2017-03-18T11:32:45+00:00"
+        },
+        {
+            "name": "sentry/sentry",
+            "version": "1.7.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/getsentry/sentry-php.git",
+                "reference": "f92d30467d9696606352aa06afeac0a60c4458ef"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/f92d30467d9696606352aa06afeac0a60c4458ef",
+                "reference": "f92d30467d9696606352aa06afeac0a60c4458ef",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": "^5.3|^7.0"
+            },
+            "conflict": {
+                "raven/raven": "*"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^1.8.0",
+                "monolog/monolog": "*",
+                "phpunit/phpunit": "^4.8 || ^5.0"
+            },
+            "suggest": {
+                "ext-hash": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "immobiliare/sentry-php": "Fork that fixes support for PHP 5.2",
+                "monolog/monolog": "Automatically capture Monolog events as breadcrumbs"
+            },
+            "bin": [
+                "bin/sentry"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.7.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Raven_": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "David Cramer",
+                    "email": "dcramer@gmail.com"
+                }
+            ],
+            "description": "A PHP client for Sentry (http://getsentry.com)",
+            "homepage": "http://getsentry.com",
+            "keywords": [
+                "log",
+                "logging"
+            ],
+            "time": "2017-06-07T18:13:17+00:00"
         },
         {
             "name": "symfony/config",
@@ -2211,16 +2468,16 @@
     "packages-dev": [
         {
             "name": "cakephp/bake",
-            "version": "1.3.5",
+            "version": "1.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/bake.git",
-                "reference": "6fe5dc1bcdd321ffc35e847ae0e0ab1effde2278"
+                "reference": "e16ce8ff45a34f93f004d33d028f4c749188b263"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/bake/zipball/6fe5dc1bcdd321ffc35e847ae0e0ab1effde2278",
-                "reference": "6fe5dc1bcdd321ffc35e847ae0e0ab1effde2278",
+                "url": "https://api.github.com/repos/cakephp/bake/zipball/e16ce8ff45a34f93f004d33d028f4c749188b263",
+                "reference": "e16ce8ff45a34f93f004d33d028f4c749188b263",
                 "shasum": ""
             },
             "require": {
@@ -2254,7 +2511,7 @@
                 "bake",
                 "cakephp"
             ],
-            "time": "2017-06-05T23:32:05+00:00"
+            "time": "2017-06-15T02:04:18+00:00"
         },
         {
             "name": "cakephp/cakephp-codesniffer",
@@ -2303,16 +2560,16 @@
         },
         {
             "name": "cakephp/debug_kit",
-            "version": "3.10.2",
+            "version": "3.10.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/debug_kit.git",
-                "reference": "a0583e2cb58e80940fd4aeb026be48d5f0000ff2"
+                "reference": "4249446a4a8ceea95d71e75e1c3fb7cfa1bca0a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/debug_kit/zipball/a0583e2cb58e80940fd4aeb026be48d5f0000ff2",
-                "reference": "a0583e2cb58e80940fd4aeb026be48d5f0000ff2",
+                "url": "https://api.github.com/repos/cakephp/debug_kit/zipball/4249446a4a8ceea95d71e75e1c3fb7cfa1bca0a8",
+                "reference": "4249446a4a8ceea95d71e75e1c3fb7cfa1bca0a8",
                 "shasum": ""
             },
             "require": {
@@ -2320,7 +2577,8 @@
                 "cakephp/chronos": "^1.0.0",
                 "cakephp/plugin-installer": "^1.0.0",
                 "composer/composer": "^1.3.0",
-                "jdorn/sql-formatter": "^1.2.0"
+                "jdorn/sql-formatter": "^1.2.0",
+                "php": ">=5.6.0"
             },
             "require-dev": {
                 "cakephp/cakephp-codesniffer": "^3.0",
@@ -2358,66 +2616,7 @@
                 "debug",
                 "kit"
             ],
-            "time": "2017-05-12T16:10:13+00:00"
-        },
-        {
-            "name": "composer/ca-bundle",
-            "version": "1.0.7",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/composer/ca-bundle.git",
-                "reference": "b17e6153cb7f33c7e44eb59578dc12eee5dc8e12"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/b17e6153cb7f33c7e44eb59578dc12eee5dc8e12",
-                "reference": "b17e6153cb7f33c7e44eb59578dc12eee5dc8e12",
-                "shasum": ""
-            },
-            "require": {
-                "ext-openssl": "*",
-                "ext-pcre": "*",
-                "php": "^5.3.2 || ^7.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.5",
-                "psr/log": "^1.0",
-                "symfony/process": "^2.5 || ^3.0"
-            },
-            "suggest": {
-                "symfony/process": "This is necessary to reliably check whether openssl_x509_parse is vulnerable on older php versions, but can be ignored on PHP 5.5.6+"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Composer\\CaBundle\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jordi Boggiano",
-                    "email": "j.boggiano@seld.be",
-                    "homepage": "http://seld.be"
-                }
-            ],
-            "description": "Lets you find a path to the system CA bundle, and includes a fallback to the Mozilla CA bundle.",
-            "keywords": [
-                "cabundle",
-                "cacert",
-                "certificate",
-                "ssl",
-                "tls"
-            ],
-            "time": "2017-03-06T11:59:08+00:00"
+            "time": "2017-06-16T20:03:13+00:00"
         },
         {
             "name": "composer/composer",
