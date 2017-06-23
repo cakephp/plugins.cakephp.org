@@ -4,8 +4,43 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "7dbd130106d8de1d9726f43e7da82a54",
+    "content-hash": "a004086a04b6dd27fdd263f01a54b663",
     "packages": [
+        {
+            "name": "admad/cakephp-social-auth",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ADmad/cakephp-social-auth.git",
+                "reference": "0bdcf91540e922168410d3606d22cdd1f6a19f10"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ADmad/cakephp-social-auth/zipball/0bdcf91540e922168410d3606d22cdd1f6a19f10",
+                "reference": "0bdcf91540e922168410d3606d22cdd1f6a19f10",
+                "shasum": ""
+            },
+            "require": {
+                "cakephp/cakephp": "^3.4"
+            },
+            "type": "cakephp-plugin",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ADmad\\SocialAuth\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A CakePHP plugin which allows you to authenticate using social providers like Facebook/Google/Twitter etc.",
+            "time": "2017-05-01 20:31:48"
+        },
         {
             "name": "airbrake/phpbrake",
             "version": "v0.3.1",
@@ -1890,12 +1925,12 @@
             "version": "v0.6.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/robmorgan/phinx.git",
+                "url": "https://github.com/cakephp/phinx.git",
                 "reference": "6943cb4bb78bf9d3964967a032220b7c793b97b7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/robmorgan/phinx/zipball/6943cb4bb78bf9d3964967a032220b7c793b97b7",
+                "url": "https://api.github.com/repos/cakephp/phinx/zipball/6943cb4bb78bf9d3964967a032220b7c793b97b7",
                 "reference": "6943cb4bb78bf9d3964967a032220b7c793b97b7",
                 "shasum": ""
             },
@@ -3493,6 +3528,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "admad/cakephp-social-auth": 20,
         "psy/psysh": 0
     },
     "prefer-stable": true,
