@@ -43,7 +43,10 @@ class UsersTable extends Table
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
-        $this->addBehavior('Muffin/Tokenize.Tokenize');
+
+        if (Configure::read('Users.enablePasswordReset') === true) {
+            $this->addBehavior('Muffin/Tokenize.Tokenize');
+        }
 
         if (Configure::read('Users.enableAvatarUploads') === true) {
             $this->addBehavior('Josegonzalez/Upload.Upload', [

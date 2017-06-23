@@ -38,9 +38,6 @@ class ControllerListener implements EventListenerInterface
     {
         $Controller = $event->getSubject();
         $table = TableRegistry::get($Controller->modelClass);
-        if (!$table->behaviors()->has('Tokenize')) {
-            throw new MissingBehaviorException(['class' => 'Tokenize']);
-        }
         if (!$Controller->components()->has('Auth')) {
             throw new MissingComponentException(['class' => 'Auth']);
         }
@@ -50,16 +47,22 @@ class ControllerListener implements EventListenerInterface
 
         $Controller->Crud->mapAction('login', 'CrudUsers.Login');
         $Controller->Crud->mapAction('logout', 'CrudUsers.Logout');
-        $Controller->Crud->mapAction('forgotPassword', 'CrudUsers.ForgotPassword');
-        $Controller->Crud->mapAction('resetPassword', [
-            'className' => 'CrudUsers.ResetPassword',
-            'findMethod' => 'token',
-        ]);
-        $Controller->Crud->mapAction('verify', [
-            'className' => 'CrudUsers.Verify',
-            'findMethod' => 'token',
-        ]);
-        $Controller->Auth->allow(['forgotPassword', 'resetPassword', 'verify']);
+
+        if (Configure::read('Users.enablePasswordReset') === true) {
+            if (!$table->behaviors()->has('Tokenize')) {
+                throw new MissingBehaviorException(['class' => 'Tokenize']);
+            }
+            $Controller->Crud->mapAction('forgotPassword', 'CrudUsers.ForgotPassword');
+            $Controller->Crud->mapAction('resetPassword', [
+                'className' => 'CrudUsers.ResetPassword',
+                'findMethod' => 'token',
+            ]);
+            $Controller->Crud->mapAction('verify', [
+                'className' => 'CrudUsers.Verify',
+                'findMethod' => 'token',
+            ]);
+            $Controller->Auth->allow(['forgotPassword', 'resetPassword', 'verify']);
+        }
 
         $Controller->Crud->action()->config('scaffold.sidebar_navigation', false);
         $Controller->Crud->action()->config('scaffold.site_title', Configure::read('App.name'));

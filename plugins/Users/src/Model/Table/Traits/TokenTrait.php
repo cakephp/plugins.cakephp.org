@@ -1,6 +1,7 @@
 <?php
 namespace Users\Model\Table\Traits;
 
+use Cake\Core\Configure;
 use Cake\Event\Event;
 
 trait TokenTrait
@@ -38,6 +39,10 @@ trait TokenTrait
      */
     public function modelInitialize(Event $event)
     {
+        if (Configure::read('Users.enablePasswordReset') !== true) {
+            return;
+        }
+
         $Table = $event->getSubject();
         if (!$Table->behaviors()->has('Muffin/Tokenize.Tokenize')) {
             $this->addBehavior('Muffin/Tokenize.Tokenize');

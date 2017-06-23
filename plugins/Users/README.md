@@ -21,6 +21,9 @@ return [
         // Enable users the ability to upload avatars
         'enableAvatarUploads' => true,
 
+        // Enable the password-reset flow
+        'enablePasswordReset' => true,
+
         // SocialAuth plugin configuration
         'social' => [
             'getUserCallback' => 'getUserFromSocialProfile',
