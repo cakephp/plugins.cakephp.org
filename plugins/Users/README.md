@@ -18,8 +18,8 @@ return [
         // Name of the table to use
         'userModel' => 'Users.Users',
 
-        // Allow an avatar to be uploaded
-        'allowAvatar' => true,
+        // Enable users the ability to upload avatars
+        'enableAvatarUploads' => true,
 
         // SocialAuth plugin configuration
         'social' => [

@@ -3,6 +3,7 @@ namespace Users\Listener;
 
 use Cake\Controller\Controller;
 use Cake\Controller\Exception\MissingComponentException;
+use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\ORM\Exception\MissingBehaviorException;
 use Cake\ORM\TableRegistry;
@@ -144,7 +145,7 @@ class CrudListener extends BaseListener
                 'type' => 'password',
             ],
         ];
-        if (Configure::read('Users.allowAvatar') === true) {
+        if (Configure::read('Users.enableAvatarUploads') === true) {
             $scaffoldFields['avatar'] = ['type' => 'file'];
         }
 

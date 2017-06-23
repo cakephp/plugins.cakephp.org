@@ -28,7 +28,7 @@ trait AccountValidationTrait
     }
 
     /**
-     * Conditionally add a validation rule for avatars if Users.allowAvatar
+     * Conditionally add a validation rule for avatars if Users.enableAvatarUploads
      * is enabled
      *
      * @param \Cake\Validation\Validator $validator Validator instance.
@@ -36,7 +36,7 @@ trait AccountValidationTrait
      */
     protected function addAvatarValidationRule(Validator $validator)
     {
-        if (Configure::read('Users.allowAvatar') !== true) {
+        if (Configure::read('Users.enableAvatarUploads') !== true) {
             return $validator;
         }
 
