@@ -1,8 +1,11 @@
 <?php
 namespace Users\Controller;
 
+use Cake\Core\Configure;
+use LogicException;
 use Users\Controller\AppController;
 use Users\Listener\ControllerListener;
+use Users\Listener\CrudListener;
 
 /**
  * Users Controller
@@ -50,7 +53,13 @@ class UsersController extends AppController
     {
         parent::initialize();
 
+        $userModel = Configure::read('Users.userModel');
+        if (empty($userModel)) {
+            throw new LogicException('Configure value Users.userModel is empty');
+        }
+
+        $this->_setModelClass($userModel);
         $this->eventManager()->attach(new ControllerListener);
-        $this->Crud->addListener('Users', 'Users\Listener\CrudListener');
+        $this->Crud->addListener('Users', CrudListener::class);
     }
 }

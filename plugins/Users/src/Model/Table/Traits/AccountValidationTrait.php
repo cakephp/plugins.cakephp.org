@@ -1,6 +1,7 @@
 <?php
 namespace Users\Model\Table\Traits;
 
+use Cake\Core\Configure;
 use Cake\Validation\Validator;
 
 trait AccountValidationTrait
@@ -20,6 +21,25 @@ trait AccountValidationTrait
             'rule' => ['compareWith', 'password'],
             'message' => 'Passwords are not equal',
         ]);
+
+        $this->addAvatarValidationRule($validator);
+
+        return $validator;
+    }
+
+    /**
+     * Conditionally add a validation rule for avatars if Users.allowAvatar
+     * is enabled
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    protected function addAvatarValidationRule(Validator $validator)
+    {
+        if (Configure::read('Users.allowAvatar') !== true) {
+            return $validator;
+        }
+
         $validator->allowEmpty('avatar');
         $validator->add('avatar', 'valid-image', [
             'rule' => ['uploadedFile', [
@@ -42,6 +62,7 @@ trait AccountValidationTrait
             'rule' => ['uploadError', true],
             'message' => 'There was an error uploading your avatar',
         ]);
+
         return $validator;
     }
 }

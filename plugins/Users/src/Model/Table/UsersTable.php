@@ -42,13 +42,16 @@ class UsersTable extends Table
 
         $this->addBehavior('Timestamp');
         $this->addBehavior('Muffin/Tokenize.Tokenize');
-        $this->addBehavior('Josegonzalez/Upload.Upload', [
-            'avatar' => [
-                'fields' => [
-                    'dir' => 'avatar_dir',
+
+        if (Configure::read('Users.allowAvatar') === true) {
+            $this->addBehavior('Josegonzalez/Upload.Upload', [
+                'avatar' => [
+                    'fields' => [
+                        'dir' => 'avatar_dir',
+                    ],
                 ],
-            ],
-        ]);
+            ]);
+        }
     }
 
     /**

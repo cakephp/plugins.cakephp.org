@@ -134,7 +134,8 @@ class CrudListener extends BaseListener
         $this->_action()->config('scaffold.viewblocks', [
             'actions' => ['' => 'text'],
         ]);
-        $this->_action()->config('scaffold.fields', [
+
+        $scaffoldFields = [
             $this->config('usernameField'),
             $this->config('passwordField') => [
                 'required' => false,
@@ -142,10 +143,12 @@ class CrudListener extends BaseListener
             'confirm_password' => [
                 'type' => 'password',
             ],
-            'avatar' => [
-                'type' => 'file'
-            ],
-        ]);
+        ];
+        if (Configure::read('Users.allowAvatar') === true) {
+            $scaffoldFields['avatar'] = ['type' => 'file'];
+        }
+
+        $this->_action()->config('scaffold.fields', $scaffoldFields);
     }
 
     /**

@@ -9,3 +9,33 @@ The recommended way to install composer packages is:
 ```
 composer require your-name-here/Users
 ```
+
+## Configuration
+
+```php
+return [
+    'Users' => [
+        // Name of the table to use
+        'userModel' => 'Users.Users',
+
+        // Allow an avatar to be uploaded
+        'allowAvatar' => true,
+
+        // SocialAuth plugin configuration
+        'social' => [
+            'getUserCallback' => 'getUserFromSocialProfile',
+            'serviceConfig' => [
+                'provider' => [
+                    'facebook' => [
+                        'applicationId' => '<application id>',
+                        'applicationSecret' => '<application secret>',
+                        'scope' => [
+                            'email'
+                        ]
+                    ],
+                ],
+            ],
+        ],
+    ],
+];
+```
