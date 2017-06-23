@@ -6,6 +6,7 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use Users\Model\Table\Traits\AccountValidationTrait;
+use Users\Model\Table\Traits\SocialAuthTrait;
 use Users\Model\Table\Traits\TokenTrait;
 
 /**
@@ -24,6 +25,7 @@ use Users\Model\Table\Traits\TokenTrait;
 class UsersTable extends Table
 {
     use AccountValidationTrait;
+    use SocialAuthTrait;
     use TokenTrait;
 
     /**
