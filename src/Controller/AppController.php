@@ -18,6 +18,7 @@ use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Crud\Controller\ControllerTrait;
+use Users\Controller\AuthTrait;
 
 /**
  * Application Controller
@@ -30,6 +31,7 @@ use Crud\Controller\ControllerTrait;
 class AppController extends Controller
 {
 
+    use AuthTrait;
     use ControllerTrait;
 
     /**
@@ -172,45 +174,6 @@ class AppController extends Controller
 
         if (!array_key_exists('_serialize', $this->viewVars) && $isRest) {
             $this->set('_serialize', true);
-        }
-    }
-
-    /**
-     * Configures the AuthComponent
-     *
-     * @return void
-     */
-    protected function loadAuthComponent()
-    {
-        $this->loadComponent('Auth', [
-            'authorize' => ['Controller'],
-            'flash' => [
-                'element' => 'flash/error',
-                'key' => 'auth',
-            ],
-            'loginAction' => [
-                'plugin' => 'Users',
-                'prefix' => false,
-                'controller' => 'Users',
-                'action' => 'login'
-            ],
-            'loginRedirect' => '/',
-            'logoutRedirect' => '/',
-            'authenticate' => [
-                'all' => [
-                    'fields' => ['username' => 'email', 'password' => 'passwd'],
-                    'userModel' => 'Users',
-                    'scope' => [
-                        'User.email_authenticated' => 1,
-                        'User.active' => 1,
-                    ],
-                ],
-                'Form',
-            ]
-        ]);
-
-        if (!isset($this->request->params['prefix']) || $this->request->params['prefix'] != 'admin') {
-            $this->Auth->allow();
         }
     }
 
