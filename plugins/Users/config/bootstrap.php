@@ -1,4 +1,8 @@
 <?php
+use ADmad\SocialAuth\Middleware\SocialAuthMiddleware;
+use Cake\Core\Configure;
+use Cake\Event\EventManager;
+
 /*
  * Read configuration file and inject configuration into various
  * CakePHP classes.
@@ -12,10 +16,6 @@ try {
 } catch (\Exception $e) {
     exit($e->getMessage() . "\n");
 }
-
-use ADmad\SocialAuth\Middleware\SocialAuthMiddleware;
-use Cake\Core\Configure;
-use Cake\Event\EventManager;
 
 EventManager::instance()->on('Server.buildMiddleware', function ($event, $middleware) {
     $config = Configure::read('Users.social');
