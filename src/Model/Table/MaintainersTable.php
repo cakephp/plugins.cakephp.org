@@ -48,13 +48,6 @@ class MaintainersTable extends Table
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id'
         ]);
-        $this->belongsTo('Gravatars', [
-            'foreignKey' => 'gravatar_id'
-        ]);
-        $this->belongsTo('Githubs', [
-            'foreignKey' => 'github_id',
-            'joinType' => 'INNER'
-        ]);
         $this->hasMany('Packages', [
             'foreignKey' => 'maintainer_id'
         ]);
