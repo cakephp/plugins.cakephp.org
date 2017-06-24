@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "a004086a04b6dd27fdd263f01a54b663",
+    "content-hash": "4366f9f901b863dd2a17237b77557c6d",
     "packages": [
         {
             "name": "admad/cakephp-social-auth",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ADmad/cakephp-social-auth.git",
-                "reference": "8e8670c3c2cafb0e8a57fffc45cc2b26ca780040"
+                "reference": "0c7c15ca60101f8ed5663228e772e7de9c9dd4ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ADmad/cakephp-social-auth/zipball/8e8670c3c2cafb0e8a57fffc45cc2b26ca780040",
-                "reference": "8e8670c3c2cafb0e8a57fffc45cc2b26ca780040",
+                "url": "https://api.github.com/repos/ADmad/cakephp-social-auth/zipball/0c7c15ca60101f8ed5663228e772e7de9c9dd4ef",
+                "reference": "0c7c15ca60101f8ed5663228e772e7de9c9dd4ef",
                 "shasum": ""
             },
             "require": {
@@ -39,7 +39,7 @@
                 "MIT"
             ],
             "description": "A CakePHP plugin which allows you to authenticate using social providers like Facebook/Google/Twitter etc.",
-            "time": "2017-06-23 18:43:47"
+            "time": "2017-06-24 06:45:28"
         },
         {
             "name": "airbrake/phpbrake",
@@ -669,16 +669,16 @@
         },
         {
             "name": "friendsofcake/crud-view",
-            "version": "0.5.0",
+            "version": "0.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfCake/crud-view.git",
-                "reference": "c6c5015b206796b2c18145b66bf2abe4ed3529ed"
+                "reference": "0e9d3725d7f29db70d7711ab0f16dd669fd486bc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfCake/crud-view/zipball/c6c5015b206796b2c18145b66bf2abe4ed3529ed",
-                "reference": "c6c5015b206796b2c18145b66bf2abe4ed3529ed",
+                "url": "https://api.github.com/repos/FriendsOfCake/crud-view/zipball/0e9d3725d7f29db70d7711ab0f16dd669fd486bc",
+                "reference": "0e9d3725d7f29db70d7711ab0f16dd669fd486bc",
                 "shasum": ""
             },
             "require": {
@@ -725,7 +725,7 @@
                 "scaffolding",
                 "update"
             ],
-            "time": "2017-04-13T00:32:56+00:00"
+            "time": "2017-06-22T19:49:57+00:00"
         },
         {
             "name": "friendsofcake/search",
@@ -3154,16 +3154,16 @@
         },
         {
             "name": "psy/psysh",
-            "version": "v0.8.7",
+            "version": "v0.8.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bobthecow/psysh.git",
-                "reference": "be969b9dc89dcaefdb9a3117fa91fa38bca19f50"
+                "reference": "fe65c30cbc55c71e61ba3a38b5a581149be31b8e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/be969b9dc89dcaefdb9a3117fa91fa38bca19f50",
-                "reference": "be969b9dc89dcaefdb9a3117fa91fa38bca19f50",
+                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/fe65c30cbc55c71e61ba3a38b5a581149be31b8e",
+                "reference": "fe65c30cbc55c71e61ba3a38b5a581149be31b8e",
                 "shasum": ""
             },
             "require": {
@@ -3223,7 +3223,7 @@
                 "interactive",
                 "shell"
             ],
-            "time": "2017-06-20T12:51:31+00:00"
+            "time": "2017-06-24T06:16:19+00:00"
         },
         {
             "name": "seld/jsonlint",
