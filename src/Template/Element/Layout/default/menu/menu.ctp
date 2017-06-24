@@ -71,7 +71,7 @@
         <li>
             <?= $this->Html->link(
                 $this->Html->tag('i', '', ['class' => 'fa fa-logout']) . __('Logout'),
-                ['prefix' => false, 'plugin' => 'CakeDC/Users', 'controller' => 'Users', 'action' => 'logout'],
+                ['prefix' => false, 'plugin' => 'Users', 'controller' => 'Users', 'action' => 'logout'],
                 ['escape' => false]
             );
             ?>
