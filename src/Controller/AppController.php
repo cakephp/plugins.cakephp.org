@@ -199,7 +199,7 @@ class AppController extends Controller
             'authenticate' => [
                 'all' => [
                     'fields' => ['username' => 'email', 'password' => 'passwd'],
-                    'userModel' => 'User',
+                    'userModel' => 'Users',
                     'scope' => [
                         'User.email_authenticated' => 1,
                         'User.active' => 1,
