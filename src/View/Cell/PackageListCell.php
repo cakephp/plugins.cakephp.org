@@ -8,6 +8,7 @@ class PackageListCell extends Cell
     public function featured()
     {
         $this->set('title', 'Featured Packages');
+        $this->set(['disableAdmin' => true]);
         return $this->display([
             52, // debug_kit
             640, // asset_compress
@@ -30,6 +31,7 @@ class PackageListCell extends Cell
             ->orderDesc('Packages.watchers')
             ->limit(8)
             ->toArray();
+        $this->set(['disableAdmin' => true]);
         return $this->display(array_keys($ids));
     }
 
