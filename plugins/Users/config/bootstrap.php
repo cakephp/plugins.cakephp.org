@@ -33,5 +33,11 @@ EventManager::instance()->on('Server.buildMiddleware', function ($event, $middle
     }
     $config['userModel'] = $userModel;
 
+    $fields = Configure::read('Users.fields');
+    if (empty($fields['username']) || empty($fields['password'])) {
+        throw new LogicException('Configure value Users.fields is invalid');
+    }
+    $config['fields'] = $fields;
+
     $middleware->add(new SocialAuthMiddleware($config));
 });

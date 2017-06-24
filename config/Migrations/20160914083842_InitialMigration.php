@@ -748,123 +748,33 @@ class InitialMigration extends AbstractMigration
             )
             ->create();
 
-        $this->table('user_details')
-            ->addColumn('id', 'string', [
-                'default' => null,
-                'limit' => 36,
-                'null' => false,
-            ])
-            ->addPrimaryKey(['id'])
-            ->addColumn('user_id', 'string', [
-                'default' => null,
-                'limit' => 36,
-                'null' => false,
-            ])
-            ->addColumn('position', 'float', [
-                'default' => 1,
-                'limit' => null,
-                'null' => false,
-            ])
-            ->addColumn('field', 'string', [
-                'default' => null,
-                'limit' => 255,
-                'null' => false,
-            ])
-            ->addColumn('value', 'text', [
-                'default' => null,
-                'limit' => null,
-                'null' => true,
-            ])
-            ->addColumn('input', 'string', [
-                'default' => null,
-                'limit' => 16,
-                'null' => false,
-            ])
-            ->addColumn('data_type', 'string', [
-                'default' => null,
-                'limit' => 16,
-                'null' => false,
-            ])
-            ->addColumn('label', 'string', [
-                'default' => '',
-                'limit' => 128,
-                'null' => false,
-            ])
-            ->addColumn('created', 'datetime', [
-                'default' => null,
-                'limit' => null,
-                'null' => true,
-            ])
-            ->addColumn('modified', 'datetime', [
-                'default' => null,
-                'limit' => null,
-                'null' => true,
-            ])
-            ->addIndex(
-                [
-                    'field',
-                    'user_id',
-                ],
-                ['unique' => true]
-            )
-            ->create();
-
         $this->table('users')
-            ->addColumn('id', 'string', [
+            ->addColumn('id', 'integer', [
+                'autoIncrement' => true,
                 'default' => null,
-                'limit' => 36,
+                'limit' => 11,
                 'null' => false,
             ])
             ->addPrimaryKey(['id'])
-            ->addColumn('username', 'string', [
-                'default' => null,
-                'limit' => 255,
-                'null' => false,
-            ])
-            ->addColumn('slug', 'string', [
-                'default' => null,
-                'limit' => 255,
-                'null' => false,
-            ])
-            ->addColumn('passwd', 'string', [
-                'default' => null,
-                'limit' => 128,
-                'null' => true,
-            ])
-            ->addColumn('password_token', 'string', [
-                'default' => null,
-                'limit' => 128,
-                'null' => true,
-            ])
             ->addColumn('email', 'string', [
                 'default' => null,
                 'limit' => 255,
-                'null' => true,
+                'null' => false,
+            ])
+            ->addColumn('password', 'string', [
+                'default' => null,
+                'limit' => 128,
+                'null' => false,
             ])
             ->addColumn('email_authenticated', 'boolean', [
                 'default' => false,
                 'limit' => null,
-                'null' => true,
-            ])
-            ->addColumn('email_token', 'string', [
-                'default' => null,
-                'limit' => 255,
-                'null' => true,
-            ])
-            ->addColumn('email_token_expires', 'datetime', [
-                'default' => null,
-                'limit' => null,
-                'null' => true,
-            ])
-            ->addColumn('tos', 'boolean', [
-                'default' => false,
-                'limit' => null,
-                'null' => true,
+                'null' => false,
             ])
             ->addColumn('active', 'boolean', [
                 'default' => false,
                 'limit' => null,
-                'null' => true,
+                'null' => false,
             ])
             ->addColumn('last_login', 'datetime', [
                 'default' => null,
@@ -873,11 +783,6 @@ class InitialMigration extends AbstractMigration
             ])
             ->addColumn('last_activity', 'datetime', [
                 'default' => null,
-                'limit' => null,
-                'null' => true,
-            ])
-            ->addColumn('is_admin', 'boolean', [
-                'default' => false,
                 'limit' => null,
                 'null' => true,
             ])
@@ -898,14 +803,8 @@ class InitialMigration extends AbstractMigration
             ])
             ->addIndex(
                 [
-                    'username',
-                    'passwd',
-                ]
-            )
-            ->addIndex(
-                [
                     'email',
-                    'passwd',
+                    'password',
                 ]
             )
             ->create();

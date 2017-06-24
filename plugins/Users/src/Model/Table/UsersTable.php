@@ -1,7 +1,10 @@
 <?php
 namespace Users\Model\Table;
 
+use ArrayObject;
 use Cake\Core\Configure;
+use Cake\Datasource\EntityInterface;
+use Cake\Event\Event;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -58,6 +61,10 @@ class UsersTable extends Table
                 ],
             ]);
         }
+
+        if (Configure::read('Users.enablePasswordReset') === true) {
+            $this->addBehavior('Muffin/Tokenize.Tokenize');
+        }
     }
 
     /**
@@ -96,5 +103,23 @@ class UsersTable extends Table
         $rules->add($rules->isUnique(['email']));
 
         return $rules;
+    }
+
+    /**
+     * Modifies the entity before it is saved.
+     *
+     * @param \Cake\Event\Event $event The beforeSave event that was fired
+     * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
+     * @param \ArrayObject $options the options passed to the save method
+     * @return void
+     */
+    public function beforeSave(Event $event, EntityInterface $entity, ArrayObject $options)
+    {
+        if (Configure::read('Users.setActiveOnCreation') === true) {
+            if ($entity->isNew()) {
+                $entity->active = true;
+            }
+        }
+        debug($entity);
     }
 }

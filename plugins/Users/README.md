@@ -24,6 +24,18 @@ return [
         // Enable the password-reset flow
         'enablePasswordReset' => true,
 
+        // Require that a user's email be authenticated
+        'requireEmailAuthentication' => true,
+
+        // Make all users active immediately
+        'setActiveOnCreation' => true,
+
+        // Fields to use for authentication
+        'fields' => [
+            'username' => 'email',
+            'password' => 'password',
+        ],
+
         // SocialAuth plugin configuration
         'social' => [
             'getUserCallback' => 'getUserFromSocialProfile',
