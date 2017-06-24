@@ -238,6 +238,6 @@ Plugin::load('Josegonzalez/Upload');
 Plugin::load('Muffin/Tokenize', ['bootstrap' => true, 'routes' => true]);
 Plugin::load('Search');
 
-Plugin::load('Users', ['bootstrap' => false, 'routes' => true]);
+Plugin::load('Users', ['bootstrap' => true, 'routes' => true]);
 
 Plugin::load('ADmad/SocialAuth', ['bootstrap' => true, 'routes' => true]);
