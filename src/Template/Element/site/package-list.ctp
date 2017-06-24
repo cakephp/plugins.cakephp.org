@@ -10,8 +10,10 @@
             );
             ?>
         </h4>
+        <?php if (empty($disableAdmin)) : ?>
+            <p><?php echo $this->element('site/version-picker', ['package' => $package]); ?></p>
+        <?php endif; ?>
         <p class="package-tags">
-            <?php echo $this->element('site/version-picker', ['package' => $package]); ?>
             <?php echo $this->element('site/category', ['category' => $package->category]); ?>
             <?php echo $this->Resource->tagCloud($package->tags); ?>
         </p>
