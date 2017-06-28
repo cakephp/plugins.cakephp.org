@@ -229,15 +229,14 @@ Configure::load('site');
 Plugin::load('Josegonzalez/CakeQueuesadilla');
 \Josegonzalez\CakeQueuesadilla\Queue\Queue::config(Configure::consume('Queuesadilla'));
 
+Plugin::load('ADmad/SocialAuth', ['bootstrap' => true, 'routes' => true]);
 Plugin::load('AssetCompress', ['bootstrap' => true]);
 Plugin::load('BootstrapUI');
 Plugin::load('Crud');
 Plugin::load('CrudUsers');
 Plugin::load('CrudView');
+Plugin::load('CsvView');
 Plugin::load('Josegonzalez/Upload');
 Plugin::load('Muffin/Tokenize', ['bootstrap' => true, 'routes' => true]);
 Plugin::load('Search');
-
 Plugin::load('Users', ['bootstrap' => true, 'routes' => true]);
-
-Plugin::load('ADmad/SocialAuth', ['bootstrap' => true, 'routes' => true]);

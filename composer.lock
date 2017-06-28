@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "4366f9f901b863dd2a17237b77557c6d",
+    "content-hash": "6905b341f312d219624efba25a94c629",
     "packages": [
         {
             "name": "admad/cakephp-social-auth",
@@ -198,16 +198,16 @@
         },
         {
             "name": "cakephp/cakephp",
-            "version": "3.4.8",
+            "version": "3.4.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/cakephp.git",
-                "reference": "143bf387be9150dac747f57b7e1af2dba731e6f4"
+                "reference": "a9eb22193e8df235ec71f4ed4a71158efa5e0b23"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/143bf387be9150dac747f57b7e1af2dba731e6f4",
-                "reference": "143bf387be9150dac747f57b7e1af2dba731e6f4",
+                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/a9eb22193e8df235ec71f4ed4a71158efa5e0b23",
+                "reference": "a9eb22193e8df235ec71f4ed4a71158efa5e0b23",
                 "shasum": ""
             },
             "require": {
@@ -280,7 +280,7 @@
                 "rapid-development",
                 "validation"
             ],
-            "time": "2017-06-20T01:04:40+00:00"
+            "time": "2017-06-26T02:03:42+00:00"
         },
         {
             "name": "cakephp/chronos",
@@ -491,16 +491,16 @@
         },
         {
             "name": "friendsofcake/bootstrap-ui",
-            "version": "1.1.0",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfCake/bootstrap-ui.git",
-                "reference": "bec60e3bf715e65fcc47532122da8544770e0152"
+                "reference": "8b7b95d3f4c753acbb5b9c4984b79953b72eb082"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfCake/bootstrap-ui/zipball/bec60e3bf715e65fcc47532122da8544770e0152",
-                "reference": "bec60e3bf715e65fcc47532122da8544770e0152",
+                "url": "https://api.github.com/repos/FriendsOfCake/bootstrap-ui/zipball/8b7b95d3f4c753acbb5b9c4984b79953b72eb082",
+                "reference": "8b7b95d3f4c753acbb5b9c4984b79953b72eb082",
                 "shasum": ""
             },
             "require": {
@@ -537,7 +537,78 @@
                 "cakephp",
                 "twitter"
             ],
-            "time": "2017-04-21T19:47:31+00:00"
+            "time": "2017-06-26T02:16:13+00:00"
+        },
+        {
+            "name": "friendsofcake/cakephp-csvview",
+            "version": "3.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/FriendsOfCake/cakephp-csvview.git",
+                "reference": "f36684fad38a6c274d7e552692c700710e5e8c2c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/FriendsOfCake/cakephp-csvview/zipball/f36684fad38a6c274d7e552692c700710e5e8c2c",
+                "reference": "f36684fad38a6c274d7e552692c700710e5e8c2c",
+                "shasum": ""
+            },
+            "require": {
+                "cakephp/cakephp": "~3.0",
+                "php": ">=5.4.16"
+            },
+            "type": "cakephp-plugin",
+            "autoload": {
+                "psr-4": {
+                    "CsvView\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "ADmad",
+                    "homepage": "https://github.com/ADmad",
+                    "role": "Contributor"
+                },
+                {
+                    "name": "Mark Scherer",
+                    "homepage": "https://github.com/dereuromark",
+                    "role": "Contributor"
+                },
+                {
+                    "name": "Joshua Paling",
+                    "homepage": "https://github.com/joshuapaling",
+                    "role": "Contributor"
+                },
+                {
+                    "name": "Gaurish Sharma",
+                    "homepage": "https://github.com/gaurish",
+                    "role": "Contributor"
+                },
+                {
+                    "name": "Gregory Gaskill",
+                    "homepage": "https://github.com/chronon",
+                    "role": "Contributor"
+                },
+                {
+                    "name": "Jose Diaz-Gonzalez",
+                    "email": "email@josediazgonzalez.com",
+                    "homepage": "http://josediazgonzalez.com",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "A CSV View class for CakePHP 3.x",
+            "homepage": "http://github.com/friendsofcake/cakephp-csvview",
+            "keywords": [
+                "cakephp",
+                "csv",
+                "export",
+                "view"
+            ],
+            "time": "2016-11-07T09:30:57+00:00"
         },
         {
             "name": "friendsofcake/crud",
@@ -669,21 +740,21 @@
         },
         {
             "name": "friendsofcake/crud-view",
-            "version": "0.6.0",
+            "version": "0.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfCake/crud-view.git",
-                "reference": "0e9d3725d7f29db70d7711ab0f16dd669fd486bc"
+                "reference": "a0f8ce40c0b9ad47085ee2031860242838d22f83"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfCake/crud-view/zipball/0e9d3725d7f29db70d7711ab0f16dd669fd486bc",
-                "reference": "0e9d3725d7f29db70d7711ab0f16dd669fd486bc",
+                "url": "https://api.github.com/repos/FriendsOfCake/crud-view/zipball/a0f8ce40c0b9ad47085ee2031860242838d22f83",
+                "reference": "a0f8ce40c0b9ad47085ee2031860242838d22f83",
                 "shasum": ""
             },
             "require": {
-                "cakephp/cakephp": "~3.0",
-                "friendsofcake/bootstrap-ui": "~1.0",
+                "cakephp/cakephp": "~3.4",
+                "friendsofcake/bootstrap-ui": "~1.2",
                 "friendsofcake/crud": "*"
             },
             "require-dev": {
@@ -725,7 +796,7 @@
                 "scaffolding",
                 "update"
             ],
-            "time": "2017-06-22T19:49:57+00:00"
+            "time": "2017-06-28T02:04:53+00:00"
         },
         {
             "name": "friendsofcake/search",
@@ -1170,21 +1241,22 @@
         },
         {
             "name": "josegonzalez/queuesadilla",
-            "version": "0.0.6",
+            "version": "0.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/josegonzalez/php-queuesadilla.git",
-                "reference": "0136d1f1b1a2ddff3047c95656c98e33f7bf94f5"
+                "reference": "9116a5259af744778b4f0f1087034890627e33ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/josegonzalez/php-queuesadilla/zipball/0136d1f1b1a2ddff3047c95656c98e33f7bf94f5",
-                "reference": "0136d1f1b1a2ddff3047c95656c98e33f7bf94f5",
+                "url": "https://api.github.com/repos/josegonzalez/php-queuesadilla/zipball/9116a5259af744778b4f0f1087034890627e33ac",
+                "reference": "9116a5259af744778b4f0f1087034890627e33ac",
                 "shasum": ""
             },
             "require": {
+                "ext-pcntl": "*",
                 "league/event": "~2.0",
-                "php": ">=5.5.0",
+                "php": ">=5.6.0",
                 "psr/log": "~1.0"
             },
             "require-dev": {
@@ -1192,6 +1264,7 @@
                 "monolog/monolog": "*",
                 "pda/pheanstalk": "dev-master",
                 "phpmd/phpmd": "dev-master",
+                "phpunit/phpunit": "~5.0",
                 "predis/predis": "~1.0",
                 "satooshi/php-coveralls": "dev-master",
                 "squizlabs/php_codesniffer": "dev-master"
@@ -1228,7 +1301,7 @@
                 "php",
                 "queue"
             ],
-            "time": "2017-01-05T17:26:32+00:00"
+            "time": "2017-06-26T16:47:24+00:00"
         },
         {
             "name": "league/climate",

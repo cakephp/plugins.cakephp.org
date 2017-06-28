@@ -20,8 +20,8 @@
         "cakephp/plugin-installer": "*",
         "josegonzalez/dotenv": "3.*",
         "friendsofcake/crud": "5.1.0",
-        "friendsofcake/crud-view": "0.6.0",
-        "friendsofcake/bootstrap-ui": "1.1.0",
+        "friendsofcake/crud-view": "0.8.0",
+        "friendsofcake/bootstrap-ui": "1.2.0",
         "friendsofcake/search": "3.1.0",
         "markstory/asset_compress": "3.*",
         "josegonzalez/cakephp-upload": "3.6.3",
@@ -30,7 +30,8 @@
         "josegonzalez/php-error-handlers": "0.*",
         "muffin/tokenize": "^1.0",
         "friendsofcake/crud-users": "^0.5.0",
-        "admad/cakephp-social-auth": "^1.0@dev"
+        "admad/cakephp-social-auth": "^1.0@dev",
+        "friendsofcake/cakephp-csvview": "~3.0"
     },
     "require-dev": {
         "psy/psysh": "@stable",
