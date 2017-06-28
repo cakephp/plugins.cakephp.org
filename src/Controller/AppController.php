@@ -84,7 +84,9 @@ class AppController extends Controller
         parent::initialize();
 
         $this->loadAuthComponent();
-        $this->loadComponent('RequestHandler');
+        $this->loadComponent('RequestHandler', [
+            'viewClassMap' => ['csv' => 'CsvView.Csv']
+        ]);
         $this->loadComponent('Flash');
         $this->loadComponent('Crud.Crud', [
             'actions' => [
@@ -161,7 +163,7 @@ class AppController extends Controller
 
         $isRest = in_array($this->response->type(), ['application/json', 'application/xml']);
         $isAdmin = $this->isAdmin || in_array($this->request->action, $this->adminActions);
-        if (!$isRest && $isAdmin) {
+        if (!$isRest && $isAdmin && empty($this->request->getParam('_ext'))) {
             $this->viewBuilder()->className('CrudView\View\CrudView');
         }
     }

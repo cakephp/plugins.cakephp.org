@@ -131,7 +131,7 @@ class CrudListener extends BaseListener
 
         $this->_action()->saveOptions(['validate' => 'account']);
         $this->_action()->config('scaffold.page_title', 'Profile');
-        $this->_action()->config('scaffold.disable_extra_buttons', true);
+        $this->_action()->config('scaffold.form_submit_extra_buttons', false);
         $this->_action()->config('scaffold.viewblocks', [
             'actions' => ['' => 'text'],
         ]);
@@ -172,8 +172,8 @@ class CrudListener extends BaseListener
         $this->_action()->config('scaffold.viewblocks', [
             'actions' => ['' => 'text'],
         ]);
-        $this->_action()->config('scaffold.disable_extra_buttons', true);
-        $this->_action()->config('scaffold.submit_button_text', 'Send Password Reset Email');
+        $this->_action()->config('scaffold.form_submit_extra_buttons', false);
+        $this->_action()->config('scaffold.form_submit_button_text', 'Send Password Reset Email');
     }
 
     /**
@@ -197,8 +197,8 @@ class CrudListener extends BaseListener
         $this->_action()->config('scaffold.viewblocks', [
             'actions' => ['' => 'text'],
         ]);
-        $this->_action()->config('scaffold.disable_extra_buttons', true);
-        $this->_action()->config('scaffold.submit_button_text', 'Login');
+        $this->_action()->config('scaffold.form_submit_extra_buttons', false);
+        $this->_action()->config('scaffold.form_submit_button_text', 'Login');
     }
 
     /**
@@ -221,8 +221,8 @@ class CrudListener extends BaseListener
         $this->_action()->config('scaffold.viewblocks', [
             'actions' => ['' => 'text'],
         ]);
-        $this->_action()->config('scaffold.disable_extra_buttons', true);
-        $this->_action()->config('scaffold.submit_button_text', 'Reset Password');
+        $this->_action()->config('scaffold.form_submit_extra_buttons', false);
+        $this->_action()->config('scaffold.form_submit_button_text', 'Reset Password');
     }
 
     /**

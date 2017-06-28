@@ -26,6 +26,8 @@ class PackagesTable extends Table
 {
 
     use \App\Model\Table\Finder\PackageFinderTrait;
+    use \App\Model\Table\Finder\PackageUncategorizedFinderTrait;
+    use \App\Model\Table\Finder\PackageUnversionedFinderTrait;
     use \App\Model\Table\Finder\PackageIndexFinderTrait;
     use \App\Model\Table\Finder\PackageViewFinderTrait;
 
