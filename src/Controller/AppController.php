@@ -153,6 +153,7 @@ class AppController extends Controller
         if ($this->Crud->isActionMapped()) {
             $this->Crud->action()->config('scaffold.sidebar_navigation', false);
             $this->Crud->action()->config('scaffold.brand', Configure::read('App.name'));
+            $this->Crud->action()->config('scaffold.site_title', Configure::read('App.name'));
         }
 
         $isRest = in_array($this->response->type(), ['application/json', 'application/xml']);
