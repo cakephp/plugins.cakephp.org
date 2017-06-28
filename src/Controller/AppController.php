@@ -154,6 +154,9 @@ class AppController extends Controller
             $this->Crud->action()->config('scaffold.sidebar_navigation', false);
             $this->Crud->action()->config('scaffold.brand', Configure::read('App.name'));
             $this->Crud->action()->config('scaffold.site_title', Configure::read('App.name'));
+            if (method_exists($this, 'getUtilityNavigation')) {
+                $this->Crud->action()->config('scaffold.utility_navigation', $this->getUtilityNavigation());
+            }
         }
 
         $isRest = in_array($this->response->type(), ['application/json', 'application/xml']);
