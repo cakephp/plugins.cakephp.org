@@ -16,7 +16,7 @@
         <?=
         $this->Html->link(
             __('Business Solutions'),
-            'http://cakephp.org/pages/business-solutions',
+            'https://cakephp.org/pages/business-solutions',
             ['escape' => false]
         );?>
     </li>
@@ -24,7 +24,7 @@
         <?=
         $this->Html->link(
             __('Showcase'),
-            'http://cakephp.org/showcase',
+            'https://cakephp.org/showcase',
             ['escape' => false]
         );?>
     </li>

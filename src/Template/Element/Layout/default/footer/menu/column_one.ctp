@@ -2,13 +2,13 @@
     'business' => [
         'class' => 'menu-title',
         'icon' => 'fa fa-menu-title fa-briefcase',
-        'url' => 'http://cakephp.org/pages/business-solutions',
+        'url' => 'https://cakephp.org/pages/business-solutions',
         'title' => __('Business Solutions')
     ],
     'showcase' => [
         'class' => 'menu-title mt30',
         'icon' => 'fa fa-menu-title fa-desktop',
-        'url' => 'http://cakephp.org/showcase',
+        'url' => 'https://cakephp.org/showcase',
         'title' => __('Showcase')
     ]
 ];

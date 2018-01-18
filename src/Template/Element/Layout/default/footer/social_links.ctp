@@ -50,7 +50,7 @@
 ); ?>
 <?= $this->Html->link(
     $this->Html->tag('i', '', ['class' => 'fa fa-slack icon-social']),
-    'http://cakesf.herokuapp.com/',
+    'https://cakesf.herokuapp.com/',
     [
         'target' => '_blank',
         'title' => 'Slack',
@@ -60,7 +60,7 @@
 ); ?>
 <?= $this->Html->link(
     $this->Html->tag('i', '', ['class' => 'fa icon-social fa-stack-overflow']),
-    'http://stackoverflow.com/tags/cakephp/info',
+    'https://stackoverflow.com/tags/cakephp/info',
     [
         'target' => '_blank',
         'title' => 'Stack Overflow',
