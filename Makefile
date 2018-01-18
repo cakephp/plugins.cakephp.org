@@ -9,7 +9,7 @@ help: ## this help message
 
 web: ## starts a web process
 ifdef DYNO
-	vendor/bin/heroku-php-nginx -C config/nginx.conf webroot/
+	vendor/bin/heroku-php-nginx -C config/nginx.conf  -l log/debug.log  -l log/error.log  -l log/sql.log webroot/
 else
 	bin/cake server -p $(PORT)
 endif
