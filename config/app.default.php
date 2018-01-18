@@ -206,6 +206,7 @@ return [
             'from' => 'you@localhost',
             //'charset' => 'utf-8',
             //'headerCharset' => 'utf-8',
+            'to' => env('EMAIL_DEFAULT_TRANSPORT_TO', null),
         ],
     ],
 
