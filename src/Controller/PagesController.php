@@ -41,7 +41,7 @@ class PagesController extends AppController
         }
 
         $data = [
-            'env' => ['PHP_VERSION' => phpversion()] + $request->getEnvByPrefix('NOMAD_'),
+            'env' => ['PHP_VERSION' => phpversion()],
             'request' => [
                 'attributes' => $request->getAttributes(),
                 'get' => $request->getQueryParams(),
