@@ -41,7 +41,7 @@ class PagesController extends AppController
         }
 
         $data = [
-            'env' => ['PHP_VERSION' => phpversion()] + $this->getEnvByPrefix('DOKKU_') + $this->getEnvByPrefix('DOCKER_')
+            'env' => ['PHP_VERSION' => phpversion()] + $this->getEnvByPrefix('DOKKU_') + $this->getEnvByPrefix('DOCKER_'),
             'request' => [
                 'attributes' => $request->getAttributes(),
                 'get' => $request->getQueryParams(),
