@@ -34,15 +34,13 @@ class SuggestForm extends BaseForm
 
     protected function _execute(array $data)
     {
-        preg_match('/([\w-]+\/[\w-]+)(?:\.git)?$/', $data['github'], $matches);
-        $pieces = explode('/', $matches[1]);
-        list($username, $repository) = $pieces;
-
         $ipaddress = null;
         if (isset($_SERVER['REMOTE_ADDR'], $ipaddress)) {
             $ipaddress = $_SERVER['REMOTE_ADDR'];
         }
 
+        preg_match('/([\w-]+\/[\w-]+)(?:\.git)?$/', $data['github'], $matches);
+        $pieces = explode('/', $matches[1]);
         list($username, $repository) = $pieces;
 
         return $this->push(['\App\Job\SuggestPackageJob', 'perform'], [
