@@ -52,7 +52,7 @@
 
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
-    <link rel="icon" type="image/png" href="/favicons/favicon.png">
+    <link rel="icon" type="image/png" href="/favicon.png">
 </head>
 <body class="<?php echo $_bodyClass; ?>" id="<?php echo $_bodyId; ?>">
 <?= $this->element('Layout/default/navbar')?>
