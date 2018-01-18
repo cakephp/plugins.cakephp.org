@@ -32,7 +32,6 @@ class PagesController extends AppController
     public function debug()
     {
         $request = $this->request;
-        $user = $this->getUser();
         $ip = $this->getRequestIpAddress();
 
         if (!in_array($ip, explode(',', env('WHITELISTED_IPS', 'Example')))) {
