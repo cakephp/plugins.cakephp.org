@@ -4,12 +4,9 @@ namespace App\Form;
 use App\Form\BaseForm;
 use Cake\Form\Schema;
 use Cake\Validation\Validator;
-use Josegonzalez\CakeQueuesadilla\Traits\QueueTrait;
 
 class SuggestForm extends BaseForm
 {
-    use QueueTrait;
-
     protected function _buildSchema(Schema $schema)
     {
         return $schema->addField('github', 'string');
