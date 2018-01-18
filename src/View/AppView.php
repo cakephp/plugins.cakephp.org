@@ -45,7 +45,7 @@ class AppView extends View implements EventListenerInterface
         $this->loadHelper('AssetCompress.AssetCompress');
         $this->loadHelper('Menu');
         $this->loadHelper('Form');
-        $this->eventManager()->on($this);
+        $this->getEventManager()->on($this);
     }
 
     /**

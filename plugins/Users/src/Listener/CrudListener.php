@@ -164,7 +164,7 @@ class CrudListener extends BaseListener
             'viewVar' => 'forgotPassword',
             'forgotPassword' => null,
         ]);
-        $this->_controller()->viewBuilder()->template('add');
+        $this->_controller()->viewBuilder()->setTemplate('add');
         $this->_action()->config('scaffold.page_title', 'Forgot Password?');
         $this->_action()->config('scaffold.fields', [
             $this->config('usernameField'),
@@ -188,7 +188,7 @@ class CrudListener extends BaseListener
             'viewVar' => 'login',
             'login' => null,
         ]);
-        $this->_controller()->viewBuilder()->template('add');
+        $this->_controller()->viewBuilder()->setTemplate('add');
         $this->_action()->config('scaffold.page_title', 'Login');
         $this->_action()->config('scaffold.fields', [
             $this->config('usernameField'),
@@ -213,7 +213,7 @@ class CrudListener extends BaseListener
             'viewVar' => 'resetPassword',
             'resetPassword' => null,
         ]);
-        $this->_controller()->viewBuilder()->template('add');
+        $this->_controller()->viewBuilder()->setTemplate('add');
         $this->_action()->config('scaffold.page_title', 'Enter a new password to reset your account');
         $this->_action()->config('scaffold.fields', [
             $this->config('passwordField'),

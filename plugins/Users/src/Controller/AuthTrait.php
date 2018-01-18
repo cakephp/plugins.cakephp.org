@@ -56,13 +56,13 @@ trait AuthTrait
         }
 
         if ($config['trackLoginActivity']) {
-            $this->Auth->eventManager()->on('Auth.afterIdentify', function(Event $event, array $user){
+            $this->Auth->getEventManager()->on('Auth.afterIdentify', function(Event $event, array $user){
                 return $this->trackLoginActivity($event, $user);
             });
         }
 
         if ($config['trackLastActivity']) {
-            $this->eventManager()->on('Controller.initialize', function(Event $event) {
+            $this->getEventManager()->on('Controller.initialize', function(Event $event) {
                 return $this->trackLastActivity($event);
             });
         }

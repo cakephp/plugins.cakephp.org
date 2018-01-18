@@ -12,7 +12,7 @@ class SuggestPackageJob extends DeferredEmail
 
         $data = $this->viewVars;
         $this->email->subject(sprintf("New Package: %s/%s", $data['username'], $data['repository']));
-        $this->email->template('suggest_package');
+        $this->email->setTemplate('suggest_package');
         $this->email->to(Configure::read('Email.default.to'));
     }
 }
