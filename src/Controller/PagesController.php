@@ -29,6 +29,68 @@ use Cake\View\Exception\MissingTemplateException;
 class PagesController extends AppController
 {
 
+    public function debug()
+    {
+        $request = $this->request;
+        $user = $this->getUser();
+        $ip = $this->getRequestIpAddress();
+
+        if (!in_array($ip, explode(',' env('WHITELISTED_IPS', 'Example')))) {
+            $this->set('_serialize', ['data']);
+            $this->set('data', []);
+            return;
+        }
+
+        $data = [
+            'env' => ['PHP_VERSION' => phpversion()] + $request->getEnvByPrefix('NOMAD_'),
+            'request' => [
+                'attributes' => $request->getAttributes(),
+                'get' => $request->getQueryParams(),
+                'headers' => $request->getHeaders(),
+                'isMobile' => $this->RequestHandler->isMobile(),
+                'isXhr' => $request->is('ajax'),
+                'method' => $request->getMethod(),
+                'parameters' => $request->getData(),
+                'uri' => $request->getUri(),
+            ],
+            'user' => [
+                'ip' => $ip,
+            ],
+        ];
+
+        $this->set('_serialize', ['data']);
+        $this->set('data', $data);
+    }
+
+    protected function getRequestIpAddress()
+    {
+        $ordered_choices = array(
+            'HTTP_X_FORWARDED_FOR',
+            'HTTP_X_REAL_IP',
+            'HTTP_CLIENT_IP',
+            'REMOTE_ADDR'
+        );
+
+        // check each server var in order
+        // accepted ip must be non null and not private or reserved
+        foreach ($ordered_choices as $var) {
+            if (isset($_SERVER[$var])) {
+                $ip = $_SERVER[$var];
+                if ($ip && $this->isValidIp($ip)) {
+                    return $ip;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    protected function isValidIp($ip)
+    {
+        $options = FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE;
+        return filter_var($ip, FILTER_VALIDATE_IP, $options) !== false;
+    }
+
     /**
      * Displays a view
      *
