@@ -1,6 +1,6 @@
 Hey Admin!
 
-Someone suggested you add a package to CakePackages:
+Someone (ip: <?php echo $ipaddress; ?>) suggested you add a package to CakePackages:
 
 Click here to see the package on github: <?php echo "https://github.com/{$username}/{$repository}"; ?>
 
