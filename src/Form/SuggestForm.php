@@ -34,10 +34,7 @@ class SuggestForm extends BaseForm
 
     protected function _execute(array $data)
     {
-        $ipaddress = null;
-        if (isset($_SERVER['REMOTE_ADDR'], $ipaddress)) {
-            $ipaddress = $_SERVER['REMOTE_ADDR'];
-        }
+        $ipaddress = $this->getRequestIpAddress();
 
         preg_match('/([\w-]+\/[\w-]+)(?:\.git)?$/', $data['github'], $matches);
         $pieces = explode('/', $matches[1]);
@@ -53,5 +50,34 @@ class SuggestForm extends BaseForm
     public function route()
     {
         return ['controller' => 'Packages', 'action' => 'suggest'];
+    }
+
+    protected function getRequestIpAddress()
+    {
+        $ordered_choices = array(
+            'HTTP_X_FORWARDED_FOR',
+            'HTTP_X_REAL_IP',
+            'HTTP_CLIENT_IP',
+            'REMOTE_ADDR'
+        );
+
+        // check each server var in order
+        // accepted ip must be non null and not private or reserved
+        foreach ($ordered_choices as $var) {
+            if (isset($_SERVER[$var])) {
+                $ip = $_SERVER[$var];
+                if ($ip && $this->isValidIp($ip)) {
+                    return $ip;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    protected function isValidIp($ip)
+    {
+        $options = FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE;
+        return filter_var($ip, FILTER_VALIDATE_IP, $options) !== false;
     }
 }
