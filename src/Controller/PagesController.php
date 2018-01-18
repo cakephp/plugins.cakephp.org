@@ -41,7 +41,7 @@ class PagesController extends AppController
         }
 
         $data = [
-            'env' => ['PHP_VERSION' => phpversion()],
+            'env' => ['PHP_VERSION' => phpversion()] + $this->getEnvByPrefix('DOKKU_') + $this->getEnvByPrefix('DOCKER_')
             'request' => [
                 'attributes' => $request->getAttributes(),
                 'get' => $request->getQueryParams(),
@@ -59,6 +59,38 @@ class PagesController extends AppController
 
         $this->set('_serialize', ['data']);
         $this->set('data', $data);
+    }
+
+    /**
+     * getEnvByPrefix
+     *
+     * @param string $prefix
+     * @param bool $stripPrefix
+     * @return array
+     */
+    public function getEnvByPrefix($prefix = '', $stripPrefix = false)
+    {
+        if (!$prefix) {
+            return [];
+        }
+
+        $raw = $_SERVER + $_ENV;
+        $len = strlen($prefix);
+
+        $return = [];
+        foreach ($raw as $key => $val) {
+            if (substr($key, 0, $len) !== $prefix) {
+                continue;
+            }
+
+            if ($stripPrefix) {
+                $key = substr($key, $len);
+            }
+            $return[$key] = $val;
+        }
+        ksort($return);
+
+        return $return;
     }
 
     protected function getRequestIpAddress()
