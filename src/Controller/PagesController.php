@@ -40,8 +40,16 @@ class PagesController extends AppController
             return;
         }
 
+        $env = [];
+        $_env = ['PHP_VERSION' => phpversion()] + $this->getEnvByPrefix('DOKKU_') + $this->getEnvByPrefix('DOCKER_');
+        foreach ($_env as $k => $v) {
+            if (strpos($k, 'PASSWORD') === false) {
+                $env[$k] = $v;
+            }
+        }
+
         $data = [
-            'env' => ['PHP_VERSION' => phpversion()] + $this->getEnvByPrefix('DOKKU_') + $this->getEnvByPrefix('DOCKER_'),
+            'env' => $env,
             'request' => [
                 'attributes' => $request->getAttributes(),
                 'get' => $request->getQueryParams(),
