@@ -35,7 +35,7 @@ class PagesController extends AppController
         $user = $this->getUser();
         $ip = $this->getRequestIpAddress();
 
-        if (!in_array($ip, explode(',' env('WHITELISTED_IPS', 'Example')))) {
+        if (!in_array($ip, explode(',', env('WHITELISTED_IPS', 'Example')))) {
             $this->set('_serialize', ['data']);
             $this->set('data', []);
             return;
