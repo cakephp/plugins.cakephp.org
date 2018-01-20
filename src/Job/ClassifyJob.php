@@ -22,8 +22,20 @@ class ClassifyJob
         'app' => [
             '/app\//',
         ],
+        'auth-storage' => [
+            '/Auth\/Storage\/([\w]+)Storage.php$/i',
+        ],
+        'authenticate' => [
+            '/Auth\/([\w]+)Authenticate.php$/i',
+        ],
+        'authorize' => [
+            '/Auth\/([\w]+)Authorize.php$/i',
+        ],
         'behavior' => [
             '/Models?\/Behaviors?\/([\w]+)Behavior.php$/i',
+        ],
+        'cache-engine' => [
+            '/Cache\/Engine\/([\w]+)Engine.php$/i',
         ],
         'cell' => [
             '/View\/Cell\/([\w\/]+).php$/i',
@@ -70,11 +82,20 @@ class ClassifyJob
         'log' => [
             '/Log\/Engine\/([\w]+).php$/i',
         ],
+        'mail-transport' => [
+            '/Mailer\/Transport\/([\w]+)Transport.php$/i',
+        ],
+        'middleware' => [
+            '/Middleware\/([\w]+)Middleware.php$/i',
+        ],
         'model' => [
             '/Models?\/([\w]+).php$/i',
         ],
         'panel' => [
             '/Lib\/Panel\/([\w]+)Panel.php$/i',
+        ],
+        'password-hasher' => [
+            '/Auth\/([\w]+)Hasher.php$/i',
         ],
         'plugin' => [
         ],
@@ -89,6 +110,12 @@ class ClassifyJob
             '/.jpeg$/i',
             '/.jpg$/i',
             '/.png$/i',
+        ],
+        'route-class' => [
+            '/Routing\/Route\/([\w]+)Route.php$/i',
+        ],
+        'route-filter' => [
+            '/Routing\/Filter\/([\w]+)Filter.php$/i',
         ],
         'shell' => [
             '/Console\/Command\/([\w]+)(Shell)?.php$/i',
@@ -113,7 +140,10 @@ class ClassifyJob
             '/Vendor\/([\w]+).php$/i',
         ],
         'view' => [
-            '/View\/([\w]+)View.php$/i',
+            '/Views?\/([\w]+)(View)?.php$/i',
+        ],
+        'widget' => [
+            '/View\/Widget\/([\w]+)Widget.php$/i',
         ],
     ];
 

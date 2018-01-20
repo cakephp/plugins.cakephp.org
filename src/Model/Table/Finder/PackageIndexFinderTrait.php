@@ -11,7 +11,11 @@ trait PackageIndexFinderTrait
 {
     public $validTypes = array(
         'app',
+        'auth-storage',
+        'authenticate',
+        'authorize',
         'behavior',
+        'cache-engine',
         'cell',
         'component',
         'composer',
@@ -26,19 +30,25 @@ trait PackageIndexFinderTrait
         'license',
         'locale',
         'log',
+        'mail-transport',
+        'middleware',
         'model',
         'panel',
+        'password-hasher',
         'plugin',
         'readme',
         'resource',
+        'route-class',
+        'route-filter',
         'shell',
         'table',
-        'test',
+        'tests',
         'theme',
         'themed',
         'travis',
         'vendor',
         'view',
+        'widget',
     );
 
     /**
