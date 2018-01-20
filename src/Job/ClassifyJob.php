@@ -186,7 +186,8 @@ class ClassifyJob
 
         if (!$package->isCloned() && !$this->runJobInline('\App\Job\CloneJob', 'perform', ['package_id' => $packageId])) {
             $this->error(sprintf('Package is not cloned: %s', $package->id));
-            return;
+
+            return false;
         }
 
         list($files, $tags) = $this->classify($package);

@@ -35,10 +35,13 @@ class CloneJob
             return false;
         }
 
-        return true;
-
         $this->info(sprintf('Cloning to: %s', $package->cloneDir()));
         $cloned = $this->ensurePackageExists($package);
+        if (!$cloned) {
+            $this->error('Not able to clone the package');
+
+            return false;
+        }
 
         $package->deleted = !!!$cloned;
         $this->info(sprintf(
