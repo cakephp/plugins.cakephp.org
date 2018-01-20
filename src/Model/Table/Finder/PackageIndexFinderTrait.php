@@ -42,7 +42,7 @@ trait PackageIndexFinderTrait
         'route-filter',
         'shell',
         'table',
-        'tests',
+        'test',
         'theme',
         'themed',
         'travis',
@@ -152,7 +152,7 @@ trait PackageIndexFinderTrait
                 if (!in_array($has, $this->validTypes)) {
                     continue;
                 }
-                $tableName = 'Tags' . ucfirst($has);
+                $tableName = 'Tags' . Inflector::classify(Inflector::underscore($has));
                 $taggedTableName = 'Tagged' . $tableName;
 
                 $query->innerJoin(
@@ -163,7 +163,7 @@ trait PackageIndexFinderTrait
                     [$tableName => 'tags'],
                     [
                         "${tableName}.id = ${taggedTableName}.tag_id",
-                        "${tableName}.keyname = '" . $has . "'",
+                        "${tableName}.keyname = '" . $this->_multibyteKey($has) . "'",
                         "${tableName}.identifier = 'has'",
                     ]
                 );
@@ -172,7 +172,7 @@ trait PackageIndexFinderTrait
 
         if (!empty($options['keyword'])) {
             foreach ((array)$options['keyword'] as $keyword) {
-                $tableName = 'Tags' . ucfirst($keyword);
+                $tableName = 'Tags' . Inflector::classify($keyword);
                 $taggedTableName = 'Tagged' . $tableName;
 
                 $query->innerJoin(
@@ -183,7 +183,7 @@ trait PackageIndexFinderTrait
                     [$tableName => 'tags'],
                     [
                         "${tableName}.id = ${taggedTableName}.tag_id",
-                        "${tableName}.keyname = '" . $keyword . "'",
+                        "${tableName}.keyname = '" . $this->_multibyteKey($keyword) . "'",
                         "${tableName}.identifier = 'keyword'",
                     ]
                 );
@@ -221,5 +221,24 @@ trait PackageIndexFinderTrait
         }
 
         return $query;
+    }
+
+    /**
+     * Creates a multibyte safe unique key
+     *
+     * @param Model $model Model instance that behavior is attached to
+     * @param string $string Tag name string
+     * @return string Multibyte safe key string
+     */
+    protected function _multibyteKey($string = null)
+    {
+        $str = mb_strtolower($string);
+        $str = preg_replace('/\xE3\x80\x80/', ' ', $str);
+        $str = str_replace(array('_', '-'), '', $str);
+        $str = preg_replace('#[:\#\*"()~$^{}`@+=;,<>!&%\.\]\/\'\\\\|\[]#', "\x20", $str);
+        $str = str_replace('?', '', $str);
+        $str = trim($str);
+        $str = preg_replace('#\x20+#', '', $str);
+        return $str;
     }
 }
