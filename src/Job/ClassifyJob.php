@@ -18,76 +18,68 @@ class ClassifyJob
 
     use ModelAwareTrait;
 
-    protected $_fileRegex = array(
-        'model' => [
-            '/Models?\/([\w]+).php$/i',
-        ],
-        'entity' => [
-            '/Model\/Entity\/([\w]+).php$/i',
-        ],
-        'table' => [
-            '/Model\/Table\/([\w]+).php$/i',
-        ],
-        'view' => [
-            '/View\/([\w]+)View.php$/i',
-        ],
-        'controller' => [
-            '/Controllers?\/([\w]+)Controller.php$/i',
-        ],
-        'component' => [
-            '/Controllers?\/Components?\/([\w]+)Controller.php$/i',
+    protected $_fileRegex = [
+        'app' => [
+            '/app\//',
         ],
         'behavior' => [
             '/Models?\/Behaviors?\/([\w]+)Behavior.php$/i',
         ],
-        'helper' => [
-            '/Views?\/Helpers?\/([\w]+)(Helper)?.php$/i',
+        'cell' => [
+            '/View\/Cell\/([\w\/]+).php$/i',
         ],
-        'shell' => [
-            '/Console\/Command\/([\w]+)(Shell)?.php$/i',
-            '/Shells?\/([\w]+)(Shell)?.php$/i',
-            '/Shells?\/Tasks?\/([\w]+)(Task)?.php$/i',
+        'composer' => [
+            '/composer.json$/i',
         ],
-        'locale' => [
-            '/Locale\/([\w\/]+).pot$/i',
-            '/Locale\/([\w\/]+).po$/i',
+        'component' => [
+            '/Controllers?\/Components?\/([\w]+)Controller.php$/i',
+        ],
+        'config' => [
+            '/Config\/([\w_\/]+).php$/i',
+        ],
+        'controller' => [
+            '/Controllers?\/([\w]+)Controller.php$/i',
         ],
         'datasource' => [
             '/Models?\/Datasources?\/([\w]+)(Source)?.php$/i',
             '/Models?\/Databases?\/([\w]+).php$/i',
         ],
-        'tests' => [
-            '/Tests?\/TestCases?\/([\w\/]+)(Test)?.php$/i',
-            '/Tests?\/Cases?\/([\w\/]+)(Test)?.php$/i',
-        ],
-        'fixture' => [
-            '/Test\/Fixture\/([\w]+)Fixture.php$/i',
-        ],
-        'themed' => [
-            '/View\/Themed\/([\w\/]+).ctp$/i',
-            '/Template\/Themed\/([\w\/]+).ctp$/i',
-        ],
         'elements' => [
             '/View\/Elements\/([\w\/]+).ctp$/i',
             '/Template\/Element\/([\w\/]+).ctp$/i',
         ],
-        'cell' => [
-            '/View\/Cell\/([\w\/]+).php$/i',
+        'entity' => [
+            '/Model\/Entity\/([\w]+).php$/i',
         ],
-        'vendor' => [
-            '/Vendor\/([\w]+).php$/i',
+        'fixture' => [
+            '/Test\/Fixture\/([\w]+)Fixture.php$/i',
+        ],
+        'helper' => [
+            '/Views?\/Helpers?\/([\w]+)(Helper)?.php$/i',
         ],
         'lib' => [
             '/Lib\/([\w\/]+).php$/i',
         ],
+        'license' => [
+            '/^LICENSE(?:\.txt)?$/i',
+        ],
+        'locale' => [
+            '/Locale\/([\w\/]+).pot$/i',
+            '/Locale\/([\w\/]+).po$/i',
+        ],
         'log' => [
             '/Log\/Engine\/([\w]+).php$/i',
+        ],
+        'model' => [
+            '/Models?\/([\w]+).php$/i',
         ],
         'panel' => [
             '/Lib\/Panel\/([\w]+)Panel.php$/i',
         ],
-        'config' => [
-            '/Config\/([\w_\/]+).php$/i',
+        'plugin' => [
+        ],
+        'readme' => [
+            '/^README.(md|markdown|textile|rst)$/i',
         ],
         'resource' => [
             '/.js$/i',
@@ -98,24 +90,32 @@ class ClassifyJob
             '/.jpg$/i',
             '/.png$/i',
         ],
-        'composer' => [
-            '/composer.json$/i',
+        'shell' => [
+            '/Console\/Command\/([\w]+)(Shell)?.php$/i',
+            '/Shells?\/([\w]+)(Shell)?.php$/i',
+            '/Shells?\/Tasks?\/([\w]+)(Task)?.php$/i',
+        ],
+        'table' => [
+            '/Model\/Table\/([\w]+).php$/i',
+        ],
+        'tests' => [
+            '/Tests?\/TestCases?\/([\w\/]+)(Test)?.php$/i',
+            '/Tests?\/Cases?\/([\w\/]+)(Test)?.php$/i',
+        ],
+        'themed' => [
+            '/View\/Themed\/([\w\/]+).ctp$/i',
+            '/Template\/Themed\/([\w\/]+).ctp$/i',
         ],
         'travis' => [
             '/^.travis.yml$/i',
         ],
-        'readme' => [
-            '/^README.(md|markdown|textile|rst)$/i',
+        'vendor' => [
+            '/Vendor\/([\w]+).php$/i',
         ],
-        'license' => [
-            '/^LICENSE(?:\.txt)?$/i',
+        'view' => [
+            '/View\/([\w]+)View.php$/i',
         ],
-        'plugin' => [
-        ],
-        'app' => [
-            '/app\//',
-        ],
-    );
+    ];
 
     public function perform(Base $job)
     {
