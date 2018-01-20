@@ -35,6 +35,10 @@ class CloneJob
             return false;
         }
 
+        $this->warning('Bailing on clone for now');
+
+        return false;
+
         $this->info(sprintf('Cloning to: %s', $package->cloneDir()));
         $cloned = $this->ensurePackageExists($package);
         if (!$cloned) {
@@ -51,6 +55,7 @@ class CloneJob
             $package->deleted ? 'true' : 'false'
         ));
         $this->Packages->save($package);
+
         return true;
     }
 
