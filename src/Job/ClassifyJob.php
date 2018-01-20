@@ -8,7 +8,9 @@ use Cake\Collection\Collection;
 use Cake\Filesystem\File;
 use Cake\Filesystem\Folder;
 use Cake\Utility\Hash;
+use josegonzalez\Queuesadilla\Engine\NullEngine;
 use josegonzalez\Queuesadilla\Job\Base;
+use Psr\Log\NullLogger;
 
 class ClassifyJob
 {
@@ -17,34 +19,102 @@ class ClassifyJob
     use ModelAwareTrait;
 
     protected $_fileRegex = array(
-        'model' => array('/Model\/([\w]+).php$/'),
-        'entity' => array('/Model\/Entity\/([\w]+).php$/'),
-        'table' => array('/Model\/Table\/([\w]+).php$/'),
-        'view' => array('/View\/([\w]+)View.php$/'),
-        'controller' => array('/Controller\/([\w]+)Controller.php$/'),
-        'component' => array('/Controller\/Component\/([\w]+)Controller.php$/'),
-        'behavior' => array('/Model\/Behavior\/([\w]+)Behavior.php$/'),
-        'helper' => array('/View\/Helper\/([\w]+)Helper.php$/'),
-        'shell' => array('/Console\/Command\/([\w]+)Shell.php$/'),
-        'locale' => array('/Locale\/([\w\/]+).pot$/', '/Locale\/([\w\/]+).po$/'),
-        'datasource' => array('/Model\/Datasource\/([\w]+)Source.php$/', '/Model\/Database\/([\w]+).php$/'),
-        'tests' => array('/Test\/Case\/([\w\/]+)Test.php$/'),
-        'fixture' => array('/Test\/Fixture\/([\w]+)Fixture.php$/'),
-        'themed' => array('/View\/Themed\/([\w\/]+).ctp$/', '/Template\/Themed\/([\w\/]+).ctp$/'),
-        'elements' => array('/View\/Elements\/([\w\/]+).ctp$/', '/Template\/Element\/([\w\/]+).ctp$/'),
-        'cell' => array('/View\/Cell\/([\w\/]+).php$/'),
-        'vendor' => array('/Vendor\/([\w]+).php$/'), //
-        'lib' => array('/Lib\/([\w\/]+).php$/'),
-        'log' => array('/Log\/Engine\/([\w]+).php$/'),
-        'panel' => array('/Lib\/Panel\/([\w]+)Panel.php$/'),
-        'config' => array('/Config\/([\w_\/]+).php$/'),
-        'resource' => array('/.js$/', '/.css$/', '/.bmp$/', '/.gif$/', '/.jpeg$/', '/.jpg$/', '/.png$/'),
-        'composer' => array('/composer.json$/'),
-        'travis' => array('/^.travis.yml$/'),
-        'readme' => array('/^README.(md|markdown|textile|rst)$/'),
-        'license' => array('/^LICENSE(?:\.txt)?$/i'),
-        'plugin' => array(),
-        'app' => array('/app\//'),
+        'model' => [
+            '/Models?\/([\w]+).php$/i',
+        ],
+        'entity' => [
+            '/Model\/Entity\/([\w]+).php$/i',
+        ],
+        'table' => [
+            '/Model\/Table\/([\w]+).php$/i',
+        ],
+        'view' => [
+            '/View\/([\w]+)View.php$/i',
+        ],
+        'controller' => [
+            '/Controllers?\/([\w]+)Controller.php$/i',
+        ],
+        'component' => [
+            '/Controllers?\/Components?\/([\w]+)Controller.php$/i',
+        ],
+        'behavior' => [
+            '/Models?\/Behaviors?\/([\w]+)Behavior.php$/i',
+        ],
+        'helper' => [
+            '/Views?\/Helpers?\/([\w]+)(Helper)?.php$/i',
+        ],
+        'shell' => [
+            '/Console\/Command\/([\w]+)(Shell)?.php$/i',
+            '/Shells?\/([\w]+)(Shell)?.php$/i',
+            '/Shells?\/Tasks?\/([\w]+)(Task)?.php$/i',
+        ],
+        'locale' => [
+            '/Locale\/([\w\/]+).pot$/i',
+            '/Locale\/([\w\/]+).po$/i',
+        ],
+        'datasource' => [
+            '/Models?\/Datasources?\/([\w]+)(Source)?.php$/i',
+            '/Models?\/Databases?\/([\w]+).php$/i',
+        ],
+        'tests' => [
+            '/Tests?\/TestCases?\/([\w\/]+)(Test)?.php$/i',
+            '/Tests?\/Cases?\/([\w\/]+)(Test)?.php$/i',
+        ],
+        'fixture' => [
+            '/Test\/Fixture\/([\w]+)Fixture.php$/i',
+        ],
+        'themed' => [
+            '/View\/Themed\/([\w\/]+).ctp$/i',
+            '/Template\/Themed\/([\w\/]+).ctp$/i',
+        ],
+        'elements' => [
+            '/View\/Elements\/([\w\/]+).ctp$/i',
+            '/Template\/Element\/([\w\/]+).ctp$/i',
+        ],
+        'cell' => [
+            '/View\/Cell\/([\w\/]+).php$/i',
+        ],
+        'vendor' => [
+            '/Vendor\/([\w]+).php$/i',
+        ],
+        'lib' => [
+            '/Lib\/([\w\/]+).php$/i',
+        ],
+        'log' => [
+            '/Log\/Engine\/([\w]+).php$/i',
+        ],
+        'panel' => [
+            '/Lib\/Panel\/([\w]+)Panel.php$/i',
+        ],
+        'config' => [
+            '/Config\/([\w_\/]+).php$/i',
+        ],
+        'resource' => [
+            '/.js$/i',
+            '/.css$/i',
+            '/.bmp$/i',
+            '/.gif$/i',
+            '/.jpeg$/i',
+            '/.jpg$/i',
+            '/.png$/i',
+        ],
+        'composer' => [
+            '/composer.json$/i',
+        ],
+        'travis' => [
+            '/^.travis.yml$/i',
+        ],
+        'readme' => [
+            '/^README.(md|markdown|textile|rst)$/i',
+        ],
+        'license' => [
+            '/^LICENSE(?:\.txt)?$/i',
+        ],
+        'plugin' => [
+        ],
+        'app' => [
+            '/app\//',
+        ],
     );
 
     public function perform(Base $job)
@@ -84,7 +154,8 @@ class ClassifyJob
             'has:vendor',
         ];
 
-        if (!$package->isCloned()) {
+        if (!$package->isCloned() && !$this->runJobInline('\App\Job\CloneJob', 'perform', ['package_id' => $packageId])) {
+            $this->error(sprintf('Package is not cloned: %s', $package->id));
             return;
         }
 
@@ -111,6 +182,9 @@ class ClassifyJob
             }
             $package->tags = implode(',', $_tags);
         }
+        $tags = explode(',', $package->tags);
+        sort($tags);
+        $package->tags = implode(',', $tags);
 
         $this->info($package->tags);
         $this->Packages->save($package);
@@ -118,6 +192,7 @@ class ClassifyJob
 
     protected function classify($package)
     {
+        $this->info('Classifying');
         $path = $package->cloneDir();
         $folder = new Folder($path);
         $files = [];
@@ -358,5 +433,17 @@ class ClassifyJob
     protected function startsWith($string, $line)
     {
         return $string === "" || strrpos($line, $string, -strlen($line)) !== false;
+    }
+
+    protected function runJobInline($class, $method, $data)
+    {
+        $item = [
+            'args' => [
+                $data,
+            ],
+        ];
+        $job = new Base($item, new NullEngine(new NullLogger, []));
+        $instance = new $class();
+        return $instance->perform($job);
     }
 }
