@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "952fc0b6542bcd0abdcd0c032a0958b9",
+    "content-hash": "1666e7ff0c7e405772a3b323574db7c6",
     "packages": [
         {
             "name": "admad/cakephp-social-auth",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ADmad/cakephp-social-auth.git",
-                "reference": "585b39daec7712e011270859aede955a1272d245"
+                "reference": "52f632d97254c3124550ac3312b371ba5faf8a6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ADmad/cakephp-social-auth/zipball/585b39daec7712e011270859aede955a1272d245",
-                "reference": "585b39daec7712e011270859aede955a1272d245",
+                "url": "https://api.github.com/repos/ADmad/cakephp-social-auth/zipball/52f632d97254c3124550ac3312b371ba5faf8a6e",
+                "reference": "52f632d97254c3124550ac3312b371ba5faf8a6e",
                 "shasum": ""
             },
             "require": {
@@ -40,7 +40,7 @@
                 "MIT"
             ],
             "description": "A CakePHP plugin which allows you to authenticate using social providers like Facebook/Google/Twitter etc.",
-            "time": "2017-12-02T06:17:58+00:00"
+            "time": "2018-01-19T06:15:29+00:00"
         },
         {
             "name": "airbrake/phpbrake",
@@ -201,16 +201,16 @@
         },
         {
             "name": "cakephp/cakephp",
-            "version": "3.5.10",
+            "version": "3.5.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/cakephp.git",
-                "reference": "288a1e2c86319a6e51fdeca0d086b95be1853b11"
+                "reference": "b557240fc11cdce9e60d35d4a911c01c0f28b5ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/288a1e2c86319a6e51fdeca0d086b95be1853b11",
-                "reference": "288a1e2c86319a6e51fdeca0d086b95be1853b11",
+                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/b557240fc11cdce9e60d35d4a911c01c0f28b5ee",
+                "reference": "b557240fc11cdce9e60d35d4a911c01c0f28b5ee",
                 "shasum": ""
             },
             "require": {
@@ -283,7 +283,7 @@
                 "rapid-development",
                 "validation"
             ],
-            "time": "2017-12-29T01:44:26+00:00"
+            "time": "2018-01-21T00:04:21+00:00"
         },
         {
             "name": "cakephp/chronos",
@@ -743,16 +743,16 @@
         },
         {
             "name": "friendsofcake/crud-view",
-            "version": "0.9.5",
+            "version": "0.9.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfCake/crud-view.git",
-                "reference": "197ca9889ebd4db29cfd03e86b85ef7a8c86e0e6"
+                "reference": "ac6d8a0265d6be0e9020871e3b45f5523d719edd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfCake/crud-view/zipball/197ca9889ebd4db29cfd03e86b85ef7a8c86e0e6",
-                "reference": "197ca9889ebd4db29cfd03e86b85ef7a8c86e0e6",
+                "url": "https://api.github.com/repos/FriendsOfCake/crud-view/zipball/ac6d8a0265d6be0e9020871e3b45f5523d719edd",
+                "reference": "ac6d8a0265d6be0e9020871e3b45f5523d719edd",
                 "shasum": ""
             },
             "require": {
@@ -800,7 +800,7 @@
                 "scaffolding",
                 "update"
             ],
-            "time": "2017-11-03T08:07:25+00:00"
+            "time": "2018-01-21T04:50:09+00:00"
         },
         {
             "name": "friendsofcake/search",
