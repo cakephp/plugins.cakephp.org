@@ -44,7 +44,7 @@ class CloneJob
             return false;
         }
 
-        return true
+        return true;
         $package->deleted = !!!$cloned;
         $this->info(sprintf(
             '%s: %s [deleted: %s]',
