@@ -86,7 +86,10 @@ Router::scope('/', function (RouteBuilder $routes) {
 
     $routes->prefix('admin', function ($routes) {
         $routes->setExtensions(['csv', 'json', 'xml']);
-        $routes->connect('/', ['controller' => 'Admin', 'action' => 'index']);
+        $routes->redirect(
+            '/',
+            ['controller' => 'Packages', 'action' => 'index']
+        );
         $routes->fallbacks(DashedRoute::class);
     });
 
