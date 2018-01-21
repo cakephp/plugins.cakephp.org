@@ -128,16 +128,16 @@ class CloneJob
             return true;
         }
 
-        $this->info(sprintf('Retrieving zip location: %s', $package->zipballUrl()));
+        $this->info(sprintf('Retrieving zip location: %s', $package->cloneZipballUrl()));
         $client = new Client;
-        $r = $client->get($package->zipballUrl());
-        if ($r->statusCode() != 302) {
-            $this->error(sprintf('Error code', $r->statusCode()));
+        $response = $client->get($package->cloneZipballUrl());
+        if ($response->statusCode() != 302) {
+            $this->error(sprintf('Error code', $response->statusCode()));
 
             return false;
         }
 
-        $url = $r->getHeader('location')[0];
+        $url = $response->getHeader('location')[0];
         $this->info(sprintf('Retrieving zip: %s', $url));
         $response = $client->get($url);
         if ($response->statusCode() != 200) {
@@ -146,8 +146,8 @@ class CloneJob
             return false;
         }
 
-        $this->info(sprintf('Writing zip: %s', $package->zipballPath()));
-        $file = new File($package->zipballPath(), true, 0644);
+        $this->info(sprintf('Writing zip: %s', $package->cloneZipballPath()));
+        $file = new File($package->cloneZipballPath(), true, 0644);
         if (!$file->write($response->body())) {
             $this->error('Unable to extract file');
 
@@ -171,8 +171,8 @@ class CloneJob
             }
         }
 
-        $this->info(sprintf('Extracting zip: %s => %s', $package->zipballPath(), $package->cloneDir()));
-        $command = sprintf('unzip %s -d %s', $package->zipballPath(), $package->cloneDir());
+        $this->info(sprintf('Extracting zip: %s => %s', $package->cloneZipballPath(), $package->cloneDir()));
+        $command = sprintf('unzip %s -d %s', $package->cloneZipballPath(), $package->cloneDir());
         $path = TMP;
         if (!$this->callProcessInDirectory($command, $path)) {
             $this->error('Unzip failed');

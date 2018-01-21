@@ -41,7 +41,16 @@ trait ClonedPackageTrait
         );
     }
 
-    public function zipballUrl()
+    public function cloneTreesUrl()
+    {
+        return sprintf(
+            'https://api.github.com/repos/%s/%s/git/trees/master?recursive=1',
+            $this->maintainer->username,
+            $this->name
+        );
+    }
+
+    public function cloneZipballUrl()
     {
         return sprintf(
             'https://api.github.com/repos/%s/%s/zipball/master',
@@ -50,7 +59,7 @@ trait ClonedPackageTrait
         );
     }
 
-    public function zipballPath()
+    public function cloneZipballPath()
     {
         return sprintf(
             '/tmp/%s-%s.zip',

@@ -7,6 +7,7 @@ use Cake\Datasource\ModelAwareTrait;
 use Cake\Collection\Collection;
 use Cake\Filesystem\File;
 use Cake\Filesystem\Folder;
+use Cake\Http\Client;
 use Cake\Utility\Hash;
 use josegonzalez\Queuesadilla\Engine\NullEngine;
 use josegonzalez\Queuesadilla\Job\Base;
@@ -103,13 +104,7 @@ class ClassifyJob
             '/^README.(md|markdown|textile|rst)$/i',
         ],
         'resource' => [
-            '/.js$/i',
-            '/.css$/i',
-            '/.bmp$/i',
-            '/.gif$/i',
-            '/.jpeg$/i',
-            '/.jpg$/i',
-            '/.png$/i',
+            '/webroot\/([\w]+)\/([.]+).(bmp|css|gif|js|jpeg|jpg|png)$/i',
         ],
         'route-class' => [
             '/Routing\/Route\/([\w]+)Route.php$/i',
@@ -225,13 +220,22 @@ class ClassifyJob
     {
         $this->info('Classifying');
         $path = $package->cloneDir();
-        $folder = new Folder($path);
+
         $files = [];
-        foreach ($folder->findRecursive() as $file) {
-            if ($this->startsWith(sprintf('%s/.git/', $path), $file)) {
-                continue;
+        $client = new Client;
+        $response = $client->get($package->cloneTreesUrl());
+        if ($response->statusCode() == 200) {
+            foreach (json_decode($response->body(), true)['tree'] as $object) {
+                $files[$object['path']] = $this->fetchType($object['path']);
             }
-            $files[$file] = $this->fetchType(str_replace($path . '/', '', $file));
+        } else {
+            $folder = new Folder($path);
+            foreach ($folder->findRecursive() as $file) {
+                if ($this->startsWith(sprintf('%s/.git/', $path), $file)) {
+                    continue;
+                }
+                $files[$file] = $this->fetchType(str_replace($path . '/', '', $file));
+            }
         }
 
         $tags = array_values($files);
