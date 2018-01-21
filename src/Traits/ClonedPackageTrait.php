@@ -14,6 +14,14 @@ trait ClonedPackageTrait
         return $folder->cd($path);
     }
 
+    public function cloneBasePath()
+    {
+        return sprintf(
+            '%srepos',
+            TMP
+        );
+    }
+
     public function cloneDir()
     {
         return sprintf(

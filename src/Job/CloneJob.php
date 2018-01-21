@@ -130,6 +130,7 @@ class CloneJob
         $r = $client->get($package->zipballUrl());
         if ($r->statusCode() != 302) {
             $this->error(sprintf('Error code', $r->statusCode()));
+
             return false;
         }
 
@@ -138,6 +139,7 @@ class CloneJob
         $response = $client->get($url);
         if ($response->statusCode() != 200) {
             $this->error(sprintf('Error code', $response->statusCode()));
+
             return false;
         }
 
@@ -145,6 +147,17 @@ class CloneJob
         $file = new File($package->zipballPath(), true, 0644);
         if (!$file->write($response->body())) {
             $this->error('Unable to extract file');
+
+            return false;
+        }
+
+        $folder = Folder($package->cloneBasePath(), true);
+        $errors = $folder->errors();
+        if (!empty($errors)) {
+            foreach ($errors as $error) {
+                $this->error($error);
+            }
+
             return false;
         }
 
