@@ -323,7 +323,15 @@ class ClassifyJob
             'locale', 'datasource',
             'tests', 'fixture',
         ];
-        $cake3Tags = ['entity', 'table', 'cell'];
+        $cake3Tags = [
+            'auth-storage',
+            'cell',
+            'entity',
+            'middleware',
+            'route-filter',
+            'table',
+            'widget',
+        ];
         foreach ($cake2Tags as $cake2Tag) {
             if (in_array($cake2Tag, $composerData['tags'])) {
                 $version = '2';

@@ -174,6 +174,30 @@ class CloneJob
         $this->info(sprintf('Extracting zip: %s => %s', $package->zipballPath(), $package->cloneDir()));
         $command = sprintf('unzip %s -d %s', $package->zipballPath(), $package->cloneDir());
         $path = TMP;
-        return $this->callProcessInDirectory($command, $path);
+        if (!$this->callProcessInDirectory($command, $path)) {
+            $this->error('Unzip failed');
+
+            return false;
+        }
+
+        $folder = new Folder($package->cloneDir(), false);
+        $contents = $folder->read();
+        $extracttFolder = $contents[0][0];
+
+        $this->info('Moving contents into place');
+        $command = sprintf('mv %s/%s/* %s', $package->cloneDir(), $extracttFolder, $package->cloneDir());
+        $path = TMP;
+        if (!$this->callProcessInDirectory($command, $path)) {
+            $this->error('Move failed');
+
+            return false;
+        }
+
+        $command = sprintf('mv %s/%s/.* %s', $package->cloneDir(), $extracttFolder, $package->cloneDir());
+        $path = TMP;
+        $this->callProcessInDirectory($command, $path);
+        $folder->delete($extracttFolder);
+
+        return true;
     }
 }
