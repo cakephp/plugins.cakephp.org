@@ -4,7 +4,8 @@ namespace App\Job;
 use App\Model\Entity\Package;
 use App\Traits\LogTrait;
 use Cake\Datasource\ModelAwareTrait;
-use Cake\Filesystem\Folder;
+use Cake\Filesystem\File;
+use Cake\Http\Client;
 use josegonzalez\Queuesadilla\Job\Base;
 use RuntimeException;
 
@@ -35,10 +36,6 @@ class CloneJob
             return false;
         }
 
-        $this->warning('Bailing on clone for now');
-
-        return false;
-
         $this->info(sprintf('Cloning to: %s', $package->cloneDir()));
         $cloned = $this->ensurePackageExists($package);
         if (!$cloned) {
@@ -47,13 +44,14 @@ class CloneJob
             return false;
         }
 
+        return true
         $package->deleted = !!!$cloned;
         $this->info(sprintf(
             '%s: %s [deleted: %s]',
             $package->id,
             $package->cloneUrl(),
             $package->deleted ? 'true' : 'false'
-        ));
+        ), ['deleted' => $package->deleted ? 'true' : 'false']);
         $this->Packages->save($package);
 
         return true;
@@ -124,15 +122,35 @@ class CloneJob
     protected function ensurePackageExists(Package $package)
     {
         if ($package->isCloned()) {
-            $command = 'git pull origin master';
-            $path = $package->cloneDir();
-
-            return $this->callProcessInDirectory($command, $path);
+            return true;
         }
 
-        $command = sprintf('git clone %s %s', escapeshellarg($package->cloneUrl()), $package->cloneDir());
-        $path = TMP;
+        $this->info(sprintf('Retrieving zip location: %s', $package->zipballUrl()));
+        $client = new Client;
+        $r = $client->get($package->zipballUrl());
+        if ($r->statusCode() != 302) {
+            $this->error(sprintf('Error code', $r->statusCode()));
+            return false;
+        }
 
+        $url = $r->getHeader('location')[0];
+        $this->info(sprintf('Retrieving zip: %s', $url));
+        $response = $client->get($url);
+        if ($response->statusCode() != 200) {
+            $this->error(sprintf('Error code', $response->statusCode()));
+            return false;
+        }
+
+        $this->info(sprintf('Writing zip: %s', $package->zipballPath()));
+        $file = new File($package->zipballPath(), true, 0644);
+        if (!$file->write($response->body())) {
+            $this->error('Unable to extract file');
+            return false;
+        }
+
+        $this->info(sprintf('Extracting zip: %s => %s', $package->zipballPath(), $package->cloneDir()));
+        $command = sprintf('unzip %s -d %s', $package->zipballPath(), $package->cloneDir());
+        $path = TMP;
         return $this->callProcessInDirectory($command, $path);
     }
 }
