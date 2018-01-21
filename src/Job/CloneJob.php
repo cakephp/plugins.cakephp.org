@@ -5,6 +5,7 @@ use App\Model\Entity\Package;
 use App\Traits\LogTrait;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Filesystem\File;
+use Cake\Filesystem\Folder;
 use Cake\Http\Client;
 use josegonzalez\Queuesadilla\Job\Base;
 use RuntimeException;
