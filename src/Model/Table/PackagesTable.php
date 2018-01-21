@@ -25,6 +25,7 @@ use Cake\Validation\Validator;
 class PackagesTable extends Table
 {
 
+    use \App\Model\Table\Finder\PackageFeaturedFinderTrait;
     use \App\Model\Table\Finder\PackageFinderTrait;
     use \App\Model\Table\Finder\PackageUncategorizedFinderTrait;
     use \App\Model\Table\Finder\PackageUnversionedFinderTrait;
@@ -47,12 +48,24 @@ class PackagesTable extends Table
 
         $this->addBehavior('Timestamp');
 
+        $this->addBehavior('Search.Search');
+        $this->searchManager()
+            ->useCollection('admin')
+            ->add('q', 'Search.Like', [
+                'after' => true,
+                'before' => true,
+                'field' => ['name'],
+                'form' => [
+                    'label' => 'Package name',
+                ]
+            ]);
+
         $this->belongsTo('Maintainers', [
             'foreignKey' => 'maintainer_id',
-            'joinType' => 'INNER'
+            'joinType' => 'INNER',
         ]);
         $this->belongsTo('Categories', [
-            'foreignKey' => 'category_id'
+            'foreignKey' => 'category_id',
         ]);
     }
 

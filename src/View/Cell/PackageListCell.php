@@ -9,21 +9,20 @@ class PackageListCell extends Cell
     {
         $this->set('title', 'Featured Packages');
         $this->set(['disableAdmin' => true]);
-        return $this->display([
-            52, // debug_kit
-            640, // asset_compress
-            678, // cakephp-upload
-            1600, // crud
-            1911, // bootstrap-ui
-            1402, // cakepdf
-            1852, // footprint
-            1764, // cakephp-jwt-auth
-        ]);
+        $this->loadModel('Packages');
+        $ids = $this->Packages->find('list')
+            ->where(['Packages.deleted' => false])
+            ->where(['Packages.featured' => true])
+            ->orderDesc('Packages.watchers')
+            ->limit(8)
+            ->toArray();
+        return $this->display(array_keys($ids));
     }
 
     public function popular()
     {
         $this->set('title', 'Popular Packages');
+        $this->set(['disableAdmin' => true]);
         $this->loadModel('Packages');
         $ids = $this->Packages->find('list')
             ->where(['Packages.deleted' => false])
@@ -31,7 +30,6 @@ class PackageListCell extends Cell
             ->orderDesc('Packages.watchers')
             ->limit(8)
             ->toArray();
-        $this->set(['disableAdmin' => true]);
         return $this->display(array_keys($ids));
     }
 
