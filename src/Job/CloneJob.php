@@ -45,6 +45,8 @@ class CloneJob
             return false;
         }
 
+        $this->info(sprintf('Package cloned: %s', $package->cloneDir()));
+
         return true;
         $package->deleted = !!!$cloned;
         $this->info(sprintf(
@@ -152,14 +154,21 @@ class CloneJob
             return false;
         }
 
-        $folder = new Folder($package->cloneBasePath(), true);
-        $errors = $folder->errors();
-        if (!empty($errors)) {
-            foreach ($errors as $error) {
-                $this->error($error);
-            }
+        $paths = [
+            $package->cloneBasePath(),
+            $package->cloneMaintainerPath(),
+        ];
+        foreach ($paths as $path) {
+            $this->info(sprintf('Creating path: %s', $path));
+            $folder = new Folder($path, true);
+            $errors = $folder->errors();
+            if (!empty($errors)) {
+                foreach ($errors as $error) {
+                    $this->error($error);
+                }
 
-            return false;
+                return false;
+            }
         }
 
         $this->info(sprintf('Extracting zip: %s => %s', $package->zipballPath(), $package->cloneDir()));

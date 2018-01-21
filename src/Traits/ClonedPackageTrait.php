@@ -22,6 +22,15 @@ trait ClonedPackageTrait
         );
     }
 
+    public function cloneMaintainerPath()
+    {
+        return sprintf(
+            '%srepos/%s',
+            TMP,
+            $this->maintainer->username
+        );
+    }
+
     public function cloneDir()
     {
         return sprintf(
