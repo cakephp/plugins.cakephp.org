@@ -40,7 +40,7 @@ class AppView extends View implements EventListenerInterface
      */
     public function initialize()
     {
-        \Cake\Log\Log::info(json_encode($this->request));
+        \Cake\Log\Log::info(json_encode($this->request->getAttributes() + ['referer' => $this->request->referer()]));
         $this->initializeUI(['layout' => $this->layout]);
         $this->loadHelper('AssetCompress.AssetCompress');
         $this->loadHelper('Menu');
