@@ -152,7 +152,7 @@ class CloneJob
             return false;
         }
 
-        $folder = Folder($package->cloneBasePath(), true);
+        $folder = new Folder($package->cloneBasePath(), true);
         $errors = $folder->errors();
         if (!empty($errors)) {
             foreach ($errors as $error) {
