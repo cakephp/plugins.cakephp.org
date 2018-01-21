@@ -1,10 +1,7 @@
 <?php
 namespace App\Model\Table\Finder;
 
-use Cake\Log\Log;
-use Cake\Network\Exception\NotFoundException;
 use Cake\ORM\Query;
-use InvalidArgumentException;
 
 trait PackageUnversionedFinderTrait
 {
