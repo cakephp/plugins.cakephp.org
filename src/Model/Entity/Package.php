@@ -28,21 +28,6 @@ use Cake\Routing\Router;
  * @property \Cake\I18n\Time $last_pushed_at
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
- * @property bool $contains_model
- * @property bool $contains_view
- * @property bool $contains_controller
- * @property bool $contains_behavior
- * @property bool $contains_helper
- * @property bool $contains_component
- * @property bool $contains_shell
- * @property bool $contains_theme
- * @property bool $contains_datasource
- * @property bool $contains_vendor
- * @property bool $contains_test
- * @property bool $contains_lib
- * @property bool $contains_resource
- * @property bool $contains_config
- * @property bool $contains_app
  * @property bool $deleted
  * @property int $forks_count
  * @property int $network_count
