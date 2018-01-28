@@ -51,7 +51,7 @@ trait AuthTrait
             ]
         ]);
 
-        if (!isset($this->request->params['prefix']) || $this->request->params['prefix'] != 'admin') {
+        if ($this->request->getParam('prefix', '') !== 'admin') {
             $this->Auth->allow();
         }
 

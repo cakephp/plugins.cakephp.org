@@ -56,7 +56,7 @@ class CrudListener extends BaseListener
      */
     public function afterForgotPassword(Event $event)
     {
-        if (!$event->subject->success) {
+        if (!$event->getSubject()->success) {
             return;
         }
 
@@ -65,12 +65,12 @@ class CrudListener extends BaseListener
             throw new MissingBehaviorException('Muffin/Tokenize.Tokenize');
         }
 
-        $token = $table->tokenize($event->subject->entity->id);
+        $token = $table->tokenize($event->getSubject()->entity->id);
         $this->push(['\App\Job\MailerJob', 'execute'], [
             'action' => 'forgotPassword',
             'mailer' => 'Users.User',
             'data' => [
-                $this->config('usernameField') => $event->subject->entity->email,
+                $this->config('usernameField') => $event->getSubject()->entity->email,
                 'token' => $token,
             ]
         ]);
@@ -84,8 +84,12 @@ class CrudListener extends BaseListener
      */
     public function verifyToken(Event $event)
     {
-        $event->subject->verified = TableRegistry::get('Muffin/Tokenize.Tokens')
-            ->verify($event->subject->token);
+        $table = TableRegistry::get($this->_controller()->modelClass);
+        if (!$table->behaviors()->has('Muffin/Tokenize.Tokenize')) {
+            throw new MissingBehaviorException('Muffin/Tokenize.Tokenize');
+        }
+
+        $event->getSubject()->verified = $table->verify($event->getSubject()->token);
     }
 
     /**
@@ -96,22 +100,22 @@ class CrudListener extends BaseListener
      */
     public function beforeHandle(Event $event)
     {
-        if ($event->subject->action === 'edit') {
+        if ($event->getSubject()->action === 'edit') {
             $this->beforeHandleEdit($event);
 
             return;
         }
-        if ($event->subject->action === 'login') {
+        if ($event->getSubject()->action === 'login') {
             $this->beforeHandleLogin($event);
 
             return;
         }
-        if ($event->subject->action === 'forgotPassword') {
+        if ($event->getSubject()->action === 'forgotPassword') {
             $this->beforeHandleForgotPassword($event);
 
             return;
         }
-        if ($event->subject->action === 'resetPassword') {
+        if ($event->getSubject()->action === 'resetPassword') {
             $this->beforeHandleResetPassword($event);
 
             return;
@@ -127,7 +131,7 @@ class CrudListener extends BaseListener
     public function beforeHandleEdit(Event $event)
     {
         $userId = $this->_controller()->Auth->user('id');
-        $event->subject->args = [$userId];
+        $event->getSubject()->args = [$userId];
 
         $this->_action()->saveOptions(['validate' => 'account']);
         $this->_action()->config('scaffold.page_title', 'Profile');
@@ -248,7 +252,7 @@ class CrudListener extends BaseListener
      */
     public function beforeRenderEdit(Event $event)
     {
-        $event->subject->entity->unsetProperty($this->config('passwordField'));
+        $event->getSubject()->entity->unsetProperty($this->config('passwordField'));
     }
 
     /**
@@ -274,9 +278,9 @@ class CrudListener extends BaseListener
      */
     public function beforeSaveEdit(Event $event)
     {
-        if ($event->subject->entity->confirm_password === '') {
-            $event->subject->entity->unsetProperty($this->config('passwordField'));
-            $event->subject->entity->dirty($this->config('passwordField'), false);
+        if ($event->getSubject()->entity->confirm_password === '') {
+            $event->getSubject()->entity->unsetProperty($this->config('passwordField'));
+            $event->getSubject()->entity->dirty($this->config('passwordField'), false);
         }
     }
 
