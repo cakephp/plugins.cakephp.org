@@ -157,8 +157,9 @@ class ResourceHelper extends AppHelper
         $url = ['controller' => 'packages', 'action' => 'index'];
 
         if (isset($colorMap[$tag])) {
-            $queryString = ['version' => $key];
-            $options['style'] = sprintf('background-color:%s;', $colorMap[$tag]);
+            $queryString = ['version' => $value];
+            $url['?'] = $queryString;
+            $options['style'] = $this->styleTag($colorMap[$tag]);
             $version = strpos($key, '.') === false ? $value . '.x' : $value;
             return $this->Html->link('version:' . $version, $url, $options);
         }
@@ -172,7 +173,40 @@ class ResourceHelper extends AppHelper
         }
 
         $url['?'] = $queryString;
-        $options['style'] = sprintf('background-color:%s;color:white;', $color);
+        $options['style'] = $this->styleTag($color);
+
         return $this->Html->link($tag, $url, $options);
+    }
+
+    /**
+     * Calculates contrast text color for a given color
+     *
+     * @param string $color RGB color code with a leading "#"
+     *
+     * @return string Color
+     */
+    public function contrastColor($color)
+    {
+        if (hexdec(substr($color, 1)) / 0xFFFFFF < 0.5) {
+            return 'white';
+        }
+
+        return '#363637';
+    }
+
+    /**
+     * Generates a style tag
+     *
+     * @param string $color Color
+     *
+     * @return string Style
+     */
+    public function styleTag($color)
+    {
+        return sprintf(
+            'background-color:%s;color:%s',
+            $color,
+            $this->contrastColor($color)
+        );
     }
 }
