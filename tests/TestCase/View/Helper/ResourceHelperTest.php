@@ -67,8 +67,20 @@ class ResourceHelperTest extends TestCase
         $result = $this->Resource->contrastColor('#FFFFFF');
         $this->assertSame($expected, $result);
 
+        $expected = '#363637';
+        $result = $this->Resource->contrastColor('#32e4ba');
+        $this->assertSame($expected, $result);
+
         $expected = 'white';
         $result = $this->Resource->contrastColor('#000000');
+        $this->assertSame($expected, $result);
+
+        $expected = 'white';
+        $result = $this->Resource->contrastColor('#9532a8');
+        $this->assertSame($expected, $result);
+
+        $expected = 'white';
+        $result = $this->Resource->contrastColor('#ed32cd');
         $this->assertSame($expected, $result);
     }
 }
