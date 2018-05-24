@@ -166,7 +166,7 @@ class ResourceHelper extends AppHelper
 
         $color = 'black';
         if (in_array($key, ['has', 'keyword'])) {
-            $color = $key == 'has' ? 'gray' : 'darkgray';
+            $color = $key == 'has' ? '#808080' : '#A9A9A9';
             $queryString = [
                 $key => [$value]
             ];
@@ -187,11 +187,15 @@ class ResourceHelper extends AppHelper
      */
     public function contrastColor($color)
     {
-        if (hexdec(substr($color, 1)) / 0xFFFFFF < 0.5) {
-            return 'white';
-        }
+        $rgb = substr($color, 1);
 
-        return '#363637';
+        list ($r, $g, $b) = array_map('hexdec', str_split($rgb, 2));
+
+        $brightness = ($r * 299 + $g * 587 + $b * 114) / 1000;
+
+        return $brightness > 128
+            ? '#363637'
+            : 'white';
     }
 
     /**
