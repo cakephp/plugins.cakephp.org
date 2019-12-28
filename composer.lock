@@ -2213,20 +2213,20 @@
         },
         {
             "name": "markstory/asset_compress",
-            "version": "3.2.3",
+            "version": "3.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/markstory/asset_compress.git",
-                "reference": "598e1043220f3bf797e18b4133cbe8b9e86be807"
+                "reference": "3cb4890177620eeb8e08528c15c89d3baf7d50ff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/markstory/asset_compress/zipball/598e1043220f3bf797e18b4133cbe8b9e86be807",
-                "reference": "598e1043220f3bf797e18b4133cbe8b9e86be807",
+                "url": "https://api.github.com/repos/markstory/asset_compress/zipball/3cb4890177620eeb8e08528c15c89d3baf7d50ff",
+                "reference": "3cb4890177620eeb8e08528c15c89d3baf7d50ff",
                 "shasum": ""
             },
             "require": {
-                "cakephp/cakephp": ">=3.3.3 <4.0.0",
+                "cakephp/cakephp": ">=3.7.0 <4.0.0",
                 "markstory/mini-asset": ">=1.4.0 <2.0.0"
             },
             "require-dev": {
@@ -2234,11 +2234,11 @@
                 "phpunit/phpunit": "5.*"
             },
             "suggest": {
+                "328/jsqueeze": "For using the JSqueeze filter.",
                 "leafo/lessphp": "For using the LessPHP filter.",
-                "leafo/scssphp": "For using the ScssPHP filter.",
                 "natxet/CssMin": "For using the CssMin filter.",
-                "tchwork/jsqueeze": "For using the JSqueeze filter.",
-                "tedivm/jshrink": "For using the JShrink filter."
+                "patchwork/jshrink": "For using the JShrink filter.",
+                "scssphp/scssphp": "For using the ScssPHP filter."
             },
             "type": "cakephp-plugin",
             "autoload": {
@@ -2267,7 +2267,7 @@
                 "minifier",
                 "sass"
             ],
-            "time": "2017-05-01T01:39:20+00:00"
+            "time": "2019-06-26T02:29:00+00:00"
         },
         {
             "name": "markstory/mini-asset",
