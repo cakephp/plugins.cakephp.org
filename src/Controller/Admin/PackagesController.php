@@ -56,6 +56,7 @@ class PackagesController extends AppController
             'maintainer_id',
             'name',
             'repository_url',
+            'deleted',
             'tags' => [
                 'formatter' => function ($name, $value) {
                     return implode(' ', explode(',', $value));
@@ -92,9 +93,13 @@ class PackagesController extends AppController
                 'title' => __('No version set'),
                 'finder' => 'unversioned',
             ],
+            [
+                'title' => __('Deleted'),
+                'finder' => 'deleted',
+            ],
         ]);
 
-        if (in_array($this->request->query('finder'), ['featured', 'suggested', 'uncategorized', 'unversioned'])) {
+        if (in_array($this->request->query('finder'), ['featured', 'uncategorized', 'unversioned', 'deleted'])) {
             $this->Crud->action()->config('findMethod', $this->request->query('finder'));
         }
 

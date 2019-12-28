@@ -25,6 +25,7 @@ use Cake\Validation\Validator;
 class PackagesTable extends Table
 {
 
+    use \App\Model\Table\Finder\PackageDeletedFinderTrait;
     use \App\Model\Table\Finder\PackageFeaturedFinderTrait;
     use \App\Model\Table\Finder\PackageFinderTrait;
     use \App\Model\Table\Finder\PackageUncategorizedFinderTrait;
