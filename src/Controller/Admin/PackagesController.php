@@ -18,6 +18,7 @@ class PackagesController extends AppController
     protected $allowedActions = [
         'index',
         'toggleFeature',
+        'toggleDelete',
     ];
 
     /**
@@ -47,6 +48,10 @@ class PackagesController extends AppController
             'className' => 'Crud.Bulk/Toggle',
             'field' => 'featured',
         ]);
+        $this->Crud->mapAction('toggleDeleted', [
+            'className' => 'Crud.Bulk/Toggle',
+            'field' => 'deleted',
+        ]);
     }
 
     public function index()
@@ -56,7 +61,6 @@ class PackagesController extends AppController
             'maintainer_id',
             'name',
             'repository_url',
-            'deleted',
             'tags' => [
                 'formatter' => function ($name, $value) {
                     return implode(' ', explode(',', $value));
@@ -67,6 +71,12 @@ class PackagesController extends AppController
                 'formatter' => function ($name, $value, $entity, $options, $View) {
                     $title = $value ? __('Unfeature') : __('Feature');
                     return $View->Html->link($title, ['action' => 'toggleFeature', $entity->id], ['class' => 'btn btn-primary']);
+                },
+            ],
+            'deleted' => [
+                'formatter' => function ($name, $value, $entity, $options, $View) {
+                    $title = $value ? __('Undelete') : __('Delete');
+                    return $View->Html->link($title, ['action' => 'toggleDelete', $entity->id], ['class' => 'btn btn-warning']);
                 },
             ],
         ];
@@ -134,6 +144,16 @@ class PackagesController extends AppController
     }
 
     public function toggleFeature($id)
+    {
+        return $this->toggle($id);
+    }
+
+    public function toggleDelete($id)
+    {
+        return $this->toggle($id);
+    }
+
+    protected function toggle($id)
     {
         $this->Crud->on('beforeHandle', function (Event $event) use ($id) {
             $this->request = $this->request->withData('id', [$id]);
