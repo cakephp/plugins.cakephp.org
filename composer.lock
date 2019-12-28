@@ -1026,26 +1026,30 @@
         },
         {
             "name": "friendsofcake/cakephp-csvview",
-            "version": "3.2.1",
+            "version": "3.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfCake/cakephp-csvview.git",
-                "reference": "f36684fad38a6c274d7e552692c700710e5e8c2c"
+                "reference": "6f80532122e58b37d2a05259b5cb11f2d9576d3d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfCake/cakephp-csvview/zipball/f36684fad38a6c274d7e552692c700710e5e8c2c",
-                "reference": "f36684fad38a6c274d7e552692c700710e5e8c2c",
+                "url": "https://api.github.com/repos/FriendsOfCake/cakephp-csvview/zipball/6f80532122e58b37d2a05259b5cb11f2d9576d3d",
+                "reference": "6f80532122e58b37d2a05259b5cb11f2d9576d3d",
                 "shasum": ""
             },
             "require": {
-                "cakephp/cakephp": "~3.0",
-                "php": ">=5.4.16"
+                "cakephp/cakephp": "^3.5.5",
+                "php": ">=5.6"
+            },
+            "require-dev": {
+                "cakephp/cakephp-codesniffer": "^3.0",
+                "phpunit/phpunit": "^5.7.14|^6.0"
             },
             "type": "cakephp-plugin",
             "autoload": {
                 "psr-4": {
-                    "CsvView\\": "src"
+                    "CsvView\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1053,6 +1057,12 @@
                 "MIT"
             ],
             "authors": [
+                {
+                    "name": "Jose Diaz-Gonzalez",
+                    "email": "email@josediazgonzalez.com",
+                    "homepage": "http://josediazgonzalez.com",
+                    "role": "Maintainer"
+                },
                 {
                     "name": "ADmad",
                     "homepage": "https://github.com/admad",
@@ -1077,12 +1087,6 @@
                     "name": "Gregory Gaskill",
                     "homepage": "https://github.com/chronon",
                     "role": "Contributor"
-                },
-                {
-                    "name": "Jose Diaz-Gonzalez",
-                    "email": "email@josediazgonzalez.com",
-                    "homepage": "http://josediazgonzalez.com",
-                    "role": "Maintainer"
                 }
             ],
             "description": "A CSV View class for CakePHP 3.x",
@@ -1093,7 +1097,7 @@
                 "export",
                 "view"
             ],
-            "time": "2016-11-07T09:30:57+00:00"
+            "time": "2019-08-28T07:40:24+00:00"
         },
         {
             "name": "friendsofcake/crud",
