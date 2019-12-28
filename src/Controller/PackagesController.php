@@ -54,10 +54,12 @@ class PackagesController extends AppController
             return $this->Prg->redirectPost();
         }
 
-        list($this->request->data, $query) = $this->Prg->cleanParams(
+        list($data, $query) = $this->Prg->cleanParams(
             $this->request->getQuery(),
             ['coalesce' => true]
         );
+
+        $this->request = $this->request->withParsedBody($data);
 
         $category = null;
         if (!empty($this->request->getData('category'))) {
