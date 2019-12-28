@@ -22,7 +22,7 @@ trait PackageFinderTrait
             'Maintainers',
         ]);
         $query->where([
-            "{$this->alias()}.deleted" => false,
+            "{$this->getAlias()}.deleted" => false,
         ]);
 
         return $query;

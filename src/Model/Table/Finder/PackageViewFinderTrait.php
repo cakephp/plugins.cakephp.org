@@ -27,7 +27,7 @@ trait PackageViewFinderTrait
         }
         $query->find('package');
         $query->where([
-            "{$this->alias()}.{$this->primaryKey()}" => $options['package_id'],
+            "{$this->getAlias()}.{$this->getPrimaryKey()}" => $options['package_id'],
         ]);
         $query->limit(1);
 

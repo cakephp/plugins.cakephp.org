@@ -22,7 +22,7 @@ trait CategoryViewFinderTrait
 
         $query->limit(1);
         $query->where([
-            "{$this->alias()}.slug" => $slug
+            "{$this->getAlias()}.slug" => $slug
         ]);
 
         return $query;

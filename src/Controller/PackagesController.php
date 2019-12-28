@@ -62,7 +62,7 @@ class PackagesController extends AppController
         $category = null;
         if (!empty($this->request->data['category'])) {
             $category = $this->Packages->Categories->find('view', [
-                'slug' => $this->request->data('category'),
+                'slug' => $this->request->getData('category'),
             ])->firstOrFail();
         }
 

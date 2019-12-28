@@ -15,7 +15,7 @@ trait PackageDeletedFinderTrait
     public function findDeleted(Query $query, array $options)
     {
         $query->where([
-            "{$this->alias()}.deleted" => true,
+            "{$this->getAlias()}.deleted" => true,
         ]);
 
         return $query;

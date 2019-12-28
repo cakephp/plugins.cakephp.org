@@ -99,19 +99,19 @@ trait PackageIndexFinderTrait
         if ($sortField == 'username') {
             $query->order(["Maintainers.{$sortField}" => "{$direction}"]);
         } else {
-            $query->order(["{$this->alias()}.{$sortField}" => "{$direction}"]);
+            $query->order(["{$this->getAlias()}.{$sortField}" => "{$direction}"]);
         }
 
         if ($options['collaborators'] !== null) {
-            $query->where(["{$this->alias()}.collaborators >=" => (int)$options['collaborators']]);
+            $query->where(["{$this->getAlias()}.collaborators >=" => (int)$options['collaborators']]);
         }
 
         if ($options['contributors'] !== null) {
-            $query->where(["{$this->alias()}.contributors >=" => (int)$options['contributors']]);
+            $query->where(["{$this->getAlias()}.contributors >=" => (int)$options['contributors']]);
         }
 
         if ($options['forks'] !== null) {
-            $query->where(["{$this->alias()}.forks >=" => (int)$options['forks']]);
+            $query->where(["{$this->getAlias()}.forks >=" => (int)$options['forks']]);
         }
 
         // if (!empty($options['version']) || !empty($options['has']) || !empty($options['keyword'])) {
@@ -197,15 +197,15 @@ trait PackageIndexFinderTrait
         }
 
         if ($options['open_issues'] !== null) {
-            $query->where(["{$this->alias()}.open_issues <=" => (int)$options['open_issues']]);
+            $query->where(["{$this->getAlias()}.open_issues <=" => (int)$options['open_issues']]);
         }
 
         if ($options['query'] !== null) {
             $_query = sprintf('%%%s%%', $options['query']);
             $query->andWhere(function ($exp, $query) use ($_query) {
                 return $query->newExpr()->add([
-                    "{$this->alias()}.name LIKE" => $_query,
-                    "{$this->alias()}.description LIKE" => $_query,
+                    "{$this->getAlias()}.name LIKE" => $_query,
+                    "{$this->getAlias()}.description LIKE" => $_query,
                     "Maintainers.username LIKE" => $_query,
                 ])->tieWith('OR');
             });
@@ -213,11 +213,11 @@ trait PackageIndexFinderTrait
 
         if ($options['since'] !== null) {
             $time = date('Y-m-d H:i:s', strtotime($options['since']));
-            $query->where(["{$this->alias()}.last_pushed_at >" => $time]);
+            $query->where(["{$this->getAlias()}.last_pushed_at >" => $time]);
         }
 
         if ($options['watchers'] !== null) {
-            $query->where(["{$this->alias()}.watchers >=" => (int)$options['watchers']]);
+            $query->where(["{$this->getAlias()}.watchers >=" => (int)$options['watchers']]);
         }
 
         return $query;

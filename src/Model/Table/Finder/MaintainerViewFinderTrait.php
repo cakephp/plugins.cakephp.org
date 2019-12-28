@@ -28,7 +28,7 @@ trait MaintainerViewFinderTrait
 
         $query->limit(1);
         $query->where([
-            "{$this->alias()}.{$this->primaryKey()}" => $options['maintainer_id']
+            "{$this->getAlias()}.{$this->getPrimaryKey()}" => $options['maintainer_id']
         ]);
 
         $query->formatResults(function ($results) use ($slug) {

@@ -15,10 +15,10 @@ trait PackageUnversionedFinderTrait
     public function findUnversioned(Query $query, array $options)
     {
         $query->where([
-            "{$this->alias()}.deleted" => false,
+            "{$this->getAlias()}.deleted" => false,
             'or' => [
-                "{$this->alias()}.tags NOT LIKE" => '%version:%',
-                "{$this->alias()}.tags IS" => null,
+                "{$this->getAlias()}.tags NOT LIKE" => '%version:%',
+                "{$this->getAlias()}.tags IS" => null,
             ]
         ]);
 
