@@ -146,6 +146,7 @@ class ResourceHelper extends AppHelper
     public function tagLink($tag)
     {
         $colorMap = [
+            'version:4' => '#D33C44',
             'version:3' => '#27a4dd',
             'version:2' => '#9dd5c0',
             'version:1.3' => '#ffaaa5',
