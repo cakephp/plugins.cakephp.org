@@ -60,7 +60,11 @@ class PackagesController extends AppController
             'id',
             'maintainer_id',
             'name',
-            'repository_url',
+            'repository_url' => [
+                'formatter' => function ($name, $value, $entity, $options, $View) {
+                    return $View->Html->link($value, $value, ['target' => '_blank']);
+                },
+            ],
             'tags' => [
                 'formatter' => function ($name, $value) {
                     return implode(' ', explode(',', $value));
