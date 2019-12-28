@@ -25,7 +25,7 @@ trait GithubRssTrait
             return [];
         }
 
-        $collection = (new Collection($response->json))
+        $collection = (new Collection($response->getJson()))
                         ->filter(function ($entry) {
                             return $entry['type'] == 'PushEvent';
                         })

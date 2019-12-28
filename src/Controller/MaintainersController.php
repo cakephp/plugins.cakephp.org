@@ -24,8 +24,8 @@ class MaintainersController extends AppController
      */
     public function view()
     {
-        $maintainerId = $this->request->param('id');
-        $slug = $this->request->param('slug');
+        $maintainerId = $this->request->getParam('id');
+        $slug = $this->request->getParam('slug');
 
         $maintainer = $this->Maintainers->find('view', [
             'maintainer_id' => $maintainerId,
