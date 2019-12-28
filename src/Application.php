@@ -29,24 +29,79 @@ use Cake\Routing\Middleware\RoutingMiddleware;
 class Application extends BaseApplication
 {
     /**
-     * Setup the middleware your application will use.
-     *
-     * @param \Cake\Http\MiddlewareQueue $middleware The middleware queue to setup.
-     * @return \Cake\Http\MiddlewareQueue The updated middleware.
+     * {@inheritDoc}
      */
-    public function middleware($middleware)
+    public function bootstrap()
     {
-        $middleware
+        // Call parent to load bootstrap from files.
+        parent::bootstrap();
+        if (PHP_SAPI === 'cli') {
+            $this->bootstrapCli();
+        }
+        /*
+         * Only try to load DebugKit in development mode
+         * Debug Kit should not be installed on a production system
+         */
+        if (Configure::read('debug')) {
+            $this->addPlugin(\DebugKit\Plugin::class);
+        }
+
+        // Load more plugins here
+        // Handle the CakeQueuesadilla
+        $this->addPlugin('Josegonzalez/CakeQueuesadilla');
+        \Josegonzalez\CakeQueuesadilla\Queue\Queue::setConfig(Configure::consume('Queuesadilla'));
+
+        $this->addPlugin('ADmad/SocialAuth', ['bootstrap' => true, 'routes' => true]);
+        $this->addPlugin('AssetCompress', ['bootstrap' => true]);
+        $this->addPlugin('BootstrapUI');
+        $this->addPlugin('Crud');
+        $this->addPlugin('CrudUsers');
+        $this->addPlugin('CrudView');
+        $this->addPlugin('CsvView');
+        $this->addPlugin('Josegonzalez/Upload');
+        $this->addPlugin('Muffin/Tokenize', ['bootstrap' => true, 'routes' => true]);
+        $this->addPlugin('Search');
+        $this->addPlugin('Users', ['bootstrap' => true, 'routes' => true]);
+
+    }
+
+    /**
+     * Setup the middleware queue your application will use.
+     *
+     * @param \Cake\Http\MiddlewareQueue $middlewareQueue The middleware queue to setup.
+     * @return \Cake\Http\MiddlewareQueue The updated middleware queue.
+     */
+    public function middleware($middlewareQueue)
+    {
+        $middlewareQueue
             // Catch any exceptions in the lower layers,
             // and make an error page/response
-            ->add(ErrorHandlerMiddleware::class)
-
+            ->add(new ErrorHandlerMiddleware(null, Configure::read('Error')))
             // Handle plugin/theme assets like CakePHP normally does.
-            ->add(AssetMiddleware::class)
+            ->add(new AssetMiddleware([
+                'cacheTime' => Configure::read('Asset.cacheTime')
+            ]))
+            // Add routing middleware.
+            // If you have a large number of routes connected, turning on routes
+            // caching in production could improve performance. For that when
+            // creating the middleware instance specify the cache config name by
+            // using it's second constructor argument:
+            // `new RoutingMiddleware($this, '_cake_routes_')`
+            ->add(new RoutingMiddleware($this));
+        return $middlewareQueue;
+    }
 
-            // Apply routing
-            ->add(RoutingMiddleware::class);
-
-        return $middleware;
+    /**
+     * @return void
+     */
+    protected function bootstrapCli()
+    {
+        try {
+            $this->addPlugin('Bake');
+        } catch (MissingPluginException $e) {
+            // Do not halt if the plugin is missing
+        }
+        $this->addPlugin('Migrations');
+        // Load more plugins here
     }
 }
