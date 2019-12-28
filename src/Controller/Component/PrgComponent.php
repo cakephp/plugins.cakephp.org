@@ -18,7 +18,7 @@ class PrgComponent extends Component
     {
         $controller = $this->_registry->getController();
         if ($controller->request->is('post')) {
-            list($data, $query) = $this->cleanParams($controller->request->data, [
+            list($data, $query) = $this->cleanParams($controller->request->getData(), [
                 'rinse' => false,
             ]);
             return $controller->redirect(array('?' => $data, 'escape' => false));

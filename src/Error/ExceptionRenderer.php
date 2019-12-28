@@ -17,8 +17,8 @@ class ExceptionRenderer extends CoreExceptionRenderer
     {
         $renderMethod = sprintf(
             'render%s%s',
-            $this->controller->request->controller,
-            ucfirst($this->controller->request->action)
+            $this->controller->request->getParam('controller'),
+            ucfirst($this->controller->request->getParam('action'))
         );
 
         if (method_exists($this, $renderMethod) && $renderMethod !== 'render') {
@@ -36,8 +36,8 @@ class ExceptionRenderer extends CoreExceptionRenderer
     public function renderPackagesView()
     {
         if ($this->error instanceof RecordNotFoundException) {
-            $this->controller->response->statusCode(302);
-            $this->controller->response->location(Router::url([
+            $this->controller->response = $this->controller->response->withStatus(302);
+            $this->controller->response = $this->controller->response->withLocation(Router::url([
                 'controller' => 'Packages',
                 'action' => 'index'
             ], true));
@@ -46,8 +46,8 @@ class ExceptionRenderer extends CoreExceptionRenderer
 
         if ($this->error instanceof RedirectException) {
             $route = $this->error->getRoute();
-            $this->controller->response->statusCode(302);
-            $this->controller->response->location(Router::url($route, true));
+            $this->controller->response = $this->controller->response->withStatus(302);
+            $this->controller->response = $this->controller->response->location(Router::url($route, true));
             return $this->controller->response;
         }
 
