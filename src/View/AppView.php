@@ -74,8 +74,8 @@ class AppView extends View implements EventListenerInterface
      */
     public function beforeLayout($layoutFileName)
     {
-        $controllerName = lcfirst($this->request->params['controller']);
-        $actionName = $this->request->params['action'];
+        $controllerName = lcfirst($this->request->getParam('controller'));
+        $actionName = $this->request->getParam('action');
 
         $this->set([
             '_bodyId' => $controllerName,

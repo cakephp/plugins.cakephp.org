@@ -11,7 +11,7 @@
                     </h2>
                 </div>
 
-                <?php $searchForm = $searchForm ?: null; ?>
+                <?php if (empty($searchForm)) $searchForm = null; ?>
                 <div class="col-md-5 hidden-sm">
                     <?php echo $this->Form->create($searchForm, [
                         'class' => 'search',

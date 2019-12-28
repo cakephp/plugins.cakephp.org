@@ -67,7 +67,7 @@
         </div>
     </li>
 
-    <?php if ($this->request->session()->check('Auth.User')) : ?>
+    <?php if ($this->request->getSession()->check('Auth.User')) : ?>
         <li>
             <?= $this->Html->link(
                 $this->Html->tag('i', '', ['class' => 'fa fa-logout']) . __('Logout'),

@@ -15,4 +15,4 @@
     </div>
 </div>
 
-<?php echo $this->element('site/package-results', ['packages' => $packages]); ?>
+<?php echo $this->element('site/package-results', ['packages' => $packages->toArray()]); ?>

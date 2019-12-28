@@ -1,5 +1,5 @@
 <?php
-if (!$this->request->session()->read('Auth.User') || !empty($package->deleted)) {
+if (!$this->request->getSession()->read('Auth.User') || !empty($package->deleted)) {
     return;
 }
 echo $this->Html->link(
