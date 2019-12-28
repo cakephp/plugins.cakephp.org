@@ -207,7 +207,7 @@ trait PackageIndexFinderTrait
                     "{$this->getAlias()}.name LIKE" => $_query,
                     "{$this->getAlias()}.description LIKE" => $_query,
                     "Maintainers.username LIKE" => $_query,
-                ])->tieWith('OR');
+                ])->setConjunction('OR');
             });
         }
 
