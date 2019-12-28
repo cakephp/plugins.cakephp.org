@@ -25,7 +25,7 @@ $this->Html->addCrumb($package->name, $package->route());
                         </form>
                     </td>
                 </tr>
-                <?php if ($this->request->session()->read('Auth.User')) : ?>
+                <?php if ($this->request->getSession()->read('Auth.User')) : ?>
                     <tr>
                         <td>Disable:</td>
                         <td>

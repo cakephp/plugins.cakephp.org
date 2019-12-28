@@ -17,11 +17,11 @@ trait GithubRssTrait
             $this->name
         ));
 
-        if ($response->statusCode() != 200) {
+        if ($response->getStatusCode() != 200) {
             return [];
         }
 
-        if ($response->json == null) {
+        if ($response->getJson() == null) {
             return [];
         }
 
