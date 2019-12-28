@@ -16,7 +16,7 @@
         "ext-redis": "*",
         "cakephp/cakephp": "3.8.7",
         "mobiledetect/mobiledetectlib": "2.*",
-        "cakephp/migrations": "~1.0",
+        "cakephp/migrations": "^2.0.0",
         "cakephp/plugin-installer": "*",
         "josegonzalez/dotenv": "3.*",
         "friendsofcake/crud": "~5.0",
@@ -34,7 +34,8 @@
         "friendsofcake/cakephp-csvview": "~3.0",
         "cakephp/debug_kit": "3.21.0",
         "cakephp/bake": "1.12.0",
-        "wyrihaximus/twig-view": "4.3.7"
+        "wyrihaximus/twig-view": "4.3.7",
+        "robmorgan/phinx": "^0.10.0"
     },
     "require-dev": {
         "psy/psysh": "@stable",
@@ -60,6 +61,7 @@
     },
     "scripts": {
         "compile": [
+            "bin/cake migrations mark_migrated",
             "bin/cake migrations migrate",
             "bin/cake migrations migrate -p Josegonzalez/CakeQueuesadilla",
             "bin/cake asset_compress build"
