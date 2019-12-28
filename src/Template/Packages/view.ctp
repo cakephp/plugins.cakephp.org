@@ -1,12 +1,12 @@
 <?php
-$this->Html->addCrumb('packages', ['action' => 'index']);
-$this->Html->addCrumb($package->maintainer->username, $package->maintainer->route());
-$this->Html->addCrumb($package->name, $package->route());
+$this->Breadcrumbs->add('packages', ['action' => 'index']);
+$this->Breadcrumbs->add($package->maintainer->username, $package->maintainer->route());
+$this->Breadcrumbs->add($package->name, $package->route());
 ?>
 
 <div class="container">
     <div class="row">
-        <?php echo $this->Html->getCrumbList(['class' => 'breadcrumbs']); ?>
+        <?php echo $this->Breadcrumbs->render(['class' => 'breadcrumbs breadcrumb']); ?>
         <h3 class="package-header">
             <?php echo $this->Text->truncate($this->Text->autoLink($package->description), 100, ['html' => true]) ?>
         </h3>
