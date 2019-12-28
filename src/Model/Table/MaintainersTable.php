@@ -39,9 +39,9 @@ class MaintainersTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('maintainers');
-        $this->displayField('name');
-        $this->primaryKey('id');
+        $this->setTable('maintainers');
+        $this->setDisplayField('name');
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
 

@@ -43,9 +43,9 @@ class PackagesTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('packages');
-        $this->displayField('name');
-        $this->primaryKey('id');
+        $this->setTable('packages');
+        $this->setDisplayField('name');
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
 

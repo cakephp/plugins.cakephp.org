@@ -75,7 +75,7 @@ trait AuthTrait
         }
 
         $lastActivity = new Time();
-        $this->request->session()->write('Auth.User.last_activity', $lastActivity);
+        $this->request->getSession()->write('Auth.User.last_activity', $lastActivity);
 
         $fields = ['last_activity' => $lastActivity];
         $conditions = ['Users.id' => $this->Auth->user('id')];

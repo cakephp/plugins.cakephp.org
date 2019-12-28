@@ -45,15 +45,15 @@ class PersistErrorsComponent extends Component
             throw new InvalidArgumentException('Argument 1 passed to PersistErrorsComponent::apply() must be an object');
         }
 
-        $sessionPrefix = $this->config('sessionPrefix');
+        $sessionPrefix = $this->getConfig('sessionPrefix');
         $className = get_class($object);
         $sessionKey = sprintf('%s.%s', $sessionPrefix, $className);
-        if (!$this->request->session()->check($sessionKey)) {
+        if (!$this->request->getSession()->check($sessionKey)) {
             return;
         }
 
-        $errors = $this->request->session()->read($sessionKey);
-        $this->request->session()->delete($sessionKey);
+        $errors = $this->request->getSession()->read($sessionKey);
+        $this->request->getSession()->delete($sessionKey);
         if (method_exists($object, 'setErrors')) {
             $object->setErrors($errors);
         } elseif (method_exists($object, 'errors')) {
@@ -79,7 +79,7 @@ class PersistErrorsComponent extends Component
             throw new InvalidArgumentException('Argument 1 passed to PersistErrorsComponent::persist() must be an object');
         }
 
-        $sessionPrefix = $this->config('sessionPrefix');
+        $sessionPrefix = $this->getConfig('sessionPrefix');
         $className = get_class($object);
         $sessionKey = sprintf('%s.%s', $sessionPrefix, $className);
 
@@ -90,7 +90,7 @@ class PersistErrorsComponent extends Component
             $errors = $object->errors();
         }
 
-        $this->request->session()->write([
+        $this->request->getSession()->write([
             $sessionKey => $errors
         ]);
     }

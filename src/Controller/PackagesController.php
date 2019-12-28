@@ -55,19 +55,19 @@ class PackagesController extends AppController
         }
 
         list($this->request->data, $query) = $this->Prg->cleanParams(
-            $this->request->query,
+            $this->request->getQuery(),
             ['coalesce' => true]
         );
 
         $category = null;
-        if (!empty($this->request->data['category'])) {
+        if (!empty($this->request->getData('category'))) {
             $category = $this->Packages->Categories->find('view', [
                 'slug' => $this->request->getData('category'),
             ])->firstOrFail();
         }
 
         $searchForm = new SearchForm();
-        $packages = $this->paginate($this->Packages->find('index', $this->request->data));
+        $packages = $this->paginate($this->Packages->find('index', $this->request->getData()));
 
         $this->request->data['query'] = $query;
         $this->set([
@@ -131,7 +131,7 @@ class PackagesController extends AppController
         }
 
         $suggestForm = new SuggestForm();
-        if ($suggestForm->execute($this->request->data)) {
+        if ($suggestForm->execute($this->request->getData())) {
             $this->Flash->success(__('Thanks, your submission will be reviewed shortly!'));
         } else {
             $this->PersistErrors->persist($suggestForm);

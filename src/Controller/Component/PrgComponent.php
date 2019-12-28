@@ -44,7 +44,7 @@ class PrgComponent extends Component
         }
 
         $options = array_merge([
-            'allowedFilters' => $this->config('allowedFilters'),
+            'allowedFilters' => $this->getConfig('allowedFilters'),
             'coalesce' => false,
             'rinse' => [
                 'search' => ' ',

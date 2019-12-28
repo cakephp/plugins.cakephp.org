@@ -8,7 +8,7 @@
     </div>
 </section>
 
-<?php if ($this->request->session()->check("Flash.flash")) : ?>
+<?php if ($this->request->getSession()->check("Flash.flash")) : ?>
 <section class="pt-30">
     <div class="container">
         <div class="row">

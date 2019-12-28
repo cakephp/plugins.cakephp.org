@@ -105,11 +105,11 @@ class AppController extends Controller
             ],
         ]);
 
-        if ($this->isAdmin || in_array($this->request->action, $this->adminActions)) {
+        if ($this->isAdmin || in_array($this->request->getParam('action'), $this->adminActions)) {
             $this->Crud->addListener('CrudView.View');
         }
 
-        if (in_array($this->request->action, $this->searchActions) && $this->modelClass !== null) {
+        if (in_array($this->request->getParam('action'), $this->searchActions) && $this->modelClass !== null) {
             list($plugin, $tableClass) = pluginSplit($this->modelClass);
             try {
                 if ($this->$tableClass->behaviors()->hasMethod('filterParams')) {
@@ -153,18 +153,18 @@ class AppController extends Controller
         });
 
         if ($this->Crud->isActionMapped()) {
-            $this->Crud->action()->config('scaffold.sidebar_navigation', false);
-            $this->Crud->action()->config('scaffold.brand', Configure::read('App.name'));
-            $this->Crud->action()->config('scaffold.site_title', Configure::read('App.name'));
+            $this->Crud->action()->setConfig('scaffold.sidebar_navigation', false);
+            $this->Crud->action()->setConfig('scaffold.brand', Configure::read('App.name'));
+            $this->Crud->action()->setConfig('scaffold.site_title', Configure::read('App.name'));
             if (method_exists($this, 'getUtilityNavigation')) {
-                $this->Crud->action()->config('scaffold.utility_navigation', $this->getUtilityNavigation());
+                $this->Crud->action()->setConfig('scaffold.utility_navigation', $this->getUtilityNavigation());
             }
         }
 
-        $isRest = in_array($this->response->type(), ['application/json', 'application/xml']);
-        $isAdmin = $this->isAdmin || in_array($this->request->action, $this->adminActions);
+        $isRest = in_array($this->response->getType(), ['application/json', 'application/xml']);
+        $isAdmin = $this->isAdmin || in_array($this->request->getParam('action'), $this->adminActions);
         if (!$isRest && $isAdmin && empty($this->request->getParam('_ext'))) {
-            $this->viewBuilder()->className('CrudView\View\CrudView');
+            $this->viewBuilder()->setClassName('CrudView\View\CrudView');
         }
     }
 

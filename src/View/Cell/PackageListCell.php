@@ -36,7 +36,7 @@ class PackageListCell extends Cell
 
     protected function display(array $packageIds = [])
     {
-        $this->template = 'display';
+        $this->viewBuilder()->setTemplate('display');
         $this->loadModel('Packages');
         $packages = $this->Packages->find('package')
             ->where(['Packages.id IN' => $packageIds]);
