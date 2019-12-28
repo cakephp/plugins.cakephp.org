@@ -15,6 +15,7 @@ trait PackageFeaturedFinderTrait
     public function findFeatured(Query $query, array $options)
     {
         $query->where([
+            "{$this->alias()}.deleted" => false,
             "{$this->alias()}.featured" => true,
         ]);
 

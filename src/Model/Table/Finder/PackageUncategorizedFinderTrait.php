@@ -15,6 +15,7 @@ trait PackageUncategorizedFinderTrait
     public function findUncategorized(Query $query, array $options)
     {
         $query->where([
+            "{$this->alias()}.deleted" => false,
             "{$this->alias()}.category_id IS" => null,
         ]);
 
