@@ -2,7 +2,7 @@
 namespace App\Traits;
 
 use Cake\Collection\Collection;
-use Cake\Network\Http\Client;
+use Cake\Http\Client;
 
 trait GithubRssTrait
 {

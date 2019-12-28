@@ -102,16 +102,16 @@ class PackagesController extends AppController
     {
         $searchForm = new SearchForm();
         $package = $this->Packages->find('view', [
-            'package_id' => $this->request->param('id'),
-            'slug' => $this->request->param('slug'),
+            'package_id' => $this->request->getParam('id'),
+            'slug' => $this->request->getParam('slug'),
             'user_id' => $this->Auth->user('id'),
         ])->firstOrFail();
 
         $this->push(['\App\Job\CloneJob', 'perform'], [
-            'package_id' => $this->request->param('id'),
+            'package_id' => $this->request->getParam('id'),
         ]);
         $this->push(['\App\Job\ClassifyJob', 'perform'], [
-            'package_id' => $this->request->param('id'),
+            'package_id' => $this->request->getParam('id'),
         ]);
 
         $this->set('package', $package);
