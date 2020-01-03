@@ -101,6 +101,7 @@ class TaggedTable extends Table
         ];
         return $this->findOrCreate($data, function ($entity) {
             $entity->id = Text::uuid();
+            $entity->times_tagged = 1;
             return $entity;
         });
     }

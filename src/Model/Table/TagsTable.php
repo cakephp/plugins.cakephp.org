@@ -94,6 +94,7 @@ class TagsTable extends Table
         return $this->findOrCreate($data, function ($entity) use ($name) {
             $entity->id = Text::uuid();
             $entity->name = $name;
+            $entity->occurrence = 1;
             return $entity;
         });
     }
