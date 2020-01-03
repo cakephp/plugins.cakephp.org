@@ -486,15 +486,10 @@ class ClassifyJob
         return $string === "" || strrpos($line, $string, -strlen($line)) !== false;
     }
 
-    protected function runJobInline($class, $method, $data)
+    protected function runJobInline($class, $method, $parameters)
     {
-        $item = [
-            'args' => [
-                $data,
-            ],
-        ];
-        $job = new Base($item, new NullEngine(new NullLogger, []));
-        $instance = new $class();
-        return $instance->perform($job);
+        $callable = [$class, $method];
+        $performer = new Performer($callable, $parameters);
+        return $performer->execute();
     }
 }
