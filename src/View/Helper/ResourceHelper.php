@@ -165,7 +165,7 @@ class ResourceHelper extends AppHelper
             return $this->Html->link('version:' . $version, $url, $options);
         }
 
-        $color = '000000';
+        $color = '#000000';
         if (in_array($key, ['has', 'keyword'])) {
             $color = $key == 'has' ? '#808080' : '#A9A9A9';
             $queryString = [
