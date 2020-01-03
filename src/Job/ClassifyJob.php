@@ -373,11 +373,18 @@ class ClassifyJob
         if ($dependsOnCake == '') {
             $dependsOnCake = Hash::get($composerContents, 'require.cakephp/core', '');
         }
+        if ($dependsOnCake == '') {
+            $dependsOnCake = Hash::get($composerContents, 'require.cakephp/utility', '');
+        }
 
         $devDependsOnCake = Hash::get($composerContents, 'require-dev.cakephp/cakephp', '');
         if ($devDependsOnCake == '') {
             $devDependsOnCake = Hash::get($composerContents, 'require-dev.cakephp/core', '');
         }
+        if ($devDependsOnCake == '') {
+            $devDependsOnCake = Hash::get($composerContents, 'require-dev.cakephp/utility', '');
+        }
+
 
         if (strlen($dependsOnCake) > 0 || strlen($devDependsOnCake) > 0) {
             $version = '2';
