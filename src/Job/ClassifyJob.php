@@ -437,6 +437,9 @@ class ClassifyJob
         ];
 
         $composerContents = $this->composerContents($composerData, $composerPath);
+        if (Hash::get($composerContents, 'description', '') !== '') {
+            $package->description = Hash::get($composerContents, 'description', '');
+        }
         $version = $this->version($package, $composerData, $composerContents);
         $composerData['version'] = $version;
 
