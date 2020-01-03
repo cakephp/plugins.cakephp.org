@@ -89,8 +89,7 @@ class PackagesController extends AppController
             $this->set('_extract', $fields);
         }
 
-        $this->Crud->action()->config('scaffold.actions', []);
-        $this->Crud->action()->config('scaffold.index_finder_scopes', [
+        $indexFinderScopes = [
             [
                 'title' => __('All'),
                 'finder' => 'all',
@@ -108,12 +107,35 @@ class PackagesController extends AppController
                 'finder' => 'unversioned',
             ],
             [
+                'title' => __('Cake 1.3'),
+                'finder' => '13',
+            ],
+            [
+                'title' => __('Cake 2'),
+                'finder' => '2',
+            ],
+            [
+                'title' => __('Cake 3'),
+                'finder' => '3',
+            ],
+            [
+                'title' => __('Cake 4'),
+                'finder' => '4',
+            ],
+            [
                 'title' => __('Deleted'),
                 'finder' => 'deleted',
             ],
-        ]);
+        ];
 
-        if (in_array($this->request->query('finder'), ['featured', 'uncategorized', 'unversioned', 'deleted'])) {
+        $this->Crud->action()->config('scaffold.actions', []);
+        $this->Crud->action()->config('scaffold.index_finder_scopes', $indexFinderScopes);
+
+
+        $allowedFinderMethods = array_map(function($e) {
+            return $e['finder'];
+        }, $indexFinderScopes);
+        if (in_array($this->request->query('finder'), $allowedFinderMethods)) {
             $this->Crud->action()->config('findMethod', $this->request->query('finder'));
         }
 
