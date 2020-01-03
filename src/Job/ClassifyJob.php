@@ -319,6 +319,10 @@ class ClassifyJob
 
     protected function version($package, $composerData, $composerContents)
     {
+        if (strpos(Hash::get($composerContents, 'name', ''), 'cakephp/') === 0) {
+            return '4';
+        }
+
         $version = '1.3';
         $cake2Tags = [
             'model', 'view', 'controller',
@@ -357,42 +361,59 @@ class ClassifyJob
                 break;
             }
 
-            if (strpos($package->description, "CakePHP 3") !== false) {
-                $version = '3';
+            // this is a minimum, it could still be cake3 or cake4
+            if (Hash::get($composerContents, 'type', '') === 'cakephp-plugin') {
+                $version = '2';
             }
 
-            if (strpos($package->description, "CakePHP 4") !== false) {
-                $version = '4';
+            $hasInstallerName = strlen(Hash::get($composerContents, 'extra.installer-name', '')) > 0;
+            if ($hasInstallerName) {
+                $version = '2';
+            }
+
+            $dependsOnComposerInstalllers = strlen(Hash::get($composerContents, 'require.composer/installers', '')) > 0;
+            $devDependsOnComposerInstalllers = strlen(Hash::get($composerContents, 'require-dev.composer/installers', '')) > 0;
+            if ($dependsOnComposerInstalllers || $devDependsOnComposerInstalllers) {
+                $version = '2';
+            }
+
+            $cake3Identifiers = ['cakephp2', 'cakephp 2', 'cake2', 'cake 2'];
+            foreach ($cake3Identifiers as $identifier) {
+                if (strpos(strtolower($package->description), $identifier) !== false) {
+                    $version = '2';
+                }
+            }
+
+            $cake3Identifiers = ['cakephp3', 'cakephp 3', 'cake3', 'cake 3'];
+            foreach ($cake3Identifiers as $identifier) {
+                if (strpos(strtolower($package->description), $identifier) !== false) {
+                    $version = '3';
+                }
+            }
+
+            $cake4Identifiers = ['cakephp4', 'cakephp 4', 'cake4', 'cake 4'];
+            foreach ($cake4Identifiers as $identifier) {
+                if (strpos(strtolower($package->description), $identifier) !== false) {
+                    $version = '4';
+                }
             }
         }
 
-        $hasInstallerName = strlen(Hash::get($composerContents, 'extra.installer-name', '')) > 0;
-        if ($hasInstallerName) {
-            $version = '2';
+        $dependsOnCake = '';
+        foreach (['cakephp', 'core', 'utility'] as $packageName) {
+            $dependsOnCake = Hash::get($composerContents, sprintf('require.cakephp/%s', $packageName), '');
+            if ($dependsOnCake !== '') {
+                break;
+            }
         }
 
-        $dependsOnComposerInstalllers = strlen(Hash::get($composerContents, 'require.composer/installers', '')) > 0;
-        $devDependsOnComposerInstalllers = strlen(Hash::get($composerContents, 'require-dev.composer/installers', '')) > 0;
-        if ($dependsOnComposerInstalllers || $devDependsOnComposerInstalllers) {
-            $version = '2';
+        $devDependsOnCake = '';
+        foreach (['cakephp', 'core', 'utility'] as $packageName) {
+            $devDependsOnCake = Hash::get($composerContents, sprintf('require-dev.cakephp/%s', $packageName), '');
+            if ($devDependsOnCake !== '') {
+                break;
+            }
         }
-
-        $dependsOnCake = Hash::get($composerContents, 'require.cakephp/cakephp', '');
-        if ($dependsOnCake == '') {
-            $dependsOnCake = Hash::get($composerContents, 'require.cakephp/core', '');
-        }
-        if ($dependsOnCake == '') {
-            $dependsOnCake = Hash::get($composerContents, 'require.cakephp/utility', '');
-        }
-
-        $devDependsOnCake = Hash::get($composerContents, 'require-dev.cakephp/cakephp', '');
-        if ($devDependsOnCake == '') {
-            $devDependsOnCake = Hash::get($composerContents, 'require-dev.cakephp/core', '');
-        }
-        if ($devDependsOnCake == '') {
-            $devDependsOnCake = Hash::get($composerContents, 'require-dev.cakephp/utility', '');
-        }
-
 
         if (strlen($dependsOnCake) > 0 || strlen($devDependsOnCake) > 0) {
             $version = '2';
