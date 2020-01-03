@@ -324,6 +324,10 @@ class ClassifyJob
         }
 
         $version = '1.3';
+        // if there is composer data, then assume the minimum version is cake2
+        if (Hash::get($composerContents, 'name', '') !== false) {
+            $version = '2';
+        }
         $cake2Tags = [
             'model', 'view', 'controller',
             'component', 'behavior', 'helper',
@@ -351,7 +355,7 @@ class ClassifyJob
             }
         }
 
-        if ($version == '1.3') {
+        if (in_array($version, ['1.3', '2'])) {
             $cake2Versions = ['2.x', '2.0', '2.1', '2.2', '2.3', '2.4', '2.5', '2.6', '2.7', '2.8', '2.9', '2.10'];
             foreach ($cake2Versions as $cake2Version) {
                 if (strpos($package->description, $cake2Version) === false) {
