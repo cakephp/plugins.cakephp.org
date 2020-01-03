@@ -27,9 +27,9 @@ $this->Breadcrumbs->add($package->name, $package->route());
                 </tr>
                 <?php if ($this->request->getSession()->read('Auth.User')) : ?>
                     <tr>
-                        <td>Disable:</td>
+                        <td>Hide:</td>
                         <td>
-                            <?php echo $this->Html->link('Disable', $package->disableRoute()) ?>
+                            <?php echo $this->Html->link('Hide', $package->disableRoute()) ?>
                         </td>
                     </tr>
                 <?php endif; ?>

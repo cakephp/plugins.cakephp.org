@@ -20,7 +20,7 @@ class PackagesController extends AppController
         'index',
         'classify',
         'toggleFeature',
-        'toggleDelete',
+        'toggleHide',
     ];
 
     /**
@@ -50,7 +50,7 @@ class PackagesController extends AppController
             'className' => 'Crud.Bulk/Toggle',
             'field' => 'featured',
         ]);
-        $this->Crud->mapAction('toggleDelete', [
+        $this->Crud->mapAction('toggleHide', [
             'className' => 'Crud.Bulk/Toggle',
             'field' => 'deleted',
         ]);
@@ -75,11 +75,11 @@ class PackagesController extends AppController
             'category_id',
             'actions' => [
                 'formatter' => function ($name, $value, $entity, $options, $View) {
-                    $deleteTitle = $entity->deleted ? __('Undelete') : __('Delete');
+                    $hideTitle = $entity->deleted ? __('Show') : __('Hide');
                     $featureTitle = $entity->featured ? __('Unfeature') : __('Feature');
                     return $View->ButtonGroup->render(implode('', [
                         $View->Html->link($featureTitle, ['action' => 'toggleFeature', $entity->id], ['class' => 'btn btn-primary']),
-                        $View->Html->link($deleteTitle, ['action' => 'toggleDelete', $entity->id], ['class' => 'btn btn-warning']),
+                        $View->Html->link($hideTitle, ['action' => 'toggleHide', $entity->id], ['class' => 'btn btn-warning']),
                         $View->Html->link('Classify Now', ['action' => 'classify', $entity->id], ['class' => 'btn btn-success']),
                     ]), ['style' => 'width:260px']);
                 },
@@ -124,7 +124,7 @@ class PackagesController extends AppController
                 'finder' => '4',
             ],
             [
-                'title' => __('Deleted'),
+                'title' => __('Hidden'),
                 'finder' => 'deleted',
             ],
         ];
@@ -175,7 +175,7 @@ class PackagesController extends AppController
         return $this->toggle($id);
     }
 
-    public function toggleDelete($id)
+    public function toggleHide($id)
     {
         return $this->toggle($id);
     }
