@@ -370,7 +370,15 @@ class ClassifyJob
         }
 
         $dependsOnCake = Hash::get($composerContents, 'require.cakephp/cakephp', '');
+        if ($dependsOnCake == '') {
+            $dependsOnCake = Hash::get($composerContents, 'require.cakephp/core', '');
+        }
+
         $devDependsOnCake = Hash::get($composerContents, 'require-dev.cakephp/cakephp', '');
+        if ($devDependsOnCake == '') {
+            $devDependsOnCake = Hash::get($composerContents, 'require-dev.cakephp/core', '');
+        }
+
         if (strlen($dependsOnCake) > 0 || strlen($devDependsOnCake) > 0) {
             $version = '2';
             $version3Starters = ['3.', '~3.', '^3.', '>=3.'];
