@@ -140,7 +140,7 @@ class CloneJob
         $url = $response->getHeader('location')[0];
         $this->info(sprintf('Retrieving zip: %s', $url));
         $response = $client->get($url);
-        if ($response->statusCode() != 200) {
+        if ($response->getStatusCode() != 200) {
             $this->error(sprintf('Error code', $response->statusCode()));
 
             return false;
