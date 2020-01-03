@@ -73,21 +73,15 @@ class PackagesController extends AppController
                 },
             ],
             'category_id',
-            'featured' => [
+            'actions' => [
                 'formatter' => function ($name, $value, $entity, $options, $View) {
-                    $title = $value ? __('Unfeature') : __('Feature');
-                    return $View->Html->link($title, ['action' => 'toggleFeature', $entity->id], ['class' => 'btn btn-primary']);
-                },
-            ],
-            'deleted' => [
-                'formatter' => function ($name, $value, $entity, $options, $View) {
-                    $title = $value ? __('Undelete') : __('Delete');
-                    return $View->Html->link($title, ['action' => 'toggleDelete', $entity->id], ['class' => 'btn btn-warning']);
-                },
-            ],
-            'classify' => [
-                'formatter' => function ($name, $value, $entity, $options, $View) {
-                    return $View->Html->link('Classify Now', ['action' => 'classify', $entity->id], ['class' => 'btn btn-success']);
+                    $deleteTitle = $entity->deleted ? __('Undelete') : __('Delete');
+                    $featureTitle = $entity->featured ? __('Unfeature') : __('Feature');
+                    return $View->ButtonGroup->render(implode('', [
+                        $View->Html->link($featureTitle, ['action' => 'toggleFeature', $entity->id], ['class' => 'btn btn-primary']),
+                        $View->Html->link($deleteTitle, ['action' => 'toggleDelete', $entity->id], ['class' => 'btn btn-warning']),
+                        $View->Html->link('Classify Now', ['action' => 'classify', $entity->id], ['class' => 'btn btn-success']),
+                    ]), ['style' => 'width:260px']);
                 },
             ],
         ];

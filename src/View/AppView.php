@@ -50,6 +50,7 @@ class AppView extends View implements EventListenerInterface
         $this->loadHelper('Menu');
         $this->loadHelper('Form');
         $this->loadHelper('Resource');
+        $this->loadHelper('ButtonGroup');
         $this->getEventManager()->on($this);
     }
 
