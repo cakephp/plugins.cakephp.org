@@ -224,8 +224,8 @@ class ClassifyJob
         $files = [];
         $client = new Client;
         $response = $client->get($package->cloneTreesUrl());
-        if ($response->statusCode() == 200) {
-            foreach (json_decode($response->body(), true)['tree'] as $object) {
+        if ($response->getStatusCode() == 200) {
+            foreach (json_decode($response->getStringBody(), true)['tree'] as $object) {
                 $files[$object['path']] = $this->fetchType($object['path']);
             }
         } else {

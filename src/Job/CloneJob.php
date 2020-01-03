@@ -131,7 +131,7 @@ class CloneJob
         $this->info(sprintf('Retrieving zip location: %s', $package->cloneZipballUrl()));
         $client = new Client;
         $response = $client->get($package->cloneZipballUrl());
-        if ($response->statusCode() != 302) {
+        if ($response->getStatusCode() != 302) {
             $this->error(sprintf('Error code', $response->statusCode()));
 
             return false;
@@ -148,7 +148,7 @@ class CloneJob
 
         $this->info(sprintf('Writing zip: %s', $package->cloneZipballPath()));
         $file = new File($package->cloneZipballPath(), true, 0644);
-        if (!$file->write($response->body())) {
+        if (!$file->write($response->getStringBody())) {
             $this->error('Unable to extract file');
 
             return false;
