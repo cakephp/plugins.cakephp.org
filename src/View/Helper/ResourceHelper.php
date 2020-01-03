@@ -137,6 +137,9 @@ class ResourceHelper extends AppHelper
 
         $links = [];
         foreach ($tags as $tag) {
+            if ($tag === '') {
+                continue;
+            }
             $links[] = $this->tagLink($tag);
         }
 

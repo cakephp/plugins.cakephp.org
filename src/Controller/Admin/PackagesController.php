@@ -68,8 +68,8 @@ class PackagesController extends AppController
                 },
             ],
             'tags' => [
-                'formatter' => function ($name, $value) {
-                    return implode(' ', explode(',', $value));
+                'formatter' => function ($name, $value, $entity, $options, $View) {
+                    return $View->Resource->tagCloud($entity->tags);
                 },
             ],
             'category_id',
