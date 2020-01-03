@@ -356,6 +356,14 @@ class ClassifyJob
                 $version = '2';
                 break;
             }
+
+            if (strpos($package->description, "CakePHP 3") !== false) {
+                $version = '3';
+            }
+
+            if (strpos($package->description, "CakePHP 4") !== false) {
+                $version = '4';
+            }
         }
 
         $hasInstallerName = strlen(Hash::get($composerContents, 'extra.installer-name', '')) > 0;
