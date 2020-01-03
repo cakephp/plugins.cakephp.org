@@ -61,7 +61,11 @@ class PackagesController extends AppController
         $fields = [
             'id',
             'maintainer_id',
-            'name',
+            'name' => [
+                'formatter' => function ($name, $value, $entity, $options, $View) {
+                    return $View->Html->link($value, $entity->route(), ['target' => '_blank']);
+                },
+            ],
             'repository_url' => [
                 'formatter' => function ($name, $value, $entity, $options, $View) {
                     return $View->Html->link($value, $value, ['target' => '_blank']);

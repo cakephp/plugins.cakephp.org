@@ -66,6 +66,7 @@ class Package extends Entity
     public function route()
     {
         return [
+            'prefix' => false,
             'plugin' => null,
             'controller' => 'Packages',
             'action' => 'view',
