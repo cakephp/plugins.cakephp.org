@@ -2,6 +2,7 @@
 namespace App\Controller\Admin;
 
 use App\Controller\Admin\AppController;
+use App\Job\Performer;
 use Cake\Event\Event;
 use Cake\Routing\Router;
 use CrudView\BreadCrumb\ActiveBreadCrumb;
@@ -17,6 +18,7 @@ class PackagesController extends AppController
      */
     protected $allowedActions = [
         'index',
+        'classify',
         'toggleFeature',
         'toggleDelete',
     ];
@@ -81,6 +83,11 @@ class PackagesController extends AppController
                 'formatter' => function ($name, $value, $entity, $options, $View) {
                     $title = $value ? __('Undelete') : __('Delete');
                     return $View->Html->link($title, ['action' => 'toggleDelete', $entity->id], ['class' => 'btn btn-warning']);
+                },
+            ],
+            'classify' => [
+                'formatter' => function ($name, $value, $entity, $options, $View) {
+                    return $View->Html->link('Classify Now', ['action' => 'classify', $entity->id], ['class' => 'btn btn-success']);
                 },
             ],
         ];
@@ -177,6 +184,24 @@ class PackagesController extends AppController
     public function toggleDelete($id)
     {
         return $this->toggle($id);
+    }
+
+    public function classify($id)
+    {
+        $callable = ['\App\Job\ClassifyJob','perform'];
+        $parameters = ['package_id' => $id];
+        $performer = new Performer($callable, $parameters);
+        if ($performer->execute()) {
+            $this->Flash->success('Package classified successfully');
+        } else {
+            $this->Flash->success('Unable to classify package, check logs for more details');
+        }
+
+        $url = $this->request->referer();
+        if ($url === '/') {
+            $url = '/admin/packages';
+        }
+        return $this->redirect($url);
     }
 
     protected function toggle($id)
