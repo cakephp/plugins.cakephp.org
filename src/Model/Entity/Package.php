@@ -77,7 +77,7 @@ class Package extends Entity
     public function disableRoute()
     {
         return [
-            'admin' => true,
+            'prefix' => 'admin',
             'plugin' => null,
             'controller' => 'Packages',
             'action' => 'disable',
