@@ -171,8 +171,10 @@ class CloneJob
             }
         }
 
-        $this->info(sprintf('Extracting zip: %s => %s', $package->cloneZipballPath(), $package->cloneDir()));
-        $command = sprintf('unzip %s -d %s', $package->cloneZipballPath(), $package->cloneDir());
+        $tmpPath = TMP . uniqid('repo');
+
+        $this->info(sprintf('Extracting zip: %s => %s', $package->cloneZipballPath(), $tmpPath));
+        $command = sprintf('unzip %s -d %s', $package->cloneZipballPath(), $tmpPath);
         $path = TMP;
         if (!$this->callProcessInDirectory($command, $path)) {
             $this->error('Unzip failed');
@@ -180,23 +182,18 @@ class CloneJob
             return false;
         }
 
-        $folder = new Folder($package->cloneDir(), false);
+        $folder = new Folder($tmpPath, false);
         $contents = $folder->read();
         $extracttFolder = $contents[0][0];
 
         $this->info('Moving contents into place');
-        $command = sprintf('mv %s/%s/* %s', $package->cloneDir(), $extracttFolder, $package->cloneDir());
+        $command = sprintf('mv %s/%s %s', $tmpPath, $extracttFolder, $package->cloneDir());
         $path = TMP;
         if (!$this->callProcessInDirectory($command, $path)) {
             $this->error('Move failed');
 
             return false;
         }
-
-        $command = sprintf('mv %s/%s/.* %s', $package->cloneDir(), $extracttFolder, $package->cloneDir());
-        $path = TMP;
-        $this->callProcessInDirectory($command, $path);
-        $folder->delete($extracttFolder);
 
         return true;
     }
