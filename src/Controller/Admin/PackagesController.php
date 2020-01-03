@@ -48,7 +48,7 @@ class PackagesController extends AppController
             'className' => 'Crud.Bulk/Toggle',
             'field' => 'featured',
         ]);
-        $this->Crud->mapAction('toggleDeleted', [
+        $this->Crud->mapAction('toggleDelete', [
             'className' => 'Crud.Bulk/Toggle',
             'field' => 'deleted',
         ]);
