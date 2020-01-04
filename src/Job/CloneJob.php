@@ -135,7 +135,7 @@ class CloneJob
         $client = new Client();
         $response = $client->get($package->cloneZipballUrl());
         if ($response->getStatusCode() != 302) {
-            $this->error(sprintf('Error code', $response->statusCode()));
+            $this->error(sprintf('Error code %d', $response->getStatusCode()));
 
             return false;
         }
@@ -144,7 +144,7 @@ class CloneJob
         $this->info(sprintf('Retrieving zip: %s', $url));
         $response = $client->get($url);
         if ($response->getStatusCode() != 200) {
-            $this->error(sprintf('Error code', $response->statusCode()));
+            $this->error(sprintf('Error code %d', $response->getStatusCode()));
 
             return false;
         }
