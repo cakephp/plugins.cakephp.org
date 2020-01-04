@@ -185,12 +185,12 @@ class PackagesController extends AppController
             $this->Flash->error('Unable to classify package, check logs for more details');
         }
 
-        $url = $this->request->referer();
-        if ($url === '/') {
-            $url = '/admin/packages';
+        $redirectUrl = $this->request->referer();
+        if ($redirectUrl === '/') {
+            $redirectUrl = '/admin/packages';
         }
 
-        return $this->redirect($url);
+        return $this->redirect($redirectUrl);
     }
 
     protected function toggle($id)
