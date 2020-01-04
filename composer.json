@@ -20,7 +20,7 @@
         "cakephp/plugin-installer": "*",
         "josegonzalez/dotenv": "3.*",
         "friendsofcake/crud": "~5.0",
-        "friendsofcake/crud-view": "0.13.1",
+        "friendsofcake/crud-view": "0.14.0",
         "friendsofcake/bootstrap-ui": "1.4.1",
         "friendsofcake/search": "~5.0",
         "markstory/asset_compress": "3.*",
