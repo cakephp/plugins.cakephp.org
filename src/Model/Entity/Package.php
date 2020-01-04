@@ -60,7 +60,7 @@ class Package extends Entity
      */
     protected $_accessible = [
         '*' => true,
-        'id' => false
+        'id' => false,
     ];
 
     public function route()
@@ -82,7 +82,7 @@ class Package extends Entity
             'plugin' => null,
             'controller' => 'Packages',
             'action' => 'disable',
-            $this->id
+            $this->id,
         ];
     }
 
@@ -118,6 +118,7 @@ class Package extends Entity
     public function maintainerName()
     {
         $parts = explode('/', $this->repository_url);
+
         return $parts[3];
     }
 }

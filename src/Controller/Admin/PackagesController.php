@@ -81,6 +81,7 @@ class PackagesController extends AppController
                 'formatter' => function ($name, $value, $entity, $options, $View) {
                     $hideTitle = $entity->deleted ? __('Show') : __('Hide');
                     $featureTitle = $entity->featured ? __('Unfeature') : __('Feature');
+
                     return $View->ButtonGroup->render(implode('', [
                         $View->Html->link($featureTitle, ['action' => 'toggleFeature', $entity->id], ['class' => 'btn btn-primary']),
                         $View->Html->link($hideTitle, ['action' => 'toggleHide', $entity->id], ['class' => 'btn btn-warning']),
@@ -136,8 +137,7 @@ class PackagesController extends AppController
         $this->Crud->action()->config('scaffold.actions', []);
         $this->Crud->action()->config('scaffold.index_finder_scopes', $indexFinderScopes);
 
-
-        $allowedFinderMethods = array_map(function($e) {
+        $allowedFinderMethods = array_map(function ($e) {
             return $e['finder'];
         }, $indexFinderScopes);
         if (in_array($this->request->query('finder'), $allowedFinderMethods)) {
@@ -147,15 +147,15 @@ class PackagesController extends AppController
         $this->Crud->action()->config('scaffold.index_formats', [
             [
                 'title' => 'CSV',
-                'url' => ['_ext' => 'csv', '?' => $this->request->query]
+                'url' => ['_ext' => 'csv', '?' => $this->request->query],
             ],
             [
                 'title' => 'JSON',
-                'url' => ['_ext' => 'json', '?' => $this->request->query]
+                'url' => ['_ext' => 'json', '?' => $this->request->query],
             ],
             [
                 'title' => 'XML',
-                'url' => ['_ext' => 'xml', '?' => $this->request->query]
+                'url' => ['_ext' => 'xml', '?' => $this->request->query],
             ],
         ]);
         $this->Crud->action()->config('scaffold.fields', $fields);
@@ -186,7 +186,7 @@ class PackagesController extends AppController
 
     public function classify($id)
     {
-        $callable = ['\App\Job\ClassifyJob','perform'];
+        $callable = ['\App\Job\ClassifyJob', 'perform'];
         $parameters = ['package_id' => $id];
         $performer = new Performer($callable, $parameters);
         if ($performer->execute()) {
@@ -199,6 +199,7 @@ class PackagesController extends AppController
         if ($url === '/') {
             $url = '/admin/packages';
         }
+
         return $this->redirect($url);
     }
 

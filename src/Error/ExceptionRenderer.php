@@ -39,8 +39,9 @@ class ExceptionRenderer extends CoreExceptionRenderer
             $this->controller->response = $this->controller->response->withStatus(302);
             $this->controller->response = $this->controller->response->withLocation(Router::url([
                 'controller' => 'Packages',
-                'action' => 'index'
+                'action' => 'index',
             ], true));
+
             return $this->controller->response;
         }
 
@@ -48,6 +49,7 @@ class ExceptionRenderer extends CoreExceptionRenderer
             $route = $this->error->getRoute();
             $this->controller->response = $this->controller->response->withStatus(302);
             $this->controller->response = $this->controller->response->location(Router::url($route, true));
+
             return $this->controller->response;
         }
 

@@ -11,7 +11,7 @@ class PrgComponent extends Component
      * @var array
      */
     protected $_defaultConfig = [
-        'allowedFilters' => []
+        'allowedFilters' => [],
     ];
 
     public function redirectPost()
@@ -21,7 +21,8 @@ class PrgComponent extends Component
             list($data, $query) = $this->cleanParams($controller->request->getData(), [
                 'rinse' => false,
             ]);
-            return $controller->redirect(array('?' => $data, 'escape' => false));
+
+            return $controller->redirect(['?' => $data, 'escape' => false]);
         }
     }
 
@@ -87,7 +88,7 @@ class PrgComponent extends Component
                     } elseif (isset($named[$key])) {
                         $named[$key] = [
                             $named[$key],
-                            trim($value[2], $options['trim'])
+                            trim($value[2], $options['trim']),
                         ];
                     }
                 } else {
@@ -161,5 +162,4 @@ class PrgComponent extends Component
 
         return [$named, trim($coalesce)];
     }
-
 }

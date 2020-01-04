@@ -37,7 +37,8 @@ class PagesController extends AppController
         if (!in_array($ip, explode(',', env('WHITELISTED_IPS', 'Example')))) {
             $this->set('_serialize', ['data']);
             $this->set('data', []);
-            return;
+
+            return $this->response;
         }
 
         $env = [];
@@ -76,7 +77,7 @@ class PagesController extends AppController
      * @param bool $stripPrefix
      * @return array
      */
-    public function getEnvByPrefix($prefix = '', $stripPrefix = false)
+    protected function getEnvByPrefix($prefix = '', $stripPrefix = false)
     {
         if (!$prefix) {
             return [];
@@ -103,12 +104,12 @@ class PagesController extends AppController
 
     protected function getRequestIpAddress()
     {
-        $ordered_choices = array(
+        $ordered_choices = [
             'HTTP_X_FORWARDED_FOR',
             'HTTP_X_REAL_IP',
             'HTTP_CLIENT_IP',
-            'REMOTE_ADDR'
-        );
+            'REMOTE_ADDR',
+        ];
 
         // check each server var in order
         // accepted ip must be non null and not private or reserved
@@ -127,6 +128,7 @@ class PagesController extends AppController
     protected function isValidIp($ip)
     {
         $options = FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE;
+
         return filter_var($ip, FILTER_VALIDATE_IP, $options) !== false;
     }
 

@@ -26,7 +26,6 @@ class AppHelper extends Helper
         return $link;
     }
 
-
     /**
      * Outputs the footer menu items
      *
@@ -85,6 +84,7 @@ class AppHelper extends Helper
     public function isCakeFestDone()
     {
         $endDate = Configure::read('Site.cakefest.end_date');
+
         return (new Time($endDate)) < (new Time());
     }
 
@@ -96,6 +96,7 @@ class AppHelper extends Helper
     public function isCakeFestInFuture()
     {
         $startDate = Configure::read('Site.cakefest.start_date');
+
         return (new Time($startDate)) > (new Time());
     }
 
@@ -107,6 +108,7 @@ class AppHelper extends Helper
     public function cakeFestDaysLeft()
     {
         $startDate = Configure::read('Site.cakefest.start_date');
+
         return (new Time($startDate))->diff(new Time())->days;
     }
 
@@ -119,6 +121,7 @@ class AppHelper extends Helper
     {
         $startDate = new DateTime(Configure::read('Site.cakefest.start_date'));
         $endDate = new DateTime(Configure::read('Site.cakefest.end_date'));
+
         return __('{0} to {1}', $startDate->format('M d'), $endDate->format('M d'));
     }
 }

@@ -39,7 +39,6 @@ class DeferredEmail
      */
     public $viewVars = [];
 
-
     /**
      * Email build step
      *
@@ -73,6 +72,7 @@ class DeferredEmail
     public function perform(Base $job)
     {
         $this->set($job->data());
+
         return $this->send();
     }
 
@@ -93,7 +93,7 @@ class DeferredEmail
      */
     public function emailClass()
     {
-        return new Email;
+        return new Email();
     }
 
     /**
@@ -129,7 +129,6 @@ class DeferredEmail
         } catch (Exception $e) {
             $this->sent = false;
             $this->error($e->getMessage());
-            // TODO: trigger error handler
         }
 
         return $this->sent;

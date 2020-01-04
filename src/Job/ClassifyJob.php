@@ -3,8 +3,8 @@ namespace App\Job;
 
 use App\Model\Entity\Package;
 use App\Traits\LogTrait;
-use Cake\Datasource\ModelAwareTrait;
 use Cake\Collection\Collection;
+use Cake\Datasource\ModelAwareTrait;
 use Cake\Filesystem\File;
 use Cake\Filesystem\Folder;
 use Cake\Http\Client;
@@ -222,7 +222,7 @@ class ClassifyJob
         $path = $package->cloneDir();
 
         $files = [];
-        $client = new Client;
+        $client = new Client();
         $response = $client->get($package->cloneTreesUrl());
         if ($response->getStatusCode() == 200) {
             foreach (json_decode($response->getStringBody(), true)['tree'] as $object) {
@@ -251,16 +251,16 @@ class ClassifyJob
     protected function cleanupTags($path, $composerData)
     {
         $tags = (array)(new Collection($composerData['tags']))
-            ->reject(function($tag) {
+            ->reject(function ($tag) {
                 return !is_string($tag);
             })
-            ->reject(function($tag) {
+            ->reject(function ($tag) {
                 return in_array($tag, ['keyword:cake', 'keyword:cakephp']) || preg_match('/\s/', $tag) || $tag === '';
             })
-            ->map(function($tag) {
+            ->map(function ($tag) {
                 return strtolower($tag);
             })
-            ->map(function($tag) {
+            ->map(function ($tag) {
                 return strpos($tag, ':') === false ? sprintf('has:%s', $tag) : $tag;
             })
             ->toArray();
@@ -281,6 +281,7 @@ class ClassifyJob
         if (in_array('license', $tags)) {
             unset($tags['license']);
         }
+
         return array_unique(array_values(array_flip($tags)));
     }
 
@@ -290,6 +291,7 @@ class ClassifyJob
             if ($composerData['license'] === 'lgpl-3.0+') {
                 $composerData['license'] = 'lgpl-3.0';
             }
+
             return sprintf('license:%s', $composerData['license']);
         }
 
@@ -488,12 +490,13 @@ class ClassifyJob
         $composerData['version'] = $version;
 
         $keywords = (new Collection(Hash::get($composerContents, 'keywords', [])))
-            ->map(function($tag) {
+            ->map(function ($tag) {
                 return sprintf('keyword:%s', $tag);
             })
             ->toArray();
 
         $composerData['tags'] = array_merge($keywords, $composerData['tags']);
+
         return $composerData;
     }
 
@@ -533,6 +536,7 @@ class ClassifyJob
     {
         $callable = [$class, $method];
         $performer = new Performer($callable, $parameters);
+
         return $performer->execute();
     }
 }

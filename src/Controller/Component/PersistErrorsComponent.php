@@ -91,7 +91,7 @@ class PersistErrorsComponent extends Component
         }
 
         $this->request->getSession()->write([
-            $sessionKey => $errors
+            $sessionKey => $errors,
         ]);
     }
 }

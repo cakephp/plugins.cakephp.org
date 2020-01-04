@@ -14,6 +14,7 @@ class BaseForm extends Form
     protected function push($callable, $args = [], $options = [])
     {
         Log::write(LogLevel::DEBUG, sprintf("Queuing %s", implode('::', (array)$callable)), $args);
+
         return Queue::push($callable, $args, $options);
     }
 }

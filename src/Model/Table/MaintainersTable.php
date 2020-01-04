@@ -26,7 +26,6 @@ use Cake\Validation\Validator;
  */
 class MaintainersTable extends Table
 {
-
     use \App\Model\Table\Finder\MaintainerViewFinderTrait;
 
     /**
@@ -46,10 +45,10 @@ class MaintainersTable extends Table
         $this->addBehavior('Timestamp');
 
         $this->belongsTo('Users', [
-            'foreignKey' => 'user_id'
+            'foreignKey' => 'user_id',
         ]);
         $this->hasMany('Packages', [
-            'foreignKey' => 'maintainer_id'
+            'foreignKey' => 'maintainer_id',
         ]);
     }
 

@@ -75,7 +75,7 @@ class MaintainersFixture extends TestFixture
             'password' => 'Lorem ipsum dolor sit amet',
             'activation_key' => 'Lorem ipsum dolor sit amet',
             'github_id' => 1,
-            'avatar_url' => 'Lorem ipsum dolor sit amet'
+            'avatar_url' => 'Lorem ipsum dolor sit amet',
         ],
     ];
 }

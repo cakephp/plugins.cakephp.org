@@ -27,7 +27,6 @@ use Cake\Validation\Validator;
  */
 class CategoriesTable extends Table
 {
-
     use \App\Model\Table\Finder\CategoryViewFinderTrait;
 
     /**
@@ -47,20 +46,20 @@ class CategoriesTable extends Table
         $this->addBehavior('Timestamp');
 
         $this->belongsTo('Categories', [
-            'foreignKey' => 'category_id'
+            'foreignKey' => 'category_id',
         ]);
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id',
-            'joinType' => 'INNER'
+            'joinType' => 'INNER',
         ]);
         $this->hasMany('Categories', [
-            'foreignKey' => 'category_id'
+            'foreignKey' => 'category_id',
         ]);
         $this->hasMany('Categorized', [
-            'foreignKey' => 'category_id'
+            'foreignKey' => 'category_id',
         ]);
         $this->hasMany('Packages', [
-            'foreignKey' => 'category_id'
+            'foreignKey' => 'category_id',
         ]);
     }
 

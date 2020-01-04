@@ -23,12 +23,12 @@ class Performer
             ],
             'queue' => 'default',
             'options' => [
-                'attempts_delay' => 600
+                'attempts_delay' => 600,
             ],
-            'attempts' => 0
+            'attempts' => 0,
         ];
 
-        $job = new Base($item, new NullEngine(new NullLogger, []));
+        $job = new Base($item, new NullEngine(new NullLogger(), []));
 
         if (!is_callable($item['class'])) {
             return false;
@@ -38,7 +38,7 @@ class Performer
         if (is_array($item['class']) && count($item['class']) == 2) {
             $className = $item['class'][0];
             $methodName = $item['class'][1];
-            $instance = new $className;
+            $instance = new $className();
             $success = $instance->$methodName($job);
         } elseif (is_string($item['class'])) {
             $success = call_user_func($item['class'], $job);

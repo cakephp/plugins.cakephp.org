@@ -43,7 +43,7 @@ class TaggedTable extends Table
 
         $this->belongsTo('Tags', [
             'foreignKey' => 'tag_id',
-            'joinType' => 'INNER'
+            'joinType' => 'INNER',
         ]);
     }
 
@@ -99,9 +99,11 @@ class TaggedTable extends Table
             'model' => 'Package',
             'language' => 'en-us',
         ];
+
         return $this->findOrCreate($data, function ($entity) {
             $entity->id = Text::uuid();
             $entity->times_tagged = 1;
+
             return $entity;
         });
     }

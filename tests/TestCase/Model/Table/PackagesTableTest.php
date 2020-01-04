@@ -26,7 +26,7 @@ class PackagesTableTest extends TestCase
     public $fixtures = [
         'app.packages',
         'app.maintainers',
-        'app.categories'
+        'app.categories',
     ];
 
     /**

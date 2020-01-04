@@ -42,7 +42,7 @@ class TagsTable extends Table
         $this->addBehavior('Timestamp');
 
         $this->hasMany('Tagged', [
-            'foreignKey' => 'tag_id'
+            'foreignKey' => 'tag_id',
         ]);
     }
 
@@ -91,10 +91,12 @@ class TagsTable extends Table
             'identifier' => $identifier,
             'keyname' => $keyname,
         ];
+
         return $this->findOrCreate($data, function ($entity) use ($name) {
             $entity->id = Text::uuid();
             $entity->name = $name;
             $entity->occurrence = 1;
+
             return $entity;
         });
     }
@@ -110,11 +112,12 @@ class TagsTable extends Table
     {
         $str = mb_strtolower($string);
         $str = preg_replace('/\xE3\x80\x80/', ' ', $str);
-        $str = str_replace(array('_', '-'), '', $str);
+        $str = str_replace(['_', '-'], '', $str);
         $str = preg_replace('#[:\#\*"()~$^{}`@+=;,<>!&%\.\]\/\'\\\\|\[]#', "\x20", $str);
         $str = str_replace('?', '', $str);
         $str = trim($str);
         $str = preg_replace('#\x20+#', '', $str);
+
         return $str;
     }
 }

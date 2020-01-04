@@ -28,11 +28,11 @@ class ButtonGroupHelper extends AppHelper
     {
         $attributes = $this->injectClasses('btn-group', (array)$attributes);
         $templater = $this->templater();
+
         return $this->formatTemplate('wrapper', [
             'content' => $content,
             'attrs' => $templater->formatAttributes($attributes, ['templateVars']),
             'templateVars' => isset($attributes['templateVars']) ? $attributes['templateVars'] : [],
         ]);
     }
-
 }

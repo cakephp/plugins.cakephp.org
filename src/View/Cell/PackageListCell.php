@@ -16,6 +16,7 @@ class PackageListCell extends Cell
             ->orderDesc('Packages.watchers')
             ->limit(8)
             ->toArray();
+
         return $this->display(array_keys($ids));
     }
 
@@ -30,9 +31,9 @@ class PackageListCell extends Cell
             ->orderDesc('Packages.watchers')
             ->limit(8)
             ->toArray();
+
         return $this->display(array_keys($ids));
     }
-
 
     protected function display(array $packageIds = [])
     {

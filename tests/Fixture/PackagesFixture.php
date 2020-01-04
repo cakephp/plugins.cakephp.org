@@ -88,7 +88,7 @@ class PackagesFixture extends TestFixture
             'open_issues_count' => 1,
             'stargazers_count' => 1,
             'subscribers_count' => 1,
-            'watchers_count' => 1
+            'watchers_count' => 1,
         ],
     ];
 }

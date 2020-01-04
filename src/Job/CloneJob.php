@@ -47,8 +47,7 @@ class CloneJob
 
         $this->info(sprintf('Package cloned: %s', $package->cloneDir()));
 
-        return true;
-        $package->deleted = !!!$cloned;
+        $package->deleted = !$cloned;
         $this->info(sprintf(
             '%s: %s [deleted: %s]',
             $package->id,
@@ -72,7 +71,7 @@ class CloneJob
         $descriptorSpec = [
             0 => ['pipe', 'r'],
             1 => ['pipe', 'w'],
-            2 => ['pipe', 'w']
+            2 => ['pipe', 'w'],
         ];
         $this->debug('Running ' . $command);
         $process = proc_open(
@@ -129,7 +128,7 @@ class CloneJob
         }
 
         $this->info(sprintf('Retrieving zip location: %s', $package->cloneZipballUrl()));
-        $client = new Client;
+        $client = new Client();
         $response = $client->get($package->cloneZipballUrl());
         if ($response->getStatusCode() != 302) {
             $this->error(sprintf('Error code', $response->statusCode()));

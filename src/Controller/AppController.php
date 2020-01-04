@@ -30,7 +30,6 @@ use Users\Controller\AuthTrait;
  */
 class AppController extends Controller
 {
-
     use AuthTrait;
     use ControllerTrait;
 
@@ -85,7 +84,7 @@ class AppController extends Controller
 
         $this->loadAuthComponent();
         $this->loadComponent('RequestHandler', [
-            'viewClassMap' => ['csv' => 'CsvView.Csv']
+            'viewClassMap' => ['csv' => 'CsvView.Csv'],
         ]);
         $this->loadComponent('Flash');
         $this->loadComponent('Crud.Crud', [
@@ -147,7 +146,7 @@ class AppController extends Controller
 
             if (!is_array($primaryKey)) {
                 $this->paginate['order'] = [
-                    sprintf('%s.%s', $repository->alias(), $primaryKey) => 'asc'
+                    sprintf('%s.%s', $repository->alias(), $primaryKey) => 'asc',
                 ];
             }
         });

@@ -61,7 +61,7 @@ class TaggedFixture extends TestFixture
             'language' => 'Lore',
             'created' => '2017-04-10 00:43:41',
             'modified' => '2017-04-10 00:43:41',
-            'times_tagged' => 1
+            'times_tagged' => 1,
         ],
     ];
 }

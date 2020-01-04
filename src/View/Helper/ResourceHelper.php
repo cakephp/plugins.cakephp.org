@@ -27,7 +27,7 @@ class ResourceHelper extends AppHelper
             'controller' => 'packages',
             'action' => 'view',
             'id' => $packageId,
-            'slug' => $slug
+            'slug' => $slug,
         ], ['title' => $name]);
     }
 
@@ -45,7 +45,7 @@ class ResourceHelper extends AppHelper
             'controller' => 'packages',
             'action' => 'view',
             'id' => $package['id'],
-            'slug' => $package['name']
+            'slug' => $package['name'],
         ]);
     }
 
@@ -69,7 +69,7 @@ class ResourceHelper extends AppHelper
             'class' => 'form-control clone-url',
             'div' => false,
             'label' => false,
-            'value' => "git://github.com/{$maintainer}/{$name}.git"
+            'value' => "git://github.com/{$maintainer}/{$name}.git",
         ]);
     }
 
@@ -85,15 +85,14 @@ class ResourceHelper extends AppHelper
 
         return $this->Html->image($avatarUrl, [
             'alt' => 'Gravatar for ' . $username,
-            'class' => 'img-circle'
+            'class' => 'img-circle',
         ]);
     }
 
     public function description($text)
     {
-        $text = trim($text);
         return $this->Html->tag('p', $this->Text->truncate(
-            $this->Text->autoLink($text),
+            $this->Text->autoLink(trim($text)),
             100,
             ['html' => true]
         ), ['class' => 'lead']);
@@ -165,6 +164,7 @@ class ResourceHelper extends AppHelper
             $url['?'] = $queryString;
             $options['style'] = $this->styleTag($colorMap[$tag]);
             $version = strpos($key, '.') === false ? $value . '.x' : $value;
+
             return $this->Html->link('version:' . $version, $url, $options);
         }
 
@@ -172,7 +172,7 @@ class ResourceHelper extends AppHelper
         if (in_array($key, ['has', 'keyword'])) {
             $color = $key == 'has' ? '#808080' : '#A9A9A9';
             $queryString = [
-                $key => [$value]
+                $key => [$value],
             ];
         }
 

@@ -19,7 +19,7 @@ trait PackageUnversionedFinderTrait
             'or' => [
                 "{$this->getAlias()}.tags NOT LIKE" => '%version:%',
                 "{$this->getAlias()}.tags IS" => null,
-            ]
+            ],
         ]);
 
         return $query;

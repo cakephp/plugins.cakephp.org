@@ -9,7 +9,7 @@ trait GithubRssTrait
     public function rss()
     {
         $client = new Client([
-            'timeout' => 2
+            'timeout' => 2,
         ]);
         $response = $client->get(sprintf(
             'https://api.github.com/repos/%s/%s/events',
@@ -34,6 +34,7 @@ trait GithubRssTrait
                                 $commit;
                                 $entry['payload']['commits'][$i]['created_at'] = strtotime($entry['created_at']);
                             }
+
                             return $entry;
                         })
                         ->extract('payload.commits');
@@ -51,11 +52,13 @@ trait GithubRssTrait
                                 $entry['url']
                             );
                             unset($entry['author']);
+
                             return $entry;
                         })
                         ->reject(function ($entry) {
                             return strpos($entry['message'], 'Merge pull request ') === 0;
                         })->sortBy('created_at');
+
         return $entries->toArray();
     }
 }

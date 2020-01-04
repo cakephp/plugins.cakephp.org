@@ -44,7 +44,7 @@ class Maintainer extends Entity
      */
     protected $_accessible = [
         '*' => true,
-        'id' => false
+        'id' => false,
     ];
 
     /**
@@ -53,9 +53,8 @@ class Maintainer extends Entity
      * @var array
      */
     protected $_hidden = [
-        'password'
+        'password',
     ];
-
 
     public function route()
     {

@@ -18,6 +18,7 @@ trait LogTrait
     {
         return Log::write(LogLevel::DEBUG, $msg, $context);
     }
+
     /**
      * Convenience method to write an error message to Log. See Log::write()
      * for more information on writing to logs.

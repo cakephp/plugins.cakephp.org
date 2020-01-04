@@ -30,7 +30,7 @@ class CategoriesTableTest extends TestCase
         'app.packages',
         'app.maintainers',
         'app.gravatars',
-        'app.githubs'
+        'app.githubs',
     ];
 
     /**

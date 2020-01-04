@@ -62,7 +62,6 @@ class Application extends BaseApplication
         $this->addPlugin('Muffin/Tokenize', ['bootstrap' => true, 'routes' => true]);
         $this->addPlugin('Search');
         $this->addPlugin('Users', ['bootstrap' => true, 'routes' => true]);
-
     }
 
     /**
@@ -79,7 +78,7 @@ class Application extends BaseApplication
             ->add(new ErrorHandlerMiddleware(null, Configure::read('Error')))
             // Handle plugin/theme assets like CakePHP normally does.
             ->add(new AssetMiddleware([
-                'cacheTime' => Configure::read('Asset.cacheTime')
+                'cacheTime' => Configure::read('Asset.cacheTime'),
             ]))
             // Add routing middleware.
             // If you have a large number of routes connected, turning on routes
@@ -88,6 +87,7 @@ class Application extends BaseApplication
             // using it's second constructor argument:
             // `new RoutingMiddleware($this, '_cake_routes_')`
             ->add(new RoutingMiddleware($this));
+
         return $middlewareQueue;
     }
 

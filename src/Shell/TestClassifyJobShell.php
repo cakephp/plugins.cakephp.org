@@ -21,7 +21,7 @@ class TestClassifyJobShell extends Shell
     {
         $parser = parent::getOptionParser();
         $parser->addArgument('package_id', [
-            'help' => 'ID of package to classify'
+            'help' => 'ID of package to classify',
         ]);
 
         return $parser;
@@ -36,12 +36,14 @@ class TestClassifyJobShell extends Shell
     {
         if (empty($this->args[0])) {
             $this->err('Missing package_id argument');
+
             return false;
         }
 
-        $callable = ['\App\Job\ClassifyJob','perform'];
+        $callable = ['\App\Job\ClassifyJob', 'perform'];
         $parameters = ['package_id' => $this->args[0]];
         $performer = new Performer($callable, $parameters);
+
         return $performer->execute();
     }
 }

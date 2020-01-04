@@ -129,6 +129,7 @@ class PackagesController extends AppController
     {
         if (!$this->request->is(['post', 'put'])) {
             $redirectUrl = $this->referer(['controller' => 'packages', 'action' => 'suggest'], true);
+
             return $this->redirect($redirectUrl);
         }
 
@@ -139,6 +140,7 @@ class PackagesController extends AppController
             $this->PersistErrors->persist($suggestForm);
             $this->Flash->error(__('There was some sort of error...'));
         }
+
         return $this->redirect($this->referer(null, true));
     }
 }

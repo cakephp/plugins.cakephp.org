@@ -9,7 +9,7 @@ use InvalidArgumentException;
 
 trait PackageIndexFinderTrait
 {
-    public $validTypes = array(
+    public $validTypes = [
         'app',
         'auth-storage',
         'authenticate',
@@ -49,7 +49,7 @@ trait PackageIndexFinderTrait
         'vendor',
         'view',
         'widget',
-    );
+    ];
 
     /**
      * Returns a valid Package with all related data
@@ -124,7 +124,7 @@ trait PackageIndexFinderTrait
 
         if (!empty($options['version'])) {
             $options['version'] = str_replace(['.x', '.'], '', $options['version']);
-            if (array($options['version'], ['12', '13', '2', '3'])) {
+            if (in_array($options['version'], ['12', '13', '2', '3'])) {
                 $tableName = 'TagsVersion';
                 $taggedTableName = 'Tagged' . $tableName;
 
@@ -234,11 +234,12 @@ trait PackageIndexFinderTrait
     {
         $str = mb_strtolower($string);
         $str = preg_replace('/\xE3\x80\x80/', ' ', $str);
-        $str = str_replace(array('_', '-'), '', $str);
+        $str = str_replace(['_', '-'], '', $str);
         $str = preg_replace('#[:\#\*"()~$^{}`@+=;,<>!&%\.\]\/\'\\\\|\[]#', "\x20", $str);
         $str = str_replace('?', '', $str);
         $str = trim($str);
         $str = preg_replace('#\x20+#', '', $str);
+
         return $str;
     }
 }

@@ -25,6 +25,7 @@ class CategoriesController extends AppController
             'slug',
             'description',
         ]);
+
         return $this->Crud->execute();
     }
 }

@@ -72,7 +72,7 @@
             "@test",
             "@cs-check"
         ],
-        "cs-check": "vendor/bin/phpcs --colors -p --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests",
+        "cs-check": "vendor/bin/phpcs --colors -p --standard='phpcs.xml.dist' ./src ./tests",
         "cs-fix": "vendor/bin/phpcbf --colors --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests",
         "test": "vendor/bin/phpunit --colors=always"
     },

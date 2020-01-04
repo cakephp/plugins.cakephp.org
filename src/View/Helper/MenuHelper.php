@@ -20,6 +20,7 @@ class MenuHelper extends Helper
     {
         $items = Configure::read('Site.menu.items.community');
         $items = $items ?: [];
+
         return $items;
     }
 
@@ -32,6 +33,7 @@ class MenuHelper extends Helper
     {
         $items = Configure::read('Site.menu.items.help');
         $items = $items ?: [];
+
         return $items;
     }
 
@@ -44,6 +46,7 @@ class MenuHelper extends Helper
     {
         $items = Configure::read('Site.menu.items.jobs');
         $items = $items ?: [];
+
         return $items;
     }
 
@@ -56,6 +59,7 @@ class MenuHelper extends Helper
     {
         $items = Configure::read('Site.menu.items.documentation');
         $items = $items ?: [];
+
         return $items;
     }
 
@@ -68,6 +72,7 @@ class MenuHelper extends Helper
     {
         $items = Configure::read('Site.menu.items.serviceProvider');
         $items = $items ?: [];
+
         return $items;
     }
 
@@ -80,6 +85,7 @@ class MenuHelper extends Helper
     {
         $items = Configure::read('Site.menu.items.calendar');
         $items = $items ?: [];
+
         return $items;
     }
 }

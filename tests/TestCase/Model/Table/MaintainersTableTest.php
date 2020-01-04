@@ -29,7 +29,7 @@ class MaintainersTableTest extends TestCase
         'app.gravatars',
         'app.githubs',
         'app.packages',
-        'app.categories'
+        'app.categories',
     ];
 
     /**

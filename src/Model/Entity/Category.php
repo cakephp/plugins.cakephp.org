@@ -40,7 +40,7 @@ class Category extends Entity
      */
     protected $_accessible = [
         '*' => true,
-        'id' => false
+        'id' => false,
     ];
 
     public function getColor()

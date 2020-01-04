@@ -44,6 +44,7 @@ class AppController extends BaseAppController
                 ),
             ];
         }
+
         return [
             new \CrudView\Menu\MenuItem(
                 'Categories',
@@ -68,7 +69,7 @@ class AppController extends BaseAppController
             new \CrudView\Menu\MenuItem(
                 'Log Out',
                 ['prefix' => false, 'plugin' => 'Users', 'controller' => 'Users', 'action' => 'logout']
-            )
+            ),
         ];
     }
 }

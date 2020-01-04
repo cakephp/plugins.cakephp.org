@@ -22,13 +22,14 @@ class SuggestForm extends BaseForm
                 }
 
                 $pieces = explode('/', $matches[1]);
+
                 return count($pieces) >= 2;
-            }
+            },
         ]);
 
         return $validator->add('github', 'length', [
             'rule' => ['minLength', 3],
-            'message' => 'Github url is required'
+            'message' => 'Github url is required',
         ]);
     }
 
@@ -54,12 +55,12 @@ class SuggestForm extends BaseForm
 
     protected function getRequestIpAddress()
     {
-        $ordered_choices = array(
+        $ordered_choices = [
             'HTTP_X_FORWARDED_FOR',
             'HTTP_X_REAL_IP',
             'HTTP_CLIENT_IP',
-            'REMOTE_ADDR'
-        );
+            'REMOTE_ADDR',
+        ];
 
         // check each server var in order
         // accepted ip must be non null and not private or reserved
@@ -78,6 +79,7 @@ class SuggestForm extends BaseForm
     protected function isValidIp($ip)
     {
         $options = FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE;
+
         return filter_var($ip, FILTER_VALIDATE_IP, $options) !== false;
     }
 }

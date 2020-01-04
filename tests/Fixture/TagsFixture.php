@@ -48,7 +48,7 @@ class TagsFixture extends TestFixture
             'keyname' => 'Lorem ipsum dolor sit amet',
             'created' => '2017-04-10 00:43:37',
             'modified' => '2017-04-10 00:43:37',
-            'occurrence' => 1
+            'occurrence' => 1,
         ],
     ];
 }

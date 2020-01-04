@@ -16,7 +16,7 @@ class SearchForm extends BaseForm
     {
         return $validator->add('query', 'length', [
             'rule' => ['minLength', 3],
-            'message' => 'Search query must be at least 3 characters'
+            'message' => 'Search query must be at least 3 characters',
         ]);
     }
 
