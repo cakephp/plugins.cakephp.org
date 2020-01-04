@@ -182,7 +182,7 @@ class PackagesController extends AppController
         if ($performer->execute()) {
             $this->Flash->success('Package classified successfully');
         } else {
-            $this->Flash->success('Unable to classify package, check logs for more details');
+            $this->Flash->error('Unable to classify package, check logs for more details');
         }
 
         $url = $this->request->referer();
