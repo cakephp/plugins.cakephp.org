@@ -10,6 +10,7 @@ use Cake\Console\Shell;
  */
 class TestClassifyJobShell extends Shell
 {
+    use PerformerTrait;
 
     /**
      * Manage the available sub-commands along with their arguments and help
