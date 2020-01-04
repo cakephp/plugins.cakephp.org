@@ -62,34 +62,24 @@ class PackagesController extends AppController
             'id',
             'maintainer_id',
             'name' => [
-                'formatter' => function ($name, $value, $entity, $options, $View) {
-                    return $View->Html->link($value, $entity->route(), ['target' => '_blank']);
-                },
+                'formatter' => 'element',
+                'element' => 'admin/packages/name_formatter',
             ],
             'repository_url' => [
-                'formatter' => function ($name, $value, $entity, $options, $View) {
-                    return $View->Html->link($value, $value, ['target' => '_blank']);
-                },
+                'formatter' => 'element',
+                'element' => 'admin/packages/repository_url_formatter',
             ],
             'tags' => [
-                'formatter' => function ($name, $value, $entity, $options, $View) {
-                    return $View->Resource->tagCloud($entity->tags);
-                },
+                'formatter' => 'element',
+                'element' => 'admin/packages/tags_formatter',
             ],
             'category_id',
             'actions' => [
-                'formatter' => function ($name, $value, $entity, $options, $View) {
-                    $hideTitle = $entity->deleted ? __('Show') : __('Hide');
-                    $featureTitle = $entity->featured ? __('Unfeature') : __('Feature');
-
-                    return $View->ButtonGroup->render(implode('', [
-                        $View->Html->link($featureTitle, ['action' => 'toggleFeature', $entity->id], ['class' => 'btn btn-primary']),
-                        $View->Html->link($hideTitle, ['action' => 'toggleHide', $entity->id], ['class' => 'btn btn-warning']),
-                        $View->Html->link('Classify Now', ['action' => 'classify', $entity->id], ['class' => 'btn btn-success']),
-                    ]), ['style' => 'width:260px']);
-                },
+                'formatter' => 'element',
+                'element' => 'admin/packages/actions_formatter',
             ],
         ];
+
         if ($this->request->getParam('_ext') === 'csv') {
             $this->set('_serialize', ['packages']);
             $this->set('_extract', $fields);
