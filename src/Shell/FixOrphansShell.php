@@ -41,13 +41,9 @@ class FixOrphansShell extends Shell
                 continue;
             }
 
-            $this->runJobInline(CloneJob::class, 'perform', [
-                'package_id' => $package->id,
-            ]);
-
-            $this->runJobInline(ClassifyJob::class, 'perform', [
-                'package_id' => $package->id,
-            ]);
+            if ($this->runJobInline(CloneJob::class, 'perform', $parameters)) {
+                $this->runJobInline(ClassifyJob::class, 'perform', $parameters);
+            }
         }
     }
 }
