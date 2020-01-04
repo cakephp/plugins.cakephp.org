@@ -99,8 +99,7 @@ class MaintainersTable extends Table
             ->allowEmpty('password');
 
         $validator
-            ->requirePresence('activation_key', 'create')
-            ->notEmpty('activation_key');
+            ->allowEmpty('activation_key');
 
         $validator
             ->requirePresence('avatar_url', 'create')
@@ -121,8 +120,6 @@ class MaintainersTable extends Table
         $rules->add($rules->isUnique(['username']));
         $rules->add($rules->isUnique(['email']));
         $rules->add($rules->existsIn(['user_id'], 'Users'));
-        $rules->add($rules->existsIn(['gravatar_id'], 'Gravatars'));
-        $rules->add($rules->existsIn(['github_id'], 'Githubs'));
 
         return $rules;
     }
