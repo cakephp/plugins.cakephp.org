@@ -1,7 +1,8 @@
 <?php
 namespace App\Shell;
 
-use App\Job\Performer;
+use App\Job\ClassifyJob;
+use App\Job\PerformerTrait;
 use Cake\Console\Shell;
 
 /**
@@ -40,10 +41,8 @@ class TestClassifyJobShell extends Shell
             return false;
         }
 
-        $callable = ['\App\Job\ClassifyJob', 'perform'];
-        $parameters = ['package_id' => $this->args[0]];
-        $performer = new Performer($callable, $parameters);
-
-        return $performer->execute();
+        return $this->runJobInline(ClassifyJob::class, 'perform', [
+            'package_id' => $this->args[0],
+        ]);
     }
 }

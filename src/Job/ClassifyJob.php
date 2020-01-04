@@ -1,6 +1,8 @@
 <?php
 namespace App\Job;
 
+use App\Job\CloneJob;
+use App\Job\PerformerTrait;
 use App\Model\Entity\Package;
 use App\Traits\LogTrait;
 use Cake\Collection\Collection;
@@ -18,6 +20,8 @@ class ClassifyJob
     use LogTrait;
 
     use ModelAwareTrait;
+
+    use PerformerTrait;
 
     protected $_fileRegex = [
         'app' => [
@@ -179,7 +183,7 @@ class ClassifyJob
             'has:vendor',
         ];
 
-        if (!$package->isCloned() && !$this->runJobInline('\App\Job\CloneJob', 'perform', ['package_id' => $packageId])) {
+        if (!$package->isCloned() && !$this->runJobInline(CloneJob::class, 'perform', ['package_id' => $packageId])) {
             $this->error(sprintf('Package is not cloned: %s', $package->id));
 
             return false;
@@ -530,13 +534,5 @@ class ClassifyJob
     protected function startsWith($string, $line)
     {
         return $string === "" || strrpos($line, $string, -strlen($line)) !== false;
-    }
-
-    protected function runJobInline($class, $method, $parameters)
-    {
-        $callable = [$class, $method];
-        $performer = new Performer($callable, $parameters);
-
-        return $performer->execute();
     }
 }

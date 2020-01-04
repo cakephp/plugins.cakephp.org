@@ -2,7 +2,8 @@
 namespace App\Controller\Admin;
 
 use App\Controller\Admin\AppController;
-use App\Job\Performer;
+use App\Job\ClassifyJob;
+use App\Job\PerformerTrait;
 use Cake\Event\Event;
 use Cake\Routing\Router;
 use CrudView\BreadCrumb\ActiveBreadCrumb;
@@ -10,6 +11,8 @@ use CrudView\BreadCrumb\BreadCrumb;
 
 class PackagesController extends AppController
 {
+    use PerformerTrait;
+
     /**
      * A list of actions that should be allowed for
      * authenticated users
@@ -183,10 +186,7 @@ class PackagesController extends AppController
 
     public function classify($id)
     {
-        $callable = ['\App\Job\ClassifyJob', 'perform'];
-        $parameters = ['package_id' => $id];
-        $performer = new Performer($callable, $parameters);
-        if ($performer->execute()) {
+        if ($this->runJobInline(ClassifyJob::class, 'perform', ['package_id' => $id])) {
             $this->Flash->success('Package classified successfully');
         } else {
             $this->Flash->error('Unable to classify package, check logs for more details');
