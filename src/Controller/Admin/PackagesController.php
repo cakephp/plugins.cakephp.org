@@ -88,7 +88,7 @@ class PackagesController extends AppController
             $this->set('_serialize', ['packages']);
             $this->set('_extract', $fields);
         } elseif ($this->request->getParam('_ext') === false) {
-            $categories = $this->Packages->Categories->find('list');
+            $categories = $this->Packages->Categories->find('list')->order(['name' => 'asc']);
             $this->set('categories', $categories);
         }
 
