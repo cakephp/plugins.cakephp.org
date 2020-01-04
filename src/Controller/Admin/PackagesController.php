@@ -18,6 +18,7 @@ class PackagesController extends AppController
      */
     protected $allowedActions = [
         'index',
+        'categorize',
         'classify',
         'toggleFeature',
         'toggleHide',
@@ -73,7 +74,10 @@ class PackagesController extends AppController
                 'formatter' => 'element',
                 'element' => 'admin/packages/tags_formatter',
             ],
-            'category_id',
+            'category_id' => [
+                'formatter' => 'element',
+                'element' => 'admin/packages/category_id_formatter',
+            ],
             'actions' => [
                 'formatter' => 'element',
                 'element' => 'admin/packages/actions_formatter',
@@ -83,6 +87,9 @@ class PackagesController extends AppController
         if ($this->request->getParam('_ext') === 'csv') {
             $this->set('_serialize', ['packages']);
             $this->set('_extract', $fields);
+        } elseif ($this->request->getParam('_ext') === false) {
+            $categories = $this->Packages->Categories->find('list');
+            $this->set('categories', $categories);
         }
 
         $indexFinderScopes = [
@@ -188,6 +195,44 @@ class PackagesController extends AppController
         $redirectUrl = $this->request->referer();
         if ($redirectUrl === '/') {
             $redirectUrl = '/admin/packages';
+        }
+
+        return $this->redirect($redirectUrl);
+    }
+
+    public function categorize($id)
+    {
+        $redirectUrl = $this->request->referer();
+        if ($redirectUrl === '/') {
+            $redirectUrl = '/admin/packages';
+        }
+
+        if ($id !== $this->request->data('id')) {
+            $this->Flash->error('Invalid package specified');
+
+            return $this->redirect($redirectUrl);
+        }
+
+        $package = $this->Packages->findById($id)->first();
+        if (empty($package)) {
+            $this->Flash->error('Invalid package specified');
+
+            return $this->redirect($redirectUrl);
+        }
+
+        $categoryId = $this->request->data('category_id');
+        $category = $this->Packages->Categories->findById($categoryId)->first();
+        if (empty($category)) {
+            $this->Flash->error('Invalid category ID specified');
+
+            return $this->redirect($redirectUrl);
+        }
+
+        $package->category_id = $this->request->data('category_id');
+        if ($this->Packages->save($package)) {
+            $this->Flash->success(sprintf('Package "%s" categorized into "%s" successfully', $package->name, $category->name));
+        } else {
+            $this->Flash->error(sprintf('Unable to categorize package "%s" into "%s", check logs for more details', $package->name, $category->name));
         }
 
         return $this->redirect($redirectUrl);
