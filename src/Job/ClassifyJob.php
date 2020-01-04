@@ -146,6 +146,13 @@ class ClassifyJob
         ],
     ];
 
+    public function __construct()
+    {
+        $this->loadModel('Packages');
+        $this->loadModel('Tagged');
+        $this->loadModel('Tags');
+    }
+
     public function perform(Base $job)
     {
         $packageId = $job->data('package_id');
@@ -154,10 +161,6 @@ class ClassifyJob
 
             return false;
         }
-
-        $this->loadModel('Packages');
-        $this->loadModel('Tagged');
-        $this->loadModel('Tags');
 
         $package = $this->Packages->find()->contain([
             'Categories',

@@ -16,6 +16,11 @@ class CloneJob
 
     use ModelAwareTrait;
 
+    public function __construct()
+    {
+        $this->loadModel('Packages');
+    }
+
     public function perform(Base $job)
     {
         $packageId = $job->data('package_id');
@@ -25,7 +30,6 @@ class CloneJob
             return false;
         }
 
-        $this->loadModel('Packages');
         $package = $this->Packages->find()
                                   ->contain(['Maintainers'])
                                   ->where(['Packages.id' => $packageId])
