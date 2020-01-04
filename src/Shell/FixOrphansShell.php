@@ -27,9 +27,9 @@ class FixOrphansShell extends Shell
 
         $this->out('Retrieving orphaned packages');
         $packages = $this->Packages->find()
-                                   ->leftJoin('maintainers', 'maintainers.id = packages.maintainer_id')
-                                   ->where(['maintainers.id IS' => null])
-                                   ->order(['packages.repository_url' => 'asc']);
+                                   ->leftJoin(['Maintainers' => 'maintainers'], 'Maintainers.id = Packages.maintainer_id')
+                                   ->where(['Maintainers.id IS' => null])
+                                   ->order(['Packages.repository_url' => 'asc']);
         foreach ($packages as $package) {
             $this->info(sprintf('%d %s/%s', $package->id, $package->maintainerName(), $package->name));
             $parameters = [
