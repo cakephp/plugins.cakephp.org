@@ -19,5 +19,16 @@ $chunkSize = ceil($packageCount / 2);
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <div class="row">
+                    <ul class="pagination">
+                        <?= $this->Paginator->prev(__('← Previous')) ?>
+                        <?= $this->Paginator->numbers() ?>
+                        <?= $this->Paginator->next(__('Next →')) ?>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
