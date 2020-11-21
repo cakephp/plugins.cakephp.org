@@ -46,8 +46,15 @@
         ) ?>
         <div class="mt10">
             <?= $this->Html->link(
-                $this->Html->image('rackspace.png'),
-                'https://www.rackspace.com/',
+                $this->Html->image('pingping.png'),
+                'https://pingping.io',
+                ['escape' => false, 'target' => '_blank']
+            ) ?>
+        </div>
+        <div class="mt10">
+            <?= $this->Html->link(
+                $this->Html->image('linode.png'),
+                'https://www.linode.com/',
                 ['escape' => false, 'target' => '_blank']
             ) ?>
         </div>

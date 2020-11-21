@@ -162,10 +162,6 @@
 		margin-top: 60px;
 	}
 
-	#fb-root-face {
-		margin-bottom: 12px;
-	}
-
 	#cakefest p {
 		text-align: center;
 	}
@@ -798,7 +794,7 @@
 	#cookbook {
 		padding-top: 50px;
 	}
-	
+
 	#slideout {
 		bottom: 0;
 	}
@@ -824,13 +820,13 @@
 	.featured-case h4 {
 		text-align: center;
 	}
-	
+
 	/* ---------------------- CALENDAR ------------------------- */
 
 	.title-calendar h1 {
 		line-height: 55px;
 	}
-	
+
 	/* ---------------------- GET INVOLVED ------------------------- */
 
 	.get-involved h2 {
@@ -849,7 +845,7 @@
 		line-height: 50px;
 	}
 
-	
+
 	/* ---------------------- TRADEMARKS ------------------------- */
 
 
@@ -892,7 +888,7 @@
 	.cake-pack-plugin {
 		margin-top: 40px;
 	}
-	
+
 	.title-plugin span {
 		color: #bdbdb5;
 	    font-size: 90px;
@@ -918,7 +914,7 @@
 		    text-align: center;
 	}
 
-	
+
 }
 
 
@@ -1037,5 +1033,5 @@
 		padding: 10px 18px;
 	}
 
-  
+
 }

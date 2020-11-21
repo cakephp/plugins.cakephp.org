@@ -8,66 +8,60 @@ return [
         'menu' => [
             'items' => [
                 'community' => [
-                    'team' => [
-                        'url' => [
-                            'plugin' => false,
-                            'controller' => 'Pages',
-                            'action' => 'display',
-                            'team',
-                            'prefix' => false,
-                        ],
-                        'title' => __('Team'),
+                    'getInvolved' => [
+                        'url' => 'https://cakephp.org/pages/get-involved',
+                        'options' => ['target' => '_blank'],
+                        'title' => __('Get Involved'),
                     ],
                     'issues' => [
                         'url' => 'https://github.com/cakephp/cakephp/issues',
                         'options' => ['target' => '_blank'],
                         'title' => __('Issues (Github)'),
                     ],
-                    'youtube' => [
-                        'url' => 'https://www.youtube.com/user/CakePHP',
-                        'options' => ['target' => '_blank'],
-                        'title' => __('Youtube Channel'),
-                    ],
-                    'getInvolved' => [
-                        'url' => [
-                            'plugin' => false,
-                            'controller' => 'Pages',
-                            'action' => 'display',
-                            'get-involved',
-                            'prefix' => false,
-                        ],
-                        'title' => __('Get Involved'),
-                    ],
                     'blog' => [
                         'url' => 'http://bakery.cakephp.org/',
+                        'options' => ['target' => '_blank'],
                         'title' => __('Bakery'),
                     ],
                     'awesomeList' => [
                         'url' => 'https://github.com/FriendsOfCake/awesome-cakephp',
+                        'options' => ['target' => '_blank'],
                         'title' => __('Featured Resources'),
                     ],
-                    'newsletter' => [
-                        'url' => [
-                            'plugin' => false,
-                            'controller' => 'Pages',
-                            'action' => 'display',
-                            'newsletter',
-                            'prefix' => false,
-                        ],
-                        'title' => __('Newsletter'),
+                    'training' => [
+                        'url' => 'http://training.cakephp.org/',
+                        'options' => ['target' => '_blank'],
+                        'title' => __('Training'),
                     ],
-                    'certification' => [
-                        'url' => 'http://certification.cakephp.org/',
-                        'title' => __('Certification'),
+                    'meetups' => [
+                        'url' => 'https://cakephp.org/pages/meetups',
+                        'options' => ['target' => '_blank'],
+                        'title' => __('Meetups'),
                     ],
                     'myCakephp' => [
                         'url' => 'http://my.cakephp.org/login',
+                        'options' => ['target' => '_blank'],
                         'title' => __('My CakePHP'),
                     ],
                     'cakefest' => [
                         'url' => 'http://cakefest.org',
                         'options' => ['target' => '_blank'],
                         'title' => __('CakeFest'),
+                    ],
+                    'newsletter' => [
+                        'url' => 'https://cakephp.org/pages/newsletter',
+                        'options' => ['target' => '_blank'],
+                        'title' => __('Newsletter'),
+                    ],
+                    'linkedin' => [
+                        'url' => 'https://www.linkedin.com/groups/4623165',
+                        'options' => ['target' => '_blank'],
+                        'title' => __('Linkedin'),
+                    ],
+                    'youtube' => [
+                        'url' => 'https://www.youtube.com/user/CakePHP',
+                        'options' => ['target' => '_blank'],
+                        'title' => __('Youtube'),
                     ],
                     'facebook' => [
                         'url' => 'https://www.facebook.com/CakePHP/',
@@ -103,12 +97,8 @@ return [
                     ],
                     'commercial' => [
                         'url' => 'http://www.cakedc.com/',
-                        'title' => __('Paid Support'),
-                    ],
-                    'googleplus' => [
-                        'url' => 'https://plus.google.com/communities/108328920558088369819',
                         'options' => ['target' => '_blank'],
-                        'title' => __('Google+'),
+                        'title' => __('Paid Support'),
                     ],
                 ],
                 'jobs' => [
@@ -140,40 +130,33 @@ return [
                 ],
                 'documentation' => [
                     'book' => [
-                        'url' => 'http://book.cakephp.org/',
+                        'url' => 'https://book.cakephp.org/',
+                        'options' => ['target' => '_blank'],
                         'title' => __('Book'),
                     ],
                     'api' => [
-                        'url' => 'http://api.cakephp.org/',
+                        'url' => 'https://api.cakephp.org/',
+                        'options' => ['target' => '_blank'],
                         'title' => __('API'),
                     ],
                     'videos' => [
-                        'url' => [
-                            'plugin' => false,
-                            'controller' => 'documentation',
-                            'action' => 'videos',
-                            'prefix' => false,
-                        ],
+                        'url' => 'https://cakephp.org/documentation/videos',
+                        'options' => ['target' => '_blank'],
                         'title' => __('Videos'),
                     ],
+                    'security' => [
+                        'url' => 'https://github.com/cakephp/cakephp#security',
+                        'options' => ['target' => '_blank'],
+                        'title' => __('Reporting Security Issues'),
+                    ],
                     'privacy' => [
-                        'url' => [
-                            'plugin' => false,
-                            'controller' => 'Pages',
-                            'action' => 'display',
-                            'privacy',
-                            'prefix' => false,
-                        ],
+                        'url' => 'https://cakephp.org/pages/privacy',
+                        'options' => ['target' => '_blank'],
                         'title' => __('Privacy Policy'),
                     ],
                     'logos' => [
-                        'url' => [
-                            'plugin' => false,
-                            'controller' => 'Pages',
-                            'action' => 'display',
-                            'trademark',
-                            'prefix' => false,
-                        ],
+                        'url' => 'https://cakephp.org/pages/trademark',
+                        'options' => ['target' => '_blank'],
                         'title' => __('Logos & Trademarks'),
                     ],
                 ],
