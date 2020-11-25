@@ -123,6 +123,7 @@
 .package-list .package-snippet .package-description {
     display:inline-block;
     height: 26px;
+    width: 100%;
     max-width: 473px;
     margin-bottom: 0;
     overflow:hidden;
