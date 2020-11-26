@@ -38,7 +38,7 @@
             </div>
         <?= $this->Form->end() ?>
     </div>
-    <div class="col-md-8 col-xs-6 p0 register">
+    <div class="col-md-8 col-xs-12 p0 register">
         <?= $this->Html->link(
             $this->Html->image('open-hub.png'),
             'https://www.openhub.net/p/cakephp',
