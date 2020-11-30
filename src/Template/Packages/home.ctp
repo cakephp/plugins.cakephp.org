@@ -21,7 +21,9 @@
 <section class="ptb-30 fundo-w">
     <div class="container">
         <div class="row">
-            <?php echo $this->element('site/categories', [], ['cache' => true]) ?>
+            <div class="col-md-12">
+                <?php echo $this->element('site/categories', [], ['cache' => true]) ?>
+            </div>
         </div>
     </div>
 </section>

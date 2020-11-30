@@ -1005,7 +1005,12 @@
 		padding: 10px 12px;
 	}
 
+}
 
+@media (max-width: 1199px) {
+    .category-container {
+        justify-content: flex-start;
+    }
 }
 
 @media (min-width: 1200px) {
