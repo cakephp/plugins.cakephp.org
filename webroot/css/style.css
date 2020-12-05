@@ -10182,8 +10182,8 @@ code {
 
 
 .megamenu2.full2 {
-    width: 60% !important;
-    right: 5% !important;
+    width: 400px !important;
+    right: 0 !important;
     left: initial;
 }
 
