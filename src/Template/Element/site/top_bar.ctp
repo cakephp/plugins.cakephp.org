@@ -1,7 +1,7 @@
 <section id="sub">
     <div class="container-fluid ">
         <div class="row ">
-            <div class="col-md-12 back-book">
+            <div class="col-md-12 back-book clearfix">
                 <div class="col-md-6 col-md-offset-1 text-center t-cook-nav p0 hidden-sm hidden-xs">
                     <h2>
                         <a href="/">
@@ -18,7 +18,7 @@
                         'method' => 'post',
                         'url' => ['plugin' => null, 'controller' => 'packages', 'action' => 'index'],
                     ]); ?>
-                        <div class="col-md-10 p0">
+                        <div class="col-xs-11 col-md-10 p0">
                             <span class="twitter-typeahead" style="position: relative; display: inline-block;">
                                 <?php
                                     echo $this->Form->input('query', [
@@ -40,7 +40,7 @@
                                 ?>
                             </span>
                         </div>
-                        <div class="col-md-2 p0 search-cook">
+                        <div class="col-xs-1 col-md-2 p0 search-cook">
                             <button type="submit">
                                 <span class="glyph_range icon-submenu icon-submenu-cook">A</span>
                             </button>

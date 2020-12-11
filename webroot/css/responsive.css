@@ -159,7 +159,7 @@
 	}
 
 	#sub {
-		margin-top: 60px;
+		margin-top: 56px;
 	}
 
 	#cakefest p {
@@ -662,6 +662,9 @@
         padding-left: 15px !important;
     }
 
+    .back-book {
+        padding-bottom: 8px;
+    }
 }
 
 @media (min-width: 768px) {
@@ -779,7 +782,7 @@
 	}
 
 	#sub {
-	    margin-top: 60px;
+	    margin-top: 56px;
 	}
 
 	#wrap input[type="text"]:focus {
