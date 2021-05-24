@@ -270,9 +270,6 @@ i.icon-social {
 	font-size: 15px;
 }
 
-.row.col-p30 [class*="col-"].business-solution {
-	padding: 0 15px;
-}
 input#mc-embedded-subscribe {
 	background: white;
 	color: #D33C44;
