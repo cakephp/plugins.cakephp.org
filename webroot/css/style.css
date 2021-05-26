@@ -5899,6 +5899,10 @@ blockquote {
   color:#751E1E;
 }
 
+.row.col-p30 [class*="col-"].business-solution {
+    padding: 0 30px;
+}
+
 
 
 
