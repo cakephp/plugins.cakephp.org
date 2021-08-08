@@ -17,9 +17,9 @@
 </div>
 
 <div class="col-sm-3 col-xs-6">
-    <iframe src="https://ghbtns.com/github-btn.html?user=cakephp&amp;repo=cakephp&amp;type=star&amp;count=true&amp;size=small"></iframe>
+    <iframe title="github star count" src="https://ghbtns.com/github-btn.html?user=cakephp&amp;repo=cakephp&amp;type=star&amp;count=true&amp;size=small"></iframe>
 </div>
 
 <div class="col-sm-3 col-xs-6">
-    <iframe src="https://ghbtns.com/github-btn.html?user=cakephp&amp;repo=cakephp&amp;type=fork&amp;count=true&amp;size=small"></iframe>
+    <iframe title="github fork count" src="https://ghbtns.com/github-btn.html?user=cakephp&amp;repo=cakephp&amp;type=fork&amp;count=true&amp;size=small"></iframe>
 </div>

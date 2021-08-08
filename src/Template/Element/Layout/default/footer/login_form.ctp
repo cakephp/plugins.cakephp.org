@@ -42,20 +42,20 @@
         <?= $this->Html->link(
             $this->Html->image('open-hub.svg'),
             'https://www.openhub.net/p/cakephp',
-            ['escape' => false, 'target' => '_blank', 'style' => 'opacity: .5']
+            ['escape' => false, 'target' => '_blank', 'style' => 'opacity: .5', 'aria-label' => 'openHub', 'alt' => 'openHub']
         ) ?>
         <div class="mt10">
             <?= $this->Html->link(
                 $this->Html->image('pingping.png'),
                 'https://pingping.io',
-                ['escape' => false, 'target' => '_blank']
+                ['escape' => false, 'target' => '_blank', 'aria-label' => 'pingping.io', 'alt' => 'pingping.io']
             ) ?>
         </div>
         <div class="mt10">
             <?= $this->Html->link(
                 $this->Html->image('linode.png'),
                 'https://www.linode.com/',
-                ['escape' => false, 'target' => '_blank']
+                ['escape' => false, 'target' => '_blank', 'aria-label' => 'Linode', 'alt' => 'Linode']
             ) ?>
         </div>
     </div>
