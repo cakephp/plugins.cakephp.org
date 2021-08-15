@@ -4315,7 +4315,16 @@
 
 
 	/* Pagination */
-	.pagination { margin: 20px 0 5px; }
+	.pagination {
+        margin: 20px 0 5px;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .pagination .pagination {
+        margin: 0;
+    }
 
 	.pagination > li > a {
 		border: none;
