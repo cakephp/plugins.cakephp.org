@@ -14,7 +14,7 @@
         "ext-pdo_mysql": "*",
         "ext-pdo_pgsql": "*",
         "ext-redis": "*",
-        "cakephp/cakephp": "3.8.7",
+        "cakephp/cakephp": "3.10.3",
         "mobiledetect/mobiledetectlib": "2.*",
         "cakephp/migrations": "^2.0.0",
         "cakephp/plugin-installer": "*",
