@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "50406bedc03ce21f328d8def0c01c407",
+    "content-hash": "15cc4a6719aa585fe05f3ee6a7657bb2",
     "packages": [
         {
             "name": "cakephp/cakephp",
@@ -513,6 +513,78 @@
                 }
             ],
             "time": "2025-08-20T19:15:30+00:00"
+        },
+        {
+            "name": "dereuromark/cakephp-tags",
+            "version": "2.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dereuromark/cakephp-tags.git",
+                "reference": "f3705291665daa29d48a0bb0cd45f4e657074d9b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dereuromark/cakephp-tags/zipball/f3705291665daa29d48a0bb0cd45f4e657074d9b",
+                "reference": "f3705291665daa29d48a0bb0cd45f4e657074d9b",
+                "shasum": ""
+            },
+            "require": {
+                "cakephp/cakephp": "^5.1.1",
+                "php": ">=8.1"
+            },
+            "conflict": {
+                "cakephp/migrations": "<4.5"
+            },
+            "require-dev": {
+                "cakephp/migrations": "^4.5.1",
+                "dereuromark/cakephp-tools": "^3.0.0",
+                "fig-r/psr2r-sniffer": "dev-master",
+                "phpunit/phpunit": "^10.5 || ^11.5 || ^12.1"
+            },
+            "type": "cakephp-plugin",
+            "autoload": {
+                "psr-4": {
+                    "Tags\\": "src/",
+                    "Tags\\Test\\Fixture\\": "tests/Fixture/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mark Scherer",
+                    "homepage": "https://www.dereuromark.de",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Jad Bitar",
+                    "homepage": "http://jadb.io",
+                    "role": "Author"
+                },
+                {
+                    "name": "ADmad",
+                    "homepage": "https://github.com/ADmad",
+                    "role": "Author"
+                },
+                {
+                    "name": "Others",
+                    "homepage": "https://github.com/dereuromark/cakephp-tags/graphs/contributors"
+                }
+            ],
+            "description": "Tags plugin for CakePHP",
+            "homepage": "https://github.com/dereuromark/cakephp-tags",
+            "keywords": [
+                "cakephp",
+                "tagging",
+                "tags"
+            ],
+            "support": {
+                "issues": "https://github.com/dereuromark/cakephp-tags/issues",
+                "source": "https://github.com/dereuromark/cakephp-tags"
+            },
+            "time": "2025-09-09T10:33:48+00:00"
         },
         {
             "name": "doctrine/inflector",

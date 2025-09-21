@@ -2,6 +2,7 @@
 /**
  * @var \App\View\AppView $this
  * @var iterable<\App\Model\Entity\Package> $packages
+ * @var iterable<\Tags\Model\Entity\Tag> $tags
  */
 ?>
 <div class="packages index content">
@@ -11,6 +12,12 @@
             <?php
             echo $this->Form->create(null, ['valueSources' => 'query', 'class' => 'flex gap-4']);
             echo $this->Form->control('search', ['label' => false,]);
+            echo $this->Form->control('slug', [
+                'label' => false,
+                'options' => $tags,
+                'empty' => __('No Filter'),
+                'multiple' => true,
+            ]);
             echo $this->Form->button('Search', ['type' => 'submit']);
             echo $this->Form->end();
             ?>
@@ -25,11 +32,21 @@
 
         <div class="grid grid-cols-4 gap-4">
             <?php foreach ($packages as $package): ?>
-                <div class="border-2 rounded-2xl border-black p-4">
-                    <div class="text-center text-xl mb-2"><?= h($package->package) ?></div>
-                    <div class="flex justify-center gap-4 mb-4">
-                        <a class="underline" target="_blank" href="<?= $package->repo_url ?>"><?= __('Repository') ?></a>
-                        <a class="underline" target="_blank" href="<?= $package->packagist_url ?>"><?= __('Packagist') ?></a>
+                <div class="border-2 rounded-2xl border-black p-4 flex flex-col justify-between">
+                    <div>
+                        <div class="text-center text-xl mb-2"><?= h($package->package) ?></div>
+                        <div class="flex justify-center gap-4 mb-4">
+                            <a class="underline" target="_blank" href="<?= $package->repo_url ?>"><?= __('Repository') ?></a>
+                            <a class="underline" target="_blank" href="<?= $package->packagist_url ?>"><?= __('Packagist') ?></a>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <?php foreach($package->tags as $tag): ?>
+                            <a href="?slug=<?= $tag->slug ?>" class="text-xs rounded-3xl px-2 py-1 text-white
+                            <?= str_starts_with($tag->label, 'PHP') ? 'bg-blue-400' : 'bg-red-500' ?>">
+                                <?= $tag->label ?>
+                            </a>
+                        <?php endforeach; ?>
                     </div>
                     <div class="flex justify-between [&_svg]:w-6">
                         <div class="flex gap-2">

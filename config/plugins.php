@@ -34,4 +34,5 @@ return [
 
     // Additional plugins here
     'Search',
+    'Tags',
 ];

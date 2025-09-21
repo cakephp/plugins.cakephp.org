@@ -5,8 +5,10 @@ namespace App\Command;
 
 use Cake\Command\Command;
 use Cake\Console\Arguments;
+use Cake\Console\CommandFactoryInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Log\Log;
+use Composer\Semver\Semver;
 use Packagist\Api\Client;
 
 /**
@@ -14,6 +16,8 @@ use Packagist\Api\Client;
  */
 class SyncPackagesCommand extends Command
 {
+    private Client $client;
+
     /**
      * The name of this command.
      *
@@ -42,6 +46,16 @@ class SyncPackagesCommand extends Command
     }
 
     /**
+     * @param \Cake\Console\CommandFactoryInterface|null $factory
+     */
+    public function __construct(
+        ?CommandFactoryInterface $factory = null,
+    ) {
+        parent::__construct($factory);
+        $this->client = new Client();
+    }
+
+    /**
      * Implement this method with your command's logic.
      *
      * @param \Cake\Console\Arguments $args The command arguments.
@@ -50,11 +64,11 @@ class SyncPackagesCommand extends Command
      */
     public function execute(Arguments $args, ConsoleIo $io)
     {
-        $client = new Client();
         $packagesTable = $this->fetchTable('Packages');
 
         /** @var \Packagist\Api\Result\Result $package */
-        foreach ($client->search('', ['type' => 'cakephp-plugin']) as $package) {
+        foreach ($this->client->search('', ['type' => 'cakephp-plugin']) as $package) {
+            $tags = $this->getTagsForPackage($package->getName());
             $data = [
                 'package' => $package->getName(),
                 'description' => $package->getDescription(),
@@ -62,6 +76,7 @@ class SyncPackagesCommand extends Command
                 'packagist_url' => $package->getUrl(),
                 'downloads' => $package->getDownloads(),
                 'stars' => $package->getFavers(),
+                'tag_list' => $tags,
             ];
 
             $entity = $packagesTable->find()->where(['package' => $package->getName()])->first();
@@ -77,5 +92,85 @@ class SyncPackagesCommand extends Command
                 ]);
             }
         }
+    }
+
+    /**
+     * @param string $packageName
+     * @return array
+     */
+    private function getTagsForPackage(string $packageName): array
+    {
+        $metaDetails = $this->client->getComposer($packageName);
+
+        /** @var \Packagist\Api\Result\Package $metaDetails */
+        $metaDetails = $metaDetails[$packageName];
+        $versions = $metaDetails->getVersions();
+
+        $meta = [];
+        // Check each version
+        foreach ($versions as $versionMeta) {
+            $phpRequire = $versionMeta->getRequire()['php'] ?? null;
+            if ($phpRequire) {
+                $meta = $this->checkPHPVersion($meta, $phpRequire);
+            }
+
+            $cakephpRequire = $versionMeta->getRequire()['cakephp/cakephp'] ?? null;
+            if ($cakephpRequire) {
+                $meta = $this->checkCakeVersion($meta, $cakephpRequire);
+            }
+        }
+
+        return $meta;
+    }
+
+    /**
+     * @param array $meta
+     * @param string $packageConstraint
+     * @return array
+     */
+    private function checkPHPVersion(array $meta, string $packageConstraint): array
+    {
+        $phpVersions = [
+            '8.4.0' => 'PHP: 8.4',
+            '8.3.0' => 'PHP: 8.3',
+            '8.2.0' => 'PHP: 8.2',
+            '8.1.0' => 'PHP: 8.1',
+            '8.0.0' => 'PHP: 8.0',
+            '7.4.0' => 'PHP: 7.4',
+            '7.3.0' => 'PHP: 7.3',
+            '7.2.0' => 'PHP: 7.2',
+            '7.1.0' => 'PHP: 7.1',
+            '7.0.0' => 'PHP: 7.0',
+        ];
+
+        foreach ($phpVersions as $version => $label) {
+            if (Semver::satisfies($version, $packageConstraint) && !in_array($label, $meta)) {
+                $meta[] = $label;
+            }
+        }
+
+        return $meta;
+    }
+
+    /**
+     * @param array $meta
+     * @param string $packageConstraint
+     * @return array
+     */
+    private function checkCakeVersion(array $meta, string $packageConstraint): array
+    {
+        $cakeVersions = [
+            '5.0.0' => 'CakePHP: 5.0',
+            '4.0.0' => 'CakePHP: 4.0',
+            '3.0.0' => 'CakePHP: 3.0',
+        ];
+
+        foreach ($cakeVersions as $version => $label) {
+            if (Semver::satisfies($version, $packageConstraint) && !in_array($label, $meta)) {
+                $meta[] = $label;
+            }
+        }
+
+        return $meta;
     }
 }

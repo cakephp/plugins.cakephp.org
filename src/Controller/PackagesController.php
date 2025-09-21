@@ -18,9 +18,12 @@ class PackagesController extends AppController
     public function index()
     {
         $query = $this->Packages
-            ->find('search', search: $this->request->getQueryParams());
+            ->find('search', search: $this->request->getQueryParams())
+            ->contain(['Tags']);
         $packages = $this->paginate($query);
 
-        $this->set(compact('packages'));
+        $tags = $this->Packages->Tags->find('list', ...['keyField' => 'slug']);
+
+        $this->set(compact('packages', 'tags'));
     }
 }
