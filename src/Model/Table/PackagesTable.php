@@ -71,12 +71,6 @@ class PackagesTable extends Table
             ->notEmptyString('repo_url');
 
         $validator
-            ->scalar('packagist_url')
-            ->maxLength('packagist_url', 255)
-            ->requirePresence('packagist_url', 'create')
-            ->notEmptyString('packagist_url');
-
-        $validator
             ->integer('downloads')
             ->requirePresence('downloads', 'create')
             ->notEmptyString('downloads');

@@ -19,7 +19,6 @@ class Initial extends BaseMigration
             ->addColumn('package', 'string')
             ->addColumn('description', 'text')
             ->addColumn('repo_url', 'string')
-            ->addColumn('packagist_url', 'string')
             ->addColumn('downloads', 'integer')
             ->addColumn('stars', 'integer')
             ->create();

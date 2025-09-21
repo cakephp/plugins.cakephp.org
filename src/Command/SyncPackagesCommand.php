@@ -66,20 +66,11 @@ class SyncPackagesCommand extends Command
     {
         $packagesTable = $this->fetchTable('Packages');
 
-        /** @var \Packagist\Api\Result\Result $package */
-        foreach ($this->client->search('', ['type' => 'cakephp-plugin']) as $package) {
-            $tags = $this->getTagsForPackage($package->getName());
-            $data = [
-                'package' => $package->getName(),
-                'description' => $package->getDescription(),
-                'repo_url' => $package->getRepository(),
-                'packagist_url' => $package->getUrl(),
-                'downloads' => $package->getDownloads(),
-                'stars' => $package->getFavers(),
-                'tag_list' => $tags,
-            ];
+        $data = $this->client->all(['type' => 'cakephp-plugin']);
+        foreach ($data as $package) {
+            $data = $this->getDataForPackage($package);
 
-            $entity = $packagesTable->find()->where(['package' => $package->getName()])->first();
+            $entity = $packagesTable->find()->where(['package' => $package])->first();
             if (!$entity) {
                 $entity = $packagesTable->newEmptyEntity();
             }
@@ -98,21 +89,19 @@ class SyncPackagesCommand extends Command
      * @param string $packageName
      * @return array
      */
-    private function getTagsForPackage(string $packageName): array
+    private function getDataForPackage(string $packageName): array
     {
-        $metaDetails = $this->client->getComposer($packageName);
-
         /** @var \Packagist\Api\Result\Package $metaDetails */
-        $metaDetails = $metaDetails[$packageName];
+        $metaDetails = $this->client->get($packageName);
         $versions = $metaDetails->getVersions();
 
         $meta = [];
         // Check each version
         foreach ($versions as $versionMeta) {
-            $phpRequire = $versionMeta->getRequire()['php'] ?? null;
-            if ($phpRequire) {
-                $meta = $this->checkPHPVersion($meta, $phpRequire);
-            }
+//            $phpRequire = $versionMeta->getRequire()['php'] ?? null;
+//            if ($phpRequire) {
+//                $meta = $this->checkPHPVersion($meta, $phpRequire);
+//            }
 
             $cakephpRequire = $versionMeta->getRequire()['cakephp/cakephp'] ?? null;
             if ($cakephpRequire) {
@@ -144,7 +133,16 @@ class SyncPackagesCommand extends Command
             }
         }
 
-        return $meta;
+        $data = [
+            'package' => $packageName,
+            'description' => $metaDetails->getDescription(),
+            'repo_url' => $metaDetails->getRepository(),
+            'downloads' => $metaDetails->getDownloads()->getTotal(),
+            'stars' => $metaDetails->getGithubStars(),
+            'tag_list' => $meta,
+        ];
+
+        return $data;
     }
 
     /**

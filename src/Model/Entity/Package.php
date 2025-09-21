@@ -12,7 +12,6 @@ use Cake\ORM\Entity;
  * @property string $package
  * @property string $description
  * @property string $repo_url
- * @property string $packagist_url
  * @property int $downloads
  * @property int $stars
  */
