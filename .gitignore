@@ -1,9 +1,0 @@
-/vendor/*
-/config/app.php
-/tmp/*
-/logs/*
-.env
-/webroot/cache_css/*css
-/webroot/cache_js/*js
-!empty
-*.log
