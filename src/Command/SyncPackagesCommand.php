@@ -6,7 +6,6 @@ namespace App\Command;
 use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
-use Cake\Console\ConsoleOptionParser;
 use Cake\Log\Log;
 use Packagist\Api\Client;
 
@@ -62,10 +61,10 @@ class SyncPackagesCommand extends Command
                 'repo_url' => $package->getRepository(),
                 'packagist_url' => $package->getUrl(),
                 'downloads' => $package->getDownloads(),
-                'stars' => $package->getFavers()
+                'stars' => $package->getFavers(),
             ];
 
-            $entity = $packagesTable->find()->where(['package' =>  $package->getName()])->first();
+            $entity = $packagesTable->find()->where(['package' => $package->getName()])->first();
             if (!$entity) {
                 $entity = $packagesTable->newEmptyEntity();
             }
@@ -74,10 +73,9 @@ class SyncPackagesCommand extends Command
             if (!$packagesTable->save($entity)) {
                 Log::warning('Unable to save package', [
                     'package' => $package->getName(),
-                    'errors' => $entity->getErrors()
+                    'errors' => $entity->getErrors(),
                 ]);
             }
-
         }
     }
 }
