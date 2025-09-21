@@ -47,8 +47,8 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
             </div>
         </div>
     </nav>
-    <main class="main max-w-4xl mx-auto">
-        <div class="container">
+    <main class="main">
+        <div class="container mx-auto">
             <?= $this->Flash->render() ?>
             <?= $this->fetch('content') ?>
         </div>
