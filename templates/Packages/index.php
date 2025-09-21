@@ -8,6 +8,12 @@
     <div>
         <div class="flex justify-between items-center my-8">
             <h3 class="text-xl"><?= __('Packages') ?></h3>
+            <?php
+            echo $this->Form->create(null, ['valueSources' => 'query', 'class' => 'flex gap-4']);
+            echo $this->Form->control('search', ['label' => false,]);
+            echo $this->Form->button('Search', ['type' => 'submit']);
+            echo $this->Form->end();
+            ?>
             <div class="flex gap-4">
                 <p><?= __('Sort by:') ?></p>
                 <div class="flex gap-4">

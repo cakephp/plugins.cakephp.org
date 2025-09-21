@@ -42,6 +42,7 @@ class AppController extends Controller
         parent::initialize();
 
         $this->loadComponent('Flash');
+        $this->loadComponent('Search.Search');
 
         /*
          * Enable the following component for recommended CakePHP form protection settings.

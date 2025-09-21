@@ -3,10 +3,9 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
-use Cake\ORM\Query\SelectQuery;
-use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Search\Manager;
 
 /**
  * Packages Model
@@ -40,6 +39,8 @@ class PackagesTable extends Table
         $this->setTable('packages');
         $this->setDisplayField('package');
         $this->setPrimaryKey('id');
+
+        $this->addBehavior('Search.Search');
     }
 
     /**
@@ -84,5 +85,26 @@ class PackagesTable extends Table
             ->notEmptyString('stars');
 
         return $validator;
+    }
+
+    /**
+     * @return \Search\Manager
+     */
+    public function searchManager(): Manager
+    {
+        /** @var \Search\Model\Behavior\SearchBehavior $search */
+        $search = $this->getBehavior('Search');
+        $searchManager = $search->searchManager();
+        $searchManager->add('search', 'Search.Like', [
+            'before' => true,
+            'after' => true,
+            'fieldMode' => 'OR',
+            'comparison' => 'LIKE',
+            'wildcardAny' => '*',
+            'wildcardOne' => '?',
+            'fields' => ['package', 'description'],
+        ]);
+
+        return $searchManager;
     }
 }
