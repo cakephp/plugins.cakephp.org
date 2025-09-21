@@ -117,6 +117,30 @@ class SyncPackagesCommand extends Command
             $cakephpRequire = $versionMeta->getRequire()['cakephp/cakephp'] ?? null;
             if ($cakephpRequire) {
                 $meta = $this->checkCakeVersion($meta, $cakephpRequire);
+            } else {
+                // Cake has standalone sub-packages
+                $subpackages = [
+                    'cakephp/cache',
+                    'cakephp/collection',
+                    'cakephp/console',
+                    'cakephp/database',
+                    'cakephp/datasource',
+                    'cakephp/event',
+                    'cakephp/form',
+                    'cakephp/http',
+                    'cakephp/i18n',
+                    'cakephp/log',
+                    'cakephp/orm',
+                    'cakephp/utility',
+                    'cakephp/validation',
+                ];
+
+                foreach ($subpackages as $subpackage) {
+                    $cakephpRequire = $versionMeta->getRequire()[$subpackage] ?? null;
+                    if ($cakephpRequire) {
+                        $meta = $this->checkCakeVersion($meta, $cakephpRequire);
+                    }
+                }
             }
         }
 
