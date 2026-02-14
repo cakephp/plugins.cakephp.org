@@ -2,22 +2,32 @@
 /**
  * @var \App\View\AppView $this
  * @var iterable<\App\Model\Entity\Package> $packages
- * @var iterable<\Tags\Model\Entity\Tag> $tags
+ * @var iterable<\Tags\Model\Entity\Tag> $cakephpTags
+ * @var iterable<\Tags\Model\Entity\Tag> $phpTags
  */
 ?>
 <div class="packages index content">
     <div>
-        <div class="flex justify-between items-center my-8">
+        <div class="flex flex-wrap lg:justify-between justify-center items-center my-8">
             <h3 class="text-xl"><?= __('Packages') ?></h3>
             <?php
-            echo $this->Form->create(null, ['valueSources' => 'query', 'class' => 'flex gap-4']);
-            echo $this->Form->control('search', ['label' => false,]);
-            echo $this->Form->control('slug', [
+            echo $this->Form->create(null, ['valueSources' => 'query', 'class' => 'flex flex-wrap justify-center gap-4']);
+            echo $this->Form->control('search', ['label' => false, 'placeholder' => __('Search...')]);
+            echo $this->Form->control('cakephp_slugs', [
                 'label' => false,
-                'options' => $tags,
+                'options' => $cakephpTags,
                 'empty' => __('No Filter'),
                 'multiple' => true,
+                'data-placeholder' => __('CakePHP Version'),
             ]);
+//            echo $this->Form->control('php_slugs', [
+//                'label' => false,
+//                'options' => $phpTags,
+//                'empty' => __('No Filter'),
+//                'multiple' => true,
+//                'data-placeholder' => __('PHP Version'),
+//                'data-is-php-filter' => true,
+//            ]);
             echo $this->Form->button('Search', ['type' => 'submit']);
             echo $this->Form->end();
             ?>
@@ -30,40 +40,17 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-4 gap-4">
-            <?php foreach ($packages as $package): ?>
-                <div class="border-2 rounded-2xl border-black flex flex-col justify-between">
-                    <a class="text-center text-xl py-2 mb-4 bg-gray-300 rounded-t-xl hover:underline"
-                       target="_blank" href="<?= $package->repo_url ?>">
-                        <?= h($package->package) ?>
-                    </a>
-                    <div class="flex flex-wrap gap-2 px-4">
-                        <?php foreach($package->tags as $tag): ?>
-                            <a href="?slug=<?= $tag->slug ?>" class="text-xs rounded-3xl px-2 py-1 text-white
-                            <?= str_starts_with($tag->label, 'PHP') ? 'bg-blue-400' : 'bg-red-500' ?>">
-                                <?= $tag->label ?>
-                            </a>
-                        <?php endforeach; ?>
-                    </div>
-                    <div class="flex justify-between [&_svg]:w-6 p-4">
-                        <div class="flex gap-2">
-                            <?php include WWW_ROOT . 'img' . DS . 'download.svg'; ?>
-                            <?= $this->Number->format($package->downloads) ?>
-                        </div>
-                        <div class="flex gap-2">
-                            <?php include WWW_ROOT . 'img' . DS . 'star.svg'; ?>
-                            <?= $this->Number->format($package->stars) ?>
-                        </div>
-                    </div>
-                </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <?php foreach ($packages as $package) : ?>
+                <?= $this->element('Packages/package-tile', ['package' => $package]) ?>
             <?php endforeach; ?>
         </div>
 
     </div>
-    <div class="py-7 flex justify-between items-center gap-3">
+    <div class="py-7 flex flex-wrap justify-between items-center gap-3">
         <p class="text-sm text-slate-500"><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
 
-        <ul class="flex items-center gap-3">
+        <ul class="flex flex-wrap items-center gap-3">
             <?= $this->Paginator->first('« ' . __('first')) ?>
             <?= $this->Paginator->prev('‹ ' . __('previous')) ?>
             <?= $this->Paginator->numbers() ?>

@@ -14,7 +14,7 @@
  * @var \App\View\AppView $this
  */
 
-$cakeDescription = 'CakePHP: the rapid development php framework';
+$cakeDescription = 'CakePHP Plugins';
 ?>
 <!DOCTYPE html>
 <html>
@@ -29,19 +29,19 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
 
     <?= $this->Html->css(['cake']) ?>
 
-    <script src="https://unpkg.com/slim-select@latest/dist/slimselect.min.js"></script>
-    <link href="https://unpkg.com/slim-select@latest/dist/slimselect.css" rel="stylesheet"/>
+    <script src="https://unpkg.com/slim-select@latest/dist/slimselect.js"></script>
+    <link href="https://unpkg.com/slim-select@latest/dist/slimselect.css" rel="stylesheet">
 
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
     <?= $this->fetch('script') ?>
 </head>
 <body>
-    <nav class="bg-amber-50 border-b border-red-600">
-        <div class="flex justify-between max-w-4xl mx-auto py-4">
+    <nav class="bg-amber-50 border-b border-cake-red">
+        <div class="flex justify-between container mx-auto p-4">
             <div class="top-nav-title">
                     <a class="text-xl" href="<?= $this->Url->build('/') ?>">
-                        <span class="text-gray-700 font-bold">Cake</span><span class="text-red-800 font-bold">PHP</span>
+                        <span class="text-gray-700 font-bold">Cake</span><span class="text-cake-red font-bold">PHP</span>
                     </a>
             </div>
             <div class="flex gap-2">
@@ -50,14 +50,21 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
             </div>
         </div>
     </nav>
-    <main class="main">
-        <div class="container mx-auto">
-            <?= $this->Flash->render() ?>
-            <?= $this->fetch('content') ?>
-        </div>
+    <main class="main container mx-auto px-4">
+        <?= $this->Flash->render() ?>
+        <?= $this->fetch('content') ?>
     </main>
     <script>
-        new SlimSelect({select: 'select'})
+        const selects = document.querySelectorAll('select');
+        selects.forEach((elem) => {
+            let placeholder = elem.getAttribute('data-placeholder');
+            new SlimSelect({
+                select: elem,
+                settings: {
+                    placeholderText: placeholder,
+                }
+            })
+        });
     </script>
 </body>
 </html>

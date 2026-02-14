@@ -21,6 +21,7 @@ class Initial extends BaseMigration
             ->addColumn('repo_url', 'string')
             ->addColumn('downloads', 'integer')
             ->addColumn('stars', 'integer')
+            ->addColumn('latest_stable_version', 'string', ['null' => true])
             ->create();
     }
 }

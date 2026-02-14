@@ -14,6 +14,12 @@ use Cake\ORM\Entity;
  * @property string $repo_url
  * @property int $downloads
  * @property int $stars
+ * @property string|null $latest_stable_version
+ *
+ * @property \Tags\Model\Entity\Tag[] $tags
+ *
+ * @property \Tags\Model\Entity\Tag[] $cake_php_tags
+ * @property \Tags\Model\Entity\Tag[] $php_tags
  */
 class Package extends Entity
 {
@@ -30,4 +36,24 @@ class Package extends Entity
         'id' => false,
         '*' => true,
     ];
+
+    /**
+     * @return array<\Tags\Model\Entity\Tag>
+     */
+    protected function _getCakePhpTags(): array
+    {
+        return array_filter($this->tags, function ($tag) {
+            return str_starts_with($tag->label, 'CakePHP');
+        });
+    }
+
+    /**
+     * @return array<\Tags\Model\Entity\Tag>
+     */
+    protected function _getPhpTags(): array
+    {
+        return array_filter($this->tags, function ($tag) {
+            return str_starts_with($tag->label, 'PHP');
+        });
+    }
 }

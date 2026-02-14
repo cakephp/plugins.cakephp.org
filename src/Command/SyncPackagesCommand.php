@@ -70,6 +70,10 @@ class SyncPackagesCommand extends Command
         foreach ($data as $package) {
             $data = $this->getDataForPackage($package);
 
+            if ($data['is_abandoned']) {
+                continue;
+            }
+
             $entity = $packagesTable->find()->where(['package' => $package])->first();
             if (!$entity) {
                 $entity = $packagesTable->newEmptyEntity();
@@ -98,10 +102,10 @@ class SyncPackagesCommand extends Command
         $meta = [];
         // Check each version
         foreach ($versions as $versionMeta) {
-//            $phpRequire = $versionMeta->getRequire()['php'] ?? null;
-//            if ($phpRequire) {
-//                $meta = $this->checkPHPVersion($meta, $phpRequire);
-//            }
+            $phpRequire = $versionMeta->getRequire()['php'] ?? null;
+            if ($phpRequire) {
+                $meta = $this->checkPHPVersion($meta, $phpRequire);
+            }
 
             $cakephpRequire = $versionMeta->getRequire()['cakephp/cakephp'] ?? null;
             if ($cakephpRequire) {
@@ -133,6 +137,12 @@ class SyncPackagesCommand extends Command
             }
         }
 
+        $stableVersions = array_filter($versions, fn($v) => preg_match('/^v?\d+\.\d+\.\d+$/', $v->getVersion()));
+        usort($stableVersions, function ($a, $b) {
+            return version_compare($a->getVersion(), $b->getVersion());
+        });
+        $latestStable = end($stableVersions);
+
         $data = [
             'package' => $packageName,
             'description' => $metaDetails->getDescription(),
@@ -140,6 +150,8 @@ class SyncPackagesCommand extends Command
             'downloads' => $metaDetails->getDownloads()->getTotal(),
             'stars' => $metaDetails->getGithubStars(),
             'tag_list' => $meta,
+            'latest_stable_version' => $latestStable ? $latestStable->getVersion() : null,
+            'is_abandoned' => $metaDetails->isAbandoned(),
         ];
 
         return $data;
@@ -153,6 +165,7 @@ class SyncPackagesCommand extends Command
     private function checkPHPVersion(array $meta, string $packageConstraint): array
     {
         $phpVersions = [
+            '8.5.0' => 'PHP: 8.5',
             '8.4.0' => 'PHP: 8.4',
             '8.3.0' => 'PHP: 8.3',
             '8.2.0' => 'PHP: 8.2',

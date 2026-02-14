@@ -3,10 +3,9 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
-use Cake\ORM\Query\SelectQuery;
+use App\Model\Filter\PackagesCollection;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
-use Search\Manager;
 
 /**
  * Packages Model
@@ -41,7 +40,9 @@ class PackagesTable extends Table
         $this->setDisplayField('package');
         $this->setPrimaryKey('id');
 
-        $this->addBehavior('Search.Search');
+        $this->addBehavior('Search.Search', [
+            'collectionClass' => PackagesCollection::class,
+        ]);
         $this->addBehavior('Tags.Tag', ['taggedCounter' => false]);
     }
 
@@ -80,34 +81,11 @@ class PackagesTable extends Table
             ->requirePresence('stars', 'create')
             ->notEmptyString('stars');
 
+        $validator
+            ->scalar('latest_stable_version')
+            ->requirePresence('latest_stable_version', 'create')
+            ->allowEmptyString('latest_stable_version');
+
         return $validator;
-    }
-
-    /**
-     * @return \Search\Manager
-     */
-    public function searchManager(): Manager
-    {
-        /** @var \Search\Model\Behavior\SearchBehavior $search */
-        $search = $this->getBehavior('Search');
-        $searchManager = $search->searchManager();
-        $searchManager
-            ->add('search', 'Search.Like', [
-                'before' => true,
-                'after' => true,
-                'fieldMode' => 'OR',
-                'comparison' => 'LIKE',
-                'wildcardAny' => '*',
-                'wildcardOne' => '?',
-                'fields' => ['package', 'description'],
-            ])
-            ->callback('slug', [
-                'callback' => function (SelectQuery $query, array $args, $manager): void {
-                    // Here you would have to remap $args if key isn't the expected "tag"
-                    $query->find('tagged', ...$args);
-                },
-            ]);
-
-        return $searchManager;
     }
 }

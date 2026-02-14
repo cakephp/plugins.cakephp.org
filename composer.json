@@ -6,8 +6,8 @@
     "homepage": "https://cakephp.org",
     "require": {
         "php": ">=8.1",
-        "cakephp/cakephp": "5.2.*",
-        "cakephp/migrations": "^4.0.0",
+        "cakephp/cakephp": "5.3.*",
+        "cakephp/migrations": "^5.0.0",
         "cakephp/plugin-installer": "^2.0",
         "dereuromark/cakephp-tags": "^2.2",
         "friendsofcake/search": "^7.5",

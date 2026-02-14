@@ -83,6 +83,7 @@
 
 @theme {
     --font-raleway: "Raleway", sans-serif;
+    --color-cake-red: #d33c44;
 }
 
 /* Styling for default app homepage */
@@ -116,10 +117,15 @@
 }
 
 .problem:before {
-    color: #d33d44;
+    color: #d33c44;
     content: "\0057";
 }
 
 .ss-main {
     height: 100%;
+    --ss-primary-color: #d33c44;
+}
+
+[data-is-php-filter] + .ss-main {
+    --ss-primary-color: var(--color-blue-500);
 }
