@@ -65,6 +65,7 @@ class SyncPackagesCommand extends Command
     public function execute(Arguments $args, ConsoleIo $io)
     {
         $packagesTable = $this->fetchTable('Packages');
+        $touchedIds = [];
 
         $data = $this->client->all(['type' => 'cakephp-plugin']);
         foreach ($data as $package) {
@@ -84,6 +85,19 @@ class SyncPackagesCommand extends Command
                 Log::warning('Unable to save package', [
                     'package' => $package->getName(),
                     'errors' => $entity->getErrors(),
+                ]);
+            }
+            $touchedIds[] = $entity->id;
+        }
+
+        // Remove packages that were not touched
+        $toDeletePackages = $packagesTable->find()->where(['id NOT IN' => $touchedIds])->all();
+        foreach ($toDeletePackages as $package) {
+            if (!$packagesTable->delete($package)) {
+                Log::warning('Unable to delete package', [
+                    'package' => $package->package,
+                    'id' => $package->id,
+                    'errors' => $package->getErrors(),
                 ]);
             }
         }
