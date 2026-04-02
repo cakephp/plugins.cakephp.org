@@ -7,12 +7,23 @@ export default defineConfig({
         tailwindcss(),
     ],
     build: {
-        outDir: 'webroot/css',
+        outDir: 'webroot',
+        emptyOutDir: false,
         rollupOptions: {
-            input: 'resources/css/style.css',
+            input: {
+                cake: 'resources/css/style.css',
+                app: 'resources/js/app.js',
+            },
             output: {
-                assetFileNames: 'cake.css',
-            }
-        }
-    }
+                entryFileNames: (chunkInfo) => chunkInfo.name === 'app' ? 'js/app.js' : 'js/[name].js',
+                assetFileNames: (assetInfo) => {
+                    if (assetInfo.names.includes('cake.css')) {
+                        return 'css/cake.css';
+                    }
+
+                    return 'assets/[name][extname]';
+                },
+            },
+        },
+    },
 })

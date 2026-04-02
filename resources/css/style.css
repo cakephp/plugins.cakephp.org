@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @import "./fonts.css";
+@import "swiper/css";
+@import "swiper/css/navigation";
 
 @theme {
     --font-raleway: "Raleway", sans-serif;
@@ -36,4 +38,26 @@
 
 [data-is-php-filter] + .ss-main {
     --ss-primary-color: var(--color-blue-500);
+}
+
+@layer components {
+    .featured-packages-slider-shell {
+        @apply -mx-3 overflow-hidden px-3 pb-4;
+    }
+
+    .featured-packages-slider {
+        @apply overflow-visible;
+    }
+
+    .featured-packages-slider .swiper-slide {
+        @apply h-auto py-2;
+    }
+
+    .featured-packages-slider-button {
+        @apply inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-lg text-slate-700 shadow-sm transition hover:border-cake-red hover:text-cake-red disabled:cursor-not-allowed disabled:opacity-40;
+    }
+
+    .featured-packages-slider-button::after {
+        content: none;
+    }
 }

@@ -2,16 +2,25 @@
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Package $package
+ * @var bool $isFeatured
  */
+$isFeatured = $isFeatured ?? false;
 ?>
 <article class="group flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
     <a class="block border-b border-slate-200 bg-slate-50 px-5 py-4 transition group-hover:bg-white"
        target="_blank" rel="noopener noreferrer" href="<?= h($package->repo_url) ?>">
         <div class="flex items-start justify-between gap-4">
             <div class="min-w-0">
-                <h2 class="truncate text-lg font-semibold text-slate-950 transition group-hover:text-cake-red">
-                    <?= h($package->package) ?>
-                </h2>
+                <div class="flex flex-wrap items-center gap-2">
+                    <h2 class="truncate text-lg font-semibold text-slate-950 transition group-hover:text-cake-red">
+                        <?= h($package->package) ?>
+                    </h2>
+                    <?php if ($isFeatured) : ?>
+                        <span class="shrink-0 rounded-full bg-cake-red px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-white">
+                            <?= __('Featured') ?>
+                        </span>
+                    <?php endif; ?>
+                </div>
             </div>
             <span class="shrink-0 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-600">
                 <?= __('Plugin') ?>

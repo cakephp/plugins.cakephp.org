@@ -92,6 +92,15 @@ return [
         // 'cacheTime' => '+1 year'
     ],
 
+    'Packages' => [
+        'featured' => [
+            'markstory/asset_compress',
+            'josegonzalez/cakephp-upload',
+            'dereuromark/cakephp-queue',
+            'lordsimal/cakephp-sentry',
+        ],
+    ],
+
     /*
      * Configure the cache adapters.
      */

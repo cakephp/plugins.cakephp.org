@@ -31,6 +31,7 @@ $cakeDescription = 'CakePHP Plugins';
 
     <script src="https://unpkg.com/slim-select@latest/dist/slimselect.js"></script>
     <link href="https://unpkg.com/slim-select@latest/dist/slimselect.css" rel="stylesheet">
+    <?= $this->Html->script('app.js', ['type' => 'module']) ?>
 
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
@@ -54,17 +55,5 @@ $cakeDescription = 'CakePHP Plugins';
         <?= $this->Flash->render() ?>
         <?= $this->fetch('content') ?>
     </main>
-    <script>
-        const selects = document.querySelectorAll('select');
-        selects.forEach((elem) => {
-            let placeholder = elem.getAttribute('data-placeholder');
-            new SlimSelect({
-                select: elem,
-                settings: {
-                    placeholderText: placeholder,
-                }
-            })
-        });
-    </script>
 </body>
 </html>
