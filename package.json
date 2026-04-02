@@ -3,7 +3,7 @@
     "devDependencies": {
         "tailwindcss": "^4.0.0",
         "@tailwindcss/vite": "^4.1.4",
-        "vite": "^7.0.0"
+        "vite": "^8.0.0"
     },
     "scripts": {
         "dev": "vite build --watch",

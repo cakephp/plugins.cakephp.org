@@ -37,20 +37,20 @@ $cakeDescription = 'CakePHP Plugins';
     <?= $this->fetch('script') ?>
 </head>
 <body>
-    <nav class="bg-amber-50 border-b border-cake-red">
-        <div class="flex justify-between container mx-auto p-4">
+    <nav class="bg-cake-red border-b border-cake-red">
+        <div class="flex justify-between container mx-auto p-4 sm:px-6 lg:px-8">
             <div class="top-nav-title">
                     <a class="text-xl" href="<?= $this->Url->build('/') ?>">
-                        <span class="text-gray-700 font-bold">Cake</span><span class="text-cake-red font-bold">PHP</span>
+                        <img src="/img/cake-logo.png" class="w-28" alt="CakePHP Logo"/>
                     </a>
             </div>
-            <div class="flex gap-2">
+            <div class="flex gap-8 text-white">
                 <?= $this->Html->link('Docs', 'https://book.cakephp.org/5/', ['target' => '_blank', 'rel' => 'noopener']) ?>
                 <?= $this->Html->link('Api', 'https://api.cakephp.org/', ['target' => '_blank', 'rel' => 'noopener']) ?>
             </div>
         </div>
     </nav>
-    <main class="main container mx-auto px-4">
+    <main class="main container mx-auto">
         <?= $this->Flash->render() ?>
         <?= $this->fetch('content') ?>
     </main>
