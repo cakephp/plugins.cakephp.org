@@ -101,6 +101,7 @@ return [
             'lordsimal/cakephp-sentry',
             'friendsofcake/cakepdf',
             'friendsofcake/crud',
+            'friendsofcake/search',
             'cakedc/users',
         ],
     ],
