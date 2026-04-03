@@ -30,6 +30,9 @@ class PackagesController extends AppController
         }
 
         $featuredPackageNames = array_values(array_filter((array)Configure::read('Packages.featured', [])));
+        if ($featuredPackageNames !== []) {
+            shuffle($featuredPackageNames);
+        }
         $featuredPackages = [];
 
         if ($featuredPackageNames !== []) {

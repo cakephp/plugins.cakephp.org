@@ -5,6 +5,7 @@
  * @var bool $isFeatured
  */
 $isFeatured = $isFeatured ?? false;
+$query = $this->getRequest()->getQueryParams();
 ?>
 <article class="group flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
     <a class="block border-b border-slate-200 bg-slate-50 px-5 py-4 transition group-hover:bg-white"
@@ -40,7 +41,15 @@ $isFeatured = $isFeatured ?? false;
                 </p>
                 <div class="flex flex-wrap gap-2">
                     <?php foreach ($package->cake_php_tags as $tag): ?>
-                        <a href="?slug=<?= h($tag->slug) ?>"
+                        <?php
+                        $tagQuery = $query;
+                        $tagQuery['cakephp_slugs'] = array_values(array_unique(array_filter([
+                            ...((array)($query['cakephp_slugs'] ?? [])),
+                            $tag->slug,
+                        ])));
+                        unset($tagQuery['page']);
+                        ?>
+                        <a href="<?= h($this->Url->build(['?' => $tagQuery])) ?>"
                            class="rounded-full bg-cake-red/10 px-3 py-1 text-xs font-medium text-cake-red transition hover:bg-cake-red hover:text-white">
                             <?= h(str_replace('CakePHP: ', '', $tag->label)) ?>
                         </a>

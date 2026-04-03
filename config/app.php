@@ -97,7 +97,11 @@ return [
             'markstory/asset_compress',
             'josegonzalez/cakephp-upload',
             'dereuromark/cakephp-queue',
+            'dereuromark/cakephp-tools',
             'lordsimal/cakephp-sentry',
+            'friendsofcake/cakepdf',
+            'friendsofcake/crud',
+            'cakedc/users',
         ],
     ],
 
