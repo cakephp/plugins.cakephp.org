@@ -1,0 +1,13 @@
+.git
+.gitignore
+.idea
+.vscode
+node_modules
+vendor
+logs
+tmp
+config/.env
+config/app_local.php
+tests
+.phpunit.cache
+.DS_Store
