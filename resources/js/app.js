@@ -33,11 +33,11 @@ const initializeFeaturedPackagesSlider = () => {
         slidesPerView: 1,
         spaceBetween: 24,
         grabCursor: true,
-        // autoplay: {
-        //     delay: 4000,
-        //     disableOnInteraction: false,
-        //     pauseOnMouseEnter: true,
-        // },
+        autoplay: {
+            delay: 4000,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true,
+        },
         navigation: {
             nextEl: '[data-featured-packages-next]',
             prevEl: '[data-featured-packages-prev]',

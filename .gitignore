@@ -6,6 +6,7 @@
 /tmp/*
 /vendor/*
 /webroot/css/cake.css
+/webroot/js/app.js
 
 # OS generated files #
 ######################
