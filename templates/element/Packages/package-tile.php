@@ -61,7 +61,7 @@ $query = $this->getRequest()->getQueryParams();
         <dl class="mt-5 grid gap-3 border-t border-slate-200 pt-4 text-sm text-slate-600 sm:grid-cols-3">
             <div class="rounded-2xl bg-slate-50 px-3 py-3">
                 <dt class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500 [&_svg]:size-4">
-                    <?php include WWW_ROOT . 'img' . DS . 'download.svg'; ?>
+                    <?= file_get_contents(WWW_ROOT . 'img' . DS . 'download.svg') ?: '' ?>
                     <?= __('Downloads') ?>
                 </dt>
                 <dd class="mt-2 text-base font-semibold text-slate-950">
@@ -78,7 +78,7 @@ $query = $this->getRequest()->getQueryParams();
             </div>
             <div class="rounded-2xl bg-slate-50 px-3 py-3">
                 <dt class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500 [&_svg]:size-4">
-                    <?php include WWW_ROOT . 'img' . DS . 'star.svg'; ?>
+                    <?= file_get_contents(WWW_ROOT . 'img' . DS . 'star.svg') ?: '' ?>
                     <?= __('Stars') ?>
                 </dt>
                 <dd class="mt-2 text-base font-semibold text-slate-950">
