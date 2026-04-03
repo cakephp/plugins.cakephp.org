@@ -66,7 +66,7 @@ class PackagesController extends AppController
 
         $cakephpTags = $this->Packages->Tags->find('list', keyField: 'slug')
             ->where(['slug LIKE' => 'cakephp-%'])
-            ->orderByAsc('label')
+            ->orderByDesc('label')
             ->toArray();
         $phpTags = $this->Packages->Tags->find('list', keyField: 'slug')
             ->where(['slug LIKE' => 'php-%'])
