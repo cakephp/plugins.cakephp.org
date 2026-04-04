@@ -5,7 +5,7 @@ declare(strict_types=1);
  * Custom templates for pagination elements.
  */
 return [
-    'button' => '<button class="bg-cake-red hover:cursor-pointer p-2 text-white rounded-sm"{{attrs}}>{{text}}</button>',
+    'button' => '<button class="btn btn-soft btn-primary"{{attrs}}>{{text}}</button>',
     'checkbox' => '<input class="justify-self-start" type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
     'checkboxWrapper' => '<div class="col-span-2 col-start-2 flex gap-2">{{label}}</div>',
     'error' => '<div class="col-start-2 col-end-4 text-cake-red" id="{{id}}">{{content}}</div>',

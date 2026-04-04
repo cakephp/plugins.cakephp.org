@@ -3,7 +3,7 @@ type: cakephp
 docroot: webroot
 php_version: "8.4"
 webserver_type: nginx-fpm
-xdebug_enabled: true
+xdebug_enabled: false
 additional_hostnames: []
 additional_fqdns: []
 database:

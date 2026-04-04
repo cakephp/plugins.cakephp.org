@@ -60,7 +60,7 @@ class PackagesController extends AppController
 
             $featuredPackages = array_values(array_filter(
                 array_map(
-                    static fn (string $packageName) => $featuredPackages[$packageName] ?? null,
+                    static fn(string $packageName) => $featuredPackages[$packageName] ?? null,
                     $featuredPackageNames,
                 ),
             ));
