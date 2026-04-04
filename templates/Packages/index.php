@@ -72,6 +72,10 @@
                     </div>
                 </div>
             </section>
+
+            <div class="packages-section-divider mb-8" aria-hidden="true">
+                <span><?= __('All packages') ?></span>
+            </div>
         <?php endif; ?>
 
         <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">

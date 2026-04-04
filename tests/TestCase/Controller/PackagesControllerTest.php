@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller;
 
+use Cake\Core\Configure;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -25,57 +26,47 @@ class PackagesControllerTest extends TestCase
     ];
 
     /**
-     * Test index method
-     *
      * @return void
-     * @link \App\Controller\PackagesController::index()
      */
-    public function testIndex(): void
+    protected function setUp(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        parent::setUp();
+        Configure::write('Packages.featured', ['markstory/asset_compress']);
     }
 
     /**
-     * Test view method
-     *
      * @return void
-     * @link \App\Controller\PackagesController::view()
      */
-    public function testView(): void
+    public function testIndexShowsFeaturedSliderOnFirstPageWithoutFilters(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->get('/?sort=downloads&direction=desc');
+
+        $this->assertResponseOk();
+        $this->assertResponseContains('Featured');
+        $this->assertResponseContains('data-featured-packages-slider');
     }
 
     /**
-     * Test add method
-     *
      * @return void
-     * @link \App\Controller\PackagesController::add()
      */
-    public function testAdd(): void
+    public function testIndexHidesFeaturedSliderOnSubsequentPages(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->get('/?sort=downloads&direction=desc&page=2');
+
+        $this->assertResponseOk();
+        $this->assertResponseNotContains('data-featured-packages-slider');
+        $this->assertResponseNotContains('Previous featured package');
     }
 
     /**
-     * Test edit method
-     *
      * @return void
-     * @link \App\Controller\PackagesController::edit()
      */
-    public function testEdit(): void
+    public function testIndexHidesFeaturedSliderWhenSearching(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
+        $this->get('/?sort=downloads&direction=desc&search=package-02');
 
-    /**
-     * Test delete method
-     *
-     * @return void
-     * @link \App\Controller\PackagesController::delete()
-     */
-    public function testDelete(): void
-    {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->assertResponseOk();
+        $this->assertResponseNotContains('data-featured-packages-slider');
+        $this->assertResponseContains('vendor/package-02');
     }
 }

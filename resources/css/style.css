@@ -60,4 +60,14 @@
     .featured-packages-slider-button::after {
         content: none;
     }
+
+    .packages-section-divider {
+        @apply flex items-center gap-4 text-xs font-semibold uppercase tracking-[0.24em] text-slate-400;
+    }
+
+    .packages-section-divider::before,
+    .packages-section-divider::after {
+        content: "";
+        @apply h-px flex-1 bg-slate-200;
+    }
 }

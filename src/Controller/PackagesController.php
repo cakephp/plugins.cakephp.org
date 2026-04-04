@@ -29,13 +29,25 @@ class PackagesController extends AppController
             ));
         }
 
-        $featuredPackageNames = array_values(array_filter((array)Configure::read('Packages.featured', [])));
-        if ($featuredPackageNames !== []) {
-            shuffle($featuredPackageNames);
-        }
         $featuredPackages = [];
+        $activeFilterKeys = ['search', 'cakephp_slugs', 'php_slugs'];
+        $hasActiveFilters = false;
+        foreach ($activeFilterKeys as $key) {
+            if ($this->hasActiveFilterValue($queryParams[$key] ?? null)) {
+                $hasActiveFilters = true;
+                break;
+            }
+        }
+        $currentPage = max(1, (int)($queryParams['page'] ?? 1));
+        $showFeaturedPackages = !$hasActiveFilters && $currentPage === 1;
+        $featuredPackageNames = [];
 
-        if ($featuredPackageNames !== []) {
+        if ($showFeaturedPackages) {
+            $featuredPackageNames = array_values(array_filter((array)Configure::read('Packages.featured', [])));
+            if ($featuredPackageNames !== []) {
+                shuffle($featuredPackageNames);
+            }
+
             $featuredPackages = $this->Packages
                 ->find()
                 ->contain(['Tags' => function (SelectQuery $q) {
@@ -74,5 +86,32 @@ class PackagesController extends AppController
             ->toArray();
 
         $this->set(compact('featuredPackages', 'packages', 'cakephpTags', 'phpTags'));
+    }
+
+    /**
+     * @param mixed $value
+     * @return bool
+     */
+    protected function hasActiveFilterValue(mixed $value): bool
+    {
+        if (is_array($value)) {
+            foreach ($value as $item) {
+                if ($this->hasActiveFilterValue($item)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        if ($value === null) {
+            return false;
+        }
+
+        if (is_string($value)) {
+            return trim($value) !== '';
+        }
+
+        return (bool)$value;
     }
 }
