@@ -30,6 +30,7 @@ const initializeFeaturedPackagesSlider = () => {
     new Swiper(slider, {
         modules: [Autoplay, Navigation],
         loop: true,
+        loopAdditionalSlides: 3,
         slidesPerView: 1,
         spaceBetween: 24,
         grabCursor: true,

@@ -42,11 +42,11 @@
 
 @layer components {
     .featured-packages-slider-shell {
-        @apply -mx-3 overflow-hidden px-3 pb-4;
+        @apply -mx-3 px-3 pb-4;
     }
 
     .featured-packages-slider {
-        @apply overflow-visible;
+        @apply overflow-visible!;
     }
 
     .featured-packages-slider .swiper-slide {

@@ -37,7 +37,7 @@ $cakeDescription = 'CakePHP Plugins';
     <?= $this->fetch('css') ?>
     <?= $this->fetch('script') ?>
 </head>
-<body>
+<body class="overflow-x-hidden">
     <nav class="bg-cake-red border-b border-cake-red">
         <div class="flex justify-between container mx-auto p-4 sm:px-6 lg:px-8">
             <div class="top-nav-title">
