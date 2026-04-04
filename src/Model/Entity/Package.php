@@ -19,6 +19,7 @@ use Cake\ORM\Entity;
  * @property \Tags\Model\Entity\Tag[] $tags
  *
  * @property \Tags\Model\Entity\Tag[] $cake_php_tags
+ * @property array<int, array<\Tags\Model\Entity\Tag>> $cake_php_tag_groups
  * @property \Tags\Model\Entity\Tag[] $php_tags
  */
 class Package extends Entity
@@ -45,6 +46,39 @@ class Package extends Entity
         return array_filter($this->tags, function ($tag) {
             return str_starts_with($tag->label, 'CakePHP');
         });
+    }
+
+    /**
+     * @return array<int, array<\Tags\Model\Entity\Tag>>
+     */
+    protected function _getCakePhpTagGroups(): array
+    {
+        $groups = [];
+
+        foreach ($this->cake_php_tags as $tag) {
+            if (!preg_match('/^CakePHP:\s*(\d+)(?:\.\d+)?$/', $tag->label, $matches)) {
+                continue;
+            }
+
+            $majorVersion = $matches[1];
+            $groups[$majorVersion][] = $tag;
+        }
+
+        uksort($groups, static function (string $left, string $right): int {
+            return version_compare($right, $left);
+        });
+
+        foreach ($groups as &$tags) {
+            usort($tags, static function ($left, $right): int {
+                $leftVersion = str_replace('CakePHP: ', '', $left->label);
+                $rightVersion = str_replace('CakePHP: ', '', $right->label);
+
+                return version_compare($rightVersion, $leftVersion);
+            });
+        }
+        unset($tags);
+
+        return $groups;
     }
 
     /**

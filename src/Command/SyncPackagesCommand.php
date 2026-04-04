@@ -8,8 +8,11 @@ use Cake\Console\Arguments;
 use Cake\Console\CommandFactoryInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Log\Log;
+use Composer\Semver\Intervals;
 use Composer\Semver\Semver;
+use Composer\Semver\VersionParser;
 use Packagist\Api\Client;
+use UnexpectedValueException;
 
 /**
  * SyncPackages command.
@@ -208,18 +211,46 @@ class SyncPackagesCommand extends Command
      */
     private function checkCakeVersion(array $meta, string $packageConstraint): array
     {
-        $cakeVersions = [
-            '5.0.0' => 'CakePHP: 5.0',
-            '4.0.0' => 'CakePHP: 4.0',
-            '3.0.0' => 'CakePHP: 3.0',
+        $versions = [
+            '3' => [0,1,2,3,4,5,6,7,8,9,10],
+            '4' => [0,1,2,3,4,5,6],
+            '5' => [0,1,2,3],
         ];
 
-        foreach ($cakeVersions as $version => $label) {
-            if (Semver::satisfies($version, $packageConstraint) && !in_array($label, $meta)) {
-                $meta[] = $label;
+        foreach ($versions as $majorVersionNr => $minorVersions) {
+            foreach ($minorVersions as $minorVersionNr) {
+                $minorVersion = sprintf('%s.%s', $majorVersionNr, $minorVersionNr);
+                $tagLabel = sprintf('CakePHP: %s.%s', $majorVersionNr, $minorVersionNr);
+                if (
+                    $this->constraintsIntersect($packageConstraint, $minorVersion) &&
+                    !in_array($tagLabel, $meta, true)
+                ) {
+                    $meta[] = $tagLabel;
+                }
             }
         }
 
         return $meta;
+    }
+
+    /**
+     * @param string $leftConstraint
+     * @param string $rightConstraint
+     * @return bool
+     */
+    private function constraintsIntersect(string $leftConstraint, string $rightConstraint): bool
+    {
+        $versionParser = new VersionParser();
+
+        try {
+            return Intervals::haveIntersections(
+                $versionParser->parseConstraints($leftConstraint),
+                $versionParser->parseConstraints($rightConstraint),
+            );
+        } catch (UnexpectedValueException) {
+            return false;
+        } finally {
+            Intervals::clear();
+        }
     }
 }

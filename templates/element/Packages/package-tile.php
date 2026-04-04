@@ -36,20 +36,32 @@ $query = $this->getRequest()->getQueryParams();
                 <p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
                     <?= __('CakePHP Compatibility') ?>
                 </p>
-                <div class="flex flex-wrap gap-2">
-                    <?php foreach ($package->cake_php_tags as $tag): ?>
-                        <?php
-                        $tagQuery = $query;
-                        $tagQuery['cakephp_slugs'] = array_values(array_unique(array_filter([
-                            ...((array)($query['cakephp_slugs'] ?? [])),
-                            $tag->slug,
-                        ])));
-                        unset($tagQuery['page']);
-                        ?>
-                        <a href="<?= h($this->Url->build(['?' => $tagQuery])) ?>"
-                           class="rounded-full bg-cake-red/10 px-3 py-1 text-xs font-medium text-cake-red transition hover:bg-cake-red hover:text-white">
-                            <?= h(str_replace('CakePHP: ', '', $tag->label)) ?>
-                        </a>
+                <div class="space-y-3">
+                    <?php foreach ($package->cake_php_tag_groups as $majorVersion => $tags): ?>
+                        <div class="flex flex-wrap items-center gap-2 mb-1">
+                            <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                <?= h($majorVersion) ?>.x
+                            </span>
+                            <?php foreach (array_slice($tags, 0, 6) as $tag): ?>
+                                <?php
+                                $tagQuery = $query;
+                                $tagQuery['cakephp_slugs'] = array_values(array_unique(array_filter([
+                                    ...((array)($query['cakephp_slugs'] ?? [])),
+                                    $tag->slug,
+                                ])));
+                                unset($tagQuery['page']);
+                                ?>
+                                <a href="<?= h($this->Url->build(['?' => $tagQuery])) ?>"
+                                   class="rounded-full bg-cake-red/10 px-3 py-1 text-xs font-medium text-cake-red transition hover:bg-cake-red hover:text-white">
+                                    <?= h(str_replace('CakePHP: ', '', $tag->label)) ?>
+                                </a>
+                            <?php endforeach; ?>
+                            <?php if (count($tags) > 6): ?>
+                                <span class="px-1 text-xs font-semibold text-slate-400" aria-label="<?= __('More versions available') ?>">
+                                    ...
+                                </span>
+                            <?php endif; ?>
+                        </div>
                     <?php endforeach; ?>
                 </div>
             </div>

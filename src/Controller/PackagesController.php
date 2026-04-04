@@ -78,8 +78,8 @@ class PackagesController extends AppController
 
         $cakephpTags = $this->Packages->Tags->find('list', keyField: 'slug')
             ->where(['slug LIKE' => 'cakephp-%'])
-            ->orderByDesc('label')
             ->toArray();
+        $cakephpTags = $this->sortCakePhpTags($cakephpTags);
         $phpTags = $this->Packages->Tags->find('list', keyField: 'slug')
             ->where(['slug LIKE' => 'php-%'])
             ->orderByAsc('label')
@@ -113,5 +113,21 @@ class PackagesController extends AppController
         }
 
         return (bool)$value;
+    }
+
+    /**
+     * @param array<string, string> $tags
+     * @return array<string, string>
+     */
+    protected function sortCakePhpTags(array $tags): array
+    {
+        uasort($tags, function (string $left, string $right): int {
+            $leftVersion = preg_replace('/^CakePHP:\s*/', '', $left) ?: $left;
+            $rightVersion = preg_replace('/^CakePHP:\s*/', '', $right) ?: $right;
+
+            return version_compare($rightVersion, $leftVersion);
+        });
+
+        return $tags;
     }
 }
