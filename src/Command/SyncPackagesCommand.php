@@ -74,7 +74,7 @@ class SyncPackagesCommand extends Command
         foreach ($data as $package) {
             $data = $this->getDataForPackage($package);
 
-            if ($data['is_abandoned']) {
+            if ($data['is_abandoned'] || $data['downloads'] < 50) {
                 continue;
             }
 
