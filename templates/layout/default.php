@@ -16,6 +16,7 @@
 
 $cakeDescription = 'CakePHP Plugins';
 $request = $this->getRequest();
+$canonicalUrl = $this->Url->build($request->getPath() ?: '/', ['fullBase' => true]);
 $isPackagesIndex = $request->getParam('controller') === 'Packages' && $request->getParam('action') === 'index';
 $searchValue = (string)$request->getQuery('search', '');
 $cakephpSlugs = (array)$request->getQuery('cakephp_slugs', []);
@@ -31,6 +32,7 @@ $phpSlugs = (array)$request->getQuery('php_slugs', []);
         <?= $this->fetch('title') ?>
     </title>
     <?= $this->Html->meta('icon') ?>
+    <link rel="canonical" href="<?= h($canonicalUrl) ?>">
 
     <?= $this->Html->css(['cake']) ?>
 
