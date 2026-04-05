@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /*cakephp_slugs
+Disallow: /*keyword
+Disallow: /*sort=
+Disallow: /*direction=
+Disallow: /*page=
