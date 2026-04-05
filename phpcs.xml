@@ -5,6 +5,13 @@
         <exclude-pattern>*/src/Controller/*</exclude-pattern>
     </rule>
 
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="200"/>
+            <property name="absoluteLineLimit" value="0"/>
+        </properties>
+    </rule>
+
     <file>src/</file>
     <file>tests/</file>
 </ruleset>

@@ -12,6 +12,9 @@ use Cake\Http\Response;
  */
 class UsersController extends AppController
 {
+    /**
+     * @return \Cake\Http\Response
+     */
     public function logout(): Response
     {
         $this->Authentication->logout();
