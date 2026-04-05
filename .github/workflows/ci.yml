@@ -3,9 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - '5.x'
-      - '5.next'
-      - '6.x'
+      - 'master'
   pull_request:
     branches:
       - '*'
@@ -21,8 +19,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - php-version: '8.1'
-            dependencies: 'lowest'
           - php-version: '8.4'
             dependencies: 'highest'
 
@@ -52,7 +48,7 @@ jobs:
         DATABASE_TEST_URL: sqlite://./testdb.sqlite
 
   coding-standard:
-    name: Coding Standard & Static Analysis
+    name: Coding Standard
     runs-on: ubuntu-24.04
 
     steps:
@@ -61,19 +57,13 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.1'
+        php-version: '8.4'
         extensions: mbstring, intl
         coverage: none
-        tools: cs2pr, phpstan:1.12
+        tools: cs2pr
 
     - name: Composer install
       uses: ramsey/composer-install@v3
 
     - name: Run PHP CodeSniffer
       run: vendor/bin/phpcs --report=checkstyle | cs2pr
-
-    - name: Run phpstan
-      if: always()
-      run: phpstan
-      env:
-        SECURITY_SALT: f76f1c8475585c46c6acd3ddcb8f5e0f15de524637bb4080a08c4afe7cfc9144

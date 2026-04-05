@@ -9,6 +9,9 @@ additional_fqdns: []
 database:
     type: mariadb
     version: "10.11"
+hooks:
+    post-start:
+        -   exec-host: ddev mysql < .ddev/mysql/init_test_db.sql
 use_dns_when_possible: true
 composer_version: "2"
 web_environment: []

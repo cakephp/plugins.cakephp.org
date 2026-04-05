@@ -55,7 +55,7 @@ ddev exec bin/cake clean
 If you want to start with a fresh DB, you can run the following command:
 
 ```bash
-ddev exec -s db mysql -uroot -proot -e "DROP DATABASE IF EXISTS db; CREATE DATABASE db;"
+ddev exec -s db mysql -uroot -proot -e "DROP DATABASE IF EXISTS db; CREATE DATABASE db; CREATE DATABASE testdb;"
 ```
 
 > [!NOTE]
