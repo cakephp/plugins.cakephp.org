@@ -35,4 +35,6 @@ return [
     // Additional plugins here
     'Search',
     'Tags',
+    'ADmad/SocialAuth',
+    'Authentication',
 ];

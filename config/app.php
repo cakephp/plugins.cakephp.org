@@ -92,6 +92,11 @@ return [
         // 'cacheTime' => '+1 year'
     ],
 
+    'GitHub' => [
+        'applicationId' => env('AUTH_ID_GITHUB'),
+        'applicationSecret' => env('AUTH_SECRET_GITHUB'),
+    ],
+
     'Packages' => [
         'featured' => [
             'markstory/asset_compress',
@@ -469,5 +474,9 @@ return [
     'TestSuite' => [
         'errorLevel' => null,
         'fixtureStrategy' => null,
+    ],
+
+    'Migrations' => [
+        'add_timestamps_use_datetime' => true,
     ],
 ];

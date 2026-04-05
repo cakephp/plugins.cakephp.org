@@ -88,20 +88,47 @@ $phpSlugs = (array)$request->getQuery('php_slugs', []);
             </div>
             <?= $this->Form->end() ?>
             <div class="navbar-end">
-                <ul class="menu menu-horizontal hidden px-1 lg:flex">
+                <ul class="menu menu-horizontal hidden px-1 lg:flex lg:gap-2">
                     <li>
                         <?= $this->Html->link('Docs', 'https://book.cakephp.org/', [
                             'target' => '_blank',
                             'rel' => 'noopener',
-                            'class' => 'text-white'
+                            'class' => 'btn',
                         ]) ?>
                     </li>
                     <li>
                         <?= $this->Html->link('Api', 'https://api.cakephp.org/', [
                             'target' => '_blank',
                             'rel' => 'noopener',
-                            'class' => 'text-white'
+                            'class' => 'btn',
                         ]) ?>
+                    </li>
+                    <li>
+                        <?php
+                        if ($this->Identity->isLoggedIn()) :
+                            echo $this->Html->link('Logout', [
+                                'controller' => 'Users',
+                                'action' => 'logout',
+                            ], [
+                                'class' => 'btn btn-secondary',
+                            ]);
+                        else :
+                            echo $this->Form->postLink(
+                                'Login with GitHub',
+                                [
+                                    'prefix' => false,
+                                    'plugin' => 'ADmad/SocialAuth',
+                                    'controller' => 'Auth',
+                                    'action' => 'login',
+                                    'provider' => 'github',
+                                    '?' => ['redirect' => $this->request->getQuery('redirect')],
+                                ],
+                                [
+                                    'class' => 'btn btn-secondary',
+                                ],
+                            );
+                        endif;
+                        ?>
                     </li>
                 </ul>
                 <div class="dropdown dropdown-end lg:hidden">
@@ -113,6 +140,33 @@ $phpSlugs = (array)$request->getQuery('php_slugs', []);
                     <ul tabindex="0" class="menu menu-sm dropdown-content z-50 mt-3 w-40 rounded-box border border-base-200 bg-base-100 p-2 shadow-lg text-base-content">
                         <li><?= $this->Html->link('Docs', 'https://book.cakephp.org/', ['target' => '_blank', 'rel' => 'noopener']) ?></li>
                         <li><?= $this->Html->link('Api', 'https://api.cakephp.org/', ['target' => '_blank', 'rel' => 'noopener']) ?></li>
+                        <li>
+                            <?php
+                            if ($this->Identity->isLoggedIn()) :
+                                echo $this->Html->link('Logout', [
+                                    'controller' => 'Users',
+                                    'action' => 'logout',
+                                ], [
+                                    'class' => 'btn btn-secondary',
+                                ]);
+                            else :
+                                echo $this->Form->postLink(
+                                    'Login with GitHub',
+                                    [
+                                        'prefix' => false,
+                                        'plugin' => 'ADmad/SocialAuth',
+                                        'controller' => 'Auth',
+                                        'action' => 'login',
+                                        'provider' => 'github',
+                                        '?' => ['redirect' => $this->request->getQuery('redirect')],
+                                    ],
+                                    [
+                                        'class' => 'btn btn-secondary',
+                                    ],
+                                );
+                            endif;
+                            ?>
+                        </li>
                     </ul>
                 </div>
             </div>
