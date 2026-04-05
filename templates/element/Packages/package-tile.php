@@ -9,6 +9,13 @@ $query = $this->getRequest()->getQueryParams();
 $tagGroups = $package->cake_php_tag_groups;
 krsort($tagGroups);
 $existingSlugs = (array)($query['cakephp_slugs'] ?? []);
+$currentPath = $this->getRequest()->getPath() ?: '/';
+$buildFilterUrl = static function (string $path, array $params): string {
+    $queryString = http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+    $queryString = preg_replace('/%5B\d+%5D=/', '%5B%5D=', $queryString) ?? $queryString;
+
+    return $queryString === '' ? $path : $path . '?' . $queryString;
+};
 $packageId = preg_replace('/[^a-z0-9]/i', '-', strtolower($package->package));
 $dialogId = 'compat-' . $packageId;
 ?>
@@ -108,7 +115,7 @@ $dialogId = 'compat-' . $packageId;
                                     : array_values(array_unique(array_merge($existingSlugs, [$slug])));
                                 unset($tagQuery['page']);
                                 ?>
-                                <a href="<?= h($this->Url->build(['?' => $tagQuery])) ?>"
+                                <a href="<?= h($buildFilterUrl($currentPath, $tagQuery)) ?>"
                                    class="btn btn-xs <?= $tagIsActive ? 'btn-error' : 'btn-soft btn-error' ?>">
                                     <?= h(str_replace('CakePHP: ', '', $tag->label)) ?>
                                 </a>
