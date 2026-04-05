@@ -2,6 +2,48 @@
 @import "./fonts.css";
 @import "swiper/css";
 @import "swiper/css/navigation";
+@import "swiper/css/pagination";
+@import "slim-select/styles";
+@plugin "daisyui" {
+    themes: cakephp --default;
+}
+
+@plugin "daisyui/theme" {
+    name: "cakephp";
+    default: true;
+    prefersdark: false;
+    color-scheme: light;
+
+    --color-base-100: hsl(0 0% 100%);
+    --color-base-200: hsl(210 20% 98%);
+    --color-base-300: hsl(210 20% 94%);
+    --color-base-content: hsl(220 13% 18%);
+
+    --color-primary: hsl(214 84% 46%);
+    --color-primary-content: hsl(0 0% 100%);
+    --color-secondary: hsl(262 80% 50%);
+    --color-secondary-content: hsl(0 0% 100%);
+    --color-accent: hsl(199 89% 48%);
+    --color-accent-content: hsl(0 0% 100%);
+    --color-neutral: hsl(220 13% 18%);
+    --color-neutral-content: hsl(0 0% 100%);
+
+    --color-info: hsl(198 93% 60%);
+    --color-info-content: hsl(198 100% 12%);
+    --color-success: hsl(158 64% 52%);
+    --color-success-content: hsl(158 100% 10%);
+    --color-warning: hsl(43 96% 56%);
+    --color-warning-content: hsl(43 100% 11%);
+    --color-error: hsl(0 72% 46%);
+    --color-error-content: hsl(0 0% 100%);
+
+    --radius-box: 1.5rem;
+    --radius-field: 1rem;
+    --radius-selector: 1rem;
+    --border: 1px;
+    --depth: 1;
+    --noise: 0;
+}
 
 @theme {
     --font-raleway: "Raleway", sans-serif;
@@ -40,9 +82,46 @@
     --ss-primary-color: var(--color-blue-500);
 }
 
+.htmx-indicator {
+    opacity: 1;
+    transition: opacity 0.2s ease;
+}
+
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator {
+    opacity: 1;
+}
+
+.main-loading-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: hsl(210 40% 98% / 0.72);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+body.is-htmx-loading .main-loading-overlay,
+.main-loading-overlay.htmx-request {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.main-loading-indicator-card {
+    opacity: 1;
+    z-index: 90;
+}
+
 @layer components {
     .featured-packages-slider-shell {
-        @apply -mx-3 px-3 pb-4;
+        @apply pb-4;
     }
 
     .featured-packages-slider {
@@ -53,21 +132,13 @@
         @apply h-auto py-2;
     }
 
-    .featured-packages-slider-button {
-        @apply inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-lg text-slate-700 shadow-sm transition hover:border-cake-red hover:text-cake-red disabled:cursor-not-allowed disabled:opacity-40;
-    }
-
-    .featured-packages-slider-button::after {
-        content: none;
-    }
-
     .packages-section-divider {
-        @apply flex items-center gap-4 text-xs font-semibold uppercase tracking-[0.24em] text-slate-400;
+        @apply flex items-center gap-4 text-xs font-semibold uppercase tracking-[0.24em] opacity-40;
     }
 
     .packages-section-divider::before,
     .packages-section-divider::after {
         content: "";
-        @apply h-px flex-1 bg-slate-200;
+        @apply h-px flex-1 bg-base-300;
     }
 }
