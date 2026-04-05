@@ -56,7 +56,7 @@
     <template>
         <div id="above-content-slot" hx-swap-oob="true">
             <?php if ($featuredPackages) : ?>
-                <div class="w-full border-b border-cake-red/20 bg-cake-red/5">
+                <div class="w-full border-b overflow-hidden border-cake-red/20 bg-cake-red/5">
                     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                         <?= $this->fetch('above_content') ?>
                     </div>
