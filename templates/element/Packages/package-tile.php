@@ -6,6 +6,11 @@
  */
 $isFeatured = $isFeatured ?? false;
 $query = $this->getRequest()->getQueryParams();
+$tagGroups = $package->cake_php_tag_groups;
+krsort($tagGroups);
+$existingSlugs = (array)($query['cakephp_slugs'] ?? []);
+$packageId = preg_replace('/[^a-z0-9]/i', '-', strtolower($package->package));
+$dialogId = 'compat-' . $packageId;
 ?>
 <article class="card h-full rounded-3xl border border-base-300 bg-base-100 shadow-sm transition hover:-translate-y-1 hover:shadow-lg overflow-hidden">
     <a class="card-header block bg-base-200 px-5 py-4 transition hover:bg-base-100 border-b border-base-300"
@@ -36,13 +41,6 @@ $query = $this->getRequest()->getQueryParams();
                 <p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] opacity-60">
                     <?= __('CakePHP Compatibility') ?>
                 </p>
-                <?php
-                $tagGroups = $package->cake_php_tag_groups;
-                krsort($tagGroups);
-                $existingSlugs = (array)($query['cakephp_slugs'] ?? []);
-                $packageId = preg_replace('/[^a-z0-9]/i', '-', strtolower($package->package));
-                $dialogId = 'compat-' . $packageId;
-                ?>
                 <div class="flex flex-wrap gap-2">
                     <?php foreach ($tagGroups as $majorVersion => $tags): ?>
                         <?php
@@ -56,43 +54,6 @@ $query = $this->getRequest()->getQueryParams();
                         </button>
                     <?php endforeach; ?>
                 </div>
-
-                <dialog id="<?= h($dialogId) ?>" class="modal">
-                    <div class="modal-box max-w-md">
-                        <h3 class="mb-1 text-base font-semibold"><?= h($package->package) ?></h3>
-                        <p class="mb-4 text-xs opacity-50"><?= __('Filter by CakePHP version') ?></p>
-                        <div class="space-y-4">
-                            <?php foreach ($tagGroups as $majorVersion => $tags): ?>
-                                <div>
-                                    <p class="mb-2 text-xs font-semibold uppercase tracking-wider opacity-50"><?= __('CakePHP {0}.x', h($majorVersion)) ?></p>
-                                    <div class="flex flex-wrap gap-2">
-                                        <?php foreach ($tags as $tag): ?>
-                                            <?php
-                                            $slug = $tag->slug;
-                                            $tagIsActive = in_array($slug, $existingSlugs, true);
-                                            $tagQuery = $query;
-                                            $tagQuery['cakephp_slugs'] = $tagIsActive
-                                                ? array_values(array_diff($existingSlugs, [$slug]))
-                                                : array_values(array_unique(array_merge($existingSlugs, [$slug])));
-                                            unset($tagQuery['page']);
-                                            ?>
-                                            <a href="<?= h($this->Url->build(['?' => $tagQuery])) ?>"
-                                               class="btn btn-xs <?= $tagIsActive ? 'btn-error' : 'btn-soft btn-error' ?>">
-                                                <?= h(str_replace('CakePHP: ', '', $tag->label)) ?>
-                                            </a>
-                                        <?php endforeach; ?>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <div class="modal-action">
-                            <form method="dialog">
-                                <button class="btn btn-sm btn-ghost"><?= __('Close') ?></button>
-                            </form>
-                        </div>
-                    </div>
-                    <form method="dialog" class="modal-backdrop"><button><?= __('Close') ?></button></form>
-                </dialog>
             </div>
         <?php endif; ?>
     </div>
@@ -127,3 +88,41 @@ $query = $this->getRequest()->getQueryParams();
         </div>
     </div>
 </article>
+<?php if ($package->cake_php_tags): ?>
+    <dialog id="<?= h($dialogId) ?>" class="modal">
+        <div class="modal-box max-w-md">
+            <h3 class="mb-1 text-base font-semibold"><?= h($package->package) ?></h3>
+            <p class="mb-4 text-xs opacity-50"><?= __('Filter by CakePHP version') ?></p>
+            <div class="space-y-4">
+                <?php foreach ($tagGroups as $majorVersion => $tags): ?>
+                    <div>
+                        <p class="mb-2 text-xs font-semibold uppercase tracking-wider opacity-50"><?= __('CakePHP {0}.x', h($majorVersion)) ?></p>
+                        <div class="flex flex-wrap gap-2">
+                            <?php foreach ($tags as $tag): ?>
+                                <?php
+                                $slug = $tag->slug;
+                                $tagIsActive = in_array($slug, $existingSlugs, true);
+                                $tagQuery = $query;
+                                $tagQuery['cakephp_slugs'] = $tagIsActive
+                                    ? array_values(array_diff($existingSlugs, [$slug]))
+                                    : array_values(array_unique(array_merge($existingSlugs, [$slug])));
+                                unset($tagQuery['page']);
+                                ?>
+                                <a href="<?= h($this->Url->build(['?' => $tagQuery])) ?>"
+                                   class="btn btn-xs <?= $tagIsActive ? 'btn-error' : 'btn-soft btn-error' ?>">
+                                    <?= h(str_replace('CakePHP: ', '', $tag->label)) ?>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <div class="modal-action">
+                <form method="dialog">
+                    <button class="btn btn-sm btn-ghost"><?= __('Close') ?></button>
+                </form>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button><?= __('Close') ?></button></form>
+    </dialog>
+<?php endif; ?>
