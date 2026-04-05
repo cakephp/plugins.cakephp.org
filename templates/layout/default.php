@@ -43,7 +43,7 @@ $phpSlugs = (array)$request->getQuery('php_slugs', []);
     <?= $this->fetch('script') ?>
 </head>
 <body class="overflow-x-hidden bg-base-100" hx-indicator="#main-loading-overlay">
-    <div class="sticky top-0 z-40 border-b border-cake-red/70 bg-cake-red/90 backdrop-blur-md">
+    <div class="sticky top-0 z-40 border-b border-cake-red/70 bg-cake-red backdrop-blur-md">
         <div class="navbar container mx-auto px-4 sm:px-6 lg:px-8 gap-5">
             <div class="navbar-start">
                 <a class="text-xl" href="<?= $this->Url->build('/') ?>">
