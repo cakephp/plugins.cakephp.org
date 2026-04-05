@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace App;
 
 use ADmad\SocialAuth\Middleware\SocialAuthMiddleware;
+use App\Event\AfterGithubIdentify;
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
 use Authentication\AuthenticationServiceProviderInterface;
@@ -25,6 +26,7 @@ use Cake\Core\Configure;
 use Cake\Core\ContainerInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
+use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
 use Cake\Http\Middleware\BodyParserMiddleware;
 use Cake\Http\Middleware\CsrfProtectionMiddleware;
@@ -62,6 +64,8 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                 (new TableLocator())->allowFallbackClass(false),
             );
         }
+
+        EventManager::instance()->on(new AfterGithubIdentify());
     }
 
     /**

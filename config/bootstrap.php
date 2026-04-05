@@ -32,14 +32,12 @@ require __DIR__ . DIRECTORY_SEPARATOR . 'paths.php';
  */
 require CORE_PATH . 'config' . DS . 'bootstrap.php';
 
-use App\Event\AfterGithubIdentify;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\Datasource\ConnectionManager;
 use Cake\Error\ErrorTrap;
 use Cake\Error\ExceptionTrap;
-use Cake\Event\EventManager;
 use Cake\Http\ServerRequest;
 use Cake\Log\Log;
 use Cake\Mailer\Mailer;
@@ -206,8 +204,6 @@ ServerRequest::addDetector('tablet', function ($request) {
 
     return $detector->isTablet();
 });
-
-EventManager::instance()->on(new AfterGithubIdentify());
 
 /*
  * You can enable default locale format parsing by adding calls
