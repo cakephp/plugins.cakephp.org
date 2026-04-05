@@ -59,6 +59,8 @@ jobs:
       run: vendor/bin/phpunit
       env:
         DATABASE_TEST_URL: mysql://root:root@127.0.0.1:3306/plugins_cakephp_test?encoding=utf8mb4
+        AUTH_ID_GITHUB: someid
+        AUTH_SECRET_GITHUB: somesecret
 
   coding-standard:
     name: Coding Standard
