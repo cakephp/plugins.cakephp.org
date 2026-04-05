@@ -110,8 +110,8 @@
                     <?php
                     $this->Paginator->setTemplates([
                         'sort' => '<a href="{{url}}" class="join-item btn btn-sm">{{text}}</a>',
-                        'sortAsc' => '<a href="{{url}}" class="join-item btn btn-sm btn-primary" aria-sort="ascending">{{text}}</a>',
-                        'sortDesc' => '<a href="{{url}}" class="join-item btn btn-sm btn-primary" aria-sort="descending">{{text}}</a>',
+                        'sortAsc' => '<a href="{{url}}" class="join-item btn btn-sm btn-primary gap-2" aria-sort="ascending">{{text}}<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg></a>',
+                        'sortDesc' => '<a href="{{url}}" class="join-item btn btn-sm btn-primary gap-2" aria-sort="descending">{{text}}<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>',
                     ]);
                     ?>
                     <?= $this->Paginator->sort('downloads', 'Downloads') ?>
@@ -139,26 +139,37 @@
         </section>
 
     </div>
-    <div class="flex flex-wrap justify-center items-center gap-4 px-4 py-8 sm:px-6 lg:px-8">
+    <div class="flex justify-center px-4 py-8 sm:px-6 lg:px-8">
         <?php
         $this->Paginator->setTemplates([
-            'number' => '<a href="{{url}}" class="join-item btn">{{text}}</a>',
-            'current' => '<button type="button" class="join-item btn btn-active" aria-current="page">{{text}}</button>',
-            'ellipsis' => '<span class="join-item btn btn-disabled">{{text}}</span>',
-            'first' => '<a href="{{url}}" class="join-item btn">{{text}}</a>',
-            'last' => '<a href="{{url}}" class="join-item btn">{{text}}</a>',
-            'prevActive' => '<a rel="prev" href="{{url}}" class="join-item btn">{{text}}</a>',
-            'prevDisabled' => '<span class="join-item btn btn-disabled">{{text}}</span>',
-            'nextActive' => '<a rel="next" href="{{url}}" class="join-item btn">{{text}}</a>',
-            'nextDisabled' => '<span class="join-item btn btn-disabled">{{text}}</span>',
+            'number' => '<a href="{{url}}" class="join-item btn btn-sm sm:btn-md">{{text}}</a>',
+            'current' => '<button type="button" class="join-item btn btn-sm btn-active sm:btn-md" aria-current="page">{{text}}</button>',
+            'ellipsis' => '<span class="join-item btn btn-sm btn-disabled sm:btn-md">{{text}}</span>',
+            'first' => '<a href="{{url}}" class="join-item btn btn-sm sm:btn-md">{{text}}</a>',
+            'last' => '<a href="{{url}}" class="join-item btn btn-sm sm:btn-md">{{text}}</a>',
+            'prevActive' => '<a rel="prev" href="{{url}}" class="join-item btn btn-sm sm:btn-md">{{text}}</a>',
+            'prevDisabled' => '<span class="join-item btn btn-sm btn-disabled sm:btn-md">{{text}}</span>',
+            'nextActive' => '<a rel="next" href="{{url}}" class="join-item btn btn-sm sm:btn-md">{{text}}</a>',
+            'nextDisabled' => '<span class="join-item btn btn-sm btn-disabled sm:btn-md">{{text}}</span>',
         ]);
         ?>
-        <div class="join">
-            <?= $this->Paginator->first('« ' . __('first')) ?>
-            <!-- <?= $this->Paginator->prev('‹ ' . __('previous')) ?> -->
-            <?= $this->Paginator->numbers() ?>
-            <!-- <?= $this->Paginator->next(__('next') . ' ›') ?> -->
-            <?= $this->Paginator->last(__('last') . ' »') ?>
+        <div class="w-full max-w-max">
+            <div class="join flex-wrap justify-center sm:hidden">
+                <?= $this->Paginator->prev('‹ ' . __('previous')) ?>
+                <span class="join-item btn btn-sm btn-disabled pointer-events-none">
+                    <?= $this->Paginator->counter('{{page}} / {{pages}}') ?>
+                </span>
+                <?= $this->Paginator->next(__('next') . ' ›') ?>
+            </div>
+            <div class="hidden sm:flex sm:justify-center">
+                <div class="join">
+                    <?= $this->Paginator->first('« ' . __('first')) ?>
+                    <?= $this->Paginator->prev('‹ ' . __('previous')) ?>
+                    <?= $this->Paginator->numbers(['modulus' => 4]) ?>
+                    <?= $this->Paginator->next(__('next') . ' ›') ?>
+                    <?= $this->Paginator->last(__('last') . ' »') ?>
+                </div>
+            </div>
         </div>
     </div>
 </div>
