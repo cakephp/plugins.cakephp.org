@@ -15,6 +15,19 @@ permissions:
 jobs:
   testsuite:
     runs-on: ubuntu-24.04
+    services:
+      mysql:
+        image: mysql:9.6
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: plugins_cakephp_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
     strategy:
       fail-fast: false
       matrix:
@@ -29,7 +42,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-version }}
-        extensions: mbstring, intl, pdo_sqlite
+        extensions: mbstring, intl, pdo_mysql, pdo_sqlite
         ini-values: zend.assertions=1
         coverage: none
 
@@ -45,7 +58,7 @@ jobs:
     - name: Run PHPUnit
       run: vendor/bin/phpunit
       env:
-        DATABASE_TEST_URL: sqlite://./testdb.sqlite
+        DATABASE_TEST_URL: mysql://root:root@127.0.0.1:3306/plugins_cakephp_test?encoding=utf8mb4
 
   coding-standard:
     name: Coding Standard
