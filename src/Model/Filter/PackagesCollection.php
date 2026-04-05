@@ -21,22 +21,24 @@ class PackagesCollection extends FilterCollection
             'wildcardAny' => '*',
             'wildcardOne' => '?',
             'fields' => ['package', 'description'],
-        ])
-            ->callback('cakephp_slugs', [
-                'callback' => function (SelectQuery $query, array $args, $manager): void {
-                    // Here you would have to remap $args if key isn't the expected "tag"
-                    $args['slug'] = $args['cakephp_slugs'];
-                    unset($args['cakephp_slugs']);
-                    $query->find('tagged', ...$args);
-                },
-            ])
-            ->callback('php_slugs', [
-                'callback' => function (SelectQuery $query, array $args, $manager): void {
-                    // Here you would have to remap $args if key isn't the expected "tag"
-                    $args['slug'] = $args['php_slugs'];
-                    unset($args['php_slugs']);
-                    $query->find('tagged', ...$args);
-                },
-            ]);
+        ]);
+
+        $this->addTaggedSlugFilter('cakephp_slugs');
+        $this->addTaggedSlugFilter('php_slugs');
+    }
+
+    /**
+     * @param string $filterName
+     * @return void
+     */
+    protected function addTaggedSlugFilter(string $filterName): void
+    {
+        $this->callback($filterName, [
+            'callback' => function (SelectQuery $query, array $args) use ($filterName): void {
+                $args['slug'] = $args[$filterName];
+                unset($args[$filterName]);
+                $query->find('tagged', ...$args);
+            },
+        ]);
     }
 }

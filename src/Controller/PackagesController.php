@@ -79,11 +79,11 @@ class PackagesController extends AppController
         $cakephpTags = $this->Packages->Tags->find('list', keyField: 'slug')
             ->where(['slug LIKE' => 'cakephp-%'])
             ->toArray();
-        $cakephpTags = $this->sortCakePhpTags($cakephpTags);
+        $cakephpTags = $this->sortVersionTags($cakephpTags, 'CakePHP');
         $phpTags = $this->Packages->Tags->find('list', keyField: 'slug')
             ->where(['slug LIKE' => 'php-%'])
-            ->orderByAsc('label')
             ->toArray();
+        $phpTags = $this->sortVersionTags($phpTags, 'PHP');
 
         $this->set(compact('featuredPackages', 'packages', 'cakephpTags', 'phpTags'));
     }
@@ -119,11 +119,12 @@ class PackagesController extends AppController
      * @param array<string, string> $tags
      * @return array<string, string>
      */
-    protected function sortCakePhpTags(array $tags): array
+    protected function sortVersionTags(array $tags, string $prefix): array
     {
-        uasort($tags, function (string $left, string $right): int {
-            $leftVersion = preg_replace('/^CakePHP:\s*/', '', $left) ?: $left;
-            $rightVersion = preg_replace('/^CakePHP:\s*/', '', $right) ?: $right;
+        $pattern = '/^' . preg_quote($prefix, '/') . ':\s*/';
+        uasort($tags, static function (string $left, string $right) use ($pattern): int {
+            $leftVersion = preg_replace($pattern, '', $left) ?: $left;
+            $rightVersion = preg_replace($pattern, '', $right) ?: $right;
 
             return version_compare($rightVersion, $leftVersion);
         });

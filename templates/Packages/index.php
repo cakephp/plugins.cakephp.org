@@ -90,15 +90,14 @@
                 'data-placeholder' => __('CakePHP Version'),
                 'class' => 'select select-bordered join-item'
             ]);
-//            echo $this->Form->control('php_slugs', [
-//                'label' => false,
-//                'options' => $phpTags,
-//                'empty' => __('No Filter'),
-//                'multiple' => true,
-//                'data-placeholder' => __('PHP Version'),
-//                'data-is-php-filter' => true,
-//                'class' => 'select select-bordered join-item'
-//            ]);
+            echo $this->Form->control('php_slugs', [
+                'label' => false,
+                'options' => $phpTags,
+                'multiple' => true,
+                'data-placeholder' => __('PHP Version'),
+                'data-is-php-filter' => true,
+                'class' => 'select select-bordered join-item'
+            ]);
             echo $this->Form->button(__('Apply'), [
                 'type' => 'submit',
             ]);

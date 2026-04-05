@@ -21,6 +21,7 @@ use Cake\ORM\Entity;
  * @property \Tags\Model\Entity\Tag[] $cake_php_tags
  * @property array<int, array<\Tags\Model\Entity\Tag>> $cake_php_tag_groups
  * @property \Tags\Model\Entity\Tag[] $php_tags
+ * @property array<int, array<\Tags\Model\Entity\Tag>> $php_tag_groups
  */
 class Package extends Entity
 {
@@ -43,9 +44,7 @@ class Package extends Entity
      */
     protected function _getCakePhpTags(): array
     {
-        return array_filter($this->tags, function ($tag) {
-            return str_starts_with($tag->label, 'CakePHP');
-        });
+        return $this->extractVersionTags('CakePHP');
     }
 
     /**
@@ -53,10 +52,48 @@ class Package extends Entity
      */
     protected function _getCakePhpTagGroups(): array
     {
-        $groups = [];
+        return $this->groupVersionTags($this->cake_php_tags, 'CakePHP');
+    }
 
-        foreach ($this->cake_php_tags as $tag) {
-            if (!preg_match('/^CakePHP:\s*(\d+)(?:\.\d+)?$/', $tag->label, $matches)) {
+    /**
+     * @return array<\Tags\Model\Entity\Tag>
+     */
+    protected function _getPhpTags(): array
+    {
+        return $this->extractVersionTags('PHP');
+    }
+
+    /**
+     * @return array<int, array<\Tags\Model\Entity\Tag>>
+     */
+    protected function _getPhpTagGroups(): array
+    {
+        return $this->groupVersionTags($this->php_tags, 'PHP');
+    }
+
+    /**
+     * @param string $prefix
+     * @return array<\Tags\Model\Entity\Tag>
+     */
+    protected function extractVersionTags(string $prefix): array
+    {
+        return array_filter($this->tags, static function ($tag) use ($prefix) {
+            return str_starts_with($tag->label, $prefix . ':');
+        });
+    }
+
+    /**
+     * @param array<\Tags\Model\Entity\Tag> $tags
+     * @param string $prefix
+     * @return array<int, array<\Tags\Model\Entity\Tag>>
+     */
+    protected function groupVersionTags(array $tags, string $prefix): array
+    {
+        $groups = [];
+        $quotedPrefix = preg_quote($prefix, '/');
+
+        foreach ($tags as $tag) {
+            if (!preg_match('/^' . $quotedPrefix . ':\s*(\d+)(?:\.\d+)?$/', $tag->label, $matches)) {
                 continue;
             }
 
@@ -68,26 +105,16 @@ class Package extends Entity
             return version_compare($right, $left);
         });
 
-        foreach ($groups as &$tags) {
-            usort($tags, static function ($left, $right): int {
-                $leftVersion = str_replace('CakePHP: ', '', $left->label);
-                $rightVersion = str_replace('CakePHP: ', '', $right->label);
+        foreach ($groups as &$groupedTags) {
+            usort($groupedTags, static function ($left, $right) use ($prefix): int {
+                $leftVersion = preg_replace('/^' . preg_quote($prefix, '/') . ':\s*/', '', $left->label) ?: $left->label;
+                $rightVersion = preg_replace('/^' . preg_quote($prefix, '/') . ':\s*/', '', $right->label) ?: $right->label;
 
                 return version_compare($rightVersion, $leftVersion);
             });
         }
-        unset($tags);
+        unset($groupedTags);
 
         return $groups;
-    }
-
-    /**
-     * @return array<\Tags\Model\Entity\Tag>
-     */
-    protected function _getPhpTags(): array
-    {
-        return array_filter($this->tags, function ($tag) {
-            return str_starts_with($tag->label, 'PHP');
-        });
     }
 }

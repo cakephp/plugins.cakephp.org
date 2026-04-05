@@ -19,9 +19,9 @@
     --color-base-300: hsl(210 20% 94%);
     --color-base-content: hsl(220 13% 18%);
 
-    --color-primary: hsl(214 84% 46%);
+    --color-primary: var(--color-cake-red);
     --color-primary-content: hsl(0 0% 100%);
-    --color-secondary: hsl(262 80% 50%);
+    --color-secondary: var(--color-cake-blue);
     --color-secondary-content: hsl(0 0% 100%);
     --color-accent: hsl(199 89% 48%);
     --color-accent-content: hsl(0 0% 100%);
@@ -48,6 +48,7 @@
 @theme {
     --font-raleway: "Raleway", sans-serif;
     --color-cake-red: #d33c44;
+    --color-cake-blue: #2F85AE;
 }
 
 /* Styling for default app homepage */
@@ -79,7 +80,7 @@
 }
 
 [data-is-php-filter] + .ss-main {
-    --ss-primary-color: var(--color-blue-500);
+    --ss-primary-color: var(--color-cake-blue);
 }
 
 .htmx-indicator {

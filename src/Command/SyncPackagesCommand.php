@@ -9,7 +9,6 @@ use Cake\Console\CommandFactoryInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Log\Log;
 use Composer\Semver\Intervals;
-use Composer\Semver\Semver;
 use Composer\Semver\VersionParser;
 use Packagist\Api\Client;
 use UnexpectedValueException;
@@ -19,6 +18,33 @@ use UnexpectedValueException;
  */
 class SyncPackagesCommand extends Command
 {
+    private const CAKEPHP_SUBPACKAGES = [
+        'cakephp/cache',
+        'cakephp/collection',
+        'cakephp/console',
+        'cakephp/database',
+        'cakephp/datasource',
+        'cakephp/event',
+        'cakephp/form',
+        'cakephp/http',
+        'cakephp/i18n',
+        'cakephp/log',
+        'cakephp/orm',
+        'cakephp/utility',
+        'cakephp/validation',
+    ];
+
+    private const PHP_VERSIONS = [
+        '7' => [0, 1, 2, 3, 4],
+        '8' => [0, 1, 2, 3, 4, 5],
+    ];
+
+    private const CAKEPHP_VERSIONS = [
+        '3' => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        '4' => [0, 1, 2, 3, 4, 5, 6],
+        '5' => [0, 1, 2, 3],
+    ];
+
     private Client $client;
 
     /**
@@ -121,34 +147,18 @@ class SyncPackagesCommand extends Command
         foreach ($versions as $versionMeta) {
             $phpRequire = $versionMeta->getRequire()['php'] ?? null;
             if ($phpRequire) {
-                $meta = $this->checkPHPVersion($meta, $phpRequire);
+                $meta = $this->appendVersionTags($meta, $phpRequire, 'PHP', self::PHP_VERSIONS);
             }
 
             $cakephpRequire = $versionMeta->getRequire()['cakephp/cakephp'] ?? null;
             if ($cakephpRequire) {
-                $meta = $this->checkCakeVersion($meta, $cakephpRequire);
+                $meta = $this->appendVersionTags($meta, $cakephpRequire, 'CakePHP', self::CAKEPHP_VERSIONS);
             } else {
                 // Cake has standalone sub-packages
-                $subpackages = [
-                    'cakephp/cache',
-                    'cakephp/collection',
-                    'cakephp/console',
-                    'cakephp/database',
-                    'cakephp/datasource',
-                    'cakephp/event',
-                    'cakephp/form',
-                    'cakephp/http',
-                    'cakephp/i18n',
-                    'cakephp/log',
-                    'cakephp/orm',
-                    'cakephp/utility',
-                    'cakephp/validation',
-                ];
-
-                foreach ($subpackages as $subpackage) {
+                foreach (self::CAKEPHP_SUBPACKAGES as $subpackage) {
                     $cakephpRequire = $versionMeta->getRequire()[$subpackage] ?? null;
                     if ($cakephpRequire) {
-                        $meta = $this->checkCakeVersion($meta, $cakephpRequire);
+                        $meta = $this->appendVersionTags($meta, $cakephpRequire, 'CakePHP', self::CAKEPHP_VERSIONS);
                     }
                 }
             }
@@ -160,7 +170,7 @@ class SyncPackagesCommand extends Command
         });
         $latestStable = end($stableVersions);
 
-        $data = [
+        return [
             'package' => $packageName,
             'description' => $metaDetails->getDescription(),
             'repo_url' => $metaDetails->getRepository(),
@@ -170,57 +180,25 @@ class SyncPackagesCommand extends Command
             'latest_stable_version' => $latestStable ? $latestStable->getVersion() : null,
             'is_abandoned' => $metaDetails->isAbandoned(),
         ];
-
-        return $data;
     }
 
     /**
-     * @param array $meta
-     * @param string $packageConstraint
+     * @param array $meta The meta array to adjust
+     * @param string $packageConstraint The meta array which contains the current version strings
+     * @param string $tagPrefix The prefix which should be used for the tag
+     * @param array<string, array<int>> $versions The versions to check
      * @return array
      */
-    private function checkPHPVersion(array $meta, string $packageConstraint): array
-    {
-        $phpVersions = [
-            '8.5.0' => 'PHP: 8.5',
-            '8.4.0' => 'PHP: 8.4',
-            '8.3.0' => 'PHP: 8.3',
-            '8.2.0' => 'PHP: 8.2',
-            '8.1.0' => 'PHP: 8.1',
-            '8.0.0' => 'PHP: 8.0',
-            '7.4.0' => 'PHP: 7.4',
-            '7.3.0' => 'PHP: 7.3',
-            '7.2.0' => 'PHP: 7.2',
-            '7.1.0' => 'PHP: 7.1',
-            '7.0.0' => 'PHP: 7.0',
-        ];
-
-        foreach ($phpVersions as $version => $label) {
-            if (Semver::satisfies($version, $packageConstraint) && !in_array($label, $meta)) {
-                $meta[] = $label;
-            }
-        }
-
-        return $meta;
-    }
-
-    /**
-     * @param array $meta
-     * @param string $packageConstraint
-     * @return array
-     */
-    private function checkCakeVersion(array $meta, string $packageConstraint): array
-    {
-        $versions = [
-            '3' => [0,1,2,3,4,5,6,7,8,9,10],
-            '4' => [0,1,2,3,4,5,6],
-            '5' => [0,1,2,3],
-        ];
-
+    private function appendVersionTags(
+        array $meta,
+        string $packageConstraint,
+        string $tagPrefix,
+        array $versions,
+    ): array {
         foreach ($versions as $majorVersionNr => $minorVersions) {
             foreach ($minorVersions as $minorVersionNr) {
                 $minorVersion = sprintf('%s.%s', $majorVersionNr, $minorVersionNr);
-                $tagLabel = sprintf('CakePHP: %s.%s', $majorVersionNr, $minorVersionNr);
+                $tagLabel = sprintf('%s: %s', $tagPrefix, $minorVersion);
                 if (
                     $this->constraintsIntersect($packageConstraint, $minorVersion) &&
                     !in_array($tagLabel, $meta, true)
