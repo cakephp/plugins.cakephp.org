@@ -20,14 +20,28 @@ class PackagesFixture extends TestFixture
         $this->records = [
             [
                 'id' => 1,
-                'package' => 'Lorem ipsum dolor sit amet',
-                'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
-                'repo_url' => 'Lorem ipsum dolor sit amet',
-                'packagist_url' => 'Lorem ipsum dolor sit amet',
-                'downloads' => 1,
-                'stars' => 1,
+                'package' => 'markstory/asset_compress',
+                'description' => 'Featured package used to verify the homepage slider.',
+                'repo_url' => 'https://github.com/markstory/asset_compress',
+                'downloads' => 5000,
+                'stars' => 450,
+                'latest_stable_version' => '5.0.0',
             ],
         ];
+
+        for ($i = 2; $i <= 24; $i++) {
+            $packageNumber = str_pad((string)($i - 1), 2, '0', STR_PAD_LEFT);
+            $this->records[] = [
+                'id' => $i,
+                'package' => sprintf('vendor/package-%s', $packageNumber),
+                'description' => sprintf('Test package %s for controller pagination and search coverage.', $packageNumber),
+                'repo_url' => sprintf('https://github.com/vendor/package-%s', $packageNumber),
+                'downloads' => 1000 - $i,
+                'stars' => 100 - $i,
+                'latest_stable_version' => sprintf('1.%d.0', $i - 2),
+            ];
+        }
+
         parent::init();
     }
 }

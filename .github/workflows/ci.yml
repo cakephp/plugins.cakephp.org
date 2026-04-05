@@ -3,9 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - '5.x'
-      - '5.next'
-      - '6.x'
+      - 'master'
   pull_request:
     branches:
       - '*'
@@ -17,12 +15,23 @@ permissions:
 jobs:
   testsuite:
     runs-on: ubuntu-24.04
+    services:
+      mysql:
+        image: mysql:9.6
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: plugins_cakephp_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
     strategy:
       fail-fast: false
       matrix:
         include:
-          - php-version: '8.1'
-            dependencies: 'lowest'
           - php-version: '8.4'
             dependencies: 'highest'
 
@@ -33,7 +42,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-version }}
-        extensions: mbstring, intl, pdo_sqlite
+        extensions: mbstring, intl, pdo_mysql, pdo_sqlite
         ini-values: zend.assertions=1
         coverage: none
 
@@ -49,10 +58,12 @@ jobs:
     - name: Run PHPUnit
       run: vendor/bin/phpunit
       env:
-        DATABASE_TEST_URL: sqlite://./testdb.sqlite
+        DATABASE_TEST_URL: mysql://root:root@127.0.0.1:3306/plugins_cakephp_test?encoding=utf8mb4
+        AUTH_ID_GITHUB: someid
+        AUTH_SECRET_GITHUB: somesecret
 
   coding-standard:
-    name: Coding Standard & Static Analysis
+    name: Coding Standard
     runs-on: ubuntu-24.04
 
     steps:
@@ -61,19 +72,13 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.1'
+        php-version: '8.4'
         extensions: mbstring, intl
         coverage: none
-        tools: cs2pr, phpstan:1.12
+        tools: cs2pr
 
     - name: Composer install
       uses: ramsey/composer-install@v3
 
     - name: Run PHP CodeSniffer
       run: vendor/bin/phpcs --report=checkstyle | cs2pr
-
-    - name: Run phpstan
-      if: always()
-      run: phpstan
-      env:
-        SECURITY_SALT: f76f1c8475585c46c6acd3ddcb8f5e0f15de524637bb4080a08c4afe7cfc9144

@@ -60,6 +60,7 @@ session_id('cli');
 // Connection aliasing needs to happen before migrations are run.
 // Otherwise, table objects inside migrations would use the default datasource
 ConnectionHelper::addTestAliases();
+ConnectionHelper::dropTables('test');
 
 // Use migrations to build test database schema.
 //
@@ -72,4 +73,8 @@ ConnectionHelper::addTestAliases();
 // use Cake\TestSuite\Fixture\SchemaLoader;
 // (new SchemaLoader())->loadSqlFiles('./tests/schema.sql', 'test');
 
-(new Migrator())->run();
+(new Migrator())->runMany([
+    [],
+    ['plugin' => 'Tags'],
+    ['plugin' => 'ADmad/SocialAuth'],
+]);

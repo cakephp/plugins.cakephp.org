@@ -14,6 +14,16 @@ use Cake\ORM\Query\SelectQuery;
 class PackagesController extends AppController
 {
     /**
+     * @return void
+     */
+    public function initialize(): void
+    {
+        parent::initialize();
+
+        $this->Authentication->allowUnauthenticated(['index']);
+    }
+
+    /**
      * Index method
      *
      * @return \Cake\Http\Response|null|void Renders view
