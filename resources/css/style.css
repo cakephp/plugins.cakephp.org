@@ -121,11 +121,11 @@ body.is-htmx-loading .main-loading-overlay,
 
 @layer components {
     .featured-packages-slider-shell {
-        @apply overflow-hidden pb-4;
+        @apply pb-4;
     }
 
     .featured-packages-slider {
-        @apply overflow-hidden;
+        @apply overflow-visible!;
     }
 
     .featured-packages-slider .swiper-slide {
