@@ -96,6 +96,7 @@ return [
         'featured' => [
             'markstory/asset_compress',
             'josegonzalez/cakephp-upload',
+            'dereuromark/cakephp-ide-helper',
             'dereuromark/cakephp-queue',
             'dereuromark/cakephp-tools',
             'lordsimal/cakephp-sentry',
