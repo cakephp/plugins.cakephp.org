@@ -164,7 +164,7 @@ class SyncPackagesCommand extends Command
             }
         }
 
-        $stableVersions = array_filter($versions, fn($v) => preg_match('/^v?\d+\.\d+\.\d+$/', $v->getVersion()));
+        $stableVersions = array_filter($versions, fn($v) => preg_match('/^v?\d+\.\d+(\.\d+)?$/', $v->getVersion()));
         usort($stableVersions, function ($a, $b) {
             return version_compare($a->getVersion(), $b->getVersion());
         });
