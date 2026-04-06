@@ -134,12 +134,26 @@ class SyncPackagesCommand extends Command
 
     /**
      * @param string $packageName
-     * @return array
+     * @return array{package: string, description: string, repo_url: string, downloads: int, stars: int, tag_list: array, latest_stable_version: ?string, is_abandoned: bool}
      */
     private function getDataForPackage(string $packageName): array
     {
         /** @var \Packagist\Api\Result\Package $metaDetails */
         $metaDetails = $this->client->get($packageName);
+
+        if ($metaDetails->isAbandoned()) {
+            return [
+                'package' => $packageName,
+                'description' => $metaDetails->getDescription(),
+                'repo_url' => $metaDetails->getRepository(),
+                'downloads' => $metaDetails->getDownloads()->getTotal(),
+                'stars' => $metaDetails->getGithubStars(),
+                'tag_list' => [],
+                'latest_stable_version' => null,
+                'is_abandoned' => true,
+            ];
+        }
+
         $versions = $metaDetails->getVersions();
 
         $meta = [];
