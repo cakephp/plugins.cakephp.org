@@ -100,7 +100,7 @@ class SyncPackagesCommand extends Command
         foreach ($data as $package) {
             $data = $this->getDataForPackage($package);
 
-            if ($data['is_abandoned'] || $data['downloads'] < 50) {
+            if ($data['is_abandoned'] || !$data['latest_stable_version'] || $data['downloads'] < 10) {
                 continue;
             }
 
@@ -178,7 +178,7 @@ class SyncPackagesCommand extends Command
             }
         }
 
-        $stableVersions = array_filter($versions, fn($v) => preg_match('/^v?\d+\.\d+\.\d+$/', $v->getVersion()));
+        $stableVersions = array_filter($versions, fn($v) => preg_match('/^v?\d+\.\d+(\.\d+)?$/', $v->getVersion()));
         usort($stableVersions, function ($a, $b) {
             return version_compare($a->getVersion(), $b->getVersion());
         });
