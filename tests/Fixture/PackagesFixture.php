@@ -26,6 +26,7 @@ class PackagesFixture extends TestFixture
                 'downloads' => 5000,
                 'stars' => 450,
                 'latest_stable_version' => '5.0.0',
+                'latest_stable_release_date' => '2025-01-15',
             ],
         ];
 
@@ -39,6 +40,7 @@ class PackagesFixture extends TestFixture
                 'downloads' => 1000 - $i,
                 'stars' => 100 - $i,
                 'latest_stable_version' => sprintf('1.%d.0', $i - 2),
+                'latest_stable_release_date' => sprintf('2025-02-%02d', $i),
             ];
         }
 

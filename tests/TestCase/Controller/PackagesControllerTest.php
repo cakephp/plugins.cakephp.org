@@ -44,6 +44,7 @@ class PackagesControllerTest extends TestCase
         $this->assertResponseOk();
         $this->assertResponseContains('Featured');
         $this->assertResponseContains('data-featured-packages-slider');
+        $this->assertResponseContains('Latest Release');
     }
 
     /**

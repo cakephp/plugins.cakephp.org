@@ -115,6 +115,7 @@
                     ?>
                     <?= $this->Paginator->sort('downloads', 'Downloads') ?>
                     <?= $this->Paginator->sort('stars', 'Stars') ?>
+                    <?= $this->Paginator->sort('latest_stable_release_date', 'Latest Release') ?>
                 </div>
             </div>
         </div>
