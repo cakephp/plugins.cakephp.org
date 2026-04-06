@@ -46,15 +46,22 @@ $phpSlugs = (array)$request->getQuery('php_slugs', []);
     <div class="sticky top-0 z-40 border-b border-cake-red/70 bg-cake-red backdrop-blur-md">
         <div class="navbar container mx-auto px-4 sm:px-6 lg:px-8 gap-5">
             <div class="navbar-start">
-                <a class="text-xl" href="<?= $this->Url->build('/') ?>">
-                    <img src="/img/cake-logo.png" class="w-28" alt="CakePHP Logo"/>
-                </a>
+                <div class="flex items-center gap-6">
+                    <a class="text-xl" href="<?= $this->Url->build('/') ?>">
+                        <img src="/img/cake-logo.png" class="w-28" alt="CakePHP Logo"/>
+                    </a>
+                    <div class="hidden lg:block">
+                        <?= $this->Html->link('Requirements', '/requirements', [
+                            'class' => 'text-sm font-medium text-white/85 transition hover:text-white',
+                        ]) ?>
+                    </div>
+                </div>
             </div>
             <?php
             $searchFormOptions = [
                 'type' => 'get',
                 'url' => ['controller' => 'Packages', 'action' => 'index'],
-                'class' => 'w-full',
+                'class' => 'w-full max-w-xl',
                 'valueSources' => 'query', // Read existing values from query string
             ];
             if ($isPackagesIndex) {
@@ -138,6 +145,7 @@ $phpSlugs = (array)$request->getQuery('php_slugs', []);
                         </svg>
                     </label>
                     <ul tabindex="0" class="menu menu-sm dropdown-content z-50 mt-3 w-40 rounded-box border border-base-200 bg-base-100 p-2 shadow-lg text-base-content">
+                        <li><?= $this->Html->link('Requirements', '/requirements') ?></li>
                         <li><?= $this->Html->link('Docs', 'https://book.cakephp.org/', ['target' => '_blank', 'rel' => 'noopener']) ?></li>
                         <li><?= $this->Html->link('Api', 'https://api.cakephp.org/', ['target' => '_blank', 'rel' => 'noopener']) ?></li>
                         <li>

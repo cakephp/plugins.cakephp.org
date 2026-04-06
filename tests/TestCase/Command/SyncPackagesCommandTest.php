@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Command;
 
+use App\Command\SyncPackagesCommand;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use ReflectionMethod;
 
 /**
  * App\Command\SyncPackagesCommand Test Case
@@ -14,6 +16,19 @@ use Cake\TestSuite\TestCase;
 class SyncPackagesCommandTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
+
+    /**
+     * @return void
+     */
+    public function testHasExplicitCakePhpDependency(): void
+    {
+        $command = new SyncPackagesCommand();
+        $method = new ReflectionMethod($command, 'hasExplicitCakePhpDependency');
+        $method->setAccessible(true);
+
+        $this->assertTrue($method->invoke($command, ['PHP: 8.2', 'CakePHP: 5.0']));
+        $this->assertFalse($method->invoke($command, ['PHP: 8.2']));
+    }
 
     /**
      * Test defaultName method
