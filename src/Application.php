@@ -118,8 +118,8 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                 'serviceConfig' => [
                     'provider' => [
                         GitHub::NAME => [
-                            'applicationId' => Configure::readOrFail('GitHub.applicationId'),
-                            'applicationSecret' => Configure::readOrFail('GitHub.applicationSecret'),
+                            'applicationId' => Configure::read('GitHub.applicationId', ''),
+                            'applicationSecret' => Configure::read('GitHub.applicationSecret', ''),
                             'scope' => [
                                 'user:email',
                                 'read:org',
