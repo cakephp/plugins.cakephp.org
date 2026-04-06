@@ -100,7 +100,12 @@ class SyncPackagesCommand extends Command
         foreach ($data as $package) {
             $data = $this->getDataForPackage($package);
 
-            if ($data['is_abandoned'] || !$data['latest_stable_version'] || $data['downloads'] < 10) {
+            if (
+                $data['is_abandoned'] ||
+                !$data['latest_stable_version'] ||
+                $data['downloads'] < 10 ||
+                !$this->hasExplicitCakePhpDependency($data['tag_list'])
+            ) {
                 continue;
             }
 
@@ -194,6 +199,21 @@ class SyncPackagesCommand extends Command
             'latest_stable_version' => $latestStable ? $latestStable->getVersion() : null,
             'is_abandoned' => $metaDetails->isAbandoned(),
         ];
+    }
+
+    /**
+     * @param list<string> $tags
+     * @return bool
+     */
+    private function hasExplicitCakePhpDependency(array $tags): bool
+    {
+        foreach ($tags as $tag) {
+            if (str_starts_with($tag, 'CakePHP')) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
