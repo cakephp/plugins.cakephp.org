@@ -86,6 +86,11 @@ class PackagesTable extends Table
             ->requirePresence('latest_stable_version', 'create')
             ->allowEmptyString('latest_stable_version');
 
+        $validator
+            ->date('latest_stable_release_date')
+            ->requirePresence('latest_stable_release_date', 'create')
+            ->allowEmptyDate('latest_stable_release_date');
+
         return $validator;
     }
 }

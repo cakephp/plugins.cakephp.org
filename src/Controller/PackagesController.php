@@ -35,7 +35,7 @@ class PackagesController extends AppController
         if (empty($queryParams['sort'])) {
             $this->request = $this->request->withQueryParams(array_merge(
                 $queryParams,
-                ['sort' => 'downloads', 'direction' => 'desc'],
+                ['sort' => 'latest_stable_release_date', 'direction' => 'desc'],
             ));
         }
 

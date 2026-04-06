@@ -119,6 +119,9 @@ $compatibilityGroups = [
                 <div class="stat-value text-base">
                     <?= h($package->latest_stable_version ?: __('Unknown')) ?>
                 </div>
+                <div class="stat-desc text-xs">
+                    <?= __('Released {0}', $package->latest_stable_release_date?->i18nFormat('MMM d, yyyy') ?? __('Unknown')) ?>
+                </div>
             </div>
             <div class="stat px-4 py-3">
                 <div class="stat-title text-xs flex items-center gap-2 [&_svg]:size-4">

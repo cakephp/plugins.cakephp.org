@@ -7,10 +7,12 @@ use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\CommandFactoryInterface;
 use Cake\Console\ConsoleIo;
+use Cake\I18n\Date;
 use Cake\Log\Log;
 use Composer\Semver\Intervals;
 use Composer\Semver\VersionParser;
 use Packagist\Api\Client;
+use Packagist\Api\Result\Package\Version;
 use UnexpectedValueException;
 
 /**
@@ -139,7 +141,7 @@ class SyncPackagesCommand extends Command
 
     /**
      * @param string $packageName
-     * @return array{package: string, description: string, repo_url: string, downloads: int, stars: int, tag_list: array, latest_stable_version: ?string, is_abandoned: bool}
+     * @return array{package: string, description: string, repo_url: string, downloads: int, stars: int, tag_list: array, latest_stable_version: ?string, latest_stable_release_date: ?\Cake\I18n\Date, is_abandoned: bool}
      */
     private function getDataForPackage(string $packageName): array
     {
@@ -155,6 +157,7 @@ class SyncPackagesCommand extends Command
                 'stars' => $metaDetails->getGithubStars(),
                 'tag_list' => [],
                 'latest_stable_version' => null,
+                'latest_stable_release_date' => null,
                 'is_abandoned' => true,
             ];
         }
@@ -183,10 +186,14 @@ class SyncPackagesCommand extends Command
             }
         }
 
-        $stableVersions = array_filter($versions, fn($v) => preg_match('/^v?\d+\.\d+(\.\d+)?$/', $v->getVersion()));
+        $stableVersions = array_filter(
+            $versions,
+            fn(Version $version) => preg_match('/^v?\d+\.\d+(\.\d+)?$/', $version->getVersion()),
+        );
         usort($stableVersions, function ($a, $b) {
             return version_compare($a->getVersion(), $b->getVersion());
         });
+        /** @var \Packagist\Api\Result\Package\Version|false $latestStable */
         $latestStable = end($stableVersions);
 
         return [
@@ -197,8 +204,22 @@ class SyncPackagesCommand extends Command
             'stars' => $metaDetails->getGithubStars(),
             'tag_list' => $meta,
             'latest_stable_version' => $latestStable ? $latestStable->getVersion() : null,
+            'latest_stable_release_date' => $this->extractReleaseDate($latestStable ?: null),
             'is_abandoned' => $metaDetails->isAbandoned(),
         ];
+    }
+
+    /**
+     * @param \Packagist\Api\Result\Package\Version|null $version
+     * @return \Cake\I18n\Date|null
+     */
+    private function extractReleaseDate(?Version $version): ?Date
+    {
+        if (!$version || $version->getTime() === '') {
+            return null;
+        }
+
+        return new Date($version->getTime());
     }
 
     /**
