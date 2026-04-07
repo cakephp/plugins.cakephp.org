@@ -60,7 +60,7 @@ return [
             /*
              * You can use a DSN string to set the entire configuration
              */
-            'url' => env('DATABASE_URL', null),
+            'url' => env('DATABASE_URL'),
         ],
 
         /*
@@ -91,7 +91,7 @@ return [
             'username' => null,
             'password' => null,
             'client' => null,
-            'url' => env('EMAIL_TRANSPORT_DEFAULT_URL', null),
+            'url' => env('EMAIL_TRANSPORT_DEFAULT_URL'),
         ],
     ],
 ];

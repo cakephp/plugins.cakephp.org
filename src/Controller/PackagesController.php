@@ -27,9 +27,9 @@ class PackagesController extends AppController
     /**
      * Index method
      *
-     * @return \Cake\Http\Response|null|void Renders view
+     * @return \Cake\Http\Response Renders view
      */
-    public function index()
+    public function index(): Response
     {
         // Add default sort if no sort is provided
         $queryParams = $this->request->getQueryParams();
@@ -97,6 +97,8 @@ class PackagesController extends AppController
         $phpTags = $this->sortVersionTags($phpTags, 'PHP');
 
         $this->set(compact('featuredPackages', 'packages', 'cakephpTags', 'phpTags'));
+
+        return $this->render();
     }
 
     /**
@@ -148,7 +150,6 @@ class PackagesController extends AppController
     }
 
     /**
-     * @param mixed $value
      * @return bool
      */
     protected function hasActiveFilterValue(mixed $value): bool
@@ -175,8 +176,6 @@ class PackagesController extends AppController
     }
 
     /**
-     * @param array $tags
-     * @param string $prefix
      * @return array
      */
     protected function sortVersionTags(array $tags, string $prefix): array

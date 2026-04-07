@@ -121,7 +121,7 @@ class Installer
         // ask if the permissions should be changed
         if ($io->isInteractive()) {
             $validator = function (string $arg): string {
-                if (in_array($arg, ['Y', 'y', 'N', 'n'])) {
+                if (in_array($arg, ['Y', 'y', 'N', 'n'], true)) {
                     return $arg;
                 }
                 throw new Exception('This is not a valid answer. Please choose Y or n.');
@@ -142,7 +142,7 @@ class Installer
         $changePerms = function (string $path) use ($io): void {
             $currentPerms = fileperms($path) & 0777;
             $worldWritable = $currentPerms | 0007;
-            if ($worldWritable == $currentPerms) {
+            if ($worldWritable === $currentPerms) {
                 return;
             }
 
@@ -207,7 +207,7 @@ class Installer
 
         $content = str_replace('__SALT__', $newKey, $content, $count);
 
-        if ($count == 0) {
+        if ($count === 0) {
             $io->write('No Security.salt placeholder to replace.');
 
             return;
@@ -243,7 +243,7 @@ class Installer
 
         $content = str_replace('__APP_NAME__', $appName, $content, $count);
 
-        if ($count == 0) {
+        if ($count === 0) {
             $io->write('No __APP_NAME__ placeholder to replace.');
 
             return;

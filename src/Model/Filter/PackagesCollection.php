@@ -28,7 +28,6 @@ class PackagesCollection extends FilterCollection
     }
 
     /**
-     * @param string $filterName
      * @return void
      */
     protected function addTaggedSlugFilter(string $filterName): void

@@ -43,7 +43,7 @@ class AfterGithubIdentify implements EventListenerInterface
 
         $http = new Client([
             'headers' => [
-                'Authorization' => "Bearer {$token}",
+                'Authorization' => 'Bearer ' . $token,
                 'Accept' => 'application/vnd.github+json',
                 'User-Agent' => 'plugins.cakephp.org',
             ],

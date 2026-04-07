@@ -85,3 +85,18 @@ jobs:
 
     - name: Run PHPStan
       run: vendor/bin/phpstan analyse -c phpstan.neon --error-format=checkstyle | cs2pr
+
+    - name: Setup rector cache
+      uses: actions/cache@v5
+      with:
+        path: ${{ runner.temp }}/rector
+        key: ${{ runner.os }}-rector-${{ hashFiles('rector.php', 'composer.lock') }}
+        restore-keys: ${{ runner.os }}-rector-
+
+    - name: Create rector cache dir
+      run: mkdir -p ${{ runner.temp }}/rector
+
+    - name: Run rector
+      env:
+        RECTOR_CACHE_DIR: ${{ runner.temp }}/rector
+      run: composer rector-setup && composer rector-check

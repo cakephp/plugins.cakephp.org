@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Model\Entity;
 
 use Cake\ORM\Entity;
+use Tags\Model\Entity\Tag;
 
 /**
  * Package Entity
@@ -78,19 +79,17 @@ class Package extends Entity
     }
 
     /**
-     * @param string $prefix
      * @return array<\Tags\Model\Entity\Tag>
      */
     protected function extractVersionTags(string $prefix): array
     {
-        return array_filter($this->tags, static function ($tag) use ($prefix) {
+        return array_filter($this->tags, static function (Tag $tag) use ($prefix): bool {
             return str_starts_with($tag->label, $prefix . ':');
         });
     }
 
     /**
      * @param array<\Tags\Model\Entity\Tag> $tags
-     * @param string $prefix
      * @return array<int, array<\Tags\Model\Entity\Tag>>
      */
     protected function groupVersionTags(array $tags, string $prefix): array
@@ -125,17 +124,30 @@ class Package extends Entity
     }
 
     public const FIELD_ID = 'id';
+
     public const FIELD_PACKAGE = 'package';
+
     public const FIELD_DESCRIPTION = 'description';
+
     public const FIELD_REPO_URL = 'repo_url';
+
     public const FIELD_DOWNLOADS = 'downloads';
+
     public const FIELD_STARS = 'stars';
+
     public const FIELD_LATEST_STABLE_VERSION = 'latest_stable_version';
+
     public const FIELD_LATEST_STABLE_RELEASE_DATE = 'latest_stable_release_date';
+
     public const FIELD_CAKE_PHP_TAGS = 'cake_php_tags';
+
     public const FIELD_CAKE_PHP_TAG_GROUPS = 'cake_php_tag_groups';
+
     public const FIELD_PHP_TAGS = 'php_tags';
+
     public const FIELD_PHP_TAG_GROUPS = 'php_tag_groups';
+
     public const FIELD_TAGGED = 'tagged';
+
     public const FIELD_TAGS = 'tags';
 }

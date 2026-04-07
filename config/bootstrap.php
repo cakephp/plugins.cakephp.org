@@ -194,12 +194,12 @@ Security::setSalt(Configure::consume('Security.salt'));
  * If you don't use these checks you can safely remove this code
  * and the mobiledetect package from composer.json.
  */
-ServerRequest::addDetector('mobile', function ($request) {
+ServerRequest::addDetector('mobile', function ($request): bool {
     $detector = new MobileDetect();
 
     return $detector->isMobile();
 });
-ServerRequest::addDetector('tablet', function ($request) {
+ServerRequest::addDetector('tablet', function ($request): bool {
     $detector = new MobileDetect();
 
     return $detector->isTablet();

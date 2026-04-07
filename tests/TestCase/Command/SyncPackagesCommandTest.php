@@ -26,7 +26,6 @@ class SyncPackagesCommandTest extends TestCase
     {
         $command = new SyncPackagesCommand();
         $method = new ReflectionMethod($command, 'hasExplicitCakePhpDependency');
-        $method->setAccessible(true);
 
         $this->assertTrue($method->invoke($command, ['PHP: 8.2', 'CakePHP: 5.0']));
         $this->assertFalse($method->invoke($command, ['PHP: 8.2']));
@@ -39,7 +38,6 @@ class SyncPackagesCommandTest extends TestCase
     {
         $command = new SyncPackagesCommand();
         $method = new ReflectionMethod($command, 'extractReleaseDate');
-        $method->setAccessible(true);
 
         $version = new Version();
         $version->fromArray([
