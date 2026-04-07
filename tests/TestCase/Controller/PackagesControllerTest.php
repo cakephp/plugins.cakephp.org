@@ -23,6 +23,8 @@ class PackagesControllerTest extends TestCase
      */
     protected array $fixtures = [
         'app.Packages',
+        'plugin.Tags.Tags',
+        'plugin.Tags.Tagged',
     ];
 
     /**
@@ -69,5 +71,97 @@ class PackagesControllerTest extends TestCase
         $this->assertResponseOk();
         $this->assertResponseNotContains('data-featured-packages-slider');
         $this->assertResponseContains('vendor/package-02');
+    }
+
+    /**
+     * @return void
+     */
+    public function testAutocompleteReturnsJsonResults(): void
+    {
+        $this->configRequest(['headers' => ['Accept' => 'application/json']]);
+        $this->get('/autocomplete?q=asset');
+
+        $this->assertResponseOk();
+        $this->assertContentType('application/json');
+
+        $body = (string)$this->_response->getBody();
+        $results = json_decode($body, true);
+
+        $this->assertNotEmpty($results);
+        $this->assertSame('markstory/asset_compress', $results[0]['package']);
+        $this->assertArrayHasKey('description', $results[0]);
+        $this->assertArrayHasKey('repo_url', $results[0]);
+        $this->assertArrayHasKey('downloads', $results[0]);
+        $this->assertArrayHasKey('stars', $results[0]);
+        $this->assertArrayHasKey('latest_version', $results[0]);
+        $this->assertArrayHasKey('cakephp_versions', $results[0]);
+        $this->assertArrayHasKey('php_versions', $results[0]);
+    }
+
+    /**
+     * @return void
+     */
+    public function testAutocompleteReturnsEmptyForShortQuery(): void
+    {
+        $this->configRequest(['headers' => ['Accept' => 'application/json']]);
+        $this->get('/autocomplete?q=a');
+
+        $this->assertResponseOk();
+        $this->assertContentType('application/json');
+
+        $body = (string)$this->_response->getBody();
+        $results = json_decode($body, true);
+
+        $this->assertEmpty($results);
+    }
+
+    /**
+     * @return void
+     */
+    public function testAutocompleteReturnsEmptyForMissingQuery(): void
+    {
+        $this->configRequest(['headers' => ['Accept' => 'application/json']]);
+        $this->get('/autocomplete');
+
+        $this->assertResponseOk();
+        $this->assertContentType('application/json');
+
+        $body = (string)$this->_response->getBody();
+        $results = json_decode($body, true);
+
+        $this->assertEmpty($results);
+    }
+
+    /**
+     * @return void
+     */
+    public function testAutocompleteReturnsEmptyForNoMatch(): void
+    {
+        $this->configRequest(['headers' => ['Accept' => 'application/json']]);
+        $this->get('/autocomplete?q=zzzznonexistent');
+
+        $this->assertResponseOk();
+        $this->assertContentType('application/json');
+
+        $body = (string)$this->_response->getBody();
+        $results = json_decode($body, true);
+
+        $this->assertEmpty($results);
+    }
+
+    /**
+     * @return void
+     */
+    public function testAutocompleteLimitsResults(): void
+    {
+        $this->configRequest(['headers' => ['Accept' => 'application/json']]);
+        $this->get('/autocomplete?q=package');
+
+        $this->assertResponseOk();
+
+        $body = (string)$this->_response->getBody();
+        $results = json_decode($body, true);
+
+        $this->assertLessThanOrEqual(8, count($results));
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Cake\Core\Configure;
+use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
 
 /**
@@ -20,7 +21,7 @@ class PackagesController extends AppController
     {
         parent::initialize();
 
-        $this->Authentication->allowUnauthenticated(['index']);
+        $this->Authentication->allowUnauthenticated(['index', 'autocomplete']);
     }
 
     /**
@@ -96,6 +97,53 @@ class PackagesController extends AppController
         $phpTags = $this->sortVersionTags($phpTags, 'PHP');
 
         $this->set(compact('featuredPackages', 'packages', 'cakephpTags', 'phpTags'));
+    }
+
+    /**
+     * Autocomplete endpoint for package search.
+     *
+     * @return \Cake\Http\Response
+     */
+    public function autocomplete(): Response
+    {
+        $q = trim((string)$this->request->getQuery('q'));
+        if (mb_strlen($q) < 2) {
+            return $this->response
+                ->withType('application/json')
+                ->withStringBody(json_encode([]));
+        }
+
+        $packages = $this->Packages
+            ->find('autocomplete', search: $q)
+            ->all();
+
+        $results = [];
+        foreach ($packages as $package) {
+            $cakeVersions = [];
+            foreach ($package->cake_php_tag_groups as $major => $tags) {
+                $cakeVersions[] = $major . '.x';
+            }
+
+            $phpVersions = [];
+            foreach ($package->php_tag_groups as $major => $tags) {
+                $phpVersions[] = $major . '.x';
+            }
+
+            $results[] = [
+                'package' => $package->package,
+                'description' => $package->description,
+                'repo_url' => $package->repo_url,
+                'downloads' => $package->downloads,
+                'stars' => $package->stars,
+                'latest_version' => $package->latest_stable_version,
+                'cakephp_versions' => $cakeVersions,
+                'php_versions' => $phpVersions,
+            ];
+        }
+
+        return $this->response
+            ->withType('application/json')
+            ->withStringBody(json_encode($results));
     }
 
     /**

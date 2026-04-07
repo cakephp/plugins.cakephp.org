@@ -28,6 +28,26 @@ class PackagesFixture extends TestFixture
                 'latest_stable_version' => '5.0.0',
                 'latest_stable_release_date' => '2025-01-15',
             ],
+            [
+                'id' => 25,
+                'package' => 'cakedc/users',
+                'description' => 'Users plugin for CakePHP.',
+                'repo_url' => 'https://github.com/cakedc/users',
+                'downloads' => 9000,
+                'stars' => 500,
+                'latest_stable_version' => '12.0.0',
+                'latest_stable_release_date' => '2025-03-01',
+            ],
+            [
+                'id' => 26,
+                'package' => 'dereuromark/cakephp-tools',
+                'description' => 'A CakePHP tools plugin containing lots of useful helpers.',
+                'repo_url' => 'https://github.com/dereuromark/cakephp-tools',
+                'downloads' => 20000,
+                'stars' => 300,
+                'latest_stable_version' => '3.0.0',
+                'latest_stable_release_date' => '2025-04-01',
+            ],
         ];
 
         for ($i = 2; $i <= 24; $i++) {

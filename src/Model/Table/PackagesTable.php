@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Model\Table;
 
 use App\Model\Filter\PackagesCollection;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
@@ -92,5 +93,32 @@ class PackagesTable extends Table
             ->allowEmptyDate('latest_stable_release_date');
 
         return $validator;
+    }
+
+    /**
+     * Finder for autocomplete search results.
+     *
+     * @param \Cake\ORM\Query\SelectQuery $query Query instance.
+     * @param string $search Search term.
+     * @param int $maxResults Maximum number of results.
+     * @return \Cake\ORM\Query\SelectQuery
+     */
+    public function findAutocomplete(SelectQuery $query, string $search, int $maxResults = 8): SelectQuery
+    {
+        return $query
+            ->find('search', search: ['search' => $search])
+            ->contain(['Tags' => function (SelectQuery $q) {
+                return $q->orderByDesc('Tags.label');
+            }])
+            ->selectAlso([
+                'name_match' => $query->expr()
+                    ->case()
+                    ->when(['Packages.package LIKE' => '%' . $search . '%'])
+                    ->then(1, 'integer')
+                    ->else(0, 'integer'),
+            ])
+            ->orderByDesc('name_match')
+            ->orderByDesc('Packages.downloads')
+            ->limit($maxResults);
     }
 }
