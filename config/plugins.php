@@ -37,5 +37,5 @@ return [
     'Tags',
     'ADmad/SocialAuth',
     'Authentication',
-    'IdeHelper',
+    'IdeHelper' => ['onlyDebug' => true],
 ];
