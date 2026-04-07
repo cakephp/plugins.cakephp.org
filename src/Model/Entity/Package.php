@@ -17,12 +17,13 @@ use Cake\ORM\Entity;
  * @property string|null $latest_stable_version
  * @property \Cake\I18n\Date|null $latest_stable_release_date
  *
- * @property \Tags\Model\Entity\Tag[] $tags
- *
- * @property \Tags\Model\Entity\Tag[] $cake_php_tags
+ * @property array<\Tags\Model\Entity\Tag> $cake_php_tags
  * @property array<int, array<\Tags\Model\Entity\Tag>> $cake_php_tag_groups
- * @property \Tags\Model\Entity\Tag[] $php_tags
+ * @property array<\Tags\Model\Entity\Tag> $php_tags
  * @property array<int, array<\Tags\Model\Entity\Tag>> $php_tag_groups
+ * @property array<\Tags\Model\Entity\Tagged> $tagged
+ * @property array<\Tags\Model\Entity\Tag> $tags
+ * @property \Tags\Model\Entity\Tagged $_joinData
  */
 class Package extends Entity
 {
@@ -42,6 +43,7 @@ class Package extends Entity
 
     /**
      * @return array<\Tags\Model\Entity\Tag>
+     * @see \App\Model\Entity\Package::$cake_php_tags
      */
     protected function _getCakePhpTags(): array
     {
@@ -50,6 +52,7 @@ class Package extends Entity
 
     /**
      * @return array<int, array<\Tags\Model\Entity\Tag>>
+     * @see \App\Model\Entity\Package::$cake_php_tag_groups
      */
     protected function _getCakePhpTagGroups(): array
     {
@@ -58,6 +61,7 @@ class Package extends Entity
 
     /**
      * @return array<\Tags\Model\Entity\Tag>
+     * @see \App\Model\Entity\Package::$php_tags
      */
     protected function _getPhpTags(): array
     {
@@ -66,6 +70,7 @@ class Package extends Entity
 
     /**
      * @return array<int, array<\Tags\Model\Entity\Tag>>
+     * @see \App\Model\Entity\Package::$php_tag_groups
      */
     protected function _getPhpTagGroups(): array
     {
@@ -98,12 +103,12 @@ class Package extends Entity
                 continue;
             }
 
-            $majorVersion = $matches[1];
+            $majorVersion = intval($matches[1]);
             $groups[$majorVersion][] = $tag;
         }
 
-        uksort($groups, static function (string $left, string $right): int {
-            return version_compare($right, $left);
+        uksort($groups, static function (int $left, int $right): int {
+            return version_compare((string)$right, (string)$left);
         });
 
         foreach ($groups as &$groupedTags) {
@@ -118,4 +123,19 @@ class Package extends Entity
 
         return $groups;
     }
+
+    public const FIELD_ID = 'id';
+    public const FIELD_PACKAGE = 'package';
+    public const FIELD_DESCRIPTION = 'description';
+    public const FIELD_REPO_URL = 'repo_url';
+    public const FIELD_DOWNLOADS = 'downloads';
+    public const FIELD_STARS = 'stars';
+    public const FIELD_LATEST_STABLE_VERSION = 'latest_stable_version';
+    public const FIELD_LATEST_STABLE_RELEASE_DATE = 'latest_stable_release_date';
+    public const FIELD_CAKE_PHP_TAGS = 'cake_php_tags';
+    public const FIELD_CAKE_PHP_TAG_GROUPS = 'cake_php_tag_groups';
+    public const FIELD_PHP_TAGS = 'php_tags';
+    public const FIELD_PHP_TAG_GROUPS = 'php_tag_groups';
+    public const FIELD_TAGGED = 'tagged';
+    public const FIELD_TAGS = 'tags';
 }

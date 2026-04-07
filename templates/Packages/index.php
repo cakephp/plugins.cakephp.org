@@ -2,7 +2,7 @@
 /**
  * @var \App\View\AppView $this
  * @var iterable<\App\Model\Entity\Package> $featuredPackages
- * @var iterable<\App\Model\Entity\Package> $packages
+ * @var array<\App\Model\Entity\Package>|\Cake\Collection\CollectionInterface<\App\Model\Entity\Package> $packages
  * @var iterable<\Tags\Model\Entity\Tag> $cakephpTags
  * @var iterable<\Tags\Model\Entity\Tag> $phpTags
  */

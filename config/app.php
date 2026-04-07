@@ -479,4 +479,11 @@ return [
     'Migrations' => [
         'add_timestamps_use_datetime' => true,
     ],
+
+    'IdeHelper' => [
+        'tableBehaviors' => true,
+        'arrayAsGenerics' => true,
+        'objectAsGenerics' => true,
+        'assocsAsGenerics' => true,
+    ],
 ];

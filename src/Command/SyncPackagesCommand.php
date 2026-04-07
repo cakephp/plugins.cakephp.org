@@ -127,6 +127,7 @@ class SyncPackagesCommand extends Command
         }
 
         // Remove packages that were not touched
+        /** @var \Cake\ORM\ResultSet<array-key, \App\Model\Entity\Package> $toDeletePackages */
         $toDeletePackages = $packagesTable->find()->where(['id NOT IN' => $touchedIds])->all();
         foreach ($toDeletePackages as $package) {
             if (!$packagesTable->delete($package)) {
@@ -241,7 +242,7 @@ class SyncPackagesCommand extends Command
      * @param array $meta The meta array to adjust
      * @param string $packageConstraint The meta array which contains the current version strings
      * @param string $tagPrefix The prefix which should be used for the tag
-     * @param array<string, array<int>> $versions The versions to check
+     * @param array<array-key, array<int>> $versions The versions to check
      * @return array
      */
     private function appendVersionTags(

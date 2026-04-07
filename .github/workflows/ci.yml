@@ -82,3 +82,6 @@ jobs:
 
     - name: Run PHP CodeSniffer
       run: vendor/bin/phpcs --report=checkstyle | cs2pr
+
+    - name: Run PHPStan
+      run: vendor/bin/phpstan analyse -c phpstan.neon --error-format=checkstyle | cs2pr
