@@ -113,6 +113,7 @@ class PackagesController extends AppController
                 ->withStringBody(json_encode([], JSON_THROW_ON_ERROR));
         }
 
+        /** @var \Cake\ORM\ResultSet<array-key, \App\Model\Entity\Package> $packages */
         $packages = $this->Packages
             ->find('autocomplete', search: $q)
             ->all();
@@ -174,8 +175,9 @@ class PackagesController extends AppController
     }
 
     /**
-     * @param array<string, string> $tags
-     * @return array<string, string>
+     * @param array $tags
+     * @param string $prefix
+     * @return array
      */
     protected function sortVersionTags(array $tags, string $prefix): array
     {

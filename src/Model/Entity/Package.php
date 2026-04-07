@@ -103,12 +103,12 @@ class Package extends Entity
                 continue;
             }
 
-            $majorVersion = $matches[1];
+            $majorVersion = intval($matches[1]);
             $groups[$majorVersion][] = $tag;
         }
 
-        uksort($groups, static function (string $left, string $right): int {
-            return version_compare($right, $left);
+        uksort($groups, static function (int $left, int $right): int {
+            return version_compare((string)$right, (string)$left);
         });
 
         foreach ($groups as &$groupedTags) {

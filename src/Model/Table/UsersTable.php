@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use ADmad\SocialAuth\Model\Entity\SocialProfile;
 use Cake\Datasource\EntityInterface;
 use Cake\Http\Session;
 use Cake\ORM\RulesChecker;
@@ -102,6 +103,7 @@ class UsersTable extends Table
      */
     public function getUser(EntityInterface $profile, Session $session): mixed
     {
+        assert($profile instanceof SocialProfile);
         // Make sure here that all the required fields are actually present
         if (!$profile->email) {
             throw new RuntimeException('Could not find email in social profile.');

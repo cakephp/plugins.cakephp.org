@@ -36,7 +36,7 @@ class AfterGithubIdentify implements EventListenerInterface
      */
     public function afterIdentify(EventInterface $event, User $user): void
     {
-        $token = $user->social_profile->access_token?->getToken();
+        $token = $user->social_profile->access_token->getToken();
         if (!$token) {
             return;
         }

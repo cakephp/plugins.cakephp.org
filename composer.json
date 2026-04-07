@@ -17,6 +17,7 @@
         "mobiledetect/mobiledetectlib": "^4.8.03"
     },
     "require-dev": {
+        "cakedc/cakephp-phpstan": "^4.0",
         "cakephp/bake": "^3.0.0",
         "cakephp/cakephp-codesniffer": "^5.0",
         "cakephp/debug_kit": "^5.0.0",
@@ -61,6 +62,8 @@
         "cs-fix": "phpcbf --colors -p",
         "test": "phpunit --colors=always",
         "annotate": "bin/cake annotate all",
-        "illuminate": "bin/cake illuminate code"
+        "illuminate": "bin/cake illuminate code",
+        "phpstan": "phpstan analyse",
+        "phpstan-baseline": "phpstan --generate-baseline"
     }
 }
