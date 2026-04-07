@@ -11,6 +11,7 @@
         "build": "vite build"
     },
     "dependencies": {
+        "alpinejs": "^3.15.11",
         "htmx.org": "^2.0.8",
         "slim-select": "^3.4.3",
         "swiper": "^12.1.3"

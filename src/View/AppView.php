@@ -41,5 +41,6 @@ class AppView extends View
         $this->loadHelper('Form', ['templates' => 'form-templates']);
         $this->loadHelper('Html', ['templates' => 'html-templates']);
         $this->loadHelper('Authentication.Identity');
+        $this->loadHelper('User');
     }
 }
