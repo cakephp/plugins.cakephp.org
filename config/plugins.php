@@ -37,4 +37,5 @@ return [
     'Tags',
     'ADmad/SocialAuth',
     'Authentication',
+    'IdeHelper',
 ];

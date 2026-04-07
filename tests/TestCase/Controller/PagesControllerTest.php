@@ -6,6 +6,9 @@ namespace App\Test\TestCase\Controller;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
+/**
+ * @link \App\Controller\PagesController
+ */
 class PagesControllerTest extends TestCase
 {
     use IntegrationTestTrait;

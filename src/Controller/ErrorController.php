@@ -25,6 +25,8 @@ use Cake\Event\EventInterface;
  */
 class ErrorController extends AppController
 {
+    protected ?string $defaultTable = '';
+
     /**
      * Initialization hook method.
      *

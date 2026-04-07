@@ -3,6 +3,7 @@
  * @var \App\View\AppView $this
  * @var string $message
  * @var string $url
+ * @var object $error
  */
 use Cake\Core\Configure;
 use Cake\Error\Debugger;
