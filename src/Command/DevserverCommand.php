@@ -17,8 +17,6 @@ class DevserverCommand extends Command
 {
     /**
      * The name of this command.
-     *
-     * @var string
      */
     protected string $name = 'devserver';
 
@@ -49,7 +47,7 @@ class DevserverCommand extends Command
      * @param \Cake\Console\ConsoleOptionParser $parser The parser to be defined
      * @return \Cake\Console\ConsoleOptionParser The built parser.
      */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
+    protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         return parent::buildOptionParser($parser)
             ->setDescription(static::getDescription());
@@ -102,10 +100,10 @@ class DevserverCommand extends Command
                 if (!$process->isRunning()) {
                     $poll = false;
                     $exitCode = $process->getExitCode();
-                    $io->error("$name has died with code $exitCode.");
+                    $io->error(sprintf('%s has died with code %s.', $name, $exitCode));
                     $errorOutput = trim($process->getErrorOutput());
                     if ($errorOutput !== '') {
-                        $io->error("$name | $errorOutput");
+                        $io->error(sprintf('%s | %s', $name, $errorOutput));
                     }
                     break;
                 }
@@ -115,7 +113,7 @@ class DevserverCommand extends Command
                 if (!empty($output)) {
                     foreach (explode("\n", trim($output)) as $line) {
                         if ($line !== '') {
-                            $io->info("$name | $line");
+                            $io->info(sprintf('%s | %s', $name, $line));
                         }
                     }
                 }
@@ -124,7 +122,7 @@ class DevserverCommand extends Command
                 if (!empty($error)) {
                     foreach (explode("\n", trim($error)) as $line) {
                         if ($line !== '') {
-                            $io->comment("$name | $line");
+                            $io->comment(sprintf('%s | %s', $name, $line));
                         }
                     }
                 }
@@ -135,7 +133,6 @@ class DevserverCommand extends Command
 
         $io->verbose('Start shutdown');
         foreach ($servers as $server) {
-            /** @var \Symfony\Component\Process\Process $process */
             $process = $server['process'];
             if ($process->isRunning()) {
                 $process->stop(1); // graceful timeout of 1 second

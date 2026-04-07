@@ -47,12 +47,10 @@ class SyncPackagesCommand extends Command
         '5' => [0, 1, 2, 3],
     ];
 
-    private Client $client;
+    private readonly Client $client;
 
     /**
      * The name of this command.
-     *
-     * @var string
      */
     protected string $name = 'sync_packages';
 
@@ -91,9 +89,9 @@ class SyncPackagesCommand extends Command
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return int|null|void The exit code or null for success
+     * @return void The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): void
     {
         $packagesTable = $this->fetchTable('Packages');
         $touchedIds = [];
@@ -141,7 +139,6 @@ class SyncPackagesCommand extends Command
     }
 
     /**
-     * @param string $packageName
      * @return array{package: string, description: string, repo_url: string, downloads: int, stars: int, tag_list: array, latest_stable_version: ?string, latest_stable_release_date: ?\Cake\I18n\Date, is_abandoned: bool}
      */
     private function getDataForPackage(string $packageName): array
@@ -189,9 +186,9 @@ class SyncPackagesCommand extends Command
 
         $stableVersions = array_filter(
             $versions,
-            fn(Version $version) => preg_match('/^v?\d+\.\d+(\.\d+)?$/', $version->getVersion()),
+            fn(Version $version): int|false => preg_match('/^v?\d+\.\d+(\.\d+)?$/', $version->getVersion()),
         );
-        usort($stableVersions, function ($a, $b) {
+        usort($stableVersions, function ($a, $b): int {
             return version_compare($a->getVersion(), $b->getVersion());
         });
         /** @var \Packagist\Api\Result\Package\Version|false $latestStable */
@@ -211,12 +208,11 @@ class SyncPackagesCommand extends Command
     }
 
     /**
-     * @param \Packagist\Api\Result\Package\Version|null $version
      * @return \Cake\I18n\Date|null
      */
     private function extractReleaseDate(?Version $version): ?Date
     {
-        if (!$version || $version->getTime() === '') {
+        if (!$version instanceof Version || $version->getTime() === '') {
             return null;
         }
 
@@ -268,8 +264,6 @@ class SyncPackagesCommand extends Command
     }
 
     /**
-     * @param string $leftConstraint
-     * @param string $rightConstraint
      * @return bool
      */
     private function constraintsIntersect(string $leftConstraint, string $rightConstraint): bool

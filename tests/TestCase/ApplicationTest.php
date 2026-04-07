@@ -37,7 +37,7 @@ class ApplicationTest extends TestCase
      *
      * @return void
      */
-    public function testBootstrap()
+    public function testBootstrap(): void
     {
         Configure::write('debug', false);
         $app = new Application(dirname(__DIR__, 2) . '/config');
@@ -54,7 +54,7 @@ class ApplicationTest extends TestCase
      *
      * @return void
      */
-    public function testBootstrapInDebug()
+    public function testBootstrapInDebug(): void
     {
         Configure::write('debug', true);
         $app = new Application(dirname(__DIR__, 2) . '/config');
@@ -69,7 +69,7 @@ class ApplicationTest extends TestCase
      *
      * @return void
      */
-    public function testMiddleware()
+    public function testMiddleware(): void
     {
         $app = new Application(dirname(__DIR__, 2) . '/config');
         $middleware = new MiddlewareQueue();
