@@ -110,7 +110,7 @@ class PackagesController extends AppController
         if (mb_strlen($q) < 2) {
             return $this->response
                 ->withType('application/json')
-                ->withStringBody(json_encode([]));
+                ->withStringBody(json_encode([], JSON_THROW_ON_ERROR));
         }
 
         $packages = $this->Packages
@@ -143,7 +143,7 @@ class PackagesController extends AppController
 
         return $this->response
             ->withType('application/json')
-            ->withStringBody(json_encode($results));
+            ->withStringBody(json_encode($results, JSON_THROW_ON_ERROR));
     }
 
     /**

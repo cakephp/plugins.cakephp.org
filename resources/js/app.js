@@ -112,7 +112,14 @@ Alpine.data('packageSearch', () => ({
     },
 
     selectResult(result) {
-        window.open(result.repo_url, '_blank', 'noopener,noreferrer')
+        try {
+            const url = new URL(result.repo_url)
+            if (url.protocol === 'https:') {
+                window.open(url.toString(), '_blank', 'noopener,noreferrer')
+            }
+        } catch {
+            // Invalid URL, ignore
+        }
         this.close()
     },
 

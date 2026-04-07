@@ -48,7 +48,6 @@ foreach ($phpSlugs as $slug) {
                class="grow min-w-0"
                autocomplete="off"
                role="combobox"
-               aria-expanded="false"
                :aria-expanded="open"
                aria-haspopup="listbox"
                aria-controls="autocomplete-listbox"

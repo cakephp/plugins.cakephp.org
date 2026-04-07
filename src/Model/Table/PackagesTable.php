@@ -105,6 +105,8 @@ class PackagesTable extends Table
      */
     public function findAutocomplete(SelectQuery $query, string $search, int $maxResults = 8): SelectQuery
     {
+        $escapedSearch = str_replace(['%', '_'], ['\%', '\_'], $search);
+
         return $query
             ->find('search', search: ['search' => $search])
             ->contain(['Tags' => function (SelectQuery $q) {
@@ -113,7 +115,7 @@ class PackagesTable extends Table
             ->selectAlso([
                 'name_match' => $query->expr()
                     ->case()
-                    ->when(['Packages.package LIKE' => '%' . $search . '%'])
+                    ->when(['Packages.package LIKE' => '%' . $escapedSearch . '%'])
                     ->then(1, 'integer')
                     ->else(0, 'integer'),
             ])
