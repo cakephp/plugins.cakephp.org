@@ -24,7 +24,7 @@ services:
       - HTTPS_EXPOSE=8037:80
     healthcheck:
       test: ["CMD-SHELL", "true"]
-      interval: 120s
+      interval: 5s
       timeout: 2s
       retries: 1
     depends_on:
