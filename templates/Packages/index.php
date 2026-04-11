@@ -113,9 +113,9 @@
                         'sortDesc' => '<a href="{{url}}" class="join-item btn btn-sm btn-primary gap-2" aria-sort="descending">{{text}}<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>',
                     ]);
                     ?>
-                    <?= $this->Paginator->sort('downloads', 'Downloads') ?>
-                    <?= $this->Paginator->sort('stars', 'Stars') ?>
-                    <?= $this->Paginator->sort('latest_stable_release_date', 'Latest Release') ?>
+                    <?= $this->Paginator->sort('downloads', 'Downloads', ['direction' => 'desc']) ?>
+                    <?= $this->Paginator->sort('stars', 'Stars', ['direction' => 'desc']) ?>
+                    <?= $this->Paginator->sort('latest_stable_release_date', 'Latest Release', ['direction' => 'desc']) ?>
                 </div>
             </div>
         </div>
