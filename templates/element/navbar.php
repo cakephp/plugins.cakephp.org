@@ -50,8 +50,7 @@
                                 </div>
                             </div>
                         </li>
-                        <li role="separator" class="p-0"><hr class="divider my-0" /></li>
-                        <li>
+                        <li class="border-t border-base-300 pt-1">
                             <?= $this->Html->link('Sign out', [
                                 'controller' => 'Users',
                                 'action' => 'logout',
@@ -92,8 +91,7 @@
                     <li><?= $this->Html->link('Docs', 'https://book.cakephp.org/', ['target' => '_blank', 'rel' => 'noopener']) ?></li>
                     <li><?= $this->Html->link('API', 'https://api.cakephp.org/', ['target' => '_blank', 'rel' => 'noopener']) ?></li>
                     <?php if (!$this->Identity->isLoggedIn()) : ?>
-                        <li role="separator" class="p-0"><hr class="divider my-0" /></li>
-                        <li>
+                        <li class="border-t border-base-300 pt-1">
                             <?= $this->Form->postLink(
                                 'Sign in with GitHub',
                                 [
