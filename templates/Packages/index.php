@@ -108,9 +108,9 @@
                 <div class="join">
                     <?php
                     $this->Paginator->setTemplates([
-                        'sort' => '<a href="{{url}}" class="join-item btn btn-sm">{{text}}</a>',
-                        'sortAsc' => '<a href="{{url}}" class="join-item btn btn-sm btn-primary gap-2" aria-sort="ascending">{{text}}<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg></a>',
-                        'sortDesc' => '<a href="{{url}}" class="join-item btn btn-sm btn-primary gap-2" aria-sort="descending">{{text}}<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>',
+                        'sort' => '<a rel="nofollow" href="{{url}}" class="join-item btn btn-sm">{{text}}</a>',
+                        'sortAsc' => '<a rel="nofollow" href="{{url}}" class="join-item btn btn-sm btn-primary gap-2" aria-sort="ascending">{{text}}<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg></a>',
+                        'sortDesc' => '<a rel="nofollow" href="{{url}}" class="join-item btn btn-sm btn-primary gap-2" aria-sort="descending">{{text}}<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>',
                     ]);
                     ?>
                     <?= $this->Paginator->sort('downloads', 'Downloads', ['direction' => 'desc']) ?>
@@ -142,14 +142,14 @@
     <div class="flex justify-center px-4 py-8 sm:px-6 lg:px-8">
         <?php
         $this->Paginator->setTemplates([
-            'number' => '<a href="{{url}}" class="join-item btn btn-sm sm:btn-md">{{text}}</a>',
+            'number' => '<a rel="nofollow" href="{{url}}" class="join-item btn btn-sm sm:btn-md">{{text}}</a>',
             'current' => '<button type="button" class="join-item btn btn-sm btn-active sm:btn-md" aria-current="page">{{text}}</button>',
             'ellipsis' => '<span class="join-item btn btn-sm btn-disabled sm:btn-md">{{text}}</span>',
-            'first' => '<a href="{{url}}" class="join-item btn btn-sm sm:btn-md">{{text}}</a>',
-            'last' => '<a href="{{url}}" class="join-item btn btn-sm sm:btn-md">{{text}}</a>',
-            'prevActive' => '<a rel="prev" href="{{url}}" class="join-item btn btn-sm sm:btn-md">{{text}}</a>',
+            'first' => '<a rel="nofollow" href="{{url}}" class="join-item btn btn-sm sm:btn-md">{{text}}</a>',
+            'last' => '<a rel="nofollow" href="{{url}}" class="join-item btn btn-sm sm:btn-md">{{text}}</a>',
+            'prevActive' => '<a rel="prev nofollow" href="{{url}}" class="join-item btn btn-sm sm:btn-md">{{text}}</a>',
             'prevDisabled' => '<span class="join-item btn btn-sm btn-disabled sm:btn-md">{{text}}</span>',
-            'nextActive' => '<a rel="next" href="{{url}}" class="join-item btn btn-sm sm:btn-md">{{text}}</a>',
+            'nextActive' => '<a rel="next nofollow" href="{{url}}" class="join-item btn btn-sm sm:btn-md">{{text}}</a>',
             'nextDisabled' => '<span class="join-item btn btn-sm btn-disabled sm:btn-md">{{text}}</span>',
         ]);
         ?>
