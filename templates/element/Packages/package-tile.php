@@ -163,7 +163,8 @@ $compatibilityGroups = [
                                     : array_values(array_unique(array_merge($existingSlugs, [$slug])));
                                 unset($tagQuery['page']);
                                 ?>
-                                <a href="<?= h($buildFilterUrl($currentPath, $tagQuery)) ?>"
+                                <a rel="nofollow"
+                                   href="<?= h($buildFilterUrl($currentPath, $tagQuery)) ?>"
                                    class="btn btn-xs <?= $tagIsActive ? $compatibilityGroup['dialogActiveClass'] : $compatibilityGroup['dialogInactiveClass'] ?>">
                                     <?= h($compatibilityGroup['tagLabel']($tag)) ?>
                                 </a>

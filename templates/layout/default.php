@@ -29,6 +29,9 @@ $canonicalUrl = $this->Url->build($request->getPath() ?: '/', ['fullBase' => tru
     </title>
     <?= $this->Html->meta('icon') ?>
     <link rel="canonical" href="<?= h($canonicalUrl) ?>">
+    <?php if ($request->getQueryParams() !== []) : ?>
+        <meta name="robots" content="noindex,nofollow">
+    <?php endif; ?>
 
     <?= $this->Html->css(['cake']) ?>
 

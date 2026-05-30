@@ -485,5 +485,8 @@ return [
         'arrayAsGenerics' => true,
         'objectAsGenerics' => true,
         'assocsAsGenerics' => true,
+        'genericsInParam' => true,
+        'concreteEntitiesInParam' => true,
+        'tableEntityQuery' => true,
     ],
 ];

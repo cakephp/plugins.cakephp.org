@@ -28,15 +28,14 @@ class PackagesCollection extends FilterCollection
     }
 
     /**
+     * @param string $filterName
      * @return void
      */
     protected function addTaggedSlugFilter(string $filterName): void
     {
         $this->callback($filterName, [
             'callback' => function (SelectQuery $query, array $args) use ($filterName): void {
-                $args['slug'] = $args[$filterName];
-                unset($args[$filterName]);
-                $query->find('tagged', ...$args);
+                $query->find('tagged', value: $args[$filterName]);
             },
         ]);
     }
