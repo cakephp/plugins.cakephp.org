@@ -1,4 +1,3 @@
-#ddev-generated
 services:
   phpmyadmin:
     container_name: ddev-${DDEV_SITENAME}-phpmyadmin
