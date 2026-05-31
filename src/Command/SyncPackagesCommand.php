@@ -96,8 +96,24 @@ class SyncPackagesCommand extends Command
         $packagesTable = $this->fetchTable('Packages');
         $touchedIds = [];
 
-        $data = $this->client->all(['type' => 'cakephp-plugin']);
-        foreach ($data as $package) {
+        $io->out('Fetching package list from Packagist...');
+        $packages = $this->client->all(['type' => 'cakephp-plugin']);
+        $total = count($packages);
+        $io->out(sprintf('Found <info>%d</info> packages. Processing...', $total));
+
+        $saved = 0;
+        $skipped = 0;
+        $failed = 0;
+        $i = 0;
+
+        $progress = $io->helper('Progress');
+        $progress->init(['total' => $total, 'width' => 60]);
+        $io->out('', 0);
+
+        foreach ($packages as $package) {
+            $i++;
+            $io->out(sprintf('[%d/%d] %s', $i, $total, $package), 1, ConsoleIo::VERBOSE);
+
             $data = $this->getDataForPackage($package);
 
             if (
@@ -106,6 +122,8 @@ class SyncPackagesCommand extends Command
                 $data['downloads'] < 10 ||
                 !$this->hasExplicitCakePhpDependency($data['tag_list'])
             ) {
+                $skipped++;
+                $progress->increment()->draw();
                 continue;
             }
 
@@ -116,26 +134,49 @@ class SyncPackagesCommand extends Command
 
             $entity = $packagesTable->patchEntity($entity, $data);
             if (!$packagesTable->save($entity)) {
+                $failed++;
                 Log::warning('Unable to save package', [
-                    'package' => $package->getName(),
+                    'package' => $package,
                     'errors' => $entity->getErrors(),
                 ]);
+            } else {
+                $saved++;
             }
             $touchedIds[] = $entity->id;
+            $progress->increment()->draw();
         }
 
+        $io->out('');
+        $io->out(sprintf(
+            'Sync complete. Saved: <info>%d</info>, Skipped: <comment>%d</comment>, Failed: <error>%d</error>',
+            $saved,
+            $skipped,
+            $failed,
+        ));
+
         // Remove packages that were not touched
+        $io->out('Removing stale packages...');
+        $deleted = 0;
+        $deleteFailed = 0;
         /** @var \Cake\ORM\ResultSet<array-key, \App\Model\Entity\Package> $toDeletePackages */
         $toDeletePackages = $packagesTable->find()->where(['id NOT IN' => $touchedIds])->all();
         foreach ($toDeletePackages as $package) {
             if (!$packagesTable->delete($package)) {
+                $deleteFailed++;
                 Log::warning('Unable to delete package', [
                     'package' => $package->package,
                     'id' => $package->id,
                     'errors' => $package->getErrors(),
                 ]);
+            } else {
+                $deleted++;
             }
         }
+        $io->out(sprintf(
+            'Cleanup complete. Deleted: <info>%d</info>, Failed: <error>%d</error>',
+            $deleted,
+            $deleteFailed,
+        ));
     }
 
     /**
