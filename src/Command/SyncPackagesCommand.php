@@ -11,7 +11,8 @@ use Cake\I18n\Date;
 use Cake\Log\Log;
 use Composer\Semver\Intervals;
 use Composer\Semver\VersionParser;
-use Packagist\Api\Client;
+use GuzzleHttp\Client as HttpClient;
+use Packagist\Api\Client as PackagistClient;
 use Packagist\Api\Result\Package\Version;
 use UnexpectedValueException;
 
@@ -47,7 +48,7 @@ class SyncPackagesCommand extends Command
         '5' => [0, 1, 2, 3],
     ];
 
-    private readonly Client $client;
+    private readonly PackagistClient $client;
 
     /**
      * The name of this command.
@@ -71,7 +72,7 @@ class SyncPackagesCommand extends Command
      */
     public static function getDescription(): string
     {
-        return 'Command description here.';
+        return 'Sync all packages from packagist.org marked cakephp-plugin';
     }
 
     /**
@@ -81,7 +82,23 @@ class SyncPackagesCommand extends Command
         ?CommandFactoryInterface $factory = null,
     ) {
         parent::__construct($factory);
-        $this->client = new Client();
+        $this->client = new PackagistClient($this->createPackagistHttpClient());
+    }
+
+    /**
+     * @return \GuzzleHttp\Client
+     */
+    private function createPackagistHttpClient(): HttpClient
+    {
+        return new HttpClient([
+            'headers' => [
+                'User-Agent' => env(
+                    'PACKAGIST_USER_AGENT',
+                    'plugins.cakephp.org (https://plugins.cakephp.org; mailto=security@cakephp.org)',
+                ),
+            ],
+            'version' => 2.0,
+        ]);
     }
 
     /**
@@ -106,6 +123,7 @@ class SyncPackagesCommand extends Command
         $failed = 0;
         $i = 0;
 
+        /** @var \Cake\Command\Helper\ProgressHelper $progress */
         $progress = $io->helper('Progress');
         $progress->init(['total' => $total, 'width' => 60]);
         $io->out('', 0);

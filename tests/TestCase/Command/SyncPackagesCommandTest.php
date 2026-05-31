@@ -7,6 +7,7 @@ use App\Command\SyncPackagesCommand;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\I18n\Date;
 use Cake\TestSuite\TestCase;
+use GuzzleHttp\Client;
 use Packagist\Api\Result\Package\Version;
 use ReflectionMethod;
 
@@ -46,6 +47,35 @@ class SyncPackagesCommandTest extends TestCase
 
         $this->assertEquals(new Date('2026-04-05'), $method->invoke($command, $version));
         $this->assertNull($method->invoke($command, null));
+    }
+
+    /**
+     * @return void
+     */
+    public function testCreatePackagistHttpClientUsesApiBestPractices(): void
+    {
+        $userAgent = 'plugins.cakephp.org-test (mailto=test@example.com)';
+        $previousUserAgent = $_ENV['PACKAGIST_USER_AGENT'] ?? null;
+        $_ENV['PACKAGIST_USER_AGENT'] = $userAgent;
+
+        try {
+            $command = new SyncPackagesCommand();
+            $method = new ReflectionMethod($command, 'createPackagistHttpClient');
+
+            /** @var \GuzzleHttp\Client $client */
+            $client = $method->invoke($command);
+        } finally {
+            if ($previousUserAgent === null) {
+                unset($_ENV['PACKAGIST_USER_AGENT']);
+            } else {
+                $_ENV['PACKAGIST_USER_AGENT'] = $previousUserAgent;
+            }
+        }
+
+        $this->assertInstanceOf(Client::class, $client);
+        $this->assertSame(2.0, $client->getConfig('version'));
+        $this->assertSame($userAgent, $client->getConfig('headers')['User-Agent']);
+        $this->assertStringContainsString('mailto=', $client->getConfig('headers')['User-Agent']);
     }
 
     /**
