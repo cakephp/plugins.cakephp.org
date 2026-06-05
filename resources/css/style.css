@@ -242,6 +242,10 @@
     transition: opacity 0.2s ease;
 }
 
+[data-theme="cakephp-dark"] .main-loading-overlay {
+    background: hsl(0 0% 8% / 0.78);
+}
+
 body.is-htmx-loading .main-loading-overlay,
 .main-loading-overlay.htmx-request {
     opacity: 1;
