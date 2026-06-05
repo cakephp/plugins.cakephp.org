@@ -34,11 +34,15 @@ $canonicalUrl = $this->Url->build($request->getPath() ?: '/', ['fullBase' => tru
     <?php endif; ?>
     <script>
         (function() {
-            var theme = localStorage.getItem('theme');
-            if (!theme) {
-                theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'cakephp-dark' : 'cakephp';
+            try {
+                var theme = localStorage.getItem('theme');
+                if (theme !== 'cakephp' && theme !== 'cakephp-dark') {
+                    theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'cakephp-dark' : 'cakephp';
+                }
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (_) {
+                document.documentElement.setAttribute('data-theme', 'cakephp');
             }
-            document.documentElement.setAttribute('data-theme', theme);
         })();
     </script>
 
