@@ -35,7 +35,7 @@ foreach ($phpSlugs as $slug) {
 }
 ?>
 <div class="w-full" x-data="packageSearch" @click.outside="close()" @keydown="onKeydown($event)">
-    <label class="input w-full bg-white text-base-content">
+    <label class="input w-full bg-base-100 text-base-content">
         <svg class="h-4 w-4 shrink-0 opacity-60" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
             <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none" stroke="currentColor">
                 <circle cx="11" cy="11" r="8"></circle>

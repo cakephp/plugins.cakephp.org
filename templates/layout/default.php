@@ -19,7 +19,7 @@ $request = $this->getRequest();
 $canonicalUrl = $this->Url->build($request->getPath() ?: '/', ['fullBase' => true]);
 ?>
 <!DOCTYPE html>
-<html class="bg-base-100">
+<html class="bg-base-100" data-theme="cakephp">
 <head>
     <?= $this->Html->charset() ?>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -32,6 +32,15 @@ $canonicalUrl = $this->Url->build($request->getPath() ?: '/', ['fullBase' => tru
     <?php if ($request->getQueryParams() !== []) : ?>
         <meta name="robots" content="noindex,nofollow">
     <?php endif; ?>
+    <script>
+        (function() {
+            var theme = localStorage.getItem('theme');
+            if (!theme) {
+                theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'cakephp-dark' : 'cakephp';
+            }
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
 
     <?= $this->Html->css(['cake']) ?>
 
