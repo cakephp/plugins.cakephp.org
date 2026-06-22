@@ -5,7 +5,7 @@
 @import "swiper/css/pagination";
 @import "slim-select/styles";
 @plugin "daisyui/index.js" {
-    themes: cakephp --default;
+    themes: cakephp --default, cakephp-dark;
 }
 
 @plugin "daisyui/theme" {
@@ -35,6 +35,43 @@
     --color-warning: hsl(43 96% 56%);
     --color-warning-content: hsl(43 100% 11%);
     --color-error: hsl(0 72% 46%);
+    --color-error-content: hsl(0 0% 100%);
+
+    --radius-box: 1.5rem;
+    --radius-field: 1rem;
+    --radius-selector: 1rem;
+    --border: 1px;
+    --depth: 1;
+    --noise: 0;
+}
+
+@plugin "daisyui/theme" {
+    name: "cakephp-dark";
+    default: false;
+    prefersdark: true;
+    color-scheme: dark;
+
+    --color-base-100: hsl(0 0% 10%);
+    --color-base-200: hsl(0 0% 13%);
+    --color-base-300: hsl(0 0% 17%);
+    --color-base-content: hsl(0 0% 88%);
+
+    --color-primary: var(--color-cake-red);
+    --color-primary-content: hsl(0 0% 100%);
+    --color-secondary: var(--color-cake-blue);
+    --color-secondary-content: hsl(0 0% 100%);
+    --color-accent: hsl(199 89% 58%);
+    --color-accent-content: hsl(0 0% 100%);
+    --color-neutral: hsl(0 0% 88%);
+    --color-neutral-content: hsl(0 0% 10%);
+
+    --color-info: hsl(198 93% 60%);
+    --color-info-content: hsl(198 100% 88%);
+    --color-success: hsl(158 64% 52%);
+    --color-success-content: hsl(158 100% 88%);
+    --color-warning: hsl(43 96% 56%);
+    --color-warning-content: hsl(43 100% 88%);
+    --color-error: hsl(0 72% 56%);
     --color-error-content: hsl(0 0% 100%);
 
     --radius-box: 1.5rem;
@@ -87,6 +124,98 @@
     --ss-primary-color: var(--color-cake-blue);
 }
 
+/* SlimSelect dark mode overrides */
+[data-theme="cakephp-dark"] .ss-main {
+    --ss-primary-color: #d33c44;
+    --ss-bg-color: hsl(0 0% 13%);
+    --ss-font-color: hsl(0 0% 88%);
+    --ss-border-color: hsl(0 0% 22%);
+    --ss-highlight-color: hsl(0 0% 17%);
+    --ss-spinner-color: hsl(0 0% 88%);
+}
+
+[data-theme="cakephp-dark"] [data-is-php-filter] + .ss-main {
+    --ss-primary-color: var(--color-cake-blue);
+}
+
+[data-theme="cakephp-dark"] .ss-content {
+    background: hsl(0 0% 13%);
+    border-color: hsl(0 0% 22%);
+}
+
+[data-theme="cakephp-dark"] .ss-content .ss-search input {
+    background: hsl(0 0% 17%);
+    border-color: hsl(0 0% 22%);
+    color: hsl(0 0% 88%);
+}
+
+[data-theme="cakephp-dark"] .ss-content .ss-list .ss-option {
+    color: hsl(0 0% 80%);
+}
+
+[data-theme="cakephp-dark"] .ss-content .ss-list .ss-option:hover,
+[data-theme="cakephp-dark"] .ss-content .ss-list .ss-option.ss-highlighted {
+    background: hsl(0 0% 17%);
+    color: hsl(0 0% 88%);
+}
+
+[data-theme="cakephp-dark"] .ss-content .ss-list .ss-option.ss-selected {
+    color: #d33c44;
+    background: hsl(0 0% 17%);
+}
+
+[data-theme="cakephp-dark"] .ss-content .ss-list .ss-option.ss-disabled {
+    color: hsl(0 0% 35%);
+}
+
+[data-theme="cakephp-dark"] .ss-single-selected {
+    background: hsl(0 0% 13%);
+    border-color: hsl(0 0% 22%);
+    color: hsl(0 0% 88%);
+}
+
+[data-theme="cakephp-dark"] .ss-single-selected .ss-arrow span {
+    border-color: hsl(0 0% 60%);
+}
+
+[data-theme="cakephp-dark"] .ss-multi-selected {
+    background: hsl(0 0% 13%);
+    border-color: hsl(0 0% 22%);
+    color: hsl(0 0% 88%);
+}
+
+[data-theme="cakephp-dark"] .ss-multi-selected .ss-values .ss-value {
+    background: hsl(0 0% 22%);
+    color: hsl(0 0% 88%);
+}
+
+[data-theme="cakephp-dark"] .ss-multi-selected .ss-values .ss-value .ss-value-delete svg path {
+    fill: hsl(0 0% 60%);
+}
+
+[data-theme="cakephp-dark"] .ss-content .ss-list .ss-option[aria-selected="true"] {
+    background: #d33c44;
+    color: #fff;
+}
+
+/* Dark mode: darker navbar background */
+[data-theme="cakephp-dark"] .navbar-top {
+    background-color: hsl(0 65% 12%) !important;
+    border-bottom-color: hsl(0 65% 18%) !important;
+}
+
+/* Dark mode: placeholder text contrast */
+[data-theme="cakephp-dark"] input::placeholder,
+[data-theme="cakephp-dark"] textarea::placeholder {
+    color: hsl(0 0% 50%) !important;
+    opacity: 1;
+}
+
+[data-theme="cakephp-dark"] .input input::placeholder {
+    color: hsl(0 0% 50%) !important;
+    opacity: 1;
+}
+
 .htmx-indicator {
     opacity: 1;
     transition: opacity 0.2s ease;
@@ -110,6 +239,10 @@
     visibility: hidden;
     pointer-events: none;
     transition: opacity 0.2s ease;
+}
+
+[data-theme="cakephp-dark"] .main-loading-overlay {
+    background: hsl(0 0% 8% / 0.78);
 }
 
 body.is-htmx-loading .main-loading-overlay,
