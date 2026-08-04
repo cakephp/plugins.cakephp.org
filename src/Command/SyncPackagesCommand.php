@@ -270,7 +270,7 @@ class SyncPackagesCommand extends Command
     }
 
     /**
-     * @return \Cake\I18n\Date|null
+     * Extract the release date
      */
     private function extractReleaseDate(?Version $version): ?Date
     {

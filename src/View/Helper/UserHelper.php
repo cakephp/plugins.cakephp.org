@@ -20,8 +20,6 @@ class UserHelper extends Helper
 
     /**
      * Get the username of the logged-in user.
-     *
-     * @return string|null
      */
     public function username(): ?string
     {
@@ -36,8 +34,6 @@ class UserHelper extends Helper
      * Get the display name of the logged-in user.
      *
      * Falls back to username if first/last name are not set.
-     *
-     * @return string|null
      */
     public function displayName(): ?string
     {
@@ -56,7 +52,6 @@ class UserHelper extends Helper
      * Get the GitHub avatar URL for the logged-in user.
      *
      * @param int $size Image size in pixels.
-     * @return string|null
      */
     public function avatarUrl(int $size = 80): ?string
     {
@@ -73,7 +68,6 @@ class UserHelper extends Helper
      *
      * @param int $size Image size in pixels.
      * @param array<string, mixed> $attrs Additional HTML attributes for the img tag.
-     * @return string|null
      */
     public function avatar(int $size = 80, array $attrs = []): ?string
     {

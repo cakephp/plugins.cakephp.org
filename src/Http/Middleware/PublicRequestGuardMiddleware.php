@@ -33,7 +33,7 @@ class PublicRequestGuardMiddleware implements MiddlewareInterface
 
     private const MAX_PAGE = 100;
 
-    private int $maxFilterValues;
+    private readonly int $maxFilterValues;
 
     /**
      * @param array{maxFilterValues?: int} $config Middleware configuration.

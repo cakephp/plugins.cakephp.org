@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Cake\Cache\Engine\FileEngine;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
@@ -13,7 +15,7 @@ $rateLimitEnabled = filter_var(
     FILTER_VALIDATE_BOOL,
 );
 $trustedProxyIps = array_values(array_filter(array_map(
-    'trim',
+    trim(...),
     explode(',', (string)env('TRUSTED_PROXY_IPS', '172.17.0.1')),
 )));
 

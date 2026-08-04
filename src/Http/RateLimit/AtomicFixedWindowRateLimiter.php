@@ -17,10 +17,7 @@ use RuntimeException;
  */
 class AtomicFixedWindowRateLimiter implements RateLimiterInterface
 {
-    /**
-     * @var \Psr\SimpleCache\CacheInterface&\Cake\Cache\CacheEngineInterface
-     */
-    private CacheInterface&CacheEngineInterface $cache;
+    private readonly CacheInterface&CacheEngineInterface $cache;
 
     /**
      * @param \Psr\SimpleCache\CacheInterface&\Cake\Cache\CacheEngineInterface $cache Cache backend.
