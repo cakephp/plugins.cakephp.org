@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Plugin configuration.
  *
@@ -18,15 +21,14 @@
  * @since         5.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-
- /*
-  * List of plugins to load in the form `PluginName` => `[configuration options]`.
-  *
-  * Available options:
-  * - onlyDebug: Load the plugin only in debug mode. Default false.
-  * - onlyCli: Load the plugin only in CLI mode. Default false.
-  * - optional: Do not throw an exception if the plugin is not found. Default false.
-  */
+/*
+ * List of plugins to load in the form `PluginName` => `[configuration options]`.
+ *
+ * Available options:
+ * - onlyDebug: Load the plugin only in debug mode. Default false.
+ * - onlyCli: Load the plugin only in CLI mode. Default false.
+ * - optional: Do not throw an exception if the plugin is not found. Default false.
+ */
 return [
     'DebugKit' => ['onlyDebug' => true],
     'Bake' => ['onlyCli' => true, 'optional' => true],

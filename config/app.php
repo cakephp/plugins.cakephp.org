@@ -1,11 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 use Cake\Cache\Engine\FileEngine;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Log\Engine\FileLog;
 use Cake\Mailer\Transport\MailTransport;
 use function Cake\Core\env;
+
+$rateLimitCacheUrl = env('RATE_LIMIT_CACHE_URL', env('REDIS_URL'));
+$rateLimitEnabled = filter_var(
+    env('RATE_LIMIT_ENABLED', $rateLimitCacheUrl !== null),
+    FILTER_VALIDATE_BOOL,
+);
+$trustedProxyIps = array_values(array_filter(array_map(
+    trim(...),
+    explode(',', (string)env('TRUSTED_PROXY_IPS', '172.17.0.1')),
+)));
 
 return [
     /*
@@ -113,6 +125,23 @@ return [
     ],
 
     /*
+     * Protection for the public package listing and autocomplete endpoints.
+     *
+     * RATE_LIMIT_CACHE_URL must be a redis:// DSN. The rate limiter remains
+     * disabled until that shared, atomic cache has been configured.
+     */
+    'PublicRequestProtection' => [
+        'rateLimitEnabled' => $rateLimitEnabled && is_string($rateLimitCacheUrl) && str_starts_with($rateLimitCacheUrl, 'redis://'),
+        'trustedProxyIps' => $trustedProxyIps,
+        'maxFilterValues' => max(1, (int)env('MAX_PACKAGE_FILTER_VALUES', 3)),
+        'rateLimits' => [
+            'browse' => ['limit' => 90, 'window' => 60],
+            'filtered' => ['limit' => 15, 'window' => 60],
+            'autocomplete' => ['limit' => 30, 'window' => 60],
+        ],
+    ],
+
+    /*
      * Configure the cache adapters.
      */
     'Cache' => [
@@ -121,6 +150,14 @@ return [
             'path' => CACHE,
             'url' => env('CACHE_DEFAULT_URL'),
         ],
+
+        'rate_limit' => [
+            'className' => FileEngine::class,
+            'path' => CACHE . 'rate_limit' . DS,
+            'duration' => '+1 minute',
+            'prefix' => 'plugins_rate_limit_',
+            'fallback' => false,
+        ] + ($rateLimitCacheUrl ? ['url' => $rateLimitCacheUrl] : []),
 
         /*
          * Configure the cache used for general framework caching.

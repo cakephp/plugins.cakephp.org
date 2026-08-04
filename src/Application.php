@@ -18,6 +18,8 @@ namespace App;
 
 use ADmad\SocialAuth\Middleware\SocialAuthMiddleware;
 use App\Event\AfterGithubIdentify;
+use App\Http\Middleware\PublicRequestGuardMiddleware;
+use App\Http\RateLimit\AtomicFixedWindowRateLimiter;
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
 use Authentication\AuthenticationServiceProviderInterface;
@@ -30,6 +32,7 @@ use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
 use Cake\Http\Middleware\BodyParserMiddleware;
 use Cake\Http\Middleware\CsrfProtectionMiddleware;
+use Cake\Http\Middleware\RateLimitMiddleware;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Locator\TableLocator;
@@ -43,8 +46,6 @@ use SocialConnect\OAuth2\Provider\GitHub;
  *
  * This defines the bootstrapping logic and middleware layers you
  * want to use in your application.
- *
- * @extends \Cake\Http\BaseApplication<\App\Application>
  */
 class Application extends BaseApplication implements AuthenticationServiceProviderInterface
 {
@@ -87,6 +88,8 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                 return true;
             }
         });
+        $requestProtection = (array)Configure::read('PublicRequestProtection', []);
+        $trustedProxyIps = (array)($requestProtection['trustedProxyIps'] ?? []);
 
         $middlewareQueue
             // Catch any exceptions in the lower layers,
@@ -96,6 +99,12 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             // Handle plugin/theme assets like CakePHP normally does.
             ->add(new AssetMiddleware([
                 'cacheTime' => Configure::read('Asset.cacheTime'),
+            ]))
+
+            // Reject malformed and unnecessarily expensive public search requests
+            // before routing or database work is performed.
+            ->add(new PublicRequestGuardMiddleware([
+                'maxFilterValues' => (int)($requestProtection['maxFilterValues'] ?? 3),
             ]))
 
             // Add routing middleware.
@@ -136,6 +145,54 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             ]))
 
             ->add(new AuthenticationMiddleware($this));
+
+        if ($requestProtection['rateLimitEnabled'] ?? false) {
+            $middlewareQueue->insertAfter(
+                PublicRequestGuardMiddleware::class,
+                new RateLimitMiddleware([
+                    'cache' => 'rate_limit',
+                    'headers' => true,
+                    'strategyClass' => AtomicFixedWindowRateLimiter::class,
+                    'identifierCallback' => static function (ServerRequestInterface $request) use ($trustedProxyIps): string {
+                        $remoteAddress = (string)($request->getServerParams()['REMOTE_ADDR'] ?? 'unknown');
+                        if (!in_array($remoteAddress, $trustedProxyIps, true)) {
+                            return $remoteAddress;
+                        }
+
+                        $forwardedFor = trim(explode(',', $request->getHeaderLine('X-Forwarded-For'))[0] ?? '');
+                        if (filter_var($forwardedFor, FILTER_VALIDATE_IP) === false) {
+                            return $remoteAddress;
+                        }
+
+                        return $forwardedFor;
+                    },
+                    'limiterResolver' => static function (ServerRequestInterface $request): string {
+                        $path = rtrim($request->getUri()->getPath(), '/');
+                        if (str_ends_with($path, '.json')) {
+                            $path = substr($path, 0, -5);
+                        }
+                        if ($path === '/autocomplete') {
+                            return 'autocomplete';
+                        }
+
+                        return $request->getQueryParams() === [] ? 'browse' : 'filtered';
+                    },
+                    'limiters' => $requestProtection['rateLimits'] ?? [],
+                    'skipCheck' => static function (ServerRequestInterface $request): bool {
+                        if (!in_array($request->getMethod(), ['GET', 'HEAD'], true)) {
+                            return true;
+                        }
+
+                        $path = rtrim($request->getUri()->getPath(), '/');
+                        if (str_ends_with($path, '.json')) {
+                            $path = substr($path, 0, -5);
+                        }
+
+                        return !in_array($path, ['', '/packages', '/autocomplete'], true);
+                    },
+                ]),
+            );
+        }
 
         return $middlewareQueue;
     }

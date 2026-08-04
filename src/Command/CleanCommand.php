@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use Cake\Cache\Cache;
 use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
@@ -61,5 +62,7 @@ class CleanCommand extends Command
         foreach ($allPackages as $package) {
             $packagesTable->delete($package);
         }
+
+        Cache::delete('package_filter_tags_v1');
     }
 }

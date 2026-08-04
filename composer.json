@@ -65,7 +65,7 @@
         "illuminate": "bin/cake illuminate code",
         "phpstan": "phpstan analyse",
         "phpstan-baseline": "phpstan --generate-baseline",
-        "rector-setup": "cp composer.json composer.backup && composer require --dev rector/rector:\"~2.3.1\" && mv composer.backup composer.json",
+        "rector-setup": "cp composer.json composer.backup && composer require --dev rector/rector:\"~2.6.1\" && mv composer.backup composer.json",
         "rector-check": "vendor/bin/rector process --dry-run",
         "rector-fix": "vendor/bin/rector process"
     }

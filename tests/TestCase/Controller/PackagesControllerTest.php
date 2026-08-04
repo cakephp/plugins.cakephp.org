@@ -76,6 +76,26 @@ class PackagesControllerTest extends TestCase
     /**
      * @return void
      */
+    public function testIndexRejectsUnknownQueryParameters(): void
+    {
+        $this->get('/?amp%3Bcakephp_slugs%5B%5D=cakephp-4-4');
+
+        $this->assertResponseCode(400);
+    }
+
+    /**
+     * @return void
+     */
+    public function testIndexRejectsExcessiveFilterValues(): void
+    {
+        $this->get('/?cakephp_slugs%5B%5D=cakephp-3-0&cakephp_slugs%5B%5D=cakephp-3-1&cakephp_slugs%5B%5D=cakephp-3-2&cakephp_slugs%5B%5D=cakephp-3-3');
+
+        $this->assertResponseCode(400);
+    }
+
+    /**
+     * @return void
+     */
     public function testAutocompleteReturnsJsonResults(): void
     {
         $this->configRequest(['headers' => ['Accept' => 'application/json']]);

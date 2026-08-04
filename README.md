@@ -2,6 +2,18 @@
 
 This repository contains the code responsible for https://plugins.cakephp.org
 
+## Production request protection
+
+The public package listing has query validation and an IP-based rate limit. It
+uses Dokku's `REDIS_URL` by default. `RATE_LIMIT_CACHE_URL` can override it if
+you later want a dedicated Redis database or service.
+
+The container includes the PHP Redis extension. `TRUSTED_PROXY_IPS` must list
+only proxies that overwrite `X-Forwarded-For`; for the current Dokku setup its
+default is `172.17.0.1`. Set `RATE_LIMIT_ENABLED=false` only for temporary
+maintenance or local development. The defaults are 90 listing views/minute,
+15 filtered listings/minute, and 30 autocomplete requests/minute per client IP.
+
 ## Starting local development
 
 You need [DDEV](https://docs.ddev.com/en/stable/) installed and configured on your machine.

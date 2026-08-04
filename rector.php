@@ -60,7 +60,6 @@ return RectorConfig::configure()
         CompactToVariablesRector::class,
         SplitDoubleAssignRector::class,
         ChangeOrIfContinueToMultiContinueRector::class,
-        ExplicitBoolCompareRector::class,
         NewlineBeforeNewAssignSetRector::class,
         DisallowedEmptyRuleFixerRector::class,
         RemoveUselessParamTagRector::class,
