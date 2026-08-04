@@ -12,6 +12,8 @@ RUN apt-get update \
     && apt-get update \
     && apt-get install -y --no-install-recommends nodejs \
     && docker-php-ext-install intl pdo_mysql zip \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
     && a2enmod rewrite headers expires \
     && sed -ri "s!/var/www/html!${APACHE_DOCUMENT_ROOT}!g" /etc/apache2/sites-available/000-default.conf /etc/apache2/apache2.conf \
     && rm -rf /var/lib/apt/lists/*

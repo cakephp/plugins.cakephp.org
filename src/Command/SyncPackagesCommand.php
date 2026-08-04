@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use Cake\Cache\Cache;
 use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\CommandFactoryInterface;
@@ -123,7 +124,7 @@ class SyncPackagesCommand extends Command
         $failed = 0;
         $i = 0;
 
-        /** @var \Cake\Command\Helper\ProgressHelper $progress */
+        /** @var \Cake\Console\Helper\ProgressHelper $progress */
         $progress = $io->helper('Progress');
         $progress->init(['total' => $total, 'width' => 60]);
         $io->out('', 0);
@@ -195,6 +196,8 @@ class SyncPackagesCommand extends Command
             $deleted,
             $deleteFailed,
         ));
+
+        Cache::delete('package_filter_tags_v1');
     }
 
     /**

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
@@ -87,14 +88,22 @@ class PackagesController extends AppController
         }
         $packages = $this->paginate($query, ['limit' => 21]);
 
-        $cakephpTags = $this->Packages->Tags->find('list', keyField: 'slug')
-            ->where(['slug LIKE' => 'cakephp-%'])
-            ->toArray();
-        $cakephpTags = $this->sortVersionTags($cakephpTags, 'CakePHP');
-        $phpTags = $this->Packages->Tags->find('list', keyField: 'slug')
-            ->where(['slug LIKE' => 'php-%'])
-            ->toArray();
-        $phpTags = $this->sortVersionTags($phpTags, 'PHP');
+        /** @var array{cakephp: array<string, string>, php: array<string, string>} $filterTags */
+        $filterTags = Cache::remember('package_filter_tags_v1', function (): array {
+            $cakephpTags = $this->Packages->Tags->find('list', keyField: 'slug')
+                ->where(['slug LIKE' => 'cakephp-%'])
+                ->toArray();
+            $phpTags = $this->Packages->Tags->find('list', keyField: 'slug')
+                ->where(['slug LIKE' => 'php-%'])
+                ->toArray();
+
+            return [
+                'cakephp' => $this->sortVersionTags($cakephpTags, 'CakePHP'),
+                'php' => $this->sortVersionTags($phpTags, 'PHP'),
+            ];
+        });
+        $cakephpTags = $filterTags['cakephp'];
+        $phpTags = $filterTags['php'];
 
         $this->set(compact('featuredPackages', 'packages', 'cakephpTags', 'phpTags'));
 
