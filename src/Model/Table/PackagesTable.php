@@ -113,19 +113,21 @@ class PackagesTable extends Table
     {
         $escapedSearch = str_replace(['%', '_'], ['\%', '\_'], $search);
 
+        $nameMatch = $query->expr()
+            ->case()
+            ->when(['Packages.package LIKE' => '%' . $escapedSearch . '%'])
+            ->then(1, 'integer')
+            ->else(0, 'integer');
+
         return $query
             ->find('search', search: ['search' => $search])
             ->contain(['Tags' => function (SelectQuery $q) {
                 return $q->orderByDesc('Tags.label');
             }])
             ->selectAlso([
-                'name_match' => $query->expr()
-                    ->case()
-                    ->when(['Packages.package LIKE' => '%' . $escapedSearch . '%'])
-                    ->then(1, 'integer')
-                    ->else(0, 'integer'),
+                'name_match' => $nameMatch,
             ])
-            ->orderByDesc('name_match')
+            ->orderByDesc($nameMatch)
             ->orderByDesc('Packages.downloads')
             ->limit($maxResults);
     }
