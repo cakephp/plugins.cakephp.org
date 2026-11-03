@@ -5,10 +5,14 @@ namespace App\Test\TestCase\Command;
 
 use App\Command\SyncPackagesCommand;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\Http\Client;
+use Cake\Http\Client\ClientEvent;
+use Cake\Http\Client\Response;
 use Cake\I18n\Date;
 use Cake\TestSuite\TestCase;
-use GuzzleHttp\Client;
+use Packagist\Api\Client as PackagistClient;
 use Packagist\Api\Result\Package\Version;
+use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionMethod;
 
 /**
@@ -52,17 +56,20 @@ class SyncPackagesCommandTest extends TestCase
     /**
      * @return void
      */
-    public function testCreatePackagistHttpClientUsesApiBestPractices(): void
+    #[DataProvider('userAgentProvider')]
+    public function testCreatePackagistHttpClientUsesApiBestPractices(?string $configuredUserAgent, string $userAgent): void
     {
-        $userAgent = 'plugins.cakephp.org-test (mailto=test@example.com)';
         $previousUserAgent = $_ENV['PACKAGIST_USER_AGENT'] ?? null;
-        $_ENV['PACKAGIST_USER_AGENT'] = $userAgent;
+        unset($_ENV['PACKAGIST_USER_AGENT']);
+        if ($configuredUserAgent !== null) {
+            $_ENV['PACKAGIST_USER_AGENT'] = $configuredUserAgent;
+        }
 
         try {
             $command = new SyncPackagesCommand();
             $method = new ReflectionMethod($command, 'createPackagistHttpClient');
 
-            /** @var \GuzzleHttp\Client $client */
+            /** @var \Cake\Http\Client $client */
             $client = $method->invoke($command);
         } finally {
             if ($previousUserAgent === null) {
@@ -73,9 +80,32 @@ class SyncPackagesCommandTest extends TestCase
         }
 
         $this->assertInstanceOf(Client::class, $client);
-        $this->assertSame(2.0, $client->getConfig('version'));
-        $this->assertSame($userAgent, $client->getConfig('headers')['User-Agent']);
-        $this->assertStringContainsString('mailto=', $client->getConfig('headers')['User-Agent']);
+        $client->getEventManager()->on('HttpClient.beforeSend', function (ClientEvent $event) use ($userAgent): void {
+            $request = $event->getRequest();
+            $this->assertSame('2', $request->getProtocolVersion());
+            $this->assertSame($userAgent, $request->getHeaderLine('User-Agent'));
+            $this->assertSame('https://packagist.org/packages/list.json?type=cakephp-plugin', (string)$request->getUri());
+            $event->setResult(new Response(
+                ['HTTP/2 200 OK', 'Content-Type: application/json'],
+                '{"packageNames":["cakephp/authentication"]}',
+            ));
+        });
+
+        $packagist = new PackagistClient($client);
+        $this->assertSame(['cakephp/authentication'], $packagist->all(['type' => 'cakephp-plugin']));
+    }
+
+    /**
+     * @return array<string, array{?string, string}>
+     */
+    public static function userAgentProvider(): array
+    {
+        $custom = 'plugins.cakephp.org-test (mailto=test@example.com)';
+
+        return [
+            'default' => [null, 'plugins.cakephp.org (https://plugins.cakephp.org; mailto=security@cakephp.org)'],
+            'custom' => [$custom, $custom],
+        ];
     }
 
     /**

@@ -5,7 +5,7 @@
     "type": "project",
     "homepage": "https://cakephp.org",
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.4",
         "admad/cakephp-social-auth": "^2.2",
         "cakephp/authentication": "^4.0",
         "cakephp/cakephp": "5.4.*",
@@ -13,7 +13,7 @@
         "cakephp/plugin-installer": "^2.0",
         "dereuromark/cakephp-tags": "^3.0",
         "friendsofcake/search": "^7.5",
-        "knplabs/packagist-api": "^2.1",
+        "knplabs/packagist-api": "^3.0",
         "mobiledetect/mobiledetectlib": "^4.8.03"
     },
     "require-dev": {
@@ -46,7 +46,7 @@
         "allow-plugins": {
             "cakephp/plugin-installer": true,
             "dealerdirect/phpcodesniffer-composer-installer": true,
-            "php-http/discovery": true
+            "php-http/discovery": false
         },
         "platform-check": true,
         "sort-packages": true
