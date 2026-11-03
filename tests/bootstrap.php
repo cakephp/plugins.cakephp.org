@@ -73,7 +73,7 @@ ConnectionHelper::dropTables('test');
 // use Cake\TestSuite\Fixture\SchemaLoader;
 // (new SchemaLoader())->loadSqlFiles('./tests/schema.sql', 'test');
 
-(new Migrator())->runMany([
+new Migrator()->runMany([
     [],
     ['plugin' => 'Tags'],
     ['plugin' => 'ADmad/SocialAuth'],

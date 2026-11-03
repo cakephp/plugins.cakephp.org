@@ -125,8 +125,8 @@ ini_set('intl.default_locale', Configure::read('App.defaultLocale'));
 /*
  * Register application error and exception handlers.
  */
-(new ErrorTrap(Configure::read('Error')))->register();
-(new ExceptionTrap(Configure::read('Error')))->register();
+new ErrorTrap(Configure::read('Error'))->register();
+new ExceptionTrap(Configure::read('Error'))->register();
 
 /*
  * CLI/Command specific configuration.

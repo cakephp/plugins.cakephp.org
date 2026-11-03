@@ -23,7 +23,7 @@ use UnexpectedValueException;
  */
 class SyncPackagesCommand extends Command
 {
-    private const CAKEPHP_SUBPACKAGES = [
+    private const array CAKEPHP_SUBPACKAGES = [
         'cakephp/cache',
         'cakephp/collection',
         'cakephp/console',
@@ -39,12 +39,12 @@ class SyncPackagesCommand extends Command
         'cakephp/validation',
     ];
 
-    private const PHP_VERSIONS = [
+    private const array PHP_VERSIONS = [
         '7' => [0, 1, 2, 3, 4],
         '8' => [0, 1, 2, 3, 4, 5],
     ];
 
-    private const CAKEPHP_VERSIONS = [
+    private const array CAKEPHP_VERSIONS = [
         '3' => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
         '4' => [0, 1, 2, 3, 4, 5, 6],
         '5' => [0, 1, 2, 3],
@@ -293,13 +293,7 @@ class SyncPackagesCommand extends Command
      */
     private function hasExplicitCakePhpDependency(array $tags): bool
     {
-        foreach ($tags as $tag) {
-            if (str_starts_with($tag, 'CakePHP')) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($tags, fn(string $tag): bool => str_starts_with($tag, 'CakePHP'));
     }
 
     /**
