@@ -8,11 +8,12 @@ use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\CommandFactoryInterface;
 use Cake\Console\ConsoleIo;
+use Cake\Http\Client as HttpClient;
+use Cake\Http\Client\ClientEvent;
 use Cake\I18n\Date;
 use Cake\Log\Log;
 use Composer\Semver\Intervals;
 use Composer\Semver\VersionParser;
-use GuzzleHttp\Client as HttpClient;
 use Packagist\Api\Client as PackagistClient;
 use Packagist\Api\Result\Package\Version;
 use UnexpectedValueException;
@@ -22,7 +23,7 @@ use UnexpectedValueException;
  */
 class SyncPackagesCommand extends Command
 {
-    private const CAKEPHP_SUBPACKAGES = [
+    private const array CAKEPHP_SUBPACKAGES = [
         'cakephp/cache',
         'cakephp/collection',
         'cakephp/console',
@@ -38,12 +39,12 @@ class SyncPackagesCommand extends Command
         'cakephp/validation',
     ];
 
-    private const PHP_VERSIONS = [
+    private const array PHP_VERSIONS = [
         '7' => [0, 1, 2, 3, 4],
         '8' => [0, 1, 2, 3, 4, 5],
     ];
 
-    private const CAKEPHP_VERSIONS = [
+    private const array CAKEPHP_VERSIONS = [
         '3' => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
         '4' => [0, 1, 2, 3, 4, 5, 6],
         '5' => [0, 1, 2, 3],
@@ -87,19 +88,24 @@ class SyncPackagesCommand extends Command
     }
 
     /**
-     * @return \GuzzleHttp\Client
+     * @return \Cake\Http\Client
      */
     private function createPackagistHttpClient(): HttpClient
     {
-        return new HttpClient([
-            'headers' => [
-                'User-Agent' => env(
-                    'PACKAGIST_USER_AGENT',
-                    'plugins.cakephp.org (https://plugins.cakephp.org; mailto=security@cakephp.org)',
-                ),
-            ],
-            'version' => 2.0,
-        ]);
+        $client = new HttpClient();
+        $userAgent = env(
+            'PACKAGIST_USER_AGENT',
+            'plugins.cakephp.org (https://plugins.cakephp.org; mailto=security@cakephp.org)',
+        );
+
+        // PSR-18 requests bypass the client's request creation and its default headers/protocol.
+        $client->getEventManager()->on('HttpClient.beforeSend', static function (ClientEvent $event) use ($userAgent): void {
+            $event->setRequest(
+                $event->getRequest()->withHeader('User-Agent', $userAgent)->withProtocolVersion('2'),
+            );
+        });
+
+        return $client;
     }
 
     /**
@@ -287,13 +293,7 @@ class SyncPackagesCommand extends Command
      */
     private function hasExplicitCakePhpDependency(array $tags): bool
     {
-        foreach ($tags as $tag) {
-            if (str_starts_with($tag, 'CakePHP')) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($tags, fn(string $tag): bool => str_starts_with($tag, 'CakePHP'));
     }
 
     /**

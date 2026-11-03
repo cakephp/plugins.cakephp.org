@@ -14,7 +14,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 class PublicRequestGuardMiddleware implements MiddlewareInterface
 {
-    private const INDEX_PARAMETERS = [
+    private const array INDEX_PARAMETERS = [
         'search',
         'cakephp_slugs',
         'php_slugs',
@@ -23,15 +23,15 @@ class PublicRequestGuardMiddleware implements MiddlewareInterface
         'page',
     ];
 
-    private const AUTOCOMPLETE_PARAMETERS = ['q'];
+    private const array AUTOCOMPLETE_PARAMETERS = ['q'];
 
-    private const SORT_FIELDS = ['downloads', 'stars', 'latest_stable_release_date'];
+    private const array SORT_FIELDS = ['downloads', 'stars', 'latest_stable_release_date'];
 
-    private const DIRECTIONS = ['asc', 'desc'];
+    private const array DIRECTIONS = ['asc', 'desc'];
 
-    private const MAX_SEARCH_LENGTH = 100;
+    private const int MAX_SEARCH_LENGTH = 100;
 
-    private const MAX_PAGE = 100;
+    private const int MAX_PAGE = 100;
 
     private readonly int $maxFilterValues;
 

@@ -43,13 +43,7 @@ class PackagesController extends AppController
 
         $featuredPackages = [];
         $activeFilterKeys = ['search', 'cakephp_slugs', 'php_slugs'];
-        $hasActiveFilters = false;
-        foreach ($activeFilterKeys as $key) {
-            if ($this->hasActiveFilterValue($queryParams[$key] ?? null)) {
-                $hasActiveFilters = true;
-                break;
-            }
-        }
+        $hasActiveFilters = array_any($activeFilterKeys, fn(string $key): bool => $this->hasActiveFilterValue($queryParams[$key] ?? null));
         $currentPage = max(1, (int)($queryParams['page'] ?? 1));
         $showFeaturedPackages = !$hasActiveFilters && $currentPage === 1;
         $featuredPackageNames = [];
@@ -164,13 +158,7 @@ class PackagesController extends AppController
     protected function hasActiveFilterValue(mixed $value): bool
     {
         if (is_array($value)) {
-            foreach ($value as $item) {
-                if ($this->hasActiveFilterValue($item)) {
-                    return true;
-                }
-            }
-
-            return false;
+            return array_any($value, fn($item): bool => $this->hasActiveFilterValue($item));
         }
 
         if ($value === null) {
