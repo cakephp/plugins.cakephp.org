@@ -29,23 +29,23 @@ $clearCategoryUrl = $this->Url->build([
     '?' => array_replace($catalogueQuery, ['category' => '']),
 ]);
 ?>
-<div class="directory site-width" x-data="catalogue" @click="activate($event)" @keydown.escape="closeMenu($event)"
+<div class="directory pt-4 md:pt-5 site-width" x-data="catalogue" @click="activate($event)" @keydown.escape="closeMenu($event)"
      @catalogue-version.window="selectVersion($event)" @catalogue-category.window="selectCategory($event)">
     <h1 class="sr-only"><?= __('CakePHP plugins') ?></h1>
 
     <div class="catalogue-discovery">
-        <div class="catalogue-search-row">
+        <div class="mb-4 flex items-center gap-3 md:gap-4">
             <?= $this->Form->create(null, [
                 'type' => 'get',
                 'url' => ['controller' => 'Packages', 'action' => 'index', 'plugin' => null],
-                'class' => 'catalogue-search',
+                'class' => 'min-w-0 flex-1',
                 'id' => 'catalogue-search-form',
                 'role' => 'search',
                 'aria-label' => __('Find plugins'),
                 'x-interact:submit' => '$server.sync()',
             ]) ?>
                 <label for="package-search" class="sr-only"><?= __('Search plugins') ?></label>
-                <div class="search-control" id="catalogue-search-control">
+                <div class="search-control input" id="catalogue-search-control">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <circle cx="11" cy="11" r="7"></circle>
                         <path d="m16 16 4.5 4.5" stroke-linecap="round"></path>
@@ -54,10 +54,10 @@ $clearCategoryUrl = $this->Url->build([
                            x-interact:model.live="search" maxlength="100" autocomplete="off"
                            placeholder="<?= __('Search by name or description') ?>" aria-controls="catalogue-results"
                            :aria-busy="!$server.error && ($server.dirty || $server.pending()) ? 'true' : 'false'">
-                    <span class="search-status" role="status" aria-label="<?= __('Updating results') ?>"
+                    <span class="flex shrink-0 items-center gap-2 text-sm leading-[1.6] text-muted" role="status" aria-label="<?= __('Updating results') ?>"
                           x-show="!$server.error && ($server.dirty || $server.pending())" x-cloak>
                         <span class="loading loading-spinner loading-sm" aria-hidden="true"></span>
-                        <span class="search-status-text"><?= __('Updating results…') ?></span>
+                        <span class="hidden md:inline"><?= __('Updating results…') ?></span>
                     </span>
                 </div>
                 <?php foreach (['cakephp_slugs' => $cakephpSlugs, 'php_slugs' => $phpSlugs] as $key => $slugs) : ?>
@@ -85,7 +85,7 @@ $clearCategoryUrl = $this->Url->build([
             <?php endif; ?>
         </div>
 
-        <div class="catalogue-filters">
+        <div class="grid gap-1">
             <?php
             $filters = [
                 ['name' => 'cakephp_slugs', 'label' => __('CakePHP version'), 'prefix' => 'CakePHP', 'options' => $cakephpTags, 'selected' => $cakephpSlugs],
@@ -94,7 +94,7 @@ $clearCategoryUrl = $this->Url->build([
             ?>
             <?php foreach ($filters as $filter) : ?>
                 <div class="version-filter" role="group" aria-label="<?= h($filter['label']) ?>">
-                    <span class="filter-label"><?= h($filter['label']) ?></span>
+                    <span class="text-[0.8125rem] font-semibold whitespace-nowrap"><?= h($filter['label']) ?></span>
                     <div class="version-options" tabindex="0" aria-label="<?= __('{0} choices; scroll for older versions', $filter['label']) ?>">
                         <?php foreach ($filter['options'] as $slug => $label) : ?>
                             <?php
@@ -105,7 +105,7 @@ $clearCategoryUrl = $this->Url->build([
                                 ? array_values(array_diff($filter['selected'], [$slug]))
                                 : [...$filter['selected'], $slug];
                             ?>
-                            <a class="version-pill" role="button" aria-pressed="<?= $selected ? 'true' : 'false' ?>"
+                            <a class="version-pill badge badge-outline" role="button" aria-pressed="<?= $selected ? 'true' : 'false' ?>"
                                aria-label="<?= h($filter['prefix'] . ' ' . $version) ?>"
                                href="<?= $this->Url->build(['controller' => 'Packages', 'action' => 'index', 'plugin' => null, '?' => $filterQuery]) ?>"
                                @keydown.space.prevent="$el.click()"
@@ -128,9 +128,9 @@ $clearCategoryUrl = $this->Url->build([
     <section class="catalogue-panel" id="packages-index-content" aria-label="<?= __('Plugin directory') ?>">
         <div class="catalogue-toolbar">
             <div class="catalogue-summary">
-                <h2 aria-live="polite"><span class="result-count"><?= $this->Paginator->counter('{{count}}') ?></span> <?= __('plugins') ?></h2>
+                <h2 aria-live="polite"><span class="result-count badge badge-soft badge-primary"><?= $this->Paginator->counter('{{count}}') ?></span> <?= __('plugins') ?></h2>
                 <?php if ($category !== '') : ?>
-                    <a class="selected-category" href="<?= h($clearCategoryUrl) ?>" data-category-slug=""
+                    <a class="selected-category badge badge-outline" href="<?= h($clearCategoryUrl) ?>" data-category-slug=""
                        aria-label="<?= h(__('Remove category filter: {0}', $categoryOptions[$category]['name'])) ?>">
                         <?= h($categoryOptions[$category]['name']) ?>
                         <span aria-hidden="true">×</span>
@@ -139,22 +139,22 @@ $clearCategoryUrl = $this->Url->build([
             </div>
             <div class="catalogue-controls">
                 <?php $awesomeQuery = array_replace($catalogueQuery, ['awesome' => $awesomeOnly ? '0' : '1']); ?>
-                <a class="curation-toggle" role="button" aria-pressed="<?= $awesomeOnly ? 'true' : 'false' ?>"
+                <a class="curation-toggle btn btn-outline" role="button" aria-pressed="<?= $awesomeOnly ? 'true' : 'false' ?>"
                    href="<?= $this->Url->build(['plugin' => null, 'controller' => 'Packages', 'action' => 'index', '?' => $awesomeQuery]) ?>"
                    data-toggle-awesome @keydown.space.prevent="$el.click()">
                     <?= $this->element('awesome_logo') ?>
                     <?= __('Awesome only') ?>
                 </a>
                 <div class="sort-control">
-                    <span class="muted"><?= __('Sort by') ?></span>
-                    <details class="sort-menu">
+                    <span class="text-muted"><?= __('Sort by') ?></span>
+                    <details class="sort-menu dropdown dropdown-end">
                         <summary aria-label="<?= __('Sort plugins') ?>">
                             <?= h($sortLabel) ?>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                                 <path d="m4 6 4 4 4-4" stroke-linecap="round" stroke-linejoin="round"></path>
                             </svg>
                         </summary>
-                        <div class="sort-options">
+                        <div class="sort-options dropdown-content">
                             <?= $this->Paginator->sort('latest_stable_release_date', __('Latest release'), ['direction' => 'desc']) ?>
                             <?= $this->Paginator->sort('downloads', __('Downloads'), ['direction' => 'desc']) ?>
                             <?= $this->Paginator->sort('stars', __('Stars'), ['direction' => 'desc']) ?>
@@ -166,7 +166,7 @@ $clearCategoryUrl = $this->Url->build([
 
         <div class="catalogue-error" role="alert" x-show="$server.error" x-cloak>
             <p><?= __('We couldn’t update the results. Your current list is still here. Please try again.') ?></p>
-            <button class="action-link" type="button" @click="$server.sync()" :disabled="$server.pending()">
+            <button class="action-link btn btn-outline" type="button" @click="$server.sync()" :disabled="$server.pending()">
                 <?= __('Retry') ?>
             </button>
         </div>
@@ -176,7 +176,7 @@ $clearCategoryUrl = $this->Url->build([
                 <div class="empty-results">
                     <h3><?= __('No plugins found') ?></h3>
                     <p><?= __('Try another search or reset your filters.') ?></p>
-                    <a class="action-link" href="<?= h($clearUrl) ?>" data-clear-catalogue><?= __('Clear all') ?></a>
+                    <a class="action-link btn btn-outline" href="<?= h($clearUrl) ?>" data-clear-catalogue><?= __('Clear all') ?></a>
                 </div>
             <?php else : ?>
                 <?php foreach ($packages as $package) : ?>
@@ -188,11 +188,11 @@ $clearCategoryUrl = $this->Url->build([
         <?php if (count($packages) > 0) : ?>
             <div class="catalogue-pagination">
                 <p><?= $this->Paginator->counter(__('Showing {{start}}–{{end}} of {{count}}')) ?></p>
-                <nav class="page-links" aria-label="<?= __('Results pages') ?>">
+                <nav class="flex flex-wrap items-center gap-1.5" aria-label="<?= __('Results pages') ?>">
                     <?php if ($this->Paginator->hasPrev()) : ?>
                         <?= $this->Paginator->first(__('First')) ?>
                     <?php else : ?>
-                        <span class="page-link" aria-disabled="true"><?= __('First') ?></span>
+                        <span class="page-link btn btn-outline" aria-disabled="true"><?= __('First') ?></span>
                     <?php endif; ?>
                     <?= $this->Paginator->prev(__('Previous')) ?>
                     <?= $this->Paginator->numbers(['modulus' => 2]) ?>
@@ -200,7 +200,7 @@ $clearCategoryUrl = $this->Url->build([
                     <?php if ($this->Paginator->hasNext()) : ?>
                         <?= $this->Paginator->last(__('Last')) ?>
                     <?php else : ?>
-                        <span class="page-link" aria-disabled="true"><?= __('Last') ?></span>
+                        <span class="page-link btn btn-outline" aria-disabled="true"><?= __('Last') ?></span>
                     <?php endif; ?>
                 </nav>
             </div>

@@ -28,14 +28,14 @@ $loginUrl = [
             <?php endforeach; ?>
         </nav>
         <?php if (!$minimal) : ?>
-            <div class="header-actions">
+            <div class="ml-auto flex items-center gap-2.5">
                 <?= $this->Interact->render('ThemeToggle', key: 'theme-toggle') ?>
                 <?php if ($loggedIn) : ?>
-                    <details class="navigation-menu desktop-account">
-                        <summary class="icon-button" aria-label="<?= __('User menu') ?>">
-                            <?= $this->User->avatar(80, ['class' => 'user-avatar']) ?>
+                    <details class="dropdown dropdown-end relative hidden md:block">
+                        <summary class="icon-button btn btn-square btn-ghost" aria-label="<?= __('User menu') ?>">
+                            <?= $this->User->avatar(80, ['class' => 'size-8 rounded-full object-cover']) ?>
                         </summary>
-                        <div class="menu-panel">
+                        <div class="menu-panel dropdown-content">
                             <p class="menu-identity">
                                 <?= h($this->User->displayName()) ?>
                                 <span>@<?= h($this->User->username()) ?></span>
@@ -44,21 +44,21 @@ $loginUrl = [
                         </div>
                     </details>
                 <?php else : ?>
-                    <div class="desktop-account">
+                    <div class="hidden md:block">
                         <?= $this->Form->postLink(
                             $this->element('github_icon') . '<span>' . __('Sign in') . '</span>',
                             $loginUrl,
-                            ['class' => 'action-link', 'escape' => false],
+                            ['class' => 'action-link btn btn-outline', 'escape' => false],
                         ) ?>
                     </div>
                 <?php endif; ?>
-                <details class="navigation-menu mobile-menu">
-                    <summary class="icon-button" aria-label="<?= __('Open menu') ?>">
+                <details class="dropdown dropdown-end relative mobile-menu block md:hidden">
+                    <summary class="icon-button btn btn-square btn-ghost" aria-label="<?= __('Open menu') ?>">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"></path>
                         </svg>
                     </summary>
-                    <nav class="menu-panel" aria-label="<?= __('Mobile navigation') ?>">
+                    <nav class="menu-panel dropdown-content" aria-label="<?= __('Mobile navigation') ?>">
                         <?php foreach ($links as $link) : ?>
                             <?= $this->Html->link($link['label'], $link['url'], [
                                 'class' => 'nav-link',
@@ -70,7 +70,7 @@ $loginUrl = [
                             <p class="menu-identity"><?= h($this->User->displayName()) ?></p>
                             <?= $this->Html->link(__('Sign out'), ['controller' => 'Users', 'action' => 'logout'], ['class' => 'nav-link']) ?>
                         <?php else : ?>
-                            <?= $this->Form->postLink(__('Sign in with GitHub'), $loginUrl, ['class' => 'action-link']) ?>
+                            <?= $this->Form->postLink(__('Sign in with GitHub'), $loginUrl, ['class' => 'action-link btn btn-outline']) ?>
                         <?php endif; ?>
                     </nav>
                 </details>

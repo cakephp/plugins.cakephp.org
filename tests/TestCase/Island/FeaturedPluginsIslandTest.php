@@ -63,6 +63,6 @@ class FeaturedPluginsIslandTest extends TestCase
             'vendor/package-01' => ['logo' => null],
         ]);
         $island = $this->testIsland('FeaturedPlugins');
-        $this->assertSame(3, substr_count($island->result()->html, 'class="featured-item"'));
+        $this->assertSame(3, substr_count($island->result()->html, 'data-plugin-tone='));
     }
 }

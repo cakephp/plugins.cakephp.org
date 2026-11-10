@@ -20,7 +20,7 @@
                     [$vendor, $name] = array_pad(explode('/', $package->package, 2), 2, '');
                     $tone = ['rose', 'violet', 'amber'][hexdec(substr(hash('sha256', $package->package), 0, 4)) % 3];
                     ?>
-                    <article class="featured-item" data-plugin-tone="<?= $tone ?>">
+                    <article class="featured-item group" data-plugin-tone="<?= $tone ?>">
                         <a class="featured-card" href="<?= $this->Url->build(['_name' => 'plugin:view', 'id' => $package->id]) ?>"
                            aria-label="<?= __('View {0} details', h($package->package)) ?>"
                            data-open-plugin data-plugin-id="<?= (int)$package->id ?>" data-plugin-name="<?= h($package->package) ?>">
@@ -28,10 +28,10 @@
                                 'packageName' => $package->package,
                                 'logo' => $featuredMetadata[$package->package]['logo'] ?? null,
                             ]) ?>
-                            <div class="featured-card-content">
-                                <div class="featured-card-top">
+                            <div class="min-w-0">
+                                <div class="flex items-start justify-between gap-2.5">
                                     <div class="featured-card-name">
-                                        <span class="featured-vendor"><?= h($vendor) ?></span>
+                                        <span class="mb-0.5 block text-xs leading-[1.6] text-muted"><?= h($vendor) ?></span>
                                         <h3><?= h($name ?: $vendor) ?></h3>
                                         <?= $this->element('Packages/awesome_badge', compact('package')) ?>
                                     </div>
@@ -40,14 +40,14 @@
                                 <p class="featured-description"><?= h($package->description ?: __('No description available.')) ?></p>
                             </div>
                             <div class="featured-card-footer">
-                                <span class="featured-downloads">
+                                <span class="inline-flex items-center gap-1.5">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
                                         <path d="M12 3v12m-4-4 4 4 4-4M4 16v5h16v-5" stroke-linecap="round" stroke-linejoin="round"></path>
                                     </svg>
                                     <?= __('{0} downloads', $this->Number->format($package->downloads)) ?>
                                 </span>
                                 <?php if ($package->latest_stable_version) : ?>
-                                    <span class="featured-release" title="<?= __('Latest stable release') ?>"><?= h($package->latest_stable_version) ?></span>
+                                    <span class="featured-release badge badge-outline" title="<?= __('Latest stable release') ?>"><?= h($package->latest_stable_version) ?></span>
                                 <?php endif; ?>
                             </div>
                         </a>

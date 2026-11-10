@@ -7,7 +7,7 @@ $dark = $this->getRequest()->getCookie('theme') === 'cakephp-dark';
 <button
     type="button"
     id="theme-toggle"
-    class="icon-button theme-toggle"
+    class="icon-button btn btn-square btn-ghost theme-toggle"
     aria-label="<?= __('Toggle theme') ?>"
     aria-pressed="<?= $dark ? 'true' : 'false' ?>"
     :aria-pressed="$store.theme.dark"

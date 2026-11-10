@@ -14,10 +14,10 @@ $groups = [
 ?>
 <article class="plugin-details" id="plugin-details-<?= (int)$package->id ?>">
     <header class="plugin-details-heading">
-        <p class="plugin-vendor"><?= h($vendor) ?> /</p>
+        <p class="mb-1 text-[0.9375rem] font-medium text-muted wrap-anywhere"><?= h($vendor) ?> /</p>
         <h2><?= h($name ?: $vendor) ?></h2>
         <?= $this->element('Packages/awesome_badge', compact('package')) ?>
-        <p class="plugin-details-description"><?= h($package->description ?: __('No description available.')) ?></p>
+        <p class="mt-4 text-base leading-[1.7] text-base-content wrap-anywhere"><?= h($package->description ?: __('No description available.')) ?></p>
         <div class="plugin-resource-links">
             <a class="btn btn-sm btn-primary" href="<?= h($package->repo_url) ?>" target="_blank" rel="noopener noreferrer">
                 <?= $this->element('github_icon') ?>
@@ -59,7 +59,8 @@ $groups = [
             <h3><?= __('Categories') ?></h3>
             <div class="plugin-category-links">
                 <?php foreach ($package->categories as $category) : ?>
-                    <a class="category-label" href="<?= $this->Url->build(['plugin' => null, 'controller' => 'Packages', 'action' => 'index', '?' => ['category' => $category->slug]]) ?>"
+                    <a class="category-label badge badge-outline"
+                       href="<?= $this->Url->build(['plugin' => null, 'controller' => 'Packages', 'action' => 'index', '?' => ['category' => $category->slug]]) ?>"
                        data-filter-package-category data-category-slug="<?= h($category->slug) ?>"><?= h($category->name) ?></a>
                 <?php endforeach; ?>
             </div>
@@ -91,14 +92,14 @@ $groups = [
         <?php foreach ($groups as $group) : ?>
             <div class="plugin-version-group">
                 <h4><?= h($group['label']) ?></h4>
-                <div class="compatibility-versions" role="group" aria-label="<?= __('{0} compatibility', $group['label']) ?>">
+                <div class="flex flex-wrap gap-1.5 p-0.5" role="group" aria-label="<?= __('{0} compatibility', $group['label']) ?>">
                     <?php if ($group['tags'] === []) : ?>
                         <span class="plugin-section-hint"><?= __('Not listed') ?></span>
                     <?php endif; ?>
                     <?php foreach ($group['tags'] as $tags) : ?>
                         <?php foreach ($tags as $tag) : ?>
                             <?php $version = str_replace($group['label'] . ': ', '', $tag->label); ?>
-                            <a class="version-pill"
+                            <a class="version-pill badge badge-outline"
                                aria-label="<?= h($group['label'] . ' ' . $version) ?>"
                                href="<?= $this->Url->build(['controller' => 'Packages', 'action' => 'index', 'plugin' => null, '?' => [$group['query'] => [$tag->slug]]]) ?>"
                                data-filter-package-version data-version-group="<?= h($group['query']) ?>" data-version-slug="<?= h($tag->slug) ?>">

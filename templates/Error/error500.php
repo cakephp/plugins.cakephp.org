@@ -36,5 +36,5 @@ endif;
         <strong><?= __d('cake', 'Error') ?>: </strong>
         <?= h($message) ?>
     </p>
-    <?= $this->Html->link(__('Browse plugins'), '/', ['class' => 'action-link']) ?>
+    <?= $this->Html->link(__('Browse plugins'), '/', ['class' => 'action-link btn btn-outline']) ?>
 </div>
