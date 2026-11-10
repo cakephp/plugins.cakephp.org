@@ -10,7 +10,7 @@ use App\Service\AwesomeListImporter;
  */
 $allCategoriesSelected = $category === '';
 ?>
-<details class="category-browser" id="catalogue-categories" x-ref="categoryBrowser" @toggle="categoriesToggled($event)">
+<details class="category-browser group" id="catalogue-categories" x-ref="categoryBrowser" @toggle="categoriesToggled($event)">
     <summary>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
             <rect x="3" y="3" width="5" height="5" rx="1"></rect>
@@ -23,21 +23,22 @@ $allCategoriesSelected = $category === '';
             <path d="m4 6 4 4 4-4" stroke-linecap="round" stroke-linejoin="round"></path>
         </svg>
     </summary>
-    <div class="category-browser-content">
-        <div class="category-browser-heading">
-            <p class="category-source">
+    <div class="pt-3">
+        <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
+            <p class="text-xs leading-[1.6] text-muted">
                 <?= __('Categories from') ?>
                 <a href="<?= AwesomeListImporter::SOURCE_URL ?>" target="_blank" rel="noopener noreferrer">Awesome CakePHP</a>.
             </p>
             <label class="category-search" x-cloak>
                 <span class="sr-only"><?= __('Find a category') ?></span>
-                <input type="search" x-model="categorySearch" placeholder="<?= __('Find a category') ?>" autocomplete="off" aria-controls="category-grid">
+                <input class="input input-sm" type="search" x-model="categorySearch" placeholder="<?= __('Find a category') ?>"
+                       autocomplete="off" aria-controls="category-grid">
             </label>
         </div>
-        <div class="category-grid" id="category-grid" x-ref="categoryGrid" role="group" aria-label="<?= __('Plugin categories') ?>">
+        <div class="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4" id="category-grid" x-ref="categoryGrid" role="group" aria-label="<?= __('Plugin categories') ?>">
             <a class="category-choice" href="<?= h($clearCategoryUrl) ?>" data-category-slug="" data-category-name="<?= __('All categories') ?>"
                x-show="matchesCategory($el.dataset.categoryName)" <?= $allCategoriesSelected ? 'aria-current="true"' : '' ?>>
-                <span class="category-choice-label"><?= __('All categories') ?></span>
+                <span class="wrap-anywhere"><?= __('All categories') ?></span>
                 <span aria-hidden="true">→</span>
             </a>
             <?php foreach ($categoryOptions as $slug => $option) : ?>
@@ -49,11 +50,11 @@ $allCategoriesSelected = $category === '';
                    data-category-slug="<?= h($slug) ?>" data-category-name="<?= h($option['name']) ?>"
                    aria-label="<?= h(__n('{0}, {1} plugin', '{0}, {1} plugins', $option['count'], $option['name'], $option['count'])) ?>"
                    title="<?= __('Total plugins in this category') ?>" x-show="matchesCategory($el.dataset.categoryName)" <?= $categorySelected ? 'aria-current="true"' : '' ?>>
-                    <span class="category-choice-label"><?= h($option['name']) ?></span>
-                    <span class="category-choice-count" aria-hidden="true"><?= $this->Number->format($option['count']) ?></span>
+                    <span class="wrap-anywhere"><?= h($option['name']) ?></span>
+                    <span class="shrink-0 text-xs leading-normal text-muted tabular-nums" aria-hidden="true"><?= $this->Number->format($option['count']) ?></span>
                 </a>
             <?php endforeach; ?>
         </div>
-        <p class="category-no-matches" role="status" x-show="categorySearch && !hasCategoryMatches()" x-cloak><?= __('No matching categories. Try another name.') ?></p>
+        <p class="mt-4 text-sm leading-[1.6] text-muted" role="status" x-show="categorySearch && !hasCategoryMatches()" x-cloak><?= __('No matching categories. Try another name.') ?></p>
     </div>
 </details>

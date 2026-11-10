@@ -25,5 +25,5 @@ endif;
         <strong><?= __d('cake', 'Error') ?>: </strong>
         <?= __d('cake', 'The requested address {0} was not found on this server.', "<strong>'" . h($url) . "'</strong>") ?>
     </p>
-    <?= $this->Html->link(__('Browse plugins'), '/', ['class' => 'action-link']) ?>
+    <?= $this->Html->link(__('Browse plugins'), '/', ['class' => 'action-link btn btn-outline']) ?>
 </div>

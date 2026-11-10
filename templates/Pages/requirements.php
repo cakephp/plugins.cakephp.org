@@ -26,7 +26,7 @@ $this->assign('title', 'Listing Requirements');
     <section class="docs-section">
         <h2><?= __('What does not qualify') ?></h2>
         <p>A generic library depending only on PSR interfaces does not qualify. A README that mentions CakePHP support is not enough without a Composer dependency.</p>
-        <p class="muted">Only <?= $this->element('code_chip', ['text' => 'require']) ?> dependencies are considered for compatibility tags.</p>
+        <p class="text-muted">Only <?= $this->element('code_chip', ['text' => 'require']) ?> dependencies are considered for compatibility tags.</p>
     </section>
     <section class="docs-section">
         <h2><?= __('Composer examples') ?></h2>
@@ -53,5 +53,5 @@ $this->assign('title', 'Listing Requirements');
             </div>
         </div>
     </section>
-    <?= $this->Html->link(__('Browse plugins'), '/', ['class' => 'action-link', 'x-interact:navigate' => '']) ?>
+    <?= $this->Html->link(__('Browse plugins'), '/', ['class' => 'action-link btn btn-outline', 'x-interact:navigate' => '']) ?>
 </section>

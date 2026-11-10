@@ -52,7 +52,7 @@ $canonicalUrl = $this->Url->build($request->getPath() ?: '/', ['fullBase' => tru
 <body>
     <a class="skip-link" href="#main-content"><?= __('Skip to content') ?></a>
     <?= $this->element('navbar') ?>
-    <div class="page-loading-track"
+    <div class="pointer-events-none fixed inset-x-0 top-0 z-[100] h-1 overflow-hidden"
          x-data x-show="$store.interactNavigation.loading()" x-cloak
          role="progressbar" aria-label="<?= __('Loading page') ?>">
         <div class="page-loading-bar"></div>
