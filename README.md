@@ -4,8 +4,19 @@ This repository contains the code responsible for https://plugins.cakephp.org
 
 ## Request handling
 
-The application uses CakePHP's `RateLimitMiddleware` globally with its default
-settings. Interactive regions use Cake Interact's shipped runtime.
+Public catalogue requests use CakePHP's `RateLimitMiddleware` with the existing
+atomic Redis counter. `RATE_LIMIT_CACHE_URL` selects the cache, defaulting to
+Dokku's `REDIS_URL`. Rate limiting is enabled when a Redis URL is configured;
+`RATE_LIMIT_ENABLED=false` disables it for local development or maintenance.
+The production container includes the PHP Redis extension.
+
+The limits are 90 browsing requests, 15 filtered listings and 30 Interact updates
+per minute per client IP. Direct plugin detail pages use the browsing limit.
+`TRUSTED_PROXY_IPS` lists proxies allowed to supply `X-Forwarded-For` and defaults
+to `172.17.0.1` for the Dokku setup. Only include proxies that overwrite that header.
+
+Interactive regions use Cake Interact's shipped runtime. Catalogue input
+validation remains in the islands and the framework paginator.
 
 ## Starting local development
 

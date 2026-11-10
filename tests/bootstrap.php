@@ -35,6 +35,8 @@ require dirname(__DIR__) . '/config/bootstrap.php';
 
 // PHP rendering tests use dev-server tags; browser tests exercise the built manifest.
 Configure::write('CakeVite.forceProductionMode', false);
+// ApplicationTest exercises throttling with an isolated cache.
+Configure::write('PublicRequestProtection.rateLimitEnabled', false);
 
 // Fixture-derived options must never populate the development application's cache.
 Cache::drop('default');

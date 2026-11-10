@@ -18,6 +18,7 @@ namespace App;
 
 use ADmad\SocialAuth\Middleware\SocialAuthMiddleware;
 use App\Event\AfterGithubIdentify;
+use App\Http\RateLimit\AtomicFixedWindowRateLimiter;
 use App\Middleware\ThemeCookieMiddleware;
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
@@ -89,8 +90,6 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                 'cacheTime' => Configure::read('Asset.cacheTime'),
             ]))
 
-            ->add(new RateLimitMiddleware())
-
             // Add routing middleware.
             // If you have a large number of routes connected, turning on routes
             // caching in production could improve performance.
@@ -131,6 +130,52 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             ]))
 
             ->add(new AuthenticationMiddleware($this));
+
+        $requestProtection = (array)Configure::read('PublicRequestProtection', []);
+        $trustedProxyIps = (array)($requestProtection['trustedProxyIps'] ?? []);
+        if ($requestProtection['rateLimitEnabled'] ?? false) {
+            $middlewareQueue->insertAfter(
+                AssetMiddleware::class,
+                new RateLimitMiddleware([
+                    'cache' => 'rate_limit',
+                    'headers' => true,
+                    'strategyClass' => AtomicFixedWindowRateLimiter::class,
+                    'identifierCallback' => static function (ServerRequestInterface $request) use ($trustedProxyIps): string {
+                        $remoteAddress = (string)($request->getServerParams()['REMOTE_ADDR'] ?? 'unknown');
+                        if (!in_array($remoteAddress, $trustedProxyIps, true)) {
+                            return $remoteAddress;
+                        }
+
+                        $forwardedFor = trim(explode(',', $request->getHeaderLine('X-Forwarded-For'))[0] ?? '');
+                        if (filter_var($forwardedFor, FILTER_VALIDATE_IP) === false) {
+                            return $remoteAddress;
+                        }
+
+                        return $forwardedFor;
+                    },
+                    'limiterResolver' => static function (ServerRequestInterface $request): string {
+                        if ($request->getMethod() === 'POST') {
+                            return 'interact';
+                        }
+
+                        return $request->getQueryParams() === [] ? 'browse' : 'filtered';
+                    },
+                    'limiters' => $requestProtection['rateLimits'] ?? [],
+                    'skipCheck' => static function (ServerRequestInterface $request): bool {
+                        $path = rtrim($request->getUri()->getPath(), '/');
+                        if (str_ends_with($path, '.json')) {
+                            $path = substr($path, 0, -5);
+                        }
+                        if ($path === '/_interact/update') {
+                            return $request->getMethod() !== 'POST';
+                        }
+
+                        return !in_array($request->getMethod(), ['GET', 'HEAD'], true)
+                            || !($path === '' || $path === '/packages' || preg_match('#^/plugins/[0-9]+$#', $path));
+                    },
+                ]),
+            );
+        }
 
         return $middlewareQueue;
     }

@@ -15,6 +15,7 @@ export default defineConfig({
             APP_NAME: 'plugins-browser-tests',
             DATABASE_URL: `sqlite://127.0.0.1/${database}`,
             DEBUG: 'false',
+            RATE_LIMIT_ENABLED: 'false',
             CACHE_DEFAULT_URL: 'array://',
             CACHE_MODEL_URL: 'array://',
             CACHE_PERSISTENT_URL: 'array://',
