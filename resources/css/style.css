@@ -224,7 +224,8 @@ a.category-choice[aria-current="true"] { color: var(--color-primary); border-col
 .catalogue-summary { display: flex; align-items: center; flex-wrap: wrap; gap: 0.625rem; min-width: 0; }
 a.selected-category { display: inline-flex; align-items: center; gap: 0.5rem; max-width: 100%; padding: 0.25rem 0.5rem; border: 1px solid var(--color-base-300); border-radius: 0.375rem; color: var(--color-primary); font-size: 0.75rem; overflow-wrap: anywhere; }
 .selected-category span { font-size: 1rem; }
-.curation-toggle { display: inline-flex; align-items: center; justify-content: center; min-height: 2.5rem; padding: 0.375rem 0.625rem; border: 1px solid var(--color-control); border-radius: 0.5rem; font-size: 0.8125rem; white-space: nowrap; }
+.curation-toggle { display: inline-flex; align-items: center; justify-content: center; gap: 0.375rem; min-height: 2.5rem; padding: 0.375rem 0.625rem; border: 1px solid var(--color-control); border-radius: 0.5rem; font-size: 0.8125rem; white-space: nowrap; }
+.awesome-toggle-logo { width: 1.5rem; height: 0.875rem; flex-shrink: 0; }
 a.curation-toggle { color: var(--color-base-content); }
 a.curation-toggle[aria-pressed="true"] { color: var(--color-primary-content); background: var(--color-primary); border-color: var(--color-primary); }
 .catalogue-panel { border: 1px solid var(--color-base-300); border-radius: 1rem; background: var(--color-base-100); }

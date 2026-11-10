@@ -141,7 +141,10 @@ $clearCategoryUrl = $this->Url->build([
                 <?php $awesomeQuery = array_replace($catalogueQuery, ['awesome' => $awesomeOnly ? '0' : '1']); ?>
                 <a class="curation-toggle" role="button" aria-pressed="<?= $awesomeOnly ? 'true' : 'false' ?>"
                    href="<?= $this->Url->build(['plugin' => null, 'controller' => 'Packages', 'action' => 'index', '?' => $awesomeQuery]) ?>"
-                   data-toggle-awesome @keydown.space.prevent="$el.click()"><?= __('Awesome only') ?></a>
+                   data-toggle-awesome @keydown.space.prevent="$el.click()">
+                    <?= $this->element('awesome_logo') ?>
+                    <?= __('Awesome only') ?>
+                </a>
                 <div class="sort-control">
                     <span class="muted"><?= __('Sort by') ?></span>
                     <details class="sort-menu">
