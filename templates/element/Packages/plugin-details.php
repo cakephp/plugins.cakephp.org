@@ -1,4 +1,6 @@
 <?php
+use App\Service\AwesomeListImporter;
+
 /**
  * @var \App\View\AppView|\App\View\IslandTemplateView $this
  * @var \App\Model\Entity\Package $package
@@ -14,6 +16,7 @@ $groups = [
     <header class="plugin-details-heading">
         <p class="plugin-vendor"><?= h($vendor) ?> /</p>
         <h2><?= h($name ?: $vendor) ?></h2>
+        <?= $this->element('Packages/awesome_badge', compact('package')) ?>
         <p class="plugin-details-description"><?= h($package->description ?: __('No description available.')) ?></p>
         <div class="plugin-resource-links">
             <a class="btn btn-sm btn-primary" href="<?= h($package->repo_url) ?>" target="_blank" rel="noopener noreferrer">
@@ -51,6 +54,21 @@ $groups = [
             <dd><?= $this->Number->format($package->stars) ?></dd>
         </div>
     </dl>
+    <?php if ($package->categories) : ?>
+        <section class="plugin-details-section plugin-category-section" aria-label="<?= __('Categories') ?>">
+            <h3><?= __('Categories') ?></h3>
+            <div class="plugin-category-links">
+                <?php foreach ($package->categories as $category) : ?>
+                    <a class="category-label" href="<?= $this->Url->build(['plugin' => null, 'controller' => 'Packages', 'action' => 'index', '?' => ['category' => $category->slug]]) ?>"
+                       data-filter-package-category data-category-slug="<?= h($category->slug) ?>"><?= h($category->name) ?></a>
+                <?php endforeach; ?>
+            </div>
+            <p class="plugin-section-hint">
+                <?= __('Community-curated in') ?>
+                <a href="<?= AwesomeListImporter::SOURCE_URL ?>" target="_blank" rel="noopener noreferrer">Awesome CakePHP</a>.
+            </p>
+        </section>
+    <?php endif; ?>
     <section class="plugin-details-section" aria-label="<?= __('Installation') ?>">
         <h3><?= __('Install with Composer') ?></h3>
         <div class="plugin-install" x-data="packageInstall" id="package-install-<?= (int)$package->id ?>">

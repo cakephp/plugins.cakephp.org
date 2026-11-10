@@ -18,6 +18,7 @@ use Tags\Model\Entity\Tag;
  * @property int $stars
  * @property string|null $latest_stable_version
  * @property \Cake\I18n\Date|null $latest_stable_release_date
+ * @property array<\App\Model\Entity\Category> $categories
  *
  * @property array<\Tags\Model\Entity\Tag> $cake_php_tags
  * @property array<int, array<\Tags\Model\Entity\Tag>> $cake_php_tag_groups

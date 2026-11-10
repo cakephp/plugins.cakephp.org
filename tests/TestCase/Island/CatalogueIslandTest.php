@@ -22,7 +22,39 @@ class CatalogueIslandTest extends TestCase
      * @var list<string>
      */
     #[Override]
-    protected array $fixtures = ['app.Packages', 'plugin.Tags.Tags', 'plugin.Tags.Tagged'];
+    protected array $fixtures = ['app.Packages', 'app.Categories', 'app.CategoriesPackages', 'plugin.Tags.Tags', 'plugin.Tags.Tagged'];
+
+    /**
+     * Category and membership changes are live, reloadable and reset pagination.
+     */
+    public function testCategoryAndMembershipActions(): void
+    {
+        $this->testIsland('Catalogue')
+            ->set('paging.page', 2)
+            ->call('toggleAwesome')
+            ->assertSet('awesomeOnly', true)
+            ->assertSet('paging.page', 1)
+            ->assertSee('cakedc/users')
+            ->assertDontSee('vendor/package-02')
+            ->call('selectCategory', 'asset-management')
+            ->assertSet('category', 'asset-management')
+            ->assertSee('markstory/asset_compress')
+            ->assertDontSee('cakedc/users')
+            ->set('search', 'users')
+            ->assertSee('No plugins found')
+            ->call('clearFilters')
+            ->assertSet('awesomeOnly', false)
+            ->assertSet('category', '')
+            ->assertSee('cakedc/users');
+    }
+
+    /**
+     * Invalid categories normalize to the full directory.
+     */
+    public function testUnknownCategoryIsCleared(): void
+    {
+        $this->testIsland('Catalogue')->call('selectCategory', 'not-a-category')->assertSet('category', '');
+    }
 
     /**
      * Keep featured selection and cached options deterministic.
@@ -111,11 +143,13 @@ class CatalogueIslandTest extends TestCase
     public function testClearFiltersRetainsSort(): void
     {
         $this->testIsland('Catalogue')
-            ->fill(['search' => 'asset', 'paging.sort' => 'downloads'])
+            ->fill(['search' => 'asset', 'category' => 'asset-management', 'awesomeOnly' => true, 'paging.sort' => 'downloads'])
             ->call('clearFilters')
             ->assertSet('search', '')
             ->assertSet('cakephpSlugs', [])
             ->assertSet('phpSlugs', [])
+            ->assertSet('category', '')
+            ->assertSet('awesomeOnly', false)
             ->assertSet('paging.page', 1)
             ->assertSet('paging.sort', 'downloads');
     }

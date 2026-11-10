@@ -62,6 +62,43 @@ Outside DDEV, run `npm run dev` alongside the PHP server. Vite defaults to
 `http://localhost:5173`; set `VITE_DEV_SERVER_URL` in the PHP environment when
 using a different address.
 
+## Categories and Awesome CakePHP
+
+`sync_packages` refreshes Packagist packages first, then imports categories from
+the Plugins section of [Awesome CakePHP](https://github.com/FriendsOfCake/awesome-cakephp).
+Run either source independently when needed:
+
+```bash
+ddev exec bin/cake sync_packages --source packagist
+ddev exec bin/cake sync_packages --source awesome
+```
+
+Apply migrations before the first category import. The Awesome importer matches
+primary GitHub repository links to existing packages; it does not create packages.
+Plugins can belong to several categories. Categories are stored separately from
+compatibility tags, so Packagist updates preserve them.
+
+The **Awesome CakePHP** badge means inclusion in that community-curated list,
+not a score or certification. Plugins without a badge remain in the directory.
+Category and Awesome-only filters combine with search and compatibility filters.
+Browse categories in the expandable grid, with directory-wide plugin counts and
+an optional local search. Selecting a category collapses the grid; its chip beside
+the results count clears that category while retaining other filters.
+
+A failed fetch, invalid source, or failed write retains the previous curation.
+Unmatched and ambiguous links are summarized; use `--verbose` to see them.
+Resolve moved or shared repositories with explicit URL-to-Composer-name mappings
+in `Packages.awesomeAliases` in `config/app.php`:
+
+```php
+'awesomeAliases' => [
+    'https://github.com/old-owner/plugin' => 'current-vendor/plugin',
+],
+```
+
+Both importers and the Markdown parser are registered in `Application::services()`.
+The console command receives its importers through CakePHP's container.
+
 ## Featured plugin logos
 
 Set an optional logo URL or image path alongside the package name in

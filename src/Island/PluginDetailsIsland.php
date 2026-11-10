@@ -34,7 +34,7 @@ class PluginDetailsIsland extends Island
     {
         $package = null;
         if ($this->packageId !== null) {
-            $package = $this->fetchTable(PackagesTable::class)->get($this->packageId, contain: ['Tags']);
+            $package = $this->fetchTable(PackagesTable::class)->get($this->packageId, contain: ['Tags', 'Categories']);
         }
 
         return compact('package');
