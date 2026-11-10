@@ -11,3 +11,5 @@ config/app_local.php
 tests
 .phpunit.cache
 .DS_Store
+
+webroot/build

@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace App\View;
 
+use Override;
+
 /**
  * A view class that is used for AJAX responses.
  * Currently only switches the default layout and sets the response type -
@@ -28,6 +30,7 @@ class AjaxView extends AppView
      * specified is the filename of the layout in /templates/Layout without
      * the .php extension.
      */
+    #[Override]
     protected string $layout = 'ajax';
 
     /**

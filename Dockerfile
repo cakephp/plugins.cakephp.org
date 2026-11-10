@@ -1,4 +1,4 @@
-FROM php:8.4-apache
+FROM php:8.5-apache
 
 WORKDIR /var/www/html
 
@@ -22,7 +22,7 @@ COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 
 COPY . .
 
-RUN npm install \
+RUN npm ci \
     && npm run build
 
 RUN composer install \
@@ -31,6 +31,8 @@ RUN composer install \
     --no-progress \
     --prefer-dist \
     --optimize-autoloader
+
+RUN DEBUG=false bin/cake plugin assets symlink Interact
 
 RUN mkdir -p logs tmp tmp/cache/models tmp/cache/persistent tmp/cache/views tmp/sessions tmp/tests \
     && chown -R www-data:www-data logs tmp \

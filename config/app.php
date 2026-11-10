@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\View\IslandTemplateView;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
@@ -111,21 +112,40 @@ return [
 
     'Packages' => [
         'featured' => [
-            'markstory/asset_compress',
-            'josegonzalez/cakephp-upload',
-            'dereuromark/cakephp-ide-helper',
-            'dereuromark/cakephp-queue',
-            'dereuromark/cakephp-tools',
-            'lordsimal/cakephp-sentry',
-            'friendsofcake/cakepdf',
-            'friendsofcake/crud',
-            'friendsofcake/search',
-            'cakedc/users',
+            // Optional logo URL or image path; null uses a name-based emblem.
+            'cakedc/users' => ['logo' => null],
+            'dereuromark/cakephp-ide-helper' => ['logo' => 'https://dereuromark.github.io/cakephp-ide-helper/logo.svg'],
+            'dereuromark/cakephp-queue' => ['logo' => 'https://dereuromark.github.io/cakephp-queue/logo.svg'],
+            'dereuromark/cakephp-tools' => ['logo' => 'https://dereuromark.github.io/cakephp-tools/logo.svg'],
+            'friendsofcake/cakepdf' => ['logo' => null],
+            'friendsofcake/crud' => ['logo' => null],
+            'friendsofcake/search' => ['logo' => null],
+            'josbeir/cakephp-interact' => ['logo' => 'https://www.cakeinteract.dev/docs/branding/interact-mark.svg'],
+            'josbeir/cakephp-vite' => ['logo' => null],
+            'josegonzalez/cakephp-upload' => ['logo' => null],
+            'lordsimal/cakephp-sentry' => ['logo' => null],
+            'markstory/asset_compress' => ['logo' => null],
         ],
     ],
 
+    'CakeVite' => [
+        'devServer' => [
+            'url' => env('VITE_DEV_SERVER_URL', env('DDEV_PRIMARY_URL', 'http://localhost') . ':5173'),
+            'hostHints' => ['localhost', '127.0.0.1', '.ddev.site'],
+        ],
+        'build' => [
+            'manifestPath' => WWW_ROOT . 'build/.vite/manifest.json',
+            'outDirectory' => 'build',
+        ],
+        'forceProductionMode' => !filter_var(env('DEBUG', false), FILTER_VALIDATE_BOOLEAN),
+    ],
+
+    'Interact' => [
+        'view' => ['className' => IslandTemplateView::class],
+    ],
+
     /*
-     * Protection for the public package listing and autocomplete endpoints.
+     * Protection for the public package listing and Interact update endpoint.
      *
      * RATE_LIMIT_CACHE_URL must be a redis:// DSN. The rate limiter remains
      * disabled until that shared, atomic cache has been configured.
@@ -133,11 +153,10 @@ return [
     'PublicRequestProtection' => [
         'rateLimitEnabled' => $rateLimitEnabled && is_string($rateLimitCacheUrl) && str_starts_with($rateLimitCacheUrl, 'redis://'),
         'trustedProxyIps' => $trustedProxyIps,
-        'maxFilterValues' => max(1, (int)env('MAX_PACKAGE_FILTER_VALUES', 3)),
         'rateLimits' => [
             'browse' => ['limit' => 90, 'window' => 60],
             'filtered' => ['limit' => 15, 'window' => 60],
-            'autocomplete' => ['limit' => 30, 'window' => 60],
+            'interact' => ['limit' => 30, 'window' => 60],
         ],
     ],
 

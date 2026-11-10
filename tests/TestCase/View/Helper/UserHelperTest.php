@@ -100,6 +100,7 @@ class UserHelperTest extends TestCase
     {
         $helper = $this->createHelper(['username' => 'markstory']);
         $result = $helper->avatar();
+        $this->assertIsString($result);
 
         $this->assertStringContainsString('<img', $result);
         $this->assertStringContainsString('https://github.com/markstory.png?size=80', $result);
@@ -112,6 +113,7 @@ class UserHelperTest extends TestCase
     {
         $helper = $this->createHelper(['username' => 'markstory']);
         $result = $helper->avatar(80, ['class' => 'w-full', 'alt' => '']);
+        $this->assertIsString($result);
 
         $this->assertStringContainsString('class="w-full"', $result);
         $this->assertStringContainsString('alt=""', $result);

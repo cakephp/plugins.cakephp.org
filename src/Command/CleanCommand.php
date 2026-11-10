@@ -7,6 +7,7 @@ use Cake\Cache\Cache;
 use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
+use Override;
 
 /**
  * Clean command.
@@ -16,6 +17,7 @@ class CleanCommand extends Command
     /**
      * The name of this command.
      */
+    #[Override]
     protected string $name = 'clean';
 
     /**

@@ -18,8 +18,8 @@ namespace App;
 
 use ADmad\SocialAuth\Middleware\SocialAuthMiddleware;
 use App\Event\AfterGithubIdentify;
-use App\Http\Middleware\PublicRequestGuardMiddleware;
 use App\Http\RateLimit\AtomicFixedWindowRateLimiter;
+use App\Middleware\ThemeCookieMiddleware;
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
 use Authentication\AuthenticationServiceProviderInterface;
@@ -34,7 +34,6 @@ use Cake\Http\Middleware\BodyParserMiddleware;
 use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\Middleware\RateLimitMiddleware;
 use Cake\Http\MiddlewareQueue;
-use Cake\Http\ServerRequest;
 use Cake\ORM\Locator\TableLocator;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
@@ -80,16 +79,6 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
         $csrf = new CsrfProtectionMiddleware([
             'httponly' => true,
         ]);
-        $csrf->skipCheckCallback(function (ServerRequest $request) {
-            if (
-                $request->getParam('controller') === 'Packages' &&
-                $request->getParam('action') === 'index'
-            ) {
-                return true;
-            }
-        });
-        $requestProtection = (array)Configure::read('PublicRequestProtection', []);
-        $trustedProxyIps = (array)($requestProtection['trustedProxyIps'] ?? []);
 
         $middlewareQueue
             // Catch any exceptions in the lower layers,
@@ -99,12 +88,6 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             // Handle plugin/theme assets like CakePHP normally does.
             ->add(new AssetMiddleware([
                 'cacheTime' => Configure::read('Asset.cacheTime'),
-            ]))
-
-            // Reject malformed and unnecessarily expensive public search requests
-            // before routing or database work is performed.
-            ->add(new PublicRequestGuardMiddleware([
-                'maxFilterValues' => (int)($requestProtection['maxFilterValues'] ?? 3),
             ]))
 
             // Add routing middleware.
@@ -121,6 +104,8 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             // Cross Site Request Forgery (CSRF) Protection Middleware
             // https://book.cakephp.org/5/en/security/csrf.html#cross-site-request-forgery-csrf-middleware
             ->add($csrf)
+
+            ->add(new ThemeCookieMiddleware())
 
             ->add(new SocialAuthMiddleware([
                 // SocialConnect Auth service's providers config. https://github.com/SocialConnect/auth/blob/master/README.md
@@ -146,9 +131,11 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
 
             ->add(new AuthenticationMiddleware($this));
 
+        $requestProtection = (array)Configure::read('PublicRequestProtection', []);
+        $trustedProxyIps = (array)($requestProtection['trustedProxyIps'] ?? []);
         if ($requestProtection['rateLimitEnabled'] ?? false) {
             $middlewareQueue->insertAfter(
-                PublicRequestGuardMiddleware::class,
+                AssetMiddleware::class,
                 new RateLimitMiddleware([
                     'cache' => 'rate_limit',
                     'headers' => true,
@@ -167,28 +154,24 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                         return $forwardedFor;
                     },
                     'limiterResolver' => static function (ServerRequestInterface $request): string {
-                        $path = rtrim($request->getUri()->getPath(), '/');
-                        if (str_ends_with($path, '.json')) {
-                            $path = substr($path, 0, -5);
-                        }
-                        if ($path === '/autocomplete') {
-                            return 'autocomplete';
+                        if ($request->getMethod() === 'POST') {
+                            return 'interact';
                         }
 
                         return $request->getQueryParams() === [] ? 'browse' : 'filtered';
                     },
                     'limiters' => $requestProtection['rateLimits'] ?? [],
                     'skipCheck' => static function (ServerRequestInterface $request): bool {
-                        if (!in_array($request->getMethod(), ['GET', 'HEAD'], true)) {
-                            return true;
-                        }
-
                         $path = rtrim($request->getUri()->getPath(), '/');
                         if (str_ends_with($path, '.json')) {
                             $path = substr($path, 0, -5);
                         }
+                        if ($path === '/_interact/update') {
+                            return $request->getMethod() !== 'POST';
+                        }
 
-                        return !in_array($path, ['', '/packages', '/autocomplete'], true);
+                        return !in_array($request->getMethod(), ['GET', 'HEAD'], true)
+                            || !($path === '' || $path === '/packages' || preg_match('#^/plugins/[0-9]+$#', $path));
                     },
                 ]),
             );

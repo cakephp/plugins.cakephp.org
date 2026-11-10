@@ -13,9 +13,9 @@ use Cake\Http\Response;
 class UsersController extends AppController
 {
     /**
-     * @return \Cake\Http\Response
+     * End the current session and return to the directory.
      */
-    public function logout(): Response
+    public function logout(): ?Response
     {
         $this->Authentication->logout();
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\View\Helper;
 
 use Cake\View\Helper;
+use Override;
 
 /**
  * User helper
@@ -16,6 +17,7 @@ use Cake\View\Helper;
  */
 class UserHelper extends Helper
 {
+    #[Override]
     protected array $helpers = ['Html', 'Authentication.Identity'];
 
     /**

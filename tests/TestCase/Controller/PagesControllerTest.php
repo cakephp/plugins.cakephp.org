@@ -21,7 +21,7 @@ class PagesControllerTest extends TestCase
         $this->get('/requirements');
 
         $this->assertResponseOk();
-        $this->assertResponseContains('Minimum requirements for being listed');
+        $this->assertResponseContains('Listing requirements');
         $this->assertResponseContains('cakephp/cakephp');
         $this->assertResponseContains('cakephp/orm');
     }

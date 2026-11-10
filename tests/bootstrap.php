@@ -15,6 +15,8 @@ declare(strict_types=1);
  * @license   https://opensource.org/licenses/mit-license.php MIT License
  */
 
+use Cake\Cache\Cache;
+use Cake\Cache\Engine\ArrayEngine;
 use Cake\Chronos\Chronos;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
@@ -30,6 +32,15 @@ use Migrations\TestSuite\Migrator;
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 require dirname(__DIR__) . '/config/bootstrap.php';
+
+// PHP rendering tests use dev-server tags; browser tests exercise the built manifest.
+Configure::write('CakeVite.forceProductionMode', false);
+// ApplicationTest exercises throttling with an isolated cache.
+Configure::write('PublicRequestProtection.rateLimitEnabled', false);
+
+// Fixture-derived options must never populate the development application's cache.
+Cache::drop('default');
+Cache::setConfig('default', ['className' => ArrayEngine::class]);
 
 if (empty($_SERVER['HTTP_HOST']) && !Configure::read('App.fullBaseUrl')) {
     Configure::write('App.fullBaseUrl', 'http://localhost');

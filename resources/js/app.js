@@ -1,229 +1,124 @@
-import Swiper from 'swiper'
-import { Autoplay, Navigation, Pagination } from 'swiper/modules'
-import htmx from 'htmx.org'
-import SlimSelect from 'slim-select'
-import Alpine from 'alpinejs'
+import 'vite/modulepreload-polyfill'
 
-window.htmx = htmx
+const register = (Alpine) => {
+    Alpine.store('theme', {
+        dark: document.documentElement.dataset.theme === 'cakephp-dark',
+        apply(event) {
+            this.dark = event.detail.theme === 'cakephp-dark'
+            document.documentElement.dataset.theme = event.detail.theme
+        },
+    })
 
-Alpine.data('packageSearch', () => ({
-    query: '',
-    results: [],
-    open: false,
-    loading: false,
-    selectedIndex: -1,
-    abortController: null,
-    debounceTimer: null,
-
-    init() {
-        // Sync initial value from the input
-        this.query = this.$refs.input?.value || ''
-
-        this.$watch('query', (value) => {
-            this.debouncedFetch(value)
-        })
-    },
-
-    debouncedFetch(value) {
-        clearTimeout(this.debounceTimer)
-
-        if (this.abortController) {
-            this.abortController.abort()
-            this.abortController = null
-        }
-
-        if (value.trim().length < 2) {
-            this.results = []
-            this.open = false
-            this.loading = false
-            return
-        }
-
-        this.loading = true
-
-        this.debounceTimer = setTimeout(() => {
-            this.fetchResults(value.trim())
-        }, 250)
-    },
-
-    async fetchResults(q) {
-        if (this.abortController) {
-            this.abortController.abort()
-        }
-
-        this.abortController = new AbortController()
-
-        try {
-            const response = await fetch(`/autocomplete?q=${encodeURIComponent(q)}`, {
-                signal: this.abortController.signal,
-                headers: { 'Accept': 'application/json' },
-            })
-
-            const data = await response.json()
-            this.results = data
-            this.open = data.length > 0
-            this.selectedIndex = -1
-        } catch (e) {
-            if (e.name !== 'AbortError') {
-                this.results = []
-                this.open = false
+    Alpine.data('catalogue', () => ({
+        activate(event) {
+            if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+            const plugin = event.target.closest('[data-open-plugin]')
+            if (plugin) {
+                event.preventDefault()
+                plugin.dispatchEvent(new CustomEvent('plugin-open', {
+                    bubbles: true,
+                    detail: { id: Number(plugin.dataset.pluginId), name: plugin.dataset.pluginName },
+                }))
+                return
             }
-        } finally {
-            this.loading = false
-        }
-    },
+            const sort = event.target.closest('.sort-option')
+            if (sort) sort.closest('details')?.removeAttribute('open')
+            const control = event.target.closest('[data-version-group][data-version-slug], [data-clear-catalogue]')
+            if (!control || !this.$el.contains(control)) return
+            event.preventDefault()
+            if (control.hasAttribute('data-clear-catalogue')) return this.$server.call('clearFilters')
+            const { versionGroup, versionSlug } = control.dataset
+            return this.$server.call('toggleVersion', versionGroup, versionSlug)
+        },
+        selectVersion(event) {
+            return this.$server.call('selectVersion', event.detail.group, event.detail.slug)
+        },
+        closeMenu(event) {
+            const menu = event.target.closest('details[open]')
+            if (!menu) return
+            menu.open = false
+            menu.querySelector('summary')?.focus()
+        },
+    }))
 
-    close() {
-        this.open = false
-        this.selectedIndex = -1
-    },
+    Alpine.data('pluginModal', () => ({
+        trigger: null,
+        scrollPosition: 0,
+        title: '',
+        open(event) {
+            this.trigger = event.target
+            this.scrollPosition = window.scrollY
+            this.title = event.detail.name
+            this.$refs.dialog.showModal()
+            this.$refs.box.scrollTop = 0
+        },
+        closed() {
+            if (!this.trigger?.isConnected) return
+            this.trigger.focus({ preventScroll: true })
+            window.scrollTo({ top: this.scrollPosition, behavior: 'instant' })
+        },
+        filter(event) {
+            if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+            const version = event.target.closest('[data-filter-package-version]')
+            if (!version) return
+            event.preventDefault()
+            this.$refs.dialog.close()
+            this.$dispatch('catalogue-version', { group: version.dataset.versionGroup, slug: version.dataset.versionSlug })
+        },
+    }))
 
-    onKeydown(e) {
-        if (!this.open) return
+    Alpine.data('pluginDetails', () => ({
+        id: null,
+        load(event) {
+            this.id = event.detail.id
+            return this.$server.call('show', this.id)
+        },
+        retry() { return this.$server.call('show', this.id) },
+    }))
 
-        switch (e.key) {
-            case 'ArrowDown':
-                e.preventDefault()
-                this.selectedIndex = Math.min(this.selectedIndex + 1, this.results.length - 1)
-                this.scrollToSelected()
-                break
-            case 'ArrowUp':
-                e.preventDefault()
-                this.selectedIndex = Math.max(this.selectedIndex - 1, -1)
-                this.scrollToSelected()
-                break
-            case 'Enter':
-                if (this.selectedIndex >= 0) {
-                    e.preventDefault()
-                    this.selectResult(this.results[this.selectedIndex])
-                }
-                break
-            case 'Escape':
-                this.close()
-                break
-        }
-    },
-
-    scrollToSelected() {
-        this.$nextTick(() => {
-            const el = this.$refs.listbox?.querySelector('[aria-selected="true"]')
-            el?.scrollIntoView({ block: 'nearest' })
-        })
-    },
-
-    selectResult(result) {
-        try {
-            const url = new URL(result.repo_url)
-            if (url.protocol === 'https:') {
-                window.open(url.toString(), '_blank', 'noopener,noreferrer')
+    Alpine.data('packageInstall', () => ({
+        copied: false,
+        failed: false,
+        async copy() {
+            try {
+                await navigator.clipboard.writeText(this.$refs.command.textContent.trim())
+                this.copied = true
+                this.failed = false
+            } catch {
+                this.failed = true
             }
-        } catch {
-            // Invalid URL, ignore
-        }
-        this.close()
-    },
+        },
+    }))
 
+    Alpine.data('siteNavigation', () => ({
+        closeMenu(event) {
+            const menu = event.target.closest('details[open]')
+            if (!menu) return
+            menu.open = false
+            menu.querySelector('summary')?.focus()
+        },
+        followLink(event) {
+            if (event.target.closest('a')) event.target.closest('details')?.removeAttribute('open')
+        },
+    }))
 
-
-    formatNumber(num) {
-        if (num >= 1000000) return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M'
-        if (num >= 1000) return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k'
-        return String(num)
-    },
-}))
-
-const initializeSelects = (root = document) => {
-    const selects = document.querySelectorAll('select')
-
-    selects.forEach(select => {
-        const initialized = select.getAttribute('data-slimselect-initialized');
-
-        if (initialized === 'true') {
-            return
-        }
-
-        select.setAttribute('data-slimselect-initialized', 'true')
-        const placeholder = select.getAttribute('data-placeholder');
-
-        new SlimSelect({
-            select: select,
-            settings: {
-                placeholderText: placeholder,
-            },
-        })
-    })
+    Alpine.data('flashMessage', () => ({ open: true, close() { this.open = false } }))
 }
 
-const initializeFeaturedPackagesSlider = (root = document) => {
-    const slider = root.querySelector('[data-featured-packages-slider]')
+if (window.Alpine) register(window.Alpine)
+else document.addEventListener('alpine:init', () => register(window.Alpine), { once: true })
 
-    if (!slider) {
-        return
+const refreshDocument = () => {
+    const hasQuery = new URL(window.location.href).search !== ''
+    let robots = document.head.querySelector('meta[name="robots"]')
+    if (hasQuery && !robots) {
+        robots = document.createElement('meta')
+        robots.name = 'robots'
+        document.head.append(robots)
     }
-
-    if (slider.dataset.swiperInitialized === 'true') {
-        return
-    }
-
-    const pagination = root.querySelector('[data-featured-packages-pagination]')
-
-    new Swiper(slider, {
-        modules: [Autoplay, Navigation, Pagination],
-        loop: true,
-        loopAdditionalSlides: 3,
-        slidesPerView: 1,
-        spaceBetween: 24,
-        grabCursor: true,
-        autoplay: {
-            delay: 4000,
-            disableOnInteraction: false,
-            pauseOnMouseEnter: true,
-        },
-        navigation: {
-            nextEl: '[data-featured-packages-next]',
-            prevEl: '[data-featured-packages-prev]',
-        },
-        pagination: {
-            el: pagination,
-            clickable: true,
-        },
-        breakpoints: {
-            768: {
-                slidesPerView: 2,
-            },
-            1280: {
-                slidesPerView: 3,
-            },
-        },
-    })
-
-    slider.dataset.swiperInitialized = 'true'
+    if (hasQuery) robots.content = 'noindex,nofollow'
+    else robots?.remove()
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    initializeFeaturedPackagesSlider()
-    initializeSelects()
-})
-
-Alpine.start()
-
-if (typeof window.htmx !== 'undefined') {
-    const reinitializeDynamicUi = () => {
-        initializeFeaturedPackagesSlider(document)
-        initializeSelects(document)
-    }
-
-    document.body.addEventListener('htmx:afterSettle', reinitializeDynamicUi)
-
-    // Track loading state
-    let isLoading = false
-    document.body.addEventListener('htmx:beforeRequest', () => {
-        isLoading = true
-        document.body.classList.add('is-htmx-loading')
-    })
-
-    document.body.addEventListener('htmx:afterRequest', () => {
-        isLoading = false
-        document.body.classList.remove('is-htmx-loading')
-    })
-}
+document.addEventListener('interact:navigated', refreshDocument)
+document.addEventListener('interact:request-finished', refreshDocument)

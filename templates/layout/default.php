@@ -16,10 +16,11 @@
 
 $cakeDescription = 'CakePHP Plugins';
 $request = $this->getRequest();
+$theme = $request->getCookie('theme') === 'cakephp-dark' ? 'cakephp-dark' : 'cakephp';
 $canonicalUrl = $this->Url->build($request->getPath() ?: '/', ['fullBase' => true]);
 ?>
 <!DOCTYPE html>
-<html class="bg-base-100" data-theme="cakephp">
+<html data-theme="<?= h($theme) ?>">
 <head>
     <?= $this->Html->charset() ?>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -32,48 +33,34 @@ $canonicalUrl = $this->Url->build($request->getPath() ?: '/', ['fullBase' => tru
     <?php if ($request->getQueryParams() !== []) : ?>
         <meta name="robots" content="noindex,nofollow">
     <?php endif; ?>
-    <script>
-        (function() {
-            try {
-                var theme = localStorage.getItem('theme');
-                if (theme !== 'cakephp' && theme !== 'cakephp-dark') {
-                    theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'cakephp-dark' : 'cakephp';
-                }
-                document.documentElement.setAttribute('data-theme', theme);
-            } catch (_) {
-                document.documentElement.setAttribute('data-theme', 'cakephp');
-            }
-        })();
-    </script>
 
-    <?= $this->Html->css(['cake']) ?>
-
-    <?= $this->Html->script('app.js', ['type' => 'module']) ?>
+    <?= $this->Vite->css([
+        'files' => ['resources/css/style.css'],
+        'block' => false,
+        'attributes' => ['x-interact:asset' => 'reload', 'timestamp' => false],
+    ]) ?>
+    <?= $this->Vite->script([
+        'files' => ['resources/js/app.js'],
+        'block' => false,
+        'attributes' => ['x-interact:asset' => 'reload', 'timestamp' => false],
+    ]) ?>
 
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
     <?= $this->fetch('script') ?>
 </head>
-<body class="overflow-x-hidden bg-base-100" hx-indicator="#main-loading-overlay">
+<body>
+    <a class="skip-link" href="#main-content"><?= __('Skip to content') ?></a>
     <?= $this->element('navbar') ?>
-    <div id="above-content-slot">
-        <?php if ($this->fetch('above_content')) : ?>
-            <div class="w-full border-b overflow-hidden border-cake-red/20 bg-cake-red/5">
-                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <?= $this->fetch('above_content') ?>
-                </div>
-            </div>
-        <?php endif; ?>
+    <div class="page-loading-track"
+         x-data x-show="$store.interactNavigation.loading()" x-cloak
+         role="progressbar" aria-label="<?= __('Loading page') ?>">
+        <div class="page-loading-bar"></div>
     </div>
-    <div id="main-loading-overlay" class="htmx-indicator main-loading-overlay" aria-hidden="true">
-        <div class="main-loading-indicator-card flex items-center gap-3 rounded-2xl border border-base-300 bg-base-100/95 px-4 py-3 shadow-2xl">
-            <span class="loading loading-ring loading-xl text-cake-red" aria-hidden="true"></span>
-            <span class="text-sm font-semibold text-base-content"><?= __('Loading content...') ?></span>
-        </div>
-    </div>
-    <main class="main container mx-auto">
+    <main id="main-content" tabindex="-1">
         <?= $this->Flash->render() ?>
         <?= $this->fetch('content') ?>
     </main>
+    <?= $this->element('footer') ?>
 </body>
 </html>

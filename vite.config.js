@@ -1,48 +1,33 @@
 import { defineConfig } from 'vite'
 import tailwindcss from '@tailwindcss/vite'
-import { fileURLToPath } from 'node:url'
+
+const origin = process.env.DDEV_PRIMARY_URL
+    ? `${process.env.DDEV_PRIMARY_URL}:5173`
+    : 'http://localhost:5173'
 
 export default defineConfig({
-    root: '.',
+    base: './',
+    publicDir: false,
     plugins: [
         tailwindcss(),
     ],
     server: {
+        host: '0.0.0.0',
+        port: 5173,
+        strictPort: true,
+        origin,
+        cors: {
+            origin: process.env.DDEV_PRIMARY_URL || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/,
+        },
         watch: {
             ignored: ['**/webroot/**', '**/vendor/**', '**/tmp/**', '**/logs/**'],
         },
     },
-    resolve: {
-        conditions: ['module', 'browser', 'development', 'import'],
-        alias: {
-            'slim-select/styles': fileURLToPath(new URL('./node_modules/slim-select/dist/slimselect.css', import.meta.url))
-        }
-    },
     build: {
-        outDir: 'webroot',
-        emptyOutDir: false,
+        outDir: 'webroot/build',
+        manifest: true,
         rollupOptions: {
-            input: {
-                cake: 'resources/css/style.css',
-                app: 'resources/js/app.js',
-            },
-            onLog(level, log, handler) {
-                // Suppress EVAL warning from htmx (known limitation, safe in this context)
-                if (log.code === 'EVAL' && log.id?.includes('htmx')) {
-                    return
-                }
-                handler(level, log)
-            },
-            output: {
-                entryFileNames: (chunkInfo) => chunkInfo.name === 'app' ? 'js/app.js' : 'js/[name].js',
-                assetFileNames: (assetInfo) => {
-                    if (assetInfo.names.includes('cake.css')) {
-                        return 'css/cake.css';
-                    }
-
-                    return 'assets/[name][extname]';
-                },
-            },
+            input: ['resources/js/app.js', 'resources/css/style.css'],
         },
     },
 })

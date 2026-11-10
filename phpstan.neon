@@ -8,3 +8,6 @@ parameters:
         - config/bootstrap.php
     paths:
         - src/
+        - config/app.php
+        - templates/
+        - tests/

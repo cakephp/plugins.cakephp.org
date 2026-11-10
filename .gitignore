@@ -5,8 +5,7 @@
 /logs/*
 /tmp/*
 /vendor/*
-/webroot/css/cake.css
-/webroot/js/app.js
+/webroot/build/
 
 # OS generated files #
 ######################
@@ -55,3 +54,8 @@ yarn-debug.log
 yarn-error.log
 
 /setup
+
+# Composer plugin assets and browser test output
+/webroot/interact
+/playwright-report/
+/test-results/

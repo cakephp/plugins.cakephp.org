@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Model\Entity;
 
 use Cake\ORM\Entity;
+use Override;
 use Tags\Model\Entity\Tag;
 
 /**
@@ -37,6 +38,7 @@ class Package extends Entity
      *
      * @var array<string, bool>
      */
+    #[Override]
     protected array $_accessible = [
         'id' => false,
         '*' => true,

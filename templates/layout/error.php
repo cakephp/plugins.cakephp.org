@@ -13,39 +13,43 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  * @var \App\View\AppView $this
  */
+
+$cakeDescription = 'CakePHP Plugins';
+$request = $this->getRequest();
+$theme = $request->getCookie('theme') === 'cakephp-dark' ? 'cakephp-dark' : 'cakephp';
 ?>
 <!DOCTYPE html>
-<html>
+<html data-theme="<?= h($theme) ?>">
 <head>
     <?= $this->Html->charset() ?>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>
+        <?= $cakeDescription ?>:
         <?= $this->fetch('title') ?>
     </title>
     <?= $this->Html->meta('icon') ?>
-
-    <?= $this->Html->css(['cake']) ?>
+    <?= $this->Vite->css([
+        'files' => ['resources/css/style.css'],
+        'block' => false,
+        'attributes' => ['x-interact:asset' => 'reload', 'timestamp' => false],
+    ]) ?>
+    <?= $this->Vite->script([
+        'files' => ['resources/js/app.js'],
+        'block' => false,
+        'attributes' => ['x-interact:asset' => 'reload', 'timestamp' => false],
+    ]) ?>
 
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
     <?= $this->fetch('script') ?>
 </head>
 <body>
-    <nav class="bg-amber-50 border-b border-cake-red">
-        <div class="flex justify-between container mx-auto py-4">
-            <div class="top-nav-title">
-                    <a class="text-xl" href="<?= $this->Url->build('/') ?>">
-                        <span class="text-gray-700 font-bold">Cake</span><span class="text-cake-red font-bold">PHP</span>
-                    </a>
-            </div>
-            <div class="flex gap-2">
-                <?= $this->Html->link('Docs', 'https://book.cakephp.org/5/', ['target' => '_blank', 'rel' => 'noopener']) ?>
-                <?= $this->Html->link('Api', 'https://api.cakephp.org/', ['target' => '_blank', 'rel' => 'noopener']) ?>
-            </div>
-        </div>
-    </nav>
-    <main class="main container mx-auto">
+    <a class="skip-link" href="#main-content"><?= __('Skip to content') ?></a>
+    <?= $this->element('navbar', ['minimal' => true]) ?>
+    <main id="main-content" tabindex="-1">
         <?= $this->Flash->render() ?>
         <?= $this->fetch('content') ?>
     </main>
+    <?= $this->element('footer') ?>
 </body>
 </html>
