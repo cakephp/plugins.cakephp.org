@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Island;
 
 use App\Model\Table\PackagesTable;
-use Cake\Core\Configure;
 use Cake\Http\Exception\BadRequestException;
 use Interact\Attribute\Action;
 use Interact\Attribute\Pagination;
@@ -19,7 +18,7 @@ use Interact\UpdatedPaths;
  */
 class CatalogueIsland extends Island
 {
-    #[State(writable: true, url: true, history: true)]
+    #[State(writable: true, url: true)]
     public string $search = '';
 
     /**
@@ -67,7 +66,7 @@ class CatalogueIsland extends Island
     }
 
     /**
-     * Toggle a version selected from a package's compatibility dialog.
+     * Toggle a version selected from the directory filters.
      */
     #[Action]
     public function toggleVersion(string $group, string $slug): void
@@ -85,12 +84,41 @@ class CatalogueIsland extends Island
     }
 
     /**
+     * Select a compatibility version from plugin details without losing other filters.
+     */
+    #[Action]
+    public function selectVersion(string $group, string $slug): void
+    {
+        if (!in_array($group, ['cakephp_slugs', 'php_slugs'], true)) {
+            throw new BadRequestException('Unsupported version group.');
+        }
+        $property = $group === 'cakephp_slugs' ? 'cakephpSlugs' : 'phpSlugs';
+        $this->{$property} = [$slug];
+        $this->paging->page = 1;
+    }
+
+    /**
+     * Clear the search and version selections while retaining the current sort.
+     */
+    #[Action]
+    public function clearFilters(): void
+    {
+        $this->search = '';
+        $this->cakephpSlugs = [];
+        $this->phpSlugs = [];
+        $this->paging->page = 1;
+    }
+
+    /**
      * Query the catalogue from validated state on initial and update requests.
      *
      * @return array<string, mixed>
      */
     public function viewData(): array
     {
+        if (mb_strlen($this->search) > 100) {
+            throw new BadRequestException('Search query is too long.');
+        }
         $options = $this->packages->filterOptions();
         $this->cakephpSlugs = array_values(array_intersect(array_filter($this->cakephpSlugs, is_string(...)), array_keys($options['cakephp'])));
         $this->phpSlugs = array_values(array_intersect(array_filter($this->phpSlugs, is_string(...)), array_keys($options['php'])));
@@ -103,14 +131,12 @@ class CatalogueIsland extends Island
         ];
         $hasFilters = trim($this->search) !== '' || $this->cakephpSlugs !== [] || $this->phpSlugs !== [];
         $showFeatured = !$hasFilters && $this->paging->page === 1;
-        $featuredNames = $showFeatured
-            ? array_values(array_filter((array)Configure::read('Packages.featured', []), is_string(...)))
-            : [];
-        $packages = $this->paginate($this->packages->find('catalogue', filters: $query, exclude: $featuredNames));
+        $packages = $this->paginate($this->packages->find('catalogue', filters: $query));
 
         return [
             'packages' => $packages,
             'showFeatured' => $showFeatured,
+            'hasFilters' => $hasFilters,
             'cakephpTags' => $options['cakephp'],
             'phpTags' => $options['php'],
             'catalogueQuery' => $query,

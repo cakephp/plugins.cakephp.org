@@ -13,7 +13,7 @@ use Cake\Http\Response;
 class UsersController extends AppController
 {
     /**
-     * @return \Cake\Http\Response|null
+     * End the current session and return to the directory.
      */
     public function logout(): ?Response
     {

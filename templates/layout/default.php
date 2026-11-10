@@ -20,7 +20,7 @@ $theme = $request->getCookie('theme') === 'cakephp-dark' ? 'cakephp-dark' : 'cak
 $canonicalUrl = $this->Url->build($request->getPath() ?: '/', ['fullBase' => true]);
 ?>
 <!DOCTYPE html>
-<html class="bg-base-100" data-theme="<?= h($theme) ?>">
+<html data-theme="<?= h($theme) ?>">
 <head>
     <?= $this->Html->charset() ?>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -49,16 +49,18 @@ $canonicalUrl = $this->Url->build($request->getPath() ?: '/', ['fullBase' => tru
     <?= $this->fetch('css') ?>
     <?= $this->fetch('script') ?>
 </head>
-<body class="overflow-x-hidden bg-base-100">
+<body>
+    <a class="skip-link" href="#main-content"><?= __('Skip to content') ?></a>
     <?= $this->element('navbar') ?>
-    <div class="pointer-events-none fixed inset-x-0 top-0 z-100 h-1 overflow-hidden bg-base-100/30"
+    <div class="page-loading-track"
          x-data x-show="$store.interactNavigation.loading()" x-cloak
          role="progressbar" aria-label="<?= __('Loading page') ?>">
-        <div class="page-loading-bar h-full w-1/3 bg-cake-blue"></div>
+        <div class="page-loading-bar"></div>
     </div>
-    <main class="main">
+    <main id="main-content" tabindex="-1">
         <?= $this->Flash->render() ?>
         <?= $this->fetch('content') ?>
     </main>
+    <?= $this->element('footer') ?>
 </body>
 </html>

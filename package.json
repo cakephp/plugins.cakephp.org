@@ -14,8 +14,5 @@
         "test:browser": "playwright test",
         "lint:tailwind": "node scripts/lint-tailwind.mjs",
         "check": "npm run lint:tailwind && npm run build && npm run test:browser"
-    },
-    "dependencies": {
-        "swiper": "^14.0.7"
     }
 }

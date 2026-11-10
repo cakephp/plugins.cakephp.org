@@ -6,6 +6,7 @@ namespace App\Test\TestCase\Island;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Interact\TestSuite\IslandTestTrait;
+use Override;
 
 /**
  * Exercises the featured selection independently of catalogue pagination.
@@ -17,6 +18,7 @@ class FeaturedPluginsIslandTest extends TestCase
     /**
      * @var list<string>
      */
+    #[Override]
     protected array $fixtures = ['app.Packages', 'plugin.Tags.Tags', 'plugin.Tags.Tagged'];
 
     /**
@@ -24,24 +26,38 @@ class FeaturedPluginsIslandTest extends TestCase
      */
     public function testSelectionOrderSurvivesRefresh(): void
     {
-        Configure::write('Packages.featured', ['markstory/asset_compress', 'cakedc/users']);
+        Configure::write('Packages.featured', [
+            'markstory/asset_compress' => 'https://example.com/asset-compress.svg',
+            'cakedc/users',
+        ]);
         $island = $this->testIsland('FeaturedPlugins');
         $order = $island->result()->state['order'];
         $island->sync()->assertSet('order', $order)
-            ->assertSee('markstory/asset_compress')->assertSee('cakedc/users');
+            ->assertSee('markstory/asset_compress')->assertSee('cakedc/users')
+            ->assertSee('https://example.com/asset-compress.svg');
 
         Configure::write('Packages.featured', ['cakedc/users']);
         $island->sync()->assertSee('cakedc/users')->assertDontSee('markstory/asset_compress');
     }
 
     /**
-     * Empty or missing configured packages leave no slider controls behind.
+     * Empty or missing configured packages leave no featured entries behind.
      */
-    public function testMissingSelectionHasNoSlider(): void
+    public function testMissingSelectionHasNoFeaturedEntries(): void
     {
         Configure::write('Packages.featured', []);
-        $this->testIsland('FeaturedPlugins')->assertDontSee('data-featured-packages-slider');
+        $this->testIsland('FeaturedPlugins')->assertDontSee('data-featured-plugins');
         Configure::write('Packages.featured', ['missing/package']);
-        $this->testIsland('FeaturedPlugins')->assertDontSee('data-featured-packages-slider');
+        $this->testIsland('FeaturedPlugins')->assertDontSee('data-featured-plugins');
+    }
+
+    /**
+     * The static recommendation section contains at most three configured packages.
+     */
+    public function testSelectionIsBoundedToThreePackages(): void
+    {
+        Configure::write('Packages.featured', ['markstory/asset_compress', 'cakedc/users', 'dereuromark/cakephp-tools', 'vendor/package-01']);
+        $island = $this->testIsland('FeaturedPlugins');
+        $this->assertSame(3, substr_count($island->result()->html, 'class="featured-item"'));
     }
 }

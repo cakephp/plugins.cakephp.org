@@ -1,6 +1,4 @@
 import 'vite/modulepreload-polyfill'
-import Swiper from 'swiper'
-import { Autoplay, Navigation, Pagination } from 'swiper/modules'
 
 const register = (Alpine) => {
     Alpine.store('theme', {
@@ -12,103 +10,99 @@ const register = (Alpine) => {
     })
 
     Alpine.data('catalogue', () => ({
-        toggleVersion(event) {
+        activate(event) {
             if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
-            const control = event.target.closest('[data-version-group][data-version-slug]')
+            const plugin = event.target.closest('[data-open-plugin]')
+            if (plugin) {
+                event.preventDefault()
+                plugin.dispatchEvent(new CustomEvent('plugin-open', {
+                    bubbles: true,
+                    detail: { id: Number(plugin.dataset.pluginId), name: plugin.dataset.pluginName },
+                }))
+                return
+            }
+            const sort = event.target.closest('.sort-option')
+            if (sort) sort.closest('details')?.removeAttribute('open')
+            const control = event.target.closest('[data-version-group][data-version-slug], [data-clear-catalogue]')
             if (!control || !this.$el.contains(control)) return
             event.preventDefault()
+            if (control.hasAttribute('data-clear-catalogue')) return this.$server.call('clearFilters')
             const { versionGroup, versionSlug } = control.dataset
             return this.$server.call('toggleVersion', versionGroup, versionSlug)
         },
-    }))
-
-    Alpine.data('featuredPackages', () => {
-        let slider
-        return {
-            init() {
-                slider = new Swiper(this.$el.querySelector('[data-featured-packages-slider]'), {
-                    modules: [Autoplay, Navigation, Pagination],
-                    loop: true,
-                    loopAdditionalSlides: 3,
-                    slidesPerView: 1,
-                    spaceBetween: 24,
-                    grabCursor: true,
-                    autoplay: { delay: 4000, disableOnInteraction: false, pauseOnMouseEnter: true },
-                    navigation: {
-                        nextEl: this.$el.querySelector('[data-featured-packages-next]'),
-                        prevEl: this.$el.querySelector('[data-featured-packages-prev]'),
-                    },
-                    pagination: { el: this.$el.querySelector('[data-featured-packages-pagination]'), clickable: true },
-                    breakpoints: { 768: { slidesPerView: 2 }, 1280: { slidesPerView: 3 } },
-                })
-            },
-            destroy() {
-                slider?.destroy(true, true)
-                slider = undefined
-            },
-        }
-    })
-
-    Alpine.data('compatibilityCard', () => ({
-        openDialog(event) {
-            this.$root.querySelector(`#${CSS.escape(event.currentTarget.dataset.dialogId)}`)?.showModal()
+        selectVersion(event) {
+            return this.$server.call('selectVersion', event.detail.group, event.detail.slug)
+        },
+        closeMenu(event) {
+            const menu = event.target.closest('details[open]')
+            if (!menu) return
+            menu.open = false
+            menu.querySelector('summary')?.focus()
         },
     }))
 
-    Alpine.data('packageSearch', () => ({
-        open: false,
-        selectedIndex: -1,
-        get activeId() {
-            return this.open && this.selectedIndex >= 0 ? `suggestion-${this.selectedIndex}` : ''
+    Alpine.data('pluginModal', () => ({
+        trigger: null,
+        scrollPosition: 0,
+        title: '',
+        open(event) {
+            this.trigger = event.target
+            this.scrollPosition = window.scrollY
+            this.title = event.detail.name
+            this.$refs.dialog.showModal()
+            this.$refs.box.scrollTop = 0
         },
-        close() {
-            this.open = false
-            this.selectedIndex = -1
+        closed() {
+            if (!this.trigger?.isConnected) return
+            this.trigger.focus({ preventScroll: true })
+            window.scrollTo({ top: this.scrollPosition, behavior: 'instant' })
         },
-        onInput() {
-            this.selectedIndex = -1
-            if (this.$refs.input.value.trim().length < 2) this.close()
+        filter(event) {
+            if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+            const version = event.target.closest('[data-filter-package-version]')
+            if (!version) return
+            event.preventDefault()
+            this.$refs.dialog.close()
+            this.$dispatch('catalogue-version', { group: version.dataset.versionGroup, slug: version.dataset.versionSlug })
         },
-        refreshSuggestions(event) {
-            if (event.detail.islandId !== this.$el.closest('[data-interact-id]').dataset.interactId) return
-            this.$nextTick(() => this.showSuggestions())
+    }))
+
+    Alpine.data('pluginDetails', () => ({
+        id: null,
+        load(event) {
+            this.id = event.detail.id
+            return this.$server.call('show', this.id)
         },
-        showSuggestions() {
-            this.open = this.$refs.input.value.trim().length >= 2
-                && this.$refs.listbox.querySelector('a') !== null
-                && document.activeElement === this.$refs.input
-            this.selectedIndex = -1
-        },
-        onKeydown(event) {
-            if (!this.open) return
-            const links = this.$refs.listbox.querySelectorAll('a')
-            if (event.key === 'Escape') {
-                event.preventDefault()
-                this.close()
-            } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-                event.preventDefault()
-                const step = event.key === 'ArrowDown' ? 1 : -1
-                this.selectedIndex = Math.max(-1, Math.min(this.selectedIndex + step, links.length - 1))
-                links[this.selectedIndex]?.scrollIntoView({ block: 'nearest' })
-            } else if (event.key === 'Enter' && this.selectedIndex >= 0) {
-                event.preventDefault()
-                links[this.selectedIndex]?.click()
-                this.close()
+        retry() { return this.$server.call('show', this.id) },
+    }))
+
+    Alpine.data('packageInstall', () => ({
+        copied: false,
+        failed: false,
+        async copy() {
+            try {
+                await navigator.clipboard.writeText(this.$refs.command.textContent.trim())
+                this.copied = true
+                this.failed = false
+            } catch {
+                this.failed = true
             }
         },
-        submit() {
-            this.close()
-            const params = new URL(window.location.href).searchParams
-            const filters = {}
-            for (const key of ['cakephp_slugs', 'php_slugs']) {
-                filters[key] = []
-                for (const [name, value] of params) {
-                    if (name === key || name === `${key}[]` || new RegExp(`^${key}\\[\\d+\\]$`).test(name)) filters[key].push(value)
-                }
-            }
-            return this.$server.call('submit', filters)
+    }))
+
+    Alpine.data('siteNavigation', () => ({
+        closeMenu(event) {
+            const menu = event.target.closest('details[open]')
+            if (!menu) return
+            menu.open = false
+            menu.querySelector('summary')?.focus()
+        },
+        followLink(event) {
+            if (event.target.closest('a')) event.target.closest('details')?.removeAttribute('open')
         },
     }))
+
+    Alpine.data('flashMessage', () => ({ open: true, close() { this.open = false } }))
 }
 
 if (window.Alpine) register(window.Alpine)

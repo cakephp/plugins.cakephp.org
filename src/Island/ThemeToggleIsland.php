@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Island;
 
 use Interact\Attribute\Action;
-use Interact\Attribute\Prop;
 use Interact\Island;
 
 /**
@@ -12,9 +11,6 @@ use Interact\Island;
  */
 class ThemeToggleIsland extends Island
 {
-    #[Prop]
-    public bool $mobile = false;
-
     /**
      * Read the current cookie so desktop and mobile toggles share one preference.
      */

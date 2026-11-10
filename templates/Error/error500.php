@@ -30,10 +30,11 @@ if (Configure::read('debug')) :
     $this->end();
 endif;
 ?>
-<div class="py-5">
-    <h2 class="text-xl pb-3"><?= __d('cake', 'An Internal Error Has Occurred.') ?></h2>
-    <p class="error">
+<div class="error-page site-width">
+    <h1><?= __d('cake', 'An Internal Error Has Occurred.') ?></h1>
+    <p>
         <strong><?= __d('cake', 'Error') ?>: </strong>
         <?= h($message) ?>
     </p>
+    <?= $this->Html->link(__('Browse plugins'), '/', ['class' => 'action-link']) ?>
 </div>

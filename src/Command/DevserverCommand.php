@@ -8,6 +8,7 @@ use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Exception\StopException;
+use Override;
 use Symfony\Component\Process\Process;
 
 /**
@@ -18,6 +19,7 @@ class DevserverCommand extends Command
     /**
      * The name of this command.
      */
+    #[Override]
     protected string $name = 'devserver';
 
     /**

@@ -14,6 +14,7 @@ use Cake\I18n\Date;
 use Cake\Log\Log;
 use Composer\Semver\Intervals;
 use Composer\Semver\VersionParser;
+use Override;
 use Packagist\Api\Client as PackagistClient;
 use Packagist\Api\Result\Package\Version;
 use UnexpectedValueException;
@@ -55,6 +56,7 @@ class SyncPackagesCommand extends Command
     /**
      * The name of this command.
      */
+    #[Override]
     protected string $name = 'sync_packages';
 
     /**

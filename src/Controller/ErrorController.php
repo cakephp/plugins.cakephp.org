@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Cake\Event\EventInterface;
+use Override;
 
 /**
  * Error Handling Controller
@@ -25,6 +26,7 @@ use Cake\Event\EventInterface;
  */
 class ErrorController extends AppController
 {
+    #[Override]
     protected ?string $defaultTable = '';
 
     /**

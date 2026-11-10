@@ -6,6 +6,7 @@ namespace App\Test\TestCase\Controller;
 use Cake\Core\Configure;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use Override;
 
 /**
  * App\Controller\PackagesController Test Case
@@ -21,6 +22,7 @@ class PackagesControllerTest extends TestCase
      *
      * @var list<string>
      */
+    #[Override]
     protected array $fixtures = [
         'app.Packages',
         'plugin.Tags.Tags',
@@ -39,37 +41,37 @@ class PackagesControllerTest extends TestCase
     /**
      * @return void
      */
-    public function testIndexShowsFeaturedSliderOnFirstPageWithoutFilters(): void
+    public function testIndexShowsFeaturedSectionOnFirstPageWithoutFilters(): void
     {
         $this->get('/?sort=downloads&direction=desc');
 
         $this->assertResponseOk();
         $this->assertResponseContains('Featured');
-        $this->assertResponseContains('data-featured-packages-slider');
-        $this->assertResponseContains('Latest Release');
+        $this->assertResponseContains('data-featured-plugins');
+        $this->assertResponseContains('Latest release');
     }
 
     /**
      * @return void
      */
-    public function testIndexHidesFeaturedSliderOnSubsequentPages(): void
+    public function testIndexHidesFeaturedSectionOnSubsequentPages(): void
     {
         $this->get('/?sort=downloads&direction=desc&page=2');
 
         $this->assertResponseOk();
-        $this->assertResponseNotContains('data-featured-packages-slider');
-        $this->assertResponseNotContains('Previous featured package');
+        $this->assertResponseNotContains('data-featured-plugins');
+        $this->assertResponseNotContains('swiper');
     }
 
     /**
      * @return void
      */
-    public function testIndexHidesFeaturedSliderWhenSearching(): void
+    public function testIndexHidesFeaturedSectionWhenSearching(): void
     {
         $this->get('/?sort=downloads&direction=desc&search=package-02');
 
         $this->assertResponseOk();
-        $this->assertResponseNotContains('data-featured-packages-slider');
+        $this->assertResponseNotContains('data-featured-plugins');
         $this->assertResponseContains('vendor/package-02');
     }
 
@@ -83,6 +85,26 @@ class PackagesControllerTest extends TestCase
     }
 
     /**
+     * Detail links have a public page fallback with the same plugin information.
+     */
+    public function testPublicPluginDetails(): void
+    {
+        $this->get('/plugins/1');
+        $this->assertResponseOk();
+        $this->assertResponseContains('composer require markstory/asset_compress');
+        $this->assertResponseContains('https://packagist.org/packages/markstory/asset_compress');
+    }
+
+    /**
+     * The normal detail route returns a 404 for missing plugins.
+     */
+    public function testMissingPluginDetails(): void
+    {
+        $this->get('/plugins/99999');
+        $this->assertResponseCode(404);
+    }
+
+    /**
      * Public catalogue documents provide the runtime and navigation metadata.
      */
     public function testIndexLoadsInteractOnceAndProvidesCsrf(): void
@@ -91,7 +113,7 @@ class PackagesControllerTest extends TestCase
         $this->assertResponseOk();
         $this->assertResponseContains('/interact/js/runtime.js');
         $this->assertResponseContains('name="interact-navigation"');
-        $this->assertResponseContains('x-interact:model.live="query"');
+        $this->assertResponseContains('x-interact:model.live="search"');
         $this->assertCookieIsSet('csrfToken');
         $this->assertResponseNotContains('hx-');
     }

@@ -19,10 +19,11 @@ if (Configure::read('debug')) :
     $this->end();
 endif;
 ?>
-<div class="py-5">
-    <h2 class="text-xl mb-3"><?= h($message) ?></h2>
-    <p class="error">
+<div class="error-page site-width">
+    <h1><?= h($message) ?></h1>
+    <p>
         <strong><?= __d('cake', 'Error') ?>: </strong>
-        <?= __d('cake', 'The requested address {0} was not found on this server.', "<strong>'{$url}'</strong>") ?>
+        <?= __d('cake', 'The requested address {0} was not found on this server.', "<strong>'" . h($url) . "'</strong>") ?>
     </p>
+    <?= $this->Html->link(__('Browse plugins'), '/', ['class' => 'action-link']) ?>
 </div>

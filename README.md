@@ -45,11 +45,27 @@ Open the DDEV site URL while Vite is running. DDEV exposes Vite on HTTPS port
 
 For a production preview, run `npm run build` and use `?vprod=1` on the site URL.
 With `DEBUG=false`, CakeVite always uses the built assets. Builds write hashed
-JavaScript, CSS, fonts, and the Vite manifest into `webroot/build`.
+JavaScript, CSS, and the Vite manifest into `webroot/build`.
 
 Outside DDEV, run `npm run dev` alongside the PHP server. Vite defaults to
 `http://localhost:5173`; set `VITE_DEV_SERVER_URL` in the PHP environment when
 using a different address.
+
+## Featured plugin logos
+
+Set an optional logo URL or image path alongside the package name in
+`Packages.featured` in `config/app.php`:
+
+```php
+'featured' => [
+    'cakedc/users' => '/img/plugins/users.svg',
+    'vendor/plugin' => 'https://example.com/plugin-logo.png',
+    'friendsofcake/crud' => null,
+],
+```
+
+A null or broken logo falls back to the name-based emblem. Plain package-name
+list entries also use the emblem.
 
 ## Get social auth working
 

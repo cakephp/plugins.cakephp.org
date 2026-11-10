@@ -20,6 +20,8 @@ if (
 ) {
     throw new RuntimeException('Browser fixtures require their dedicated SQLite database.');
 }
+// Fixture schema reflection must use the same isolated database as the browser server.
+ConnectionManager::alias('default', 'test');
 // Only catalogue and tag tables are needed; OAuth itself is not exercised here.
 new Migrator()->runMany([['connection' => 'default'], ['connection' => 'default', 'plugin' => 'Tags']]);
 $fixture = new PackagesFixture();

@@ -102,16 +102,19 @@ return [
 
     'Packages' => [
         'featured' => [
-            'markstory/asset_compress',
-            'josegonzalez/cakephp-upload',
-            'dereuromark/cakephp-ide-helper',
-            'dereuromark/cakephp-queue',
-            'dereuromark/cakephp-tools',
-            'lordsimal/cakephp-sentry',
-            'friendsofcake/cakepdf',
-            'friendsofcake/crud',
-            'friendsofcake/search',
-            'cakedc/users',
+            // Optional logo URL or image path; null uses a name-based emblem.
+            'cakedc/users' => null,
+            'dereuromark/cakephp-ide-helper' => 'https://dereuromark.github.io/cakephp-ide-helper/logo.svg',
+            'dereuromark/cakephp-queue' => 'https://dereuromark.github.io/cakephp-queue/logo.svg',
+            'dereuromark/cakephp-tools' => 'https://dereuromark.github.io/cakephp-tools/logo.svg',
+            'friendsofcake/cakepdf' => null,
+            'friendsofcake/crud' => null,
+            'friendsofcake/search' => null,
+            'josbeir/cakephp-interact' => 'https://www.cakeinteract.dev/docs/branding/interact-mark.svg',
+            'josbeir/cakephp-vite' => null,
+            'josegonzalez/cakephp-upload' => null,
+            'lordsimal/cakephp-sentry' => null,
+            'markstory/asset_compress' => null,
         ],
     ],
 

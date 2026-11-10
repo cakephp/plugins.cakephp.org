@@ -59,6 +59,8 @@ return function (RouteBuilder $routes): void {
          * to use (in this case, templates/Pages/home.php)...
          */
         $builder->connect('/', ['controller' => 'Packages', 'action' => 'index']);
+        $builder->get('/plugins/{id}', ['controller' => 'Packages', 'action' => 'view'], 'plugin:view')
+            ->setPatterns(['id' => '[0-9]+'])->setPass(['id']);
         $builder->connect('/requirements', ['controller' => 'Pages', 'action' => 'display', 'requirements']);
 
         /*

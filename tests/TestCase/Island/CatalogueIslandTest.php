@@ -9,6 +9,7 @@ use Cake\Http\Exception\BadRequestException;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Interact\TestSuite\IslandTestTrait;
+use Override;
 
 /**
  * Exercises catalogue selections through real signed island updates.
@@ -20,6 +21,7 @@ class CatalogueIslandTest extends TestCase
     /**
      * @var list<string>
      */
+    #[Override]
     protected array $fixtures = ['app.Packages', 'plugin.Tags.Tags', 'plugin.Tags.Tagged'];
 
     /**
@@ -39,11 +41,11 @@ class CatalogueIslandTest extends TestCase
     {
         $this->testIsland('Catalogue')
             ->assertSet('paging.sort', 'latest_stable_release_date')
-            ->assertSee('data-featured-packages-slider')
+            ->assertSee('data-featured-plugins')
             ->set('paging.page', 2)
-            ->assertDontSee('data-featured-packages-slider')
+            ->assertDontSee('data-featured-plugins')
             ->set('paging.page', 1)
-            ->assertSee('data-featured-packages-slider');
+            ->assertSee('data-featured-plugins');
     }
 
     /**
@@ -56,7 +58,7 @@ class CatalogueIslandTest extends TestCase
             ->set('search', 'package-02')
             ->assertSet('paging.page', 1)
             ->assertSee('vendor/package-02')
-            ->assertDontSee('data-featured-packages-slider')
+            ->assertDontSee('data-featured-plugins')
             ->assertDontSee('vendor/package-03');
     }
 
@@ -65,7 +67,7 @@ class CatalogueIslandTest extends TestCase
      */
     public function testInitialUrlSelectionAndGeneratedLinks(): void
     {
-        $request = (new ServerRequest(['url' => 'http://localhost/?sort=downloads&direction=desc&page=2']))->withQueryParams([
+        $request = new ServerRequest(['url' => 'http://localhost/?sort=downloads&direction=desc&page=2'])->withQueryParams([
             'sort' => 'downloads', 'direction' => 'desc', 'page' => '2',
         ]);
         $island = $this->testIsland('Catalogue', request: $request)
@@ -101,5 +103,48 @@ class CatalogueIslandTest extends TestCase
         $island = $this->testIsland('Catalogue');
         $this->expectException(BadRequestException::class);
         $island->call('toggleVersion', 'featuredOrder', 'cakephp-5-4');
+    }
+
+    /**
+     * Resetting filters preserves the chosen sort and restores the full directory.
+     */
+    public function testClearFiltersRetainsSort(): void
+    {
+        $this->testIsland('Catalogue')
+            ->fill(['search' => 'asset', 'paging.sort' => 'downloads'])
+            ->call('clearFilters')
+            ->assertSet('search', '')
+            ->assertSet('cakephpSlugs', [])
+            ->assertSet('phpSlugs', [])
+            ->assertSet('paging.page', 1)
+            ->assertSet('paging.sort', 'downloads');
+    }
+
+    /**
+     * A version chosen in details replaces its family while retaining search and sort.
+     */
+    public function testDetailVersionRetainsOtherSelections(): void
+    {
+        $tags = $this->fetchTable('Tags.Tags');
+        $tag = $tags->saveOrFail($tags->newEntity(['slug' => 'cakephp-4-4', 'label' => 'CakePHP: 4.4']));
+        $tagged = $this->fetchTable('Tags.Tagged');
+        $tagged->saveOrFail($tagged->newEntity(['tag_id' => $tag->id, 'fk_id' => 1, 'fk_model' => 'Packages']));
+        $this->testIsland('Catalogue')
+            ->fill(['search' => 'asset', 'paging.sort' => 'downloads'])
+            ->call('selectVersion', 'cakephp_slugs', 'cakephp-4-4')
+            ->assertSet('cakephpSlugs', ['cakephp-4-4'])
+            ->assertSet('search', 'asset')
+            ->assertSet('paging.sort', 'downloads')
+            ->assertSet('paging.page', 1);
+    }
+
+    /**
+     * The update transport cannot bypass the input's search-length bound.
+     */
+    public function testOverlongSearchIsRejected(): void
+    {
+        $island = $this->testIsland('Catalogue');
+        $this->expectException(BadRequestException::class);
+        $island->set('search', str_repeat('a', 101));
     }
 }

@@ -2,56 +2,57 @@
 /**
  * @var \App\View\IslandTemplateView $this
  * @var list<\App\Model\Entity\Package> $featuredPackages
- * @var array<string, mixed> $catalogueQuery
+ * @var array<string, string|null> $featuredLogos
  */
 ?>
 <div>
-    <?php if ($featuredPackages) : ?>
-        <div class="w-full border-b overflow-hidden border-cake-red/20 bg-cake-red/5">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <section class="py-8 sm:py-10" x-data="featuredPackages">
-                    <div x-interact:ignore>
-                        <div class="mb-5 flex items-end justify-between gap-4">
-                            <div>
-                                <p class="text-sm font-medium uppercase tracking-[0.2em] text-cake-red"><?= __('Featured plugins') ?></p>
-                                <p class="mt-2 text-sm text-base-content/60"><?= __('Curated packages highlighted by the CakePHP community.') ?></p>
-                            </div>
-                            <div class="hidden items-center gap-3 md:flex">
-                                <button type="button" class="btn btn-circle btn-soft btn-primary" data-featured-packages-prev
-                                        aria-label="<?= __('Previous featured package') ?>">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
-                                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                        <path d="m15 18-6-6 6-6" />
-                                    </svg>
-                                </button>
-                                <button type="button" class="btn btn-circle btn-soft btn-primary" data-featured-packages-next
-                                        aria-label="<?= __('Next featured package') ?>">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
-                                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                        <path d="m9 18 6-6-6-6" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="featured-packages-slider-shell">
-                            <div class="featured-packages-slider swiper" data-featured-packages-slider>
-                                <div class="swiper-wrapper">
-                                    <?php foreach ($featuredPackages as $package) : ?>
-                                        <div class="swiper-slide">
-                                            <?= $this->element('Packages/package-tile', [
-                                                'package' => $package,
-                                                'isFeatured' => true,
-                                                'catalogueQuery' => $catalogueQuery,
-                                            ]) ?>
-                                        </div>
-                                    <?php endforeach; ?>
+    <?php if ($featuredPackages !== []) : ?>
+        <section class="featured-section" aria-label="<?= __('Featured plugins') ?>" data-featured-plugins>
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+                    <path d="m12 3 2.8 5.7 6.3.9-4.6 4.5 1.1 6.3-5.6-3-5.6 3 1.1-6.3-4.6-4.5 6.3-.9L12 3Z" stroke-linejoin="round"></path>
+                </svg>
+                <?= __('Featured plugins') ?>
+            </h2>
+            <div class="featured-grid">
+                <?php foreach ($featuredPackages as $package) : ?>
+                    <?php
+                    [$vendor, $name] = array_pad(explode('/', $package->package, 2), 2, '');
+                    $tone = ['rose', 'violet', 'amber'][hexdec(substr(hash('sha256', $package->package), 0, 4)) % 3];
+                    ?>
+                    <article class="featured-item" data-plugin-tone="<?= $tone ?>">
+                        <a class="featured-card" href="<?= $this->Url->build(['_name' => 'plugin:view', 'id' => $package->id]) ?>"
+                           aria-label="<?= __('View {0} details', h($package->package)) ?>"
+                           data-open-plugin data-plugin-id="<?= (int)$package->id ?>" data-plugin-name="<?= h($package->package) ?>">
+                            <?= $this->element('Packages/plugin-avatar', [
+                                'packageName' => $package->package,
+                                'logo' => $featuredLogos[$package->package] ?? null,
+                            ]) ?>
+                            <div class="featured-card-content">
+                                <div class="featured-card-top">
+                                    <div class="featured-card-name">
+                                        <span class="featured-vendor"><?= h($vendor) ?></span>
+                                        <h3><?= h($name ?: $vendor) ?></h3>
+                                    </div>
+                                    <span class="featured-card-arrow" aria-hidden="true">→</span>
                                 </div>
+                                <p class="featured-description"><?= h($package->description ?: __('No description available.')) ?></p>
                             </div>
-                            <div class="mt-4 flex justify-center" data-featured-packages-pagination></div>
-                        </div>
-                    </div>
-                </section>
+                            <div class="featured-card-footer">
+                                <span class="featured-downloads">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+                                        <path d="M12 3v12m-4-4 4 4 4-4M4 16v5h16v-5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    </svg>
+                                    <?= __('{0} downloads', $this->Number->format($package->downloads)) ?>
+                                </span>
+                                <?php if ($package->latest_stable_version) : ?>
+                                    <span class="featured-release" title="<?= __('Latest stable release') ?>"><?= h($package->latest_stable_version) ?></span>
+                                <?php endif; ?>
+                            </div>
+                        </a>
+                    </article>
+                <?php endforeach; ?>
             </div>
-        </div>
+        </section>
     <?php endif; ?>
 </div>

@@ -107,16 +107,12 @@ class PackagesTable extends Table
      *
      * @param \Cake\ORM\Query\SelectQuery<\App\Model\Entity\Package> $query Query instance.
      * @param array<string, mixed> $filters Accepted search and version filters.
-     * @param list<string> $exclude Featured package names to exclude.
      * @return \Cake\ORM\Query\SelectQuery<\App\Model\Entity\Package>
      */
-    public function findCatalogue(SelectQuery $query, array $filters, array $exclude = []): SelectQuery
+    public function findCatalogue(SelectQuery $query, array $filters): SelectQuery
     {
         $query->find('search', search: $filters)
             ->contain(['Tags' => static fn(SelectQuery $tags) => $tags->orderByDesc('Tags.label')]);
-        if ($exclude !== []) {
-            $query->where(['Packages.package NOT IN' => $exclude]);
-        }
 
         return $query;
     }
@@ -157,36 +153,5 @@ class PackagesTable extends Table
 
             return $options;
         });
-    }
-
-    /**
-     * Finder for autocomplete search results.
-     *
-     * @param \Cake\ORM\Query\SelectQuery<\App\Model\Entity\Package> $query Query instance.
-     * @param string $search Search term.
-     * @param int $maxResults Maximum number of results.
-     * @return \Cake\ORM\Query\SelectQuery<\App\Model\Entity\Package>
-     */
-    public function findAutocomplete(SelectQuery $query, string $search, int $maxResults = 8): SelectQuery
-    {
-        $escapedSearch = str_replace(['%', '_'], ['\%', '\_'], $search);
-
-        $nameMatch = $query->expr()
-            ->case()
-            ->when(['Packages.package LIKE' => '%' . $escapedSearch . '%'])
-            ->then(1, 'integer')
-            ->else(0, 'integer');
-
-        return $query
-            ->find('search', search: ['search' => $search])
-            ->contain(['Tags' => function (SelectQuery $q) {
-                return $q->orderByDesc('Tags.label');
-            }])
-            ->selectAlso([
-                'name_match' => $nameMatch,
-            ])
-            ->orderByDesc($nameMatch)
-            ->orderByDesc('Packages.downloads')
-            ->limit($maxResults);
     }
 }
