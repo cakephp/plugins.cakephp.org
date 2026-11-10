@@ -16,10 +16,11 @@
 
 $cakeDescription = 'CakePHP Plugins';
 $request = $this->getRequest();
+$theme = $request->getCookie('theme') === 'cakephp-dark' ? 'cakephp-dark' : 'cakephp';
 $canonicalUrl = $this->Url->build($request->getPath() ?: '/', ['fullBase' => true]);
 ?>
 <!DOCTYPE html>
-<html class="bg-base-100" data-theme="cakephp">
+<html class="bg-base-100" data-theme="<?= h($theme) ?>">
 <head>
     <?= $this->Html->charset() ?>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -32,11 +33,17 @@ $canonicalUrl = $this->Url->build($request->getPath() ?: '/', ['fullBase' => tru
     <?php if ($request->getQueryParams() !== []) : ?>
         <meta name="robots" content="noindex,nofollow">
     <?php endif; ?>
-    <?= $this->Html->script('theme', ['x-interact:asset' => 'reload']) ?>
 
-    <?= $this->Html->css('cake.css?v=' . (is_file(WWW_ROOT . 'css/cake.css') ? filemtime(WWW_ROOT . 'css/cake.css') : 'dev'), ['x-interact:asset' => 'reload']) ?>
-
-    <?= $this->Html->script('app.js?v=' . (is_file(WWW_ROOT . 'js/app.js') ? filemtime(WWW_ROOT . 'js/app.js') : 'dev'), ['defer' => true, 'x-interact:asset' => 'reload']) ?>
+    <?= $this->Vite->css([
+        'files' => ['resources/css/style.css'],
+        'block' => false,
+        'attributes' => ['x-interact:asset' => 'reload', 'timestamp' => false],
+    ]) ?>
+    <?= $this->Vite->script([
+        'files' => ['resources/js/app.js'],
+        'block' => false,
+        'attributes' => ['x-interact:asset' => 'reload', 'timestamp' => false],
+    ]) ?>
 
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>

@@ -36,10 +36,20 @@ While that is running (takes quite a while) you should install node modules and 
 
 ```bash
 ddev exec npm ci
-ddev exec bin/cake devserver
+ddev exec npm run dev
 ```
 
-With that you should now see what is currently on the production site.
+Open the DDEV site URL while Vite is running. DDEV exposes Vite on HTTPS port
+5173; restart DDEV after changing its port configuration. Development uses
+`DEBUG=true`. CakeVite loads the dev server and provides CSS hot reload.
+
+For a production preview, run `npm run build` and use `?vprod=1` on the site URL.
+With `DEBUG=false`, CakeVite always uses the built assets. Builds write hashed
+JavaScript, CSS, fonts, and the Vite manifest into `webroot/build`.
+
+Outside DDEV, run `npm run dev` alongside the PHP server. Vite defaults to
+`http://localhost:5173`; set `VITE_DEV_SERVER_URL` in the PHP environment when
+using a different address.
 
 ## Get social auth working
 
@@ -88,4 +98,6 @@ starts a local PHP server using a separate `tmp/browser.sqlite` fixture database
 
 Interact owns Alpine startup. Application components register through
 `alpine:init`; PHP islands live in `src/Island` with templates in
-`templates/island`. Composer supplies `/interact/js/runtime.js`.
+`templates/island`. Composer supplies `/interact/js/runtime.js`. The layout
+renders the app module before Interact's script block so components register
+before Alpine initializes.

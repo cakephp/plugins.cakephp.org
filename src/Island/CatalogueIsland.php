@@ -14,7 +14,7 @@ use Interact\Pagination\PaginationState;
 use Interact\UpdatedPaths;
 
 /**
- * Owns the public catalogue's accepted filters, paging, and featured region.
+ * Owns the public catalogue's accepted filters and paging.
  * Queries and entities remain request-local; only selections enter snapshots.
  */
 class CatalogueIsland extends Island
@@ -46,12 +46,6 @@ class CatalogueIsland extends Island
     )]
     public PaginationState $paging;
 
-    /**
-     * @var list<string>
-     */
-    #[State]
-    public array $featuredOrder = [];
-
     protected PackagesTable $packages;
 
     /**
@@ -60,15 +54,6 @@ class CatalogueIsland extends Island
     public function initialize(): void
     {
         $this->packages = $this->fetchTable(PackagesTable::class);
-    }
-
-    /**
-     * Randomize the featured selection once per fresh page mount.
-     */
-    public function mount(): void
-    {
-        $this->featuredOrder = array_values(array_filter((array)Configure::read('Packages.featured', [])));
-        shuffle($this->featuredOrder);
     }
 
     /**
@@ -117,23 +102,15 @@ class CatalogueIsland extends Island
             'direction' => $this->paging->direction,
         ];
         $hasFilters = trim($this->search) !== '' || $this->cakephpSlugs !== [] || $this->phpSlugs !== [];
-        $featuredNames = !$hasFilters && $this->paging->page === 1
-            ? array_values(array_intersect($this->featuredOrder, (array)Configure::read('Packages.featured', [])))
+        $showFeatured = !$hasFilters && $this->paging->page === 1;
+        $featuredNames = $showFeatured
+            ? array_values(array_filter((array)Configure::read('Packages.featured', []), is_string(...)))
             : [];
-        $featuredPackages = [];
-        if ($featuredNames !== []) {
-            $featured = $this->packages->find('featured', names: $featuredNames)->all()->indexBy('package')->toArray();
-            foreach ($featuredNames as $name) {
-                if (isset($featured[$name])) {
-                    $featuredPackages[] = $featured[$name];
-                }
-            }
-        }
         $packages = $this->paginate($this->packages->find('catalogue', filters: $query, exclude: $featuredNames));
 
         return [
             'packages' => $packages,
-            'featuredPackages' => $featuredPackages,
+            'showFeatured' => $showFeatured,
             'cakephpTags' => $options['cakephp'],
             'phpTags' => $options['php'],
             'catalogueQuery' => $query,

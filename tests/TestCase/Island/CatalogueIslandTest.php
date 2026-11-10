@@ -35,7 +35,7 @@ class CatalogueIslandTest extends TestCase
     /**
      * Pagination hides and restores the featured region without a page reload.
      */
-    public function testPagingUpdatesFeaturedRegionAndKeepsItsOrder(): void
+    public function testPagingUpdatesFeaturedRegion(): void
     {
         $this->testIsland('Catalogue')
             ->assertSet('paging.sort', 'latest_stable_release_date')
@@ -43,8 +43,7 @@ class CatalogueIslandTest extends TestCase
             ->set('paging.page', 2)
             ->assertDontSee('data-featured-packages-slider')
             ->set('paging.page', 1)
-            ->assertSee('data-featured-packages-slider')
-            ->assertSet('featuredOrder', ['markstory/asset_compress']);
+            ->assertSee('data-featured-packages-slider');
     }
 
     /**

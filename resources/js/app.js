@@ -1,25 +1,23 @@
-import '../css/style.css'
+import 'vite/modulepreload-polyfill'
 import Swiper from 'swiper'
 import { Autoplay, Navigation, Pagination } from 'swiper/modules'
 
 const register = (Alpine) => {
     Alpine.store('theme', {
         dark: document.documentElement.dataset.theme === 'cakephp-dark',
-        apply() {
-            document.documentElement.dataset.theme = this.dark ? 'cakephp-dark' : 'cakephp'
-        },
-        toggle() {
-            this.dark = !this.dark
-            this.apply()
-            try { localStorage.setItem('theme', this.dark ? 'cakephp-dark' : 'cakephp') } catch {}
+        apply(event) {
+            this.dark = event.detail.theme === 'cakephp-dark'
+            document.documentElement.dataset.theme = event.detail.theme
         },
     })
 
     Alpine.data('catalogue', () => ({
         toggleVersion(event) {
             if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+            const control = event.target.closest('[data-version-group][data-version-slug]')
+            if (!control || !this.$el.contains(control)) return
             event.preventDefault()
-            const { versionGroup, versionSlug } = event.currentTarget.dataset
+            const { versionGroup, versionSlug } = control.dataset
             return this.$server.call('toggleVersion', versionGroup, versionSlug)
         },
     }))
@@ -53,7 +51,7 @@ const register = (Alpine) => {
 
     Alpine.data('compatibilityCard', () => ({
         openDialog(event) {
-            this.$el.querySelector(`#${CSS.escape(event.currentTarget.dataset.dialogId)}`)?.showModal()
+            this.$root.querySelector(`#${CSS.escape(event.currentTarget.dataset.dialogId)}`)?.showModal()
         },
     }))
 
@@ -117,7 +115,6 @@ if (window.Alpine) register(window.Alpine)
 else document.addEventListener('alpine:init', () => register(window.Alpine), { once: true })
 
 const refreshDocument = () => {
-    window.Alpine?.store('theme')?.apply()
     const hasQuery = new URL(window.location.href).search !== ''
     let robots = document.head.querySelector('meta[name="robots"]')
     if (hasQuery && !robots) {

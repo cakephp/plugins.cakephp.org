@@ -14,6 +14,7 @@
         "dereuromark/cakephp-tags": "^3.0",
         "friendsofcake/search": "^7.5",
         "josbeir/cakephp-interact": "^0.2",
+        "josbeir/cakephp-vite": "^0.1.4",
         "knplabs/packagist-api": "^3.0",
         "mobiledetect/mobiledetectlib": "^4.8.03"
     },

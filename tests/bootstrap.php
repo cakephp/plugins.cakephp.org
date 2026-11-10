@@ -33,6 +33,9 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 
 require dirname(__DIR__) . '/config/bootstrap.php';
 
+// PHP rendering tests use dev-server tags; browser tests exercise the built manifest.
+Configure::write('CakeVite.forceProductionMode', false);
+
 // Fixture-derived options must never populate the development application's cache.
 Cache::drop('default');
 Cache::setConfig('default', ['className' => ArrayEngine::class]);

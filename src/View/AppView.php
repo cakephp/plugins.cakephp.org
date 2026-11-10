@@ -26,6 +26,7 @@ use Cake\View\View;
  * @property \Authentication\View\Helper\IdentityHelper $Identity
  * @property \App\View\Helper\UserHelper $User
  * @property \Interact\View\Helper\InteractHelper $Interact
+ * @property \CakeVite\View\Helper\ViteHelper $Vite
  */
 class AppView extends View
 {
@@ -46,5 +47,6 @@ class AppView extends View
         $this->loadHelper('Authentication.Identity');
         $this->loadHelper('User');
         $this->loadHelper('Interact.Interact');
+        $this->loadHelper('CakeVite.Vite');
     }
 }

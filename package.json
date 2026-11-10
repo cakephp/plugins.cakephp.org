@@ -9,7 +9,7 @@
         "vite": "^8.3.4"
     },
     "scripts": {
-        "dev": "vite build --watch",
+        "dev": "vite",
         "build": "vite build",
         "test:browser": "playwright test",
         "lint:tailwind": "node scripts/lint-tailwind.mjs",

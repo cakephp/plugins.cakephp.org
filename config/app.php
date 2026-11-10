@@ -115,6 +115,18 @@ return [
         ],
     ],
 
+    'CakeVite' => [
+        'devServer' => [
+            'url' => env('VITE_DEV_SERVER_URL', env('DDEV_PRIMARY_URL', 'http://localhost') . ':5173'),
+            'hostHints' => ['localhost', '127.0.0.1', '.ddev.site'],
+        ],
+        'build' => [
+            'manifestPath' => WWW_ROOT . 'build/.vite/manifest.json',
+            'outDirectory' => 'build',
+        ],
+        'forceProductionMode' => !filter_var(env('DEBUG', false), FILTER_VALIDATE_BOOLEAN),
+    ],
+
     'Interact' => [
         'view' => ['className' => IslandTemplateView::class],
     ],

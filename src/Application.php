@@ -18,6 +18,7 @@ namespace App;
 
 use ADmad\SocialAuth\Middleware\SocialAuthMiddleware;
 use App\Event\AfterGithubIdentify;
+use App\Middleware\ThemeCookieMiddleware;
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
 use Authentication\AuthenticationServiceProviderInterface;
@@ -104,6 +105,8 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             // Cross Site Request Forgery (CSRF) Protection Middleware
             // https://book.cakephp.org/5/en/security/csrf.html#cross-site-request-forgery-csrf-middleware
             ->add($csrf)
+
+            ->add(new ThemeCookieMiddleware())
 
             ->add(new SocialAuthMiddleware([
                 // SocialConnect Auth service's providers config. https://github.com/SocialConnect/auth/blob/master/README.md

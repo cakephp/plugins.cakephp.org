@@ -35,6 +35,7 @@ return [
     'Migrations' => ['onlyCli' => true],
 
     'Interact',
+    'CakeVite',
 
     // Additional plugins here
     'Search',
