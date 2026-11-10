@@ -21,6 +21,12 @@ class CatalogueIsland extends Island
     #[State(writable: true, url: true)]
     public string $search = '';
 
+    #[State(writable: true, url: true, history: true)]
+    public string $category = '';
+
+    #[State(writable: true, url: 'awesome', history: true)]
+    public bool $awesomeOnly = false;
+
     /**
      * @var list<string>
      */
@@ -60,7 +66,7 @@ class CatalogueIsland extends Island
      */
     public function updated(UpdatedPaths $paths): void
     {
-        if (($paths->has('search') || $paths->has('cakephpSlugs') || $paths->has('phpSlugs')) && !$paths->has('paging.page')) {
+        if (($paths->has('search') || $paths->has('cakephpSlugs') || $paths->has('phpSlugs') || $paths->has('category') || $paths->has('awesomeOnly')) && !$paths->has('paging.page')) {
             $this->paging->page = 1;
         }
     }
@@ -98,6 +104,26 @@ class CatalogueIsland extends Island
     }
 
     /**
+     * Choose one category from the directory or plugin details.
+     */
+    #[Action]
+    public function selectCategory(string $slug): void
+    {
+        $this->category = $slug;
+        $this->paging->page = 1;
+    }
+
+    /**
+     * Toggle community-curated membership without changing other filters.
+     */
+    #[Action]
+    public function toggleAwesome(): void
+    {
+        $this->awesomeOnly = !$this->awesomeOnly;
+        $this->paging->page = 1;
+    }
+
+    /**
      * Clear the search and version selections while retaining the current sort.
      */
     #[Action]
@@ -106,6 +132,8 @@ class CatalogueIsland extends Island
         $this->search = '';
         $this->cakephpSlugs = [];
         $this->phpSlugs = [];
+        $this->category = '';
+        $this->awesomeOnly = false;
         $this->paging->page = 1;
     }
 
@@ -120,16 +148,22 @@ class CatalogueIsland extends Island
             throw new BadRequestException('Search query is too long.');
         }
         $options = $this->packages->filterOptions();
+        $categoryOptions = $this->packages->categoryOptions();
+        if (!array_key_exists($this->category, $categoryOptions)) {
+            $this->category = '';
+        }
         $this->cakephpSlugs = array_values(array_intersect(array_filter($this->cakephpSlugs, is_string(...)), array_keys($options['cakephp'])));
         $this->phpSlugs = array_values(array_intersect(array_filter($this->phpSlugs, is_string(...)), array_keys($options['php'])));
         $query = [
             'search' => $this->search,
             'cakephp_slugs' => $this->cakephpSlugs,
             'php_slugs' => $this->phpSlugs,
+            'category' => $this->category,
+            'awesome' => $this->awesomeOnly,
             'sort' => $this->paging->sort,
             'direction' => $this->paging->direction,
         ];
-        $hasFilters = trim($this->search) !== '' || $this->cakephpSlugs !== [] || $this->phpSlugs !== [];
+        $hasFilters = trim($this->search) !== '' || $this->cakephpSlugs !== [] || $this->phpSlugs !== [] || $this->category !== '' || $this->awesomeOnly;
         $showFeatured = !$hasFilters && $this->paging->page === 1;
         $packages = $this->paginate($this->packages->find('catalogue', filters: $query));
 
@@ -140,6 +174,7 @@ class CatalogueIsland extends Island
             'cakephpTags' => $options['cakephp'],
             'phpTags' => $options['php'],
             'catalogueQuery' => $query,
+            'categoryOptions' => $categoryOptions,
         ];
     }
 }

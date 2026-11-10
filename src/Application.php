@@ -17,9 +17,14 @@ declare(strict_types=1);
 namespace App;
 
 use ADmad\SocialAuth\Middleware\SocialAuthMiddleware;
+use App\Command\SyncPackagesCommand;
 use App\Event\AfterGithubIdentify;
 use App\Http\RateLimit\AtomicFixedWindowRateLimiter;
 use App\Middleware\ThemeCookieMiddleware;
+use App\Model\Table\PackagesTable;
+use App\Service\AwesomeListImporter;
+use App\Service\AwesomeListParser;
+use App\Service\PackagistImporter;
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
 use Authentication\AuthenticationServiceProviderInterface;
@@ -27,9 +32,12 @@ use Authentication\Middleware\AuthenticationMiddleware;
 use Cake\Core\Configure;
 use Cake\Core\ContainerInterface;
 use Cake\Datasource\FactoryLocator;
+use Cake\Datasource\RepositoryInterface;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
+use Cake\Http\Client;
+use Cake\Http\Client\ClientEvent;
 use Cake\Http\Middleware\BodyParserMiddleware;
 use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\Middleware\RateLimitMiddleware;
@@ -37,6 +45,7 @@ use Cake\Http\MiddlewareQueue;
 use Cake\ORM\Locator\TableLocator;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
+use Packagist\Api\Client as PackagistClient;
 use Psr\Http\Message\ServerRequestInterface;
 use SocialConnect\OAuth2\Provider\GitHub;
 
@@ -189,6 +198,23 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
      */
     public function services(ContainerInterface $container): void
     {
+        $container->addShared(PackagesTable::class, static fn(): RepositoryInterface => FactoryLocator::get('Table')->get(PackagesTable::class));
+        $container->addShared(Client::class);
+        $container->addShared(AwesomeListParser::class);
+        $container->addShared('packagist.http', static function (): Client {
+            $client = new Client();
+            $userAgent = (string)env('PACKAGIST_USER_AGENT', 'plugins.cakephp.org (https://plugins.cakephp.org; mailto=security@cakephp.org)');
+            // Packagist's PSR-18 transport bypasses Cake's default headers and protocol.
+            $client->getEventManager()->on('HttpClient.beforeSend', static function (ClientEvent $event) use ($userAgent): void {
+                $event->setRequest($event->getRequest()->withHeader('User-Agent', $userAgent)->withProtocolVersion('2'));
+            });
+
+            return $client;
+        });
+        $container->addShared(PackagistClient::class)->addArgument('packagist.http');
+        $container->addShared(PackagistImporter::class)->addArguments([PackagesTable::class, PackagistClient::class]);
+        $container->addShared(AwesomeListImporter::class)->addArguments([PackagesTable::class, Client::class, AwesomeListParser::class]);
+        $container->add(SyncPackagesCommand::class)->addArguments([PackagistImporter::class, AwesomeListImporter::class]);
     }
 
     /**

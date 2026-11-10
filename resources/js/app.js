@@ -10,6 +10,23 @@ const register = (Alpine) => {
     })
 
     Alpine.data('catalogue', () => ({
+        categorySearch: '',
+        categoriesToggled(event) {
+            if (event.target.open) this.categorySearch = ''
+        },
+        matchesCategory(name) {
+            return name.toLocaleLowerCase().includes(this.categorySearch.trim().toLocaleLowerCase())
+        },
+        hasCategoryMatches() {
+            return Array.from(this.$refs.categoryGrid.querySelectorAll('[data-category-name]'))
+                .some(category => this.matchesCategory(category.dataset.categoryName))
+        },
+        closeCategories(focusToggle = false) {
+            if (!this.$refs.categoryBrowser.open && !focusToggle) return
+            this.$refs.categoryBrowser.open = false
+            this.$refs.categoryBrowser.querySelector('summary').focus({ preventScroll: true })
+            this.categorySearch = ''
+        },
         activate(event) {
             if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
             const plugin = event.target.closest('[data-open-plugin]')
@@ -23,15 +40,24 @@ const register = (Alpine) => {
             }
             const sort = event.target.closest('.sort-option')
             if (sort) sort.closest('details')?.removeAttribute('open')
-            const control = event.target.closest('[data-version-group][data-version-slug], [data-clear-catalogue]')
+            const control = event.target.closest('[data-version-group][data-version-slug], [data-clear-catalogue], [data-category-slug], [data-toggle-awesome]')
             if (!control || !this.$el.contains(control)) return
             event.preventDefault()
             if (control.hasAttribute('data-clear-catalogue')) return this.$server.call('clearFilters')
+            if (control.hasAttribute('data-category-slug')) {
+                this.closeCategories(control.classList.contains('selected-category'))
+                return this.$server.call('selectCategory', control.dataset.categorySlug)
+            }
+            if (control.hasAttribute('data-toggle-awesome')) return this.$server.call('toggleAwesome')
             const { versionGroup, versionSlug } = control.dataset
             return this.$server.call('toggleVersion', versionGroup, versionSlug)
         },
         selectVersion(event) {
             return this.$server.call('selectVersion', event.detail.group, event.detail.slug)
+        },
+        selectCategory(event) {
+            this.closeCategories()
+            return this.$server.call('selectCategory', event.detail.slug)
         },
         closeMenu(event) {
             const menu = event.target.closest('details[open]')
@@ -60,10 +86,12 @@ const register = (Alpine) => {
         filter(event) {
             if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
             const version = event.target.closest('[data-filter-package-version]')
-            if (!version) return
+            const category = event.target.closest('[data-filter-package-category]')
+            if (!version && !category) return
             event.preventDefault()
             this.$refs.dialog.close()
-            this.$dispatch('catalogue-version', { group: version.dataset.versionGroup, slug: version.dataset.versionSlug })
+            if (category) this.$dispatch('catalogue-category', { slug: category.dataset.categorySlug })
+            else this.$dispatch('catalogue-version', { group: version.dataset.versionGroup, slug: version.dataset.versionSlug })
         },
     }))
 

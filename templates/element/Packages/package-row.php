@@ -20,6 +20,17 @@ $detailsUrl = $this->Url->build(['_name' => 'plugin:view', 'id' => $package->id]
             </a>
         </h3>
         <p class="package-description"><?= h($package->description ?: __('No description available.')) ?></p>
+        <?php if ($package->categories) : ?>
+            <div class="package-curation">
+                <?= $this->element('Packages/awesome_badge', compact('package')) ?>
+                <?php foreach (array_slice($package->categories, 0, 2) as $category) : ?>
+                    <span class="category-label"><?= h($category->name) ?></span>
+                <?php endforeach; ?>
+                <?php if (count($package->categories) > 2) : ?>
+                    <span class="category-label">+<?= count($package->categories) - 2 ?></span>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
         <?php if ($summaries !== []) : ?>
             <p class="package-compatibility"><?= h(implode(' · ', $summaries)) ?></p>
         <?php endif; ?>

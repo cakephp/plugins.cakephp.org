@@ -31,7 +31,7 @@ class PackagesController extends AppController
      */
     public function view(string $id): void
     {
-        $package = $this->fetchTable(PackagesTable::class)->get($id, contain: ['Tags']);
+        $package = $this->fetchTable(PackagesTable::class)->get($id, contain: ['Tags', 'Categories']);
         $this->set(compact('package'));
     }
 }

@@ -33,6 +33,7 @@
                                     <div class="featured-card-name">
                                         <span class="featured-vendor"><?= h($vendor) ?></span>
                                         <h3><?= h($name ?: $vendor) ?></h3>
+                                        <?= $this->element('Packages/awesome_badge', compact('package')) ?>
                                     </div>
                                     <span class="featured-card-arrow" aria-hidden="true">→</span>
                                 </div>

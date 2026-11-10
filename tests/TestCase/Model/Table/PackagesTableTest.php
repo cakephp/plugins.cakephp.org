@@ -16,7 +16,35 @@ class PackagesTableTest extends TestCase
      * @var list<string>
      */
     #[Override]
-    protected array $fixtures = ['app.Packages', 'plugin.Tags.Tags', 'plugin.Tags.Tagged'];
+    protected array $fixtures = ['app.Packages', 'app.Categories', 'app.CategoriesPackages', 'plugin.Tags.Tags', 'plugin.Tags.Tagged'];
+
+    /**
+     * Grid counts represent unique packages in each category across the directory.
+     */
+    public function testCategoryChoicesIncludePackageCounts(): void
+    {
+        $this->assertSame([
+            'asset-management' => ['name' => 'Asset Management', 'count' => 1],
+            'authentication-authorization' => ['name' => 'Authentication & Authorization', 'count' => 1],
+            'code-analysis' => ['name' => 'Code Analysis', 'count' => 1],
+        ], $this->fetchTable(PackagesTable::class)->categoryOptions());
+    }
+
+    /**
+     * Membership is optional and multi-category plugins appear only once.
+     */
+    public function testCategoryAndMembershipFilters(): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        $this->assertSame(2, $packages->find('catalogue', filters: ['awesome' => true])->count());
+        $results = $packages->find('catalogue', filters: ['category' => 'asset-management'])->toArray();
+        $this->assertCount(1, $results);
+        $this->assertSame('markstory/asset_compress', $results[0]->package);
+        $this->assertCount(2, $results[0]->categories);
+        $this->assertSame(0, $packages->find('catalogue', filters: ['category' => 'asset-management', 'search' => 'users'])->count());
+        $this->assertSame(1, $packages->find('catalogue', filters: ['awesome' => true, 'search' => 'users'])->count());
+        $this->assertSame(26, $packages->find('catalogue', filters: [])->count());
+    }
 
     /**
      * Names and descriptions are both searchable in the full catalogue.

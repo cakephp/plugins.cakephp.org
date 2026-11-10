@@ -5,6 +5,7 @@ namespace App\Model\Table;
 
 use App\Model\Filter\PackagesCollection;
 use Cake\Cache\Cache;
+use Cake\Database\Expression\QueryExpression;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -27,6 +28,7 @@ use Cake\Validation\Validator;
  * @method \Cake\Datasource\ResultSetInterface<\App\Model\Entity\Package> deleteManyOrFail(iterable<\App\Model\Entity\Package> $entities, array<string, mixed> $options = [])
  * @property \Cake\ORM\Association\HasMany<\Tags\Model\Table\TaggedTable> $Tagged
  * @property \Cake\ORM\Association\BelongsToMany<\Tags\Model\Table\TagsTable> $Tags
+ * @property \Cake\ORM\Association\BelongsToMany<\App\Model\Table\CategoriesTable> $Categories
  * @mixin \Search\Model\Behavior\SearchBehavior
  * @mixin \Tags\Model\Behavior\TagBehavior
  * @extends \Cake\ORM\Table<array{Search: \Search\Model\Behavior\SearchBehavior, Tag: \Tags\Model\Behavior\TagBehavior}, \App\Model\Entity\Package>
@@ -52,6 +54,7 @@ class PackagesTable extends Table
             'collectionClass' => PackagesCollection::class,
         ]);
         $this->addBehavior('Tags.Tag', ['taggedCounter' => false]);
+        $this->belongsToMany('Categories')->setSort(['Categories.name' => 'ASC']);
     }
 
     /**
@@ -112,7 +115,18 @@ class PackagesTable extends Table
     public function findCatalogue(SelectQuery $query, array $filters): SelectQuery
     {
         $query->find('search', search: $filters)
-            ->contain(['Tags' => static fn(SelectQuery $tags) => $tags->orderByDesc('Tags.label')]);
+            ->contain(['Categories', 'Tags' => static fn(SelectQuery $tags) => $tags->orderByDesc('Tags.label')]);
+        if (!empty($filters['category']) || !empty($filters['awesome'])) {
+            $junction = $this->Categories->junction();
+            $alias = $junction->getAlias();
+            $membership = $junction->find()->select([$alias . '.package_id'])
+                ->where(static fn(QueryExpression $exp) => $exp->equalFields($alias . '.package_id', 'Packages.id'));
+            if (!empty($filters['category'])) {
+                $membership->innerJoin(['CurationCategory' => 'categories'], ['CurationCategory.id = ' . $alias . '.category_id'])
+                    ->where(['CurationCategory.slug' => $filters['category']]);
+            }
+            $query->where(static fn(QueryExpression $exp) => $exp->exists($membership));
+        }
 
         return $query;
     }
@@ -127,7 +141,25 @@ class PackagesTable extends Table
     public function findFeatured(SelectQuery $query, array $names): SelectQuery
     {
         return $query->where(['Packages.package IN' => $names])
-            ->contain(['Tags' => static fn(SelectQuery $tags) => $tags->orderByDesc('Tags.label')]);
+            ->contain(['Categories', 'Tags' => static fn(SelectQuery $tags) => $tags->orderByDesc('Tags.label')]);
+    }
+
+    /**
+     * @return array<string, array{name: string, count: int}> Imported categories and their directory-wide package counts.
+     */
+    public function categoryOptions(): array
+    {
+        $query = $this->Categories->find();
+        $query->select(['Categories.slug', 'Categories.name', 'package_count' => $query->func()->count('CategoryMemberships.package_id')])
+            ->leftJoin(['CategoryMemberships' => 'categories_packages'], ['CategoryMemberships.category_id = Categories.id'])
+            ->groupBy(['Categories.id', 'Categories.slug', 'Categories.name'])
+            ->orderByAsc('Categories.name');
+        $options = [];
+        foreach ($query->all() as $category) {
+            $options[$category->get('slug')] = ['name' => $category->get('name'), 'count' => (int)$category->get('package_count')];
+        }
+
+        return $options;
     }
 
     /**

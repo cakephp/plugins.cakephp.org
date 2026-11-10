@@ -3,152 +3,105 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Command;
 
-use App\Command\SyncPackagesCommand;
+use App\Service\AwesomeListImporter;
+use App\Service\PackagistImporter;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
-use Cake\Http\Client;
-use Cake\Http\Client\ClientEvent;
-use Cake\Http\Client\Response;
-use Cake\I18n\Date;
 use Cake\TestSuite\TestCase;
-use Packagist\Api\Client as PackagistClient;
-use Packagist\Api\Result\Package\Version;
-use PHPUnit\Framework\Attributes\DataProvider;
-use ReflectionMethod;
+use RuntimeException;
 
 /**
- * App\Command\SyncPackagesCommand Test Case
- *
- * @link \App\Command\SyncPackagesCommand
+ * The command resolves importers from CakePHP's container and orchestrates them.
  */
 class SyncPackagesCommandTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
 
     /**
-     * @return void
+     * A standalone failed source returns a useful exit status to automation.
      */
-    public function testHasExplicitCakePhpDependency(): void
+    public function testStandaloneCurationFailureReturnsAnError(): void
     {
-        $command = new SyncPackagesCommand();
-        $method = new ReflectionMethod($command, 'hasExplicitCakePhpDependency');
-
-        $this->assertTrue($method->invoke($command, ['PHP: 8.2', 'CakePHP: 5.0']));
-        $this->assertFalse($method->invoke($command, ['PHP: 8.2']));
+        $packagist = $this->createMock(PackagistImporter::class);
+        $packagist->expects($this->never())->method('sync');
+        $awesome = $this->createMock(AwesomeListImporter::class);
+        $awesome->expects($this->once())->method('sync')->willThrowException(new RuntimeException('Upstream unavailable'));
+        $this->mockService(PackagistImporter::class, static fn(): PackagistImporter => $packagist);
+        $this->mockService(AwesomeListImporter::class, static fn(): AwesomeListImporter => $awesome);
+        $this->exec('sync_packages --source awesome');
+        $this->assertExitError();
+        $this->assertErrorContains('previous curation retained');
     }
 
     /**
-     * @return void
+     * A category-only refresh must never trigger the full Packagist import.
      */
-    public function testExtractReleaseDate(): void
+    public function testAwesomeSourceRunsIndependently(): void
     {
-        $command = new SyncPackagesCommand();
-        $method = new ReflectionMethod($command, 'extractReleaseDate');
+        $packagist = $this->createMock(PackagistImporter::class);
+        $packagist->expects($this->never())->method('sync');
+        $awesome = $this->createMock(AwesomeListImporter::class);
+        $awesome->expects($this->once())->method('sync')->willReturn(['matched' => 2, 'unmatched' => []]);
+        $this->mockService(PackagistImporter::class, static fn(): PackagistImporter => $packagist);
+        $this->mockService(AwesomeListImporter::class, static fn(): AwesomeListImporter => $awesome);
+        $this->exec('sync_packages --source awesome');
+        $this->assertExitSuccess();
+        $this->assertOutputContains('2 plugins matched');
+        $this->assertOutputNotContains('Fetching package list');
+    }
 
-        $version = new Version();
-        $version->fromArray([
-            'time' => '2026-04-05T11:22:33+00:00',
+    /**
+     * Packagist can also be refreshed without fetching the curated list.
+     */
+    public function testPackagistSourceRunsIndependently(): void
+    {
+        $packagist = $this->createMock(PackagistImporter::class);
+        $packagist->expects($this->once())->method('sync')->willReturn([
+            'total' => 1, 'saved' => 1, 'skipped' => 0, 'failed' => 0, 'deleted' => 0, 'deleteFailed' => 0,
         ]);
-
-        $this->assertEquals(new Date('2026-04-05'), $method->invoke($command, $version));
-        $this->assertNull($method->invoke($command, null));
+        $awesome = $this->createMock(AwesomeListImporter::class);
+        $awesome->expects($this->never())->method('sync');
+        $this->mockService(PackagistImporter::class, static fn(): PackagistImporter => $packagist);
+        $this->mockService(AwesomeListImporter::class, static fn(): AwesomeListImporter => $awesome);
+        $this->exec('sync_packages --source packagist');
+        $this->assertExitSuccess();
+        $this->assertOutputContains('Saved: 1');
+        $this->assertOutputNotContains('Refreshing Awesome');
     }
 
     /**
-     * @return void
+     * A successful package sync runs curation afterwards.
      */
-    #[DataProvider('userAgentProvider')]
-    public function testCreatePackagistHttpClientUsesApiBestPractices(?string $configuredUserAgent, string $userAgent): void
+    public function testImportsUseContainerServices(): void
     {
-        $previousUserAgent = $_ENV['PACKAGIST_USER_AGENT'] ?? null;
-        unset($_ENV['PACKAGIST_USER_AGENT']);
-        if ($configuredUserAgent !== null) {
-            $_ENV['PACKAGIST_USER_AGENT'] = $configuredUserAgent;
-        }
-
-        try {
-            $command = new SyncPackagesCommand();
-            $method = new ReflectionMethod($command, 'createPackagistHttpClient');
-
-            /** @var \Cake\Http\Client $client */
-            $client = $method->invoke($command);
-        } finally {
-            if ($previousUserAgent === null) {
-                unset($_ENV['PACKAGIST_USER_AGENT']);
-            } else {
-                $_ENV['PACKAGIST_USER_AGENT'] = $previousUserAgent;
-            }
-        }
-
-        $this->assertInstanceOf(Client::class, $client);
-        $client->getEventManager()->on('HttpClient.beforeSend', function (ClientEvent $event) use ($userAgent): void {
-            $request = $event->getRequest();
-            $this->assertSame('2', $request->getProtocolVersion());
-            $this->assertSame($userAgent, $request->getHeaderLine('User-Agent'));
-            $this->assertSame('https://packagist.org/packages/list.json?type=cakephp-plugin', (string)$request->getUri());
-            $event->setResult(new Response(
-                ['HTTP/2 200 OK', 'Content-Type: application/json'],
-                '{"packageNames":["cakephp/authentication"]}',
-            ));
-        });
-
-        $packagist = new PackagistClient($client);
-        $this->assertSame(['cakephp/authentication'], $packagist->all(['type' => 'cakephp-plugin']));
+        $packagist = $this->createMock(PackagistImporter::class);
+        $packagist->expects($this->once())->method('sync')->willReturn([
+            'total' => 1, 'saved' => 1, 'skipped' => 0, 'failed' => 0, 'deleted' => 0, 'deleteFailed' => 0,
+        ]);
+        $awesome = $this->createMock(AwesomeListImporter::class);
+        $awesome->expects($this->once())->method('sync')->willReturn(['matched' => 1, 'unmatched' => []]);
+        $this->mockService(PackagistImporter::class, static fn(): PackagistImporter => $packagist);
+        $this->mockService(AwesomeListImporter::class, static fn(): AwesomeListImporter => $awesome);
+        $this->exec('sync_packages');
+        $this->assertExitSuccess();
+        $this->assertOutputContains('Saved: 1');
+        $this->assertOutputContains('1 plugins matched');
     }
 
     /**
-     * @return array<string, array{?string, string}>
+     * A failed curation refresh leaves the completed package import successful.
      */
-    public static function userAgentProvider(): array
+    public function testCurationFailureIsReported(): void
     {
-        $custom = 'plugins.cakephp.org-test (mailto=test@example.com)';
-
-        return [
-            'default' => [null, 'plugins.cakephp.org (https://plugins.cakephp.org; mailto=security@cakephp.org)'],
-            'custom' => [$custom, $custom],
-        ];
-    }
-
-    /**
-     * Test defaultName method
-     *
-     * @return void
-     * @link \App\Command\SyncPackagesCommand::defaultName()
-     */
-    public function testDefaultName(): void
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
-
-    /**
-     * Test getDescription method
-     *
-     * @return void
-     * @link \App\Command\SyncPackagesCommand::getDescription()
-     */
-    public function testGetDescription(): void
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
-
-    /**
-     * Test buildOptionParser method
-     *
-     * @return void
-     * @link \App\Command\SyncPackagesCommand::buildOptionParser()
-     */
-    public function testBuildOptionParser(): void
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
-
-    /**
-     * Test execute method
-     *
-     * @return void
-     * @link \App\Command\SyncPackagesCommand::execute()
-     */
-    public function testExecute(): void
-    {
-        $this->markTestIncomplete('Not implemented yet.');
+        $packagist = $this->createMock(PackagistImporter::class);
+        $packagist->expects($this->once())->method('sync')->willReturn([
+            'total' => 1, 'saved' => 1, 'skipped' => 0, 'failed' => 0, 'deleted' => 0, 'deleteFailed' => 0,
+        ]);
+        $awesome = $this->createMock(AwesomeListImporter::class);
+        $awesome->expects($this->once())->method('sync')->willThrowException(new RuntimeException('Upstream unavailable'));
+        $this->mockService(PackagistImporter::class, static fn(): PackagistImporter => $packagist);
+        $this->mockService(AwesomeListImporter::class, static fn(): AwesomeListImporter => $awesome);
+        $this->exec('sync_packages');
+        $this->assertExitSuccess();
+        $this->assertErrorContains('previous curation retained');
     }
 }

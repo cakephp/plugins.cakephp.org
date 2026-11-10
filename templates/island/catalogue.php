@@ -10,6 +10,9 @@
  * @var array<string, mixed> $catalogueQuery
  * @var list<string> $cakephpSlugs
  * @var list<string> $phpSlugs
+ * @var array<string, array{name: string, count: int}> $categoryOptions
+ * @var string $category
+ * @var bool $awesomeOnly
  */
 $sortLabels = [
     'latest_stable_release_date' => __('Latest release'),
@@ -21,9 +24,13 @@ $clearUrl = $this->Url->build([
     'controller' => 'Packages', 'action' => 'index', 'plugin' => null,
     '?' => ['sort' => $catalogueQuery['sort'], 'direction' => $catalogueQuery['direction']],
 ]);
+$clearCategoryUrl = $this->Url->build([
+    'controller' => 'Packages', 'action' => 'index', 'plugin' => null,
+    '?' => array_replace($catalogueQuery, ['category' => '']),
+]);
 ?>
 <div class="directory site-width" x-data="catalogue" @click="activate($event)" @keydown.escape="closeMenu($event)"
-     @catalogue-version.window="selectVersion($event)">
+     @catalogue-version.window="selectVersion($event)" @catalogue-category.window="selectCategory($event)">
     <h1 class="sr-only"><?= __('CakePHP plugins') ?></h1>
 
     <div class="catalogue-discovery">
@@ -60,6 +67,12 @@ $clearUrl = $this->Url->build([
                 <?php endforeach; ?>
                 <?= $this->Form->hidden('sort', ['value' => $catalogueQuery['sort']]) ?>
                 <?= $this->Form->hidden('direction', ['value' => $catalogueQuery['direction']]) ?>
+                <?php if ($category !== '') : ?>
+                    <?= $this->Form->hidden('category', ['value' => $category]) ?>
+                <?php endif; ?>
+                <?php if ($awesomeOnly) : ?>
+                    <?= $this->Form->hidden('awesome', ['value' => '1']) ?>
+                <?php endif; ?>
             <?= $this->Form->end() ?>
             <?php if ($hasFilters) : ?>
                 <a class="reset-filters" href="<?= h($clearUrl) ?>" data-clear-catalogue
@@ -105,6 +118,7 @@ $clearUrl = $this->Url->build([
             <?php endforeach; ?>
         </div>
 
+        <?= $this->element('Packages/category_browser', compact('categoryOptions', 'category', 'catalogueQuery', 'clearCategoryUrl')) ?>
     </div>
 
     <?php if ($showFeatured) : ?>
@@ -113,8 +127,21 @@ $clearUrl = $this->Url->build([
 
     <section class="catalogue-panel" id="packages-index-content" aria-label="<?= __('Plugin directory') ?>">
         <div class="catalogue-toolbar">
-            <h2 aria-live="polite"><span class="result-count"><?= $this->Paginator->counter('{{count}}') ?></span> <?= __('plugins') ?></h2>
+            <div class="catalogue-summary">
+                <h2 aria-live="polite"><span class="result-count"><?= $this->Paginator->counter('{{count}}') ?></span> <?= __('plugins') ?></h2>
+                <?php if ($category !== '') : ?>
+                    <a class="selected-category" href="<?= h($clearCategoryUrl) ?>" data-category-slug=""
+                       aria-label="<?= h(__('Remove category filter: {0}', $categoryOptions[$category]['name'])) ?>">
+                        <?= h($categoryOptions[$category]['name']) ?>
+                        <span aria-hidden="true">×</span>
+                    </a>
+                <?php endif; ?>
+            </div>
             <div class="catalogue-controls">
+                <?php $awesomeQuery = array_replace($catalogueQuery, ['awesome' => $awesomeOnly ? '0' : '1']); ?>
+                <a class="curation-toggle" role="button" aria-pressed="<?= $awesomeOnly ? 'true' : 'false' ?>"
+                   href="<?= $this->Url->build(['plugin' => null, 'controller' => 'Packages', 'action' => 'index', '?' => $awesomeQuery]) ?>"
+                   data-toggle-awesome @keydown.space.prevent="$el.click()"><?= __('Awesome only') ?></a>
                 <div class="sort-control">
                     <span class="muted"><?= __('Sort by') ?></span>
                     <details class="sort-menu">
@@ -145,7 +172,7 @@ $clearUrl = $this->Url->build([
             <?php if (count($packages) === 0) : ?>
                 <div class="empty-results">
                     <h3><?= __('No plugins found') ?></h3>
-                    <p><?= __('Try another search or clear the selected versions.') ?></p>
+                    <p><?= __('Try another search or reset your filters.') ?></p>
                     <a class="action-link" href="<?= h($clearUrl) ?>" data-clear-catalogue><?= __('Clear all') ?></a>
                 </div>
             <?php else : ?>

@@ -111,6 +111,8 @@ return [
     ],
 
     'Packages' => [
+        // Resolve moved or ambiguous Awesome-list repositories to an exact Composer package name.
+        'awesomeAliases' => [],
         'featured' => [
             // Optional logo URL or image path; null uses a name-based emblem.
             'cakedc/users' => ['logo' => null],

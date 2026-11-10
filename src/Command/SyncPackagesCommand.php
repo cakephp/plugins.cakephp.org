@@ -3,66 +3,36 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use Cake\Cache\Cache;
+use App\Service\AwesomeListImporter;
+use App\Service\PackagistImporter;
 use Cake\Command\Command;
 use Cake\Console\Arguments;
-use Cake\Console\CommandFactoryInterface;
 use Cake\Console\ConsoleIo;
-use Cake\Http\Client as HttpClient;
-use Cake\Http\Client\ClientEvent;
-use Cake\I18n\Date;
+use Cake\Console\ConsoleOptionParser;
 use Cake\Log\Log;
-use Composer\Semver\Intervals;
-use Composer\Semver\VersionParser;
 use Override;
-use Packagist\Api\Client as PackagistClient;
-use Packagist\Api\Result\Package\Version;
-use UnexpectedValueException;
+use Throwable;
 
 /**
- * SyncPackages command.
+ * Runs package imports with console progress and summaries.
  */
 class SyncPackagesCommand extends Command
 {
-    private const array CAKEPHP_SUBPACKAGES = [
-        'cakephp/cache',
-        'cakephp/collection',
-        'cakephp/console',
-        'cakephp/database',
-        'cakephp/datasource',
-        'cakephp/event',
-        'cakephp/form',
-        'cakephp/http',
-        'cakephp/i18n',
-        'cakephp/log',
-        'cakephp/orm',
-        'cakephp/utility',
-        'cakephp/validation',
-    ];
-
-    private const array PHP_VERSIONS = [
-        '7' => [0, 1, 2, 3, 4],
-        '8' => [0, 1, 2, 3, 4, 5],
-    ];
-
-    private const array CAKEPHP_VERSIONS = [
-        '3' => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-        '4' => [0, 1, 2, 3, 4, 5, 6],
-        '5' => [0, 1, 2, 3, 4],
-    ];
-
-    private readonly PackagistClient $client;
-
-    /**
-     * The name of this command.
-     */
     #[Override]
     protected string $name = 'sync_packages';
 
     /**
+     * Importers are supplied by CakePHP's command factory and container.
+     */
+    public function __construct(
+        private readonly PackagistImporter $packagist,
+        private readonly AwesomeListImporter $awesome,
+    ) {
+        parent::__construct();
+    }
+
+    /**
      * Get the default command name.
-     *
-     * @return string
      */
     public static function defaultName(): string
     {
@@ -70,280 +40,81 @@ class SyncPackagesCommand extends Command
     }
 
     /**
-     * Get the command description.
-     *
-     * @return string
+     * Describe the complete catalogue refresh.
      */
     public static function getDescription(): string
     {
-        return 'Sync all packages from packagist.org marked cakephp-plugin';
+        return 'Sync CakePHP plugins from Packagist and categories from Awesome CakePHP';
     }
 
     /**
-     * @param \Cake\Console\CommandFactoryInterface|null $factory
+     * Select a single source without changing the default complete refresh.
      */
-    public function __construct(
-        ?CommandFactoryInterface $factory = null,
-    ) {
-        parent::__construct($factory);
-        $this->client = new PackagistClient($this->createPackagistHttpClient());
-    }
-
-    /**
-     * @return \Cake\Http\Client
-     */
-    private function createPackagistHttpClient(): HttpClient
+    protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $client = new HttpClient();
-        $userAgent = (string)env(
-            'PACKAGIST_USER_AGENT',
-            'plugins.cakephp.org (https://plugins.cakephp.org; mailto=security@cakephp.org)',
-        );
-
-        // PSR-18 requests bypass the client's request creation and its default headers/protocol.
-        $client->getEventManager()->on('HttpClient.beforeSend', static function (ClientEvent $event) use ($userAgent): void {
-            $event->setRequest(
-                $event->getRequest()->withHeader('User-Agent', $userAgent)->withProtocolVersion('2'),
-            );
-        });
-
-        return $client;
+        return parent::buildOptionParser($parser)->addOption('source', [
+            'help' => 'Import all sources, Packagist packages only, or Awesome CakePHP categories only.',
+            'default' => 'all',
+            'choices' => ['all', 'packagist', 'awesome'],
+        ]);
     }
 
     /**
-     * Implement this method with your command's logic.
-     *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIo $io The console io
-     * @return void The exit code or null for success
+     * @param \Cake\Console\Arguments $args Command arguments.
+     * @param \Cake\Console\ConsoleIo $io Console output.
      */
-    public function execute(Arguments $args, ConsoleIo $io): void
+    public function execute(Arguments $args, ConsoleIo $io): int
     {
-        $packagesTable = $this->fetchTable('Packages');
-        $touchedIds = [];
+        if ($args->getOption('source') !== 'awesome') {
+            $this->importPackages($io);
+        }
+        if ($args->getOption('source') !== 'packagist' && !$this->importCuration($io)) {
+            return $args->getOption('source') === 'awesome' ? self::CODE_ERROR : self::CODE_SUCCESS;
+        }
 
+        return self::CODE_SUCCESS;
+    }
+
+    /**
+     * Report package import progress and cleanup results.
+     */
+    private function importPackages(ConsoleIo $io): void
+    {
         $io->out('Fetching package list from Packagist...');
-        /** @var list<string> $packages The names-only API response, without the optional fields filter. */
-        $packages = $this->client->all(['type' => 'cakephp-plugin']);
-        $total = count($packages);
-        $io->out(sprintf('Found <info>%d</info> packages. Processing...', $total));
-
-        $saved = 0;
-        $skipped = 0;
-        $failed = 0;
-        $i = 0;
-
         /** @var \Cake\Console\Helper\ProgressHelper $progress */
         $progress = $io->helper('Progress');
-        $progress->init(['total' => $total, 'width' => 60]);
-        $io->out('', 0);
-
-        foreach ($packages as $package) {
-            $i++;
-            $io->out(sprintf('[%d/%d] %s', $i, $total, $package), 1, ConsoleIo::VERBOSE);
-
-            $data = $this->getDataForPackage($package);
-
-            if (
-                $data['is_abandoned'] ||
-                !$data['latest_stable_version'] ||
-                $data['downloads'] < 10 ||
-                !$this->hasExplicitCakePhpDependency($data['tag_list'])
-            ) {
-                $skipped++;
-                $progress->increment()->draw();
-                continue;
+        $result = $this->packagist->sync(static function (string $name, int $current, int $total) use ($io, $progress): void {
+            if ($current === 1) {
+                $io->out(sprintf('Found <info>%d</info> packages. Processing...', $total));
+                $progress->init(['total' => $total, 'width' => 60]);
             }
-
-            $entity = $packagesTable->find()->where(['package' => $package])->first();
-            if (!$entity) {
-                $entity = $packagesTable->newEmptyEntity();
-            }
-
-            $entity = $packagesTable->patchEntity($entity, $data);
-            if (!$packagesTable->save($entity)) {
-                $failed++;
-                Log::warning('Unable to save package', [
-                    'package' => $package,
-                    'errors' => $entity->getErrors(),
-                ]);
-            } else {
-                $saved++;
-            }
-            $touchedIds[] = $entity->id;
+            $io->out(sprintf('[%d/%d] %s', $current, $total, $name), 1, ConsoleIo::VERBOSE);
             $progress->increment()->draw();
-        }
-
-        $io->out('');
-        $io->out(sprintf(
-            'Sync complete. Saved: <info>%d</info>, Skipped: <comment>%d</comment>, Failed: <error>%d</error>',
-            $saved,
-            $skipped,
-            $failed,
-        ));
-
-        // Remove packages that were not touched
-        $io->out('Removing stale packages...');
-        $deleted = 0;
-        $deleteFailed = 0;
-        /** @var \Cake\ORM\ResultSet<array-key, \App\Model\Entity\Package> $toDeletePackages */
-        $toDeletePackages = $packagesTable->find()->where(['id NOT IN' => $touchedIds])->all();
-        foreach ($toDeletePackages as $package) {
-            if (!$packagesTable->delete($package)) {
-                $deleteFailed++;
-                Log::warning('Unable to delete package', [
-                    'package' => $package->package,
-                    'id' => $package->id,
-                    'errors' => $package->getErrors(),
-                ]);
-            } else {
-                $deleted++;
-            }
-        }
-        $io->out(sprintf(
-            'Cleanup complete. Deleted: <info>%d</info>, Failed: <error>%d</error>',
-            $deleted,
-            $deleteFailed,
-        ));
-
-        Cache::delete('package_filter_tags_v1');
-    }
-
-    /**
-     * @return array{package: string, description: string, repo_url: string, downloads: int, stars: int, tag_list: array, latest_stable_version: ?string, latest_stable_release_date: ?\Cake\I18n\Date, is_abandoned: bool}
-     */
-    private function getDataForPackage(string $packageName): array
-    {
-        /** @var \Packagist\Api\Result\Package $metaDetails */
-        $metaDetails = $this->client->get($packageName);
-
-        if ($metaDetails->isAbandoned()) {
-            return [
-                'package' => $packageName,
-                'description' => $metaDetails->getDescription(),
-                'repo_url' => $metaDetails->getRepository(),
-                'downloads' => $metaDetails->getDownloads()->getTotal(),
-                'stars' => $metaDetails->getGithubStars(),
-                'tag_list' => [],
-                'latest_stable_version' => null,
-                'latest_stable_release_date' => null,
-                'is_abandoned' => true,
-            ];
-        }
-
-        $versions = $metaDetails->getVersions();
-
-        $meta = [];
-        // Check each version
-        foreach ($versions as $versionMeta) {
-            $phpRequire = $versionMeta->getRequire()['php'] ?? null;
-            if ($phpRequire) {
-                $meta = $this->appendVersionTags($meta, $phpRequire, 'PHP', self::PHP_VERSIONS);
-            }
-
-            $cakephpRequire = $versionMeta->getRequire()['cakephp/cakephp'] ?? null;
-            if ($cakephpRequire) {
-                $meta = $this->appendVersionTags($meta, $cakephpRequire, 'CakePHP', self::CAKEPHP_VERSIONS);
-            } else {
-                // Cake has standalone sub-packages
-                foreach (self::CAKEPHP_SUBPACKAGES as $subpackage) {
-                    $cakephpRequire = $versionMeta->getRequire()[$subpackage] ?? null;
-                    if ($cakephpRequire) {
-                        $meta = $this->appendVersionTags($meta, $cakephpRequire, 'CakePHP', self::CAKEPHP_VERSIONS);
-                    }
-                }
-            }
-        }
-
-        $stableVersions = array_filter(
-            $versions,
-            fn(Version $version): int|false => preg_match('/^v?\d+\.\d+(\.\d+)?$/', $version->getVersion()),
-        );
-        usort($stableVersions, function ($a, $b): int {
-            return version_compare($a->getVersion(), $b->getVersion());
         });
-        /** @var \Packagist\Api\Result\Package\Version|false $latestStable */
-        $latestStable = end($stableVersions);
-
-        return [
-            'package' => $packageName,
-            'description' => $metaDetails->getDescription(),
-            'repo_url' => $metaDetails->getRepository(),
-            'downloads' => $metaDetails->getDownloads()->getTotal(),
-            'stars' => $metaDetails->getGithubStars(),
-            'tag_list' => $meta,
-            'latest_stable_version' => $latestStable ? $latestStable->getVersion() : null,
-            'latest_stable_release_date' => $this->extractReleaseDate($latestStable ?: null),
-            'is_abandoned' => $metaDetails->isAbandoned(),
-        ];
+        $io->out('');
+        $io->out(sprintf('Sync complete. Saved: %d, Skipped: %d, Failed: %d', $result['saved'], $result['skipped'], $result['failed']));
+        $io->out(sprintf('Cleanup complete. Deleted: %d, Failed: %d', $result['deleted'], $result['deleteFailed']));
     }
 
     /**
-     * Extract the release date
+     * A failed curation refresh must not invalidate a completed package import.
      */
-    private function extractReleaseDate(?Version $version): ?Date
+    private function importCuration(ConsoleIo $io): bool
     {
-        if (!$version instanceof Version || $version->getTime() === '') {
-            return null;
-        }
-
-        return new Date($version->getTime());
-    }
-
-    /**
-     * @param list<string> $tags
-     * @return bool
-     */
-    private function hasExplicitCakePhpDependency(array $tags): bool
-    {
-        return array_any($tags, fn(string $tag): bool => str_starts_with($tag, 'CakePHP'));
-    }
-
-    /**
-     * @param array $meta The meta array to adjust
-     * @param string $packageConstraint The meta array which contains the current version strings
-     * @param string $tagPrefix The prefix which should be used for the tag
-     * @param array<array-key, array<int>> $versions The versions to check
-     * @return array
-     */
-    private function appendVersionTags(
-        array $meta,
-        string $packageConstraint,
-        string $tagPrefix,
-        array $versions,
-    ): array {
-        foreach ($versions as $majorVersionNr => $minorVersions) {
-            foreach ($minorVersions as $minorVersionNr) {
-                $minorVersion = sprintf('%s.%s', $majorVersionNr, $minorVersionNr);
-                $tagLabel = sprintf('%s: %s', $tagPrefix, $minorVersion);
-                if (
-                    $this->constraintsIntersect($packageConstraint, $minorVersion) &&
-                    !in_array($tagLabel, $meta, true)
-                ) {
-                    $meta[] = $tagLabel;
-                }
-            }
-        }
-
-        return $meta;
-    }
-
-    /**
-     * @return bool
-     */
-    private function constraintsIntersect(string $leftConstraint, string $rightConstraint): bool
-    {
-        $versionParser = new VersionParser();
-
+        $io->out('Refreshing Awesome CakePHP categories...');
         try {
-            return Intervals::haveIntersections(
-                $versionParser->parseConstraints($leftConstraint),
-                $versionParser->parseConstraints($rightConstraint),
-            );
-        } catch (UnexpectedValueException) {
+            $curation = $this->awesome->sync();
+            $io->out(sprintf('Awesome CakePHP: %d plugins matched, %d repository links unmatched.', $curation['matched'], count($curation['unmatched'])));
+            foreach ($curation['unmatched'] as $repository) {
+                $io->out('Unmatched or ambiguous: ' . $repository, 1, ConsoleIo::VERBOSE);
+            }
+
+            return true;
+        } catch (Throwable $exception) {
+            $io->warning('Awesome CakePHP refresh failed; previous curation retained. ' . $exception->getMessage());
+            Log::warning('Awesome CakePHP refresh failed: ' . $exception->getMessage());
+
             return false;
-        } finally {
-            Intervals::clear();
         }
     }
 }
