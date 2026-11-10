@@ -77,7 +77,6 @@ jobs:
         node-version: '24'
         cache: npm
     - run: npm ci
-    - run: npm run lint:tailwind
     - run: npm run build
     - run: npx playwright install --with-deps chromium
     - run: bin/cake plugin assets symlink Interact

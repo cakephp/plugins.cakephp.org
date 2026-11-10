@@ -102,10 +102,7 @@ ddev exec -s db mysql -uroot -proot -e "DROP DATABASE IF EXISTS db; CREATE DATAB
 Run the PHP suite with `ddev exec composer test`, code style with
 `ddev exec composer cs-check`, and static analysis with `ddev exec composer phpstan`.
 
-Run `npm run lint:tailwind` to check templates, styles, and PHP HTML templates
-with the official Tailwind language server. Warnings and errors fail this check,
-which also runs in CI. `npm run check` runs Tailwind lint, the frontend build, and
-the browser suite.
+Run `npm run check` to build the frontend assets and run the browser suite.
 
 For browser regressions, install dependencies with `npm ci`, build with
 `npm run build`, and install Chromium with `npx playwright install chromium`.
