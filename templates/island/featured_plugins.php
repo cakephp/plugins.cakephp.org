@@ -2,7 +2,7 @@
 /**
  * @var \App\View\IslandTemplateView $this
  * @var list<\App\Model\Entity\Package> $featuredPackages
- * @var array<string, string|null> $featuredLogos
+ * @var array<string, array{logo: string|null}> $featuredMetadata
  */
 ?>
 <div>
@@ -26,7 +26,7 @@
                            data-open-plugin data-plugin-id="<?= (int)$package->id ?>" data-plugin-name="<?= h($package->package) ?>">
                             <?= $this->element('Packages/plugin-avatar', [
                                 'packageName' => $package->package,
-                                'logo' => $featuredLogos[$package->package] ?? null,
+                                'logo' => $featuredMetadata[$package->package]['logo'] ?? null,
                             ]) ?>
                             <div class="featured-card-content">
                                 <div class="featured-card-top">

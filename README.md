@@ -69,14 +69,14 @@ Set an optional logo URL or image path alongside the package name in
 
 ```php
 'featured' => [
-    'cakedc/users' => '/img/plugins/users.svg',
-    'vendor/plugin' => 'https://example.com/plugin-logo.png',
-    'friendsofcake/crud' => null,
+    'cakedc/users' => ['logo' => '/img/plugins/users.svg'],
+    'vendor/plugin' => ['logo' => 'https://example.com/plugin-logo.png'],
+    'friendsofcake/crud' => ['logo' => null],
 ],
 ```
 
-A null or broken logo falls back to the name-based emblem. Plain package-name
-list entries also use the emblem.
+A null or broken logo falls back to the name-based emblem. Each entry can hold
+additional metadata alongside `logo` as needed.
 
 ## Get social auth working
 

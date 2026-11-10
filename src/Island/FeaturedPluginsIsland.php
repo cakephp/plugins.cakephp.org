@@ -35,8 +35,8 @@ class FeaturedPluginsIsland extends Island
      */
     public function viewData(): array
     {
-        $logos = $this->featured();
-        $names = array_values(array_intersect($this->order, array_keys($logos)));
+        $metadata = $this->featured();
+        $names = array_values(array_intersect($this->order, array_keys($metadata)));
         $packages = [];
         if ($names !== []) {
             $featured = $this->fetchTable(PackagesTable::class)->find('featured', names: $names)->all()->indexBy('package')->toArray();
@@ -52,28 +52,17 @@ class FeaturedPluginsIsland extends Island
 
         return [
             'featuredPackages' => $packages,
-            'featuredLogos' => $logos,
+            'featuredMetadata' => $metadata,
         ];
     }
 
     /**
-     * Package names map to optional logo URLs; plain list entries use an emblem.
+     * Read featured metadata keyed by package name.
      *
-     * @return array<string, string|null>
+     * @return array<string, array{logo: string|null}>
      */
     protected function featured(): array
     {
-        $featured = [];
-        foreach ((array)Configure::read('Packages.featured', []) as $name => $logo) {
-            if (is_int($name)) {
-                $name = $logo;
-                $logo = null;
-            }
-            if (is_string($name)) {
-                $featured[$name] = is_string($logo) && $logo !== '' ? $logo : null;
-            }
-        }
-
-        return $featured;
+        return (array)Configure::read('Packages.featured', []);
     }
 }

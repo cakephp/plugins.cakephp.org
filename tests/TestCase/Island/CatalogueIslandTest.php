@@ -30,7 +30,7 @@ class CatalogueIslandTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Configure::write('Packages.featured', ['markstory/asset_compress']);
+        Configure::write('Packages.featured', ['markstory/asset_compress' => ['logo' => null]]);
         Cache::delete('package_filter_tags_v1');
     }
 

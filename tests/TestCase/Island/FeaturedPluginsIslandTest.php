@@ -27,8 +27,8 @@ class FeaturedPluginsIslandTest extends TestCase
     public function testSelectionOrderSurvivesRefresh(): void
     {
         Configure::write('Packages.featured', [
-            'markstory/asset_compress' => 'https://example.com/asset-compress.svg',
-            'cakedc/users',
+            'markstory/asset_compress' => ['logo' => 'https://example.com/asset-compress.svg'],
+            'cakedc/users' => ['logo' => null],
         ]);
         $island = $this->testIsland('FeaturedPlugins');
         $order = $island->result()->state['order'];
@@ -36,7 +36,7 @@ class FeaturedPluginsIslandTest extends TestCase
             ->assertSee('markstory/asset_compress')->assertSee('cakedc/users')
             ->assertSee('https://example.com/asset-compress.svg');
 
-        Configure::write('Packages.featured', ['cakedc/users']);
+        Configure::write('Packages.featured', ['cakedc/users' => ['logo' => null]]);
         $island->sync()->assertSee('cakedc/users')->assertDontSee('markstory/asset_compress');
     }
 
@@ -47,7 +47,7 @@ class FeaturedPluginsIslandTest extends TestCase
     {
         Configure::write('Packages.featured', []);
         $this->testIsland('FeaturedPlugins')->assertDontSee('data-featured-plugins');
-        Configure::write('Packages.featured', ['missing/package']);
+        Configure::write('Packages.featured', ['missing/package' => ['logo' => null]]);
         $this->testIsland('FeaturedPlugins')->assertDontSee('data-featured-plugins');
     }
 
@@ -56,7 +56,12 @@ class FeaturedPluginsIslandTest extends TestCase
      */
     public function testSelectionIsBoundedToThreePackages(): void
     {
-        Configure::write('Packages.featured', ['markstory/asset_compress', 'cakedc/users', 'dereuromark/cakephp-tools', 'vendor/package-01']);
+        Configure::write('Packages.featured', [
+            'markstory/asset_compress' => ['logo' => null],
+            'cakedc/users' => ['logo' => null],
+            'dereuromark/cakephp-tools' => ['logo' => null],
+            'vendor/package-01' => ['logo' => null],
+        ]);
         $island = $this->testIsland('FeaturedPlugins');
         $this->assertSame(3, substr_count($island->result()->html, 'class="featured-item"'));
     }
