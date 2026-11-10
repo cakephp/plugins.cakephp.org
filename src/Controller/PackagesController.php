@@ -3,188 +3,24 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Cake\Cache\Cache;
-use Cake\Core\Configure;
-use Cake\Http\Response;
-use Cake\ORM\Query\SelectQuery;
-
 /**
- * Packages Controller
- *
- * @property \App\Model\Table\PackagesTable $Packages
+ * Hosts the public catalogue; islands own subsequent interactions.
  */
 class PackagesController extends AppController
 {
     /**
-     * @return void
+     * Allow anonymous catalogue visits.
      */
     public function initialize(): void
     {
         parent::initialize();
-
-        $this->Authentication->allowUnauthenticated(['index', 'autocomplete']);
+        $this->Authentication->allowUnauthenticated(['index']);
     }
 
     /**
-     * Index method
-     *
-     * @return \Cake\Http\Response Renders view
+     * Render the catalogue island in the normal application layout.
      */
-    public function index(): Response
+    public function index(): void
     {
-        // Add default sort if no sort is provided
-        $queryParams = $this->request->getQueryParams();
-        if (empty($queryParams['sort'])) {
-            $this->request = $this->request->withQueryParams(array_merge(
-                $queryParams,
-                ['sort' => 'latest_stable_release_date', 'direction' => 'desc'],
-            ));
-        }
-
-        $featuredPackages = [];
-        $activeFilterKeys = ['search', 'cakephp_slugs', 'php_slugs'];
-        $hasActiveFilters = array_any($activeFilterKeys, fn(string $key): bool => $this->hasActiveFilterValue($queryParams[$key] ?? null));
-        $currentPage = max(1, (int)($queryParams['page'] ?? 1));
-        $showFeaturedPackages = !$hasActiveFilters && $currentPage === 1;
-        $featuredPackageNames = [];
-
-        if ($showFeaturedPackages) {
-            $featuredPackageNames = array_values(array_filter((array)Configure::read('Packages.featured', [])));
-            if ($featuredPackageNames !== []) {
-                shuffle($featuredPackageNames);
-            }
-
-            $featuredPackages = $this->Packages
-                ->find()
-                ->contain(['Tags' => function (SelectQuery $q) {
-                    return $q->orderByDesc('Tags.label');
-                }])
-                ->where(['Packages.package IN' => $featuredPackageNames])
-                ->all()
-                ->indexBy('package')
-                ->toArray();
-
-            $featuredPackages = array_values(array_filter(
-                array_map(
-                    static fn(string $packageName) => $featuredPackages[$packageName] ?? null,
-                    $featuredPackageNames,
-                ),
-            ));
-        }
-
-        $query = $this->Packages
-            ->find('search', search: $this->request->getQueryParams())
-            ->contain(['Tags' => function (SelectQuery $q) {
-                return $q->orderByDesc('Tags.label');
-            }]);
-        if ($featuredPackageNames !== []) {
-            $query->where(['Packages.package NOT IN' => $featuredPackageNames]);
-        }
-        $packages = $this->paginate($query, ['limit' => 21]);
-
-        /** @var array{cakephp: array<string, string>, php: array<string, string>} $filterTags */
-        $filterTags = Cache::remember('package_filter_tags_v1', function (): array {
-            $cakephpTags = $this->Packages->Tags->find('list', keyField: 'slug')
-                ->where(['slug LIKE' => 'cakephp-%'])
-                ->toArray();
-            $phpTags = $this->Packages->Tags->find('list', keyField: 'slug')
-                ->where(['slug LIKE' => 'php-%'])
-                ->toArray();
-
-            return [
-                'cakephp' => $this->sortVersionTags($cakephpTags, 'CakePHP'),
-                'php' => $this->sortVersionTags($phpTags, 'PHP'),
-            ];
-        });
-        $cakephpTags = $filterTags['cakephp'];
-        $phpTags = $filterTags['php'];
-
-        $this->set(compact('featuredPackages', 'packages', 'cakephpTags', 'phpTags'));
-
-        return $this->render();
-    }
-
-    /**
-     * Autocomplete endpoint for package search.
-     *
-     * @return \Cake\Http\Response
-     */
-    public function autocomplete(): Response
-    {
-        $q = trim((string)$this->request->getQuery('q'));
-        if (mb_strlen($q) < 2) {
-            return $this->response
-                ->withType('application/json')
-                ->withStringBody(json_encode([], JSON_THROW_ON_ERROR));
-        }
-
-        /** @var \Cake\ORM\ResultSet<array-key, \App\Model\Entity\Package> $packages */
-        $packages = $this->Packages
-            ->find('autocomplete', search: $q)
-            ->all();
-
-        $results = [];
-        foreach ($packages as $package) {
-            $cakeVersions = [];
-            foreach ($package->cake_php_tag_groups as $major => $tags) {
-                $cakeVersions[] = $major . '.x';
-            }
-
-            $phpVersions = [];
-            foreach ($package->php_tag_groups as $major => $tags) {
-                $phpVersions[] = $major . '.x';
-            }
-
-            $results[] = [
-                'package' => $package->package,
-                'description' => $package->description,
-                'repo_url' => $package->repo_url,
-                'downloads' => $package->downloads,
-                'stars' => $package->stars,
-                'latest_version' => $package->latest_stable_version,
-                'cakephp_versions' => $cakeVersions,
-                'php_versions' => $phpVersions,
-            ];
-        }
-
-        return $this->response
-            ->withType('application/json')
-            ->withStringBody(json_encode($results, JSON_THROW_ON_ERROR));
-    }
-
-    /**
-     * @return bool
-     */
-    protected function hasActiveFilterValue(mixed $value): bool
-    {
-        if (is_array($value)) {
-            return array_any($value, fn($item): bool => $this->hasActiveFilterValue($item));
-        }
-
-        if ($value === null) {
-            return false;
-        }
-
-        if (is_string($value)) {
-            return trim($value) !== '';
-        }
-
-        return (bool)$value;
-    }
-
-    /**
-     * @return array
-     */
-    protected function sortVersionTags(array $tags, string $prefix): array
-    {
-        $pattern = '/^' . preg_quote($prefix, '/') . ':\s*/';
-        uasort($tags, static function (string $left, string $right) use ($pattern): int {
-            $leftVersion = preg_replace($pattern, '', $left) ?: $left;
-            $rightVersion = preg_replace($pattern, '', $right) ?: $right;
-
-            return version_compare($rightVersion, $leftVersion);
-        });
-
-        return $tags;
     }
 }

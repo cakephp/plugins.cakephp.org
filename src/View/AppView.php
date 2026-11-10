@@ -25,6 +25,7 @@ use Cake\View\View;
  * @link https://book.cakephp.org/5/en/views.html#the-app-view
  * @property \Authentication\View\Helper\IdentityHelper $Identity
  * @property \App\View\Helper\UserHelper $User
+ * @property \Interact\View\Helper\InteractHelper $Interact
  */
 class AppView extends View
 {
@@ -44,5 +45,6 @@ class AppView extends View
         $this->loadHelper('Html', ['templates' => 'html-templates']);
         $this->loadHelper('Authentication.Identity');
         $this->loadHelper('User');
+        $this->loadHelper('Interact.Interact');
     }
 }

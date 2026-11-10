@@ -55,3 +55,8 @@ yarn-debug.log
 yarn-error.log
 
 /setup
+
+# Composer plugin assets and browser test output
+/webroot/interact
+/playwright-report/
+/test-results/

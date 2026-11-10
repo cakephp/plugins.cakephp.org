@@ -34,6 +34,8 @@ return [
     'Bake' => ['onlyCli' => true, 'optional' => true],
     'Migrations' => ['onlyCli' => true],
 
+    'Interact',
+
     // Additional plugins here
     'Search',
     'Tags',

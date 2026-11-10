@@ -5,7 +5,7 @@
     "type": "project",
     "homepage": "https://cakephp.org",
     "require": {
-        "php": ">=8.4",
+        "php": "^8.5",
         "admad/cakephp-social-auth": "^2.2",
         "cakephp/authentication": "^4.0",
         "cakephp/cakephp": "5.4.*",
@@ -13,6 +13,7 @@
         "cakephp/plugin-installer": "^2.0",
         "dereuromark/cakephp-tags": "^3.0",
         "friendsofcake/search": "^7.5",
+        "josbeir/cakephp-interact": "^0.2",
         "knplabs/packagist-api": "^3.0",
         "mobiledetect/mobiledetectlib": "^4.8.03"
     },

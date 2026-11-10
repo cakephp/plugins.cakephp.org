@@ -2,23 +2,21 @@
 
 This repository contains the code responsible for https://plugins.cakephp.org
 
-## Production request protection
+## Request handling
 
-The public package listing has query validation and an IP-based rate limit. It
-uses Dokku's `REDIS_URL` by default. `RATE_LIMIT_CACHE_URL` can override it if
-you later want a dedicated Redis database or service.
-
-The container includes the PHP Redis extension. `TRUSTED_PROXY_IPS` must list
-only proxies that overwrite `X-Forwarded-For`; for the current Dokku setup its
-default is `172.17.0.1`. Set `RATE_LIMIT_ENABLED=false` only for temporary
-maintenance or local development. The defaults are 90 listing views/minute,
-15 filtered listings/minute, and 30 autocomplete requests/minute per client IP.
+The application uses CakePHP's `RateLimitMiddleware` globally with its default
+settings. Interactive regions use Cake Interact's shipped runtime.
 
 ## Starting local development
 
-You need [DDEV](https://docs.ddev.com/en/stable/) installed and configured on your machine.
+You need PHP 8.5 and [DDEV](https://docs.ddev.com/en/stable/) installed and configured on your machine.
 
-After that start the app via `ddev start`
+After that start the app via `ddev start` and install the PHP dependencies and runtime assets:
+
+```bash
+ddev exec composer install
+ddev exec bin/cake plugin assets symlink Interact
+```
 
 Next you need to apply migrations to create the database tables:
 
@@ -37,7 +35,7 @@ ddev exec bin/cake sync_packages
 While that is running (takes quite a while) you should install node modules and start the dev server via
 
 ```bash
-ddev exec npm i
+ddev exec npm ci
 ddev exec bin/cake devserver
 ```
 
@@ -72,3 +70,22 @@ ddev exec -s db mysql -uroot -proot -e "DROP DATABASE IF EXISTS db; CREATE DATAB
 
 > [!NOTE]
 > Don't forget to apply migrations again.
+
+## Checking changes
+
+Run the PHP suite with `ddev exec composer test`, code style with
+`ddev exec composer cs-check`, and static analysis with `ddev exec composer phpstan`.
+
+Run `npm run lint:tailwind` to check templates, styles, and PHP HTML templates
+with the official Tailwind language server. Warnings and errors fail this check,
+which also runs in CI. `npm run check` runs Tailwind lint, the frontend build, and
+the browser suite.
+
+For browser regressions, install dependencies with `npm ci`, build with
+`npm run build`, and install Chromium with `npx playwright install chromium`.
+Then run `npm run test:browser` with PHP 8.5 and SQLite available. The suite
+starts a local PHP server using a separate `tmp/browser.sqlite` fixture database.
+
+Interact owns Alpine startup. Application components register through
+`alpine:init`; PHP islands live in `src/Island` with templates in
+`templates/island`. Composer supplies `/interact/js/runtime.js`.

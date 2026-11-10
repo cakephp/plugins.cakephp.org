@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace App\Test\TestCase;
 
 use App\Application;
-use App\Http\Middleware\PublicRequestGuardMiddleware;
 use Cake\Core\Configure;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
+use Cake\Http\Middleware\RateLimitMiddleware;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
@@ -81,7 +81,7 @@ class ApplicationTest extends TestCase
         $middleware->seek(1);
         $this->assertInstanceOf(AssetMiddleware::class, $middleware->current());
         $middleware->seek(2);
-        $this->assertInstanceOf(PublicRequestGuardMiddleware::class, $middleware->current());
+        $this->assertInstanceOf(RateLimitMiddleware::class, $middleware->current());
         $middleware->seek(3);
         $this->assertInstanceOf(RoutingMiddleware::class, $middleware->current());
     }

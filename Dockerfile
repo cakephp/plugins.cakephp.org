@@ -1,4 +1,4 @@
-FROM php:8.4-apache
+FROM php:8.5-apache
 
 WORKDIR /var/www/html
 
@@ -12,8 +12,6 @@ RUN apt-get update \
     && apt-get update \
     && apt-get install -y --no-install-recommends nodejs \
     && docker-php-ext-install intl pdo_mysql zip \
-    && pecl install redis \
-    && docker-php-ext-enable redis \
     && a2enmod rewrite headers expires \
     && sed -ri "s!/var/www/html!${APACHE_DOCUMENT_ROOT}!g" /etc/apache2/sites-available/000-default.conf /etc/apache2/apache2.conf \
     && rm -rf /var/lib/apt/lists/*
@@ -22,7 +20,7 @@ COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 
 COPY . .
 
-RUN npm install \
+RUN npm ci \
     && npm run build
 
 RUN composer install \
@@ -31,6 +29,8 @@ RUN composer install \
     --no-progress \
     --prefer-dist \
     --optimize-autoloader
+
+RUN DEBUG=false bin/cake plugin assets symlink Interact
 
 RUN mkdir -p logs tmp tmp/cache/models tmp/cache/persistent tmp/cache/views tmp/sessions tmp/tests \
     && chown -R www-data:www-data logs tmp \

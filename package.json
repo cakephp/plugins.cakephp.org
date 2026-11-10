@@ -1,6 +1,8 @@
 {
     "type": "module",
     "devDependencies": {
+        "@playwright/test": "^1.65.0",
+        "@tailwindcss/language-server": "^0.16.0",
         "@tailwindcss/vite": "^4.1.4",
         "daisyui": "^5.5.19",
         "tailwindcss": "^4.0.0",
@@ -8,12 +10,12 @@
     },
     "scripts": {
         "dev": "vite build --watch",
-        "build": "vite build"
+        "build": "vite build",
+        "test:browser": "playwright test",
+        "lint:tailwind": "node scripts/lint-tailwind.mjs",
+        "check": "npm run lint:tailwind && npm run build && npm run test:browser"
     },
     "dependencies": {
-        "alpinejs": "^3.15.11",
-        "htmx.org": "^2.0.8",
-        "slim-select": "^4.0.7",
         "swiper": "^14.0.7"
     }
 }

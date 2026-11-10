@@ -93,7 +93,7 @@ class SyncPackagesCommand extends Command
     private function createPackagistHttpClient(): HttpClient
     {
         $client = new HttpClient();
-        $userAgent = env(
+        $userAgent = (string)env(
             'PACKAGIST_USER_AGENT',
             'plugins.cakephp.org (https://plugins.cakephp.org; mailto=security@cakephp.org)',
         );
@@ -121,6 +121,7 @@ class SyncPackagesCommand extends Command
         $touchedIds = [];
 
         $io->out('Fetching package list from Packagist...');
+        /** @var list<string> $packages The names-only API response, without the optional fields filter. */
         $packages = $this->client->all(['type' => 'cakephp-plugin']);
         $total = count($packages);
         $io->out(sprintf('Found <info>%d</info> packages. Processing...', $total));

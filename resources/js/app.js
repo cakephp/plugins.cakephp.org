@@ -1,229 +1,133 @@
+import '../css/style.css'
 import Swiper from 'swiper'
 import { Autoplay, Navigation, Pagination } from 'swiper/modules'
-import htmx from 'htmx.org'
-import SlimSelect from 'slim-select'
-import Alpine from 'alpinejs'
 
-window.htmx = htmx
+const register = (Alpine) => {
+    Alpine.store('theme', {
+        dark: document.documentElement.dataset.theme === 'cakephp-dark',
+        apply() {
+            document.documentElement.dataset.theme = this.dark ? 'cakephp-dark' : 'cakephp'
+        },
+        toggle() {
+            this.dark = !this.dark
+            this.apply()
+            try { localStorage.setItem('theme', this.dark ? 'cakephp-dark' : 'cakephp') } catch {}
+        },
+    })
 
-Alpine.data('packageSearch', () => ({
-    query: '',
-    results: [],
-    open: false,
-    loading: false,
-    selectedIndex: -1,
-    abortController: null,
-    debounceTimer: null,
+    Alpine.data('catalogue', () => ({
+        toggleVersion(event) {
+            if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+            event.preventDefault()
+            const { versionGroup, versionSlug } = event.currentTarget.dataset
+            return this.$server.call('toggleVersion', versionGroup, versionSlug)
+        },
+    }))
 
-    init() {
-        // Sync initial value from the input
-        this.query = this.$refs.input?.value || ''
-
-        this.$watch('query', (value) => {
-            this.debouncedFetch(value)
-        })
-    },
-
-    debouncedFetch(value) {
-        clearTimeout(this.debounceTimer)
-
-        if (this.abortController) {
-            this.abortController.abort()
-            this.abortController = null
+    Alpine.data('featuredPackages', () => {
+        let slider
+        return {
+            init() {
+                slider = new Swiper(this.$el.querySelector('[data-featured-packages-slider]'), {
+                    modules: [Autoplay, Navigation, Pagination],
+                    loop: true,
+                    loopAdditionalSlides: 3,
+                    slidesPerView: 1,
+                    spaceBetween: 24,
+                    grabCursor: true,
+                    autoplay: { delay: 4000, disableOnInteraction: false, pauseOnMouseEnter: true },
+                    navigation: {
+                        nextEl: this.$el.querySelector('[data-featured-packages-next]'),
+                        prevEl: this.$el.querySelector('[data-featured-packages-prev]'),
+                    },
+                    pagination: { el: this.$el.querySelector('[data-featured-packages-pagination]'), clickable: true },
+                    breakpoints: { 768: { slidesPerView: 2 }, 1280: { slidesPerView: 3 } },
+                })
+            },
+            destroy() {
+                slider?.destroy(true, true)
+                slider = undefined
+            },
         }
+    })
 
-        if (value.trim().length < 2) {
-            this.results = []
+    Alpine.data('compatibilityCard', () => ({
+        openDialog(event) {
+            this.$el.querySelector(`#${CSS.escape(event.currentTarget.dataset.dialogId)}`)?.showModal()
+        },
+    }))
+
+    Alpine.data('packageSearch', () => ({
+        open: false,
+        selectedIndex: -1,
+        get activeId() {
+            return this.open && this.selectedIndex >= 0 ? `suggestion-${this.selectedIndex}` : ''
+        },
+        close() {
             this.open = false
-            this.loading = false
-            return
-        }
-
-        this.loading = true
-
-        this.debounceTimer = setTimeout(() => {
-            this.fetchResults(value.trim())
-        }, 250)
-    },
-
-    async fetchResults(q) {
-        if (this.abortController) {
-            this.abortController.abort()
-        }
-
-        this.abortController = new AbortController()
-
-        try {
-            const response = await fetch(`/autocomplete?q=${encodeURIComponent(q)}`, {
-                signal: this.abortController.signal,
-                headers: { 'Accept': 'application/json' },
-            })
-
-            const data = await response.json()
-            this.results = data
-            this.open = data.length > 0
             this.selectedIndex = -1
-        } catch (e) {
-            if (e.name !== 'AbortError') {
-                this.results = []
-                this.open = false
-            }
-        } finally {
-            this.loading = false
-        }
-    },
-
-    close() {
-        this.open = false
-        this.selectedIndex = -1
-    },
-
-    onKeydown(e) {
-        if (!this.open) return
-
-        switch (e.key) {
-            case 'ArrowDown':
-                e.preventDefault()
-                this.selectedIndex = Math.min(this.selectedIndex + 1, this.results.length - 1)
-                this.scrollToSelected()
-                break
-            case 'ArrowUp':
-                e.preventDefault()
-                this.selectedIndex = Math.max(this.selectedIndex - 1, -1)
-                this.scrollToSelected()
-                break
-            case 'Enter':
-                if (this.selectedIndex >= 0) {
-                    e.preventDefault()
-                    this.selectResult(this.results[this.selectedIndex])
-                }
-                break
-            case 'Escape':
+        },
+        onInput() {
+            this.selectedIndex = -1
+            if (this.$refs.input.value.trim().length < 2) this.close()
+        },
+        refreshSuggestions(event) {
+            if (event.detail.islandId !== this.$el.closest('[data-interact-id]').dataset.interactId) return
+            this.$nextTick(() => this.showSuggestions())
+        },
+        showSuggestions() {
+            this.open = this.$refs.input.value.trim().length >= 2
+                && this.$refs.listbox.querySelector('a') !== null
+                && document.activeElement === this.$refs.input
+            this.selectedIndex = -1
+        },
+        onKeydown(event) {
+            if (!this.open) return
+            const links = this.$refs.listbox.querySelectorAll('a')
+            if (event.key === 'Escape') {
+                event.preventDefault()
                 this.close()
-                break
-        }
-    },
-
-    scrollToSelected() {
-        this.$nextTick(() => {
-            const el = this.$refs.listbox?.querySelector('[aria-selected="true"]')
-            el?.scrollIntoView({ block: 'nearest' })
-        })
-    },
-
-    selectResult(result) {
-        try {
-            const url = new URL(result.repo_url)
-            if (url.protocol === 'https:') {
-                window.open(url.toString(), '_blank', 'noopener,noreferrer')
+            } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+                event.preventDefault()
+                const step = event.key === 'ArrowDown' ? 1 : -1
+                this.selectedIndex = Math.max(-1, Math.min(this.selectedIndex + step, links.length - 1))
+                links[this.selectedIndex]?.scrollIntoView({ block: 'nearest' })
+            } else if (event.key === 'Enter' && this.selectedIndex >= 0) {
+                event.preventDefault()
+                links[this.selectedIndex]?.click()
+                this.close()
             }
-        } catch {
-            // Invalid URL, ignore
-        }
-        this.close()
-    },
-
-
-
-    formatNumber(num) {
-        if (num >= 1000000) return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M'
-        if (num >= 1000) return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k'
-        return String(num)
-    },
-}))
-
-const initializeSelects = (root = document) => {
-    const selects = document.querySelectorAll('select')
-
-    selects.forEach(select => {
-        const initialized = select.getAttribute('data-slimselect-initialized');
-
-        if (initialized === 'true') {
-            return
-        }
-
-        select.setAttribute('data-slimselect-initialized', 'true')
-        const placeholder = select.getAttribute('data-placeholder');
-
-        new SlimSelect({
-            select: select,
-            settings: {
-                placeholderText: placeholder,
-            },
-        })
-    })
+        },
+        submit() {
+            this.close()
+            const params = new URL(window.location.href).searchParams
+            const filters = {}
+            for (const key of ['cakephp_slugs', 'php_slugs']) {
+                filters[key] = []
+                for (const [name, value] of params) {
+                    if (name === key || name === `${key}[]` || new RegExp(`^${key}\\[\\d+\\]$`).test(name)) filters[key].push(value)
+                }
+            }
+            return this.$server.call('submit', filters)
+        },
+    }))
 }
 
-const initializeFeaturedPackagesSlider = (root = document) => {
-    const slider = root.querySelector('[data-featured-packages-slider]')
+if (window.Alpine) register(window.Alpine)
+else document.addEventListener('alpine:init', () => register(window.Alpine), { once: true })
 
-    if (!slider) {
-        return
+const refreshDocument = () => {
+    window.Alpine?.store('theme')?.apply()
+    const hasQuery = new URL(window.location.href).search !== ''
+    let robots = document.head.querySelector('meta[name="robots"]')
+    if (hasQuery && !robots) {
+        robots = document.createElement('meta')
+        robots.name = 'robots'
+        document.head.append(robots)
     }
-
-    if (slider.dataset.swiperInitialized === 'true') {
-        return
-    }
-
-    const pagination = root.querySelector('[data-featured-packages-pagination]')
-
-    new Swiper(slider, {
-        modules: [Autoplay, Navigation, Pagination],
-        loop: true,
-        loopAdditionalSlides: 3,
-        slidesPerView: 1,
-        spaceBetween: 24,
-        grabCursor: true,
-        autoplay: {
-            delay: 4000,
-            disableOnInteraction: false,
-            pauseOnMouseEnter: true,
-        },
-        navigation: {
-            nextEl: '[data-featured-packages-next]',
-            prevEl: '[data-featured-packages-prev]',
-        },
-        pagination: {
-            el: pagination,
-            clickable: true,
-        },
-        breakpoints: {
-            768: {
-                slidesPerView: 2,
-            },
-            1280: {
-                slidesPerView: 3,
-            },
-        },
-    })
-
-    slider.dataset.swiperInitialized = 'true'
+    if (hasQuery) robots.content = 'noindex,nofollow'
+    else robots?.remove()
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    initializeFeaturedPackagesSlider()
-    initializeSelects()
-})
-
-Alpine.start()
-
-if (typeof window.htmx !== 'undefined') {
-    const reinitializeDynamicUi = () => {
-        initializeFeaturedPackagesSlider(document)
-        initializeSelects(document)
-    }
-
-    document.body.addEventListener('htmx:afterSettle', reinitializeDynamicUi)
-
-    // Track loading state
-    let isLoading = false
-    document.body.addEventListener('htmx:beforeRequest', () => {
-        isLoading = true
-        document.body.classList.add('is-htmx-loading')
-    })
-
-    document.body.addEventListener('htmx:afterRequest', () => {
-        isLoading = false
-        document.body.classList.remove('is-htmx-loading')
-    })
-}
+document.addEventListener('interact:navigated', refreshDocument)
+document.addEventListener('interact:request-finished', refreshDocument)

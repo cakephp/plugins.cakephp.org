@@ -16,7 +16,7 @@ class PackagesTableTest extends TestCase
      *
      * @var \App\Model\Table\PackagesTable
      */
-    protected $Packages;
+    protected PackagesTable $Packages;
 
     /**
      * Fixtures
@@ -37,20 +37,7 @@ class PackagesTableTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $config = $this->getTableLocator()->exists('Packages') ? [] : ['className' => PackagesTable::class];
-        $this->Packages = $this->getTableLocator()->get('Packages', $config);
-    }
-
-    /**
-     * tearDown method
-     *
-     * @return void
-     */
-    protected function tearDown(): void
-    {
-        unset($this->Packages);
-
-        parent::tearDown();
+        $this->Packages = $this->fetchTable(PackagesTable::class);
     }
 
     /**

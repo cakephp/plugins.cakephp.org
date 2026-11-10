@@ -14,4 +14,6 @@
 
     <file>src/</file>
     <file>tests/</file>
+    <file>config/</file>
+    <file>templates/</file>
 </ruleset>

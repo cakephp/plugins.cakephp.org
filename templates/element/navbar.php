@@ -9,11 +9,12 @@
     <div class="navbar container mx-auto px-4 sm:px-6 lg:px-8 gap-5">
         <div class="navbar-start">
             <div class="flex items-center gap-6">
-                <a class="text-xl" href="<?= $this->Url->build('/') ?>">
+                <a class="text-xl" x-interact:navigate.hover href="<?= $this->Url->build('/') ?>">
                     <img src="/img/cake-logo.png" class="w-28" alt="CakePHP Logo"/>
                 </a>
                 <nav class="hidden items-center gap-1 lg:flex">
                     <?= $this->Html->link('Requirements', '/requirements', [
+                        'x-interact:navigate.hover' => '',
                         'class' => 'rounded-lg px-3 py-1.5 text-sm font-medium text-white/80 transition hover:bg-white/10 hover:text-white',
                     ]) ?>
                     <?= $this->Html->link('Docs', 'https://book.cakephp.org/', [
@@ -38,18 +39,18 @@
                     class="btn btn-ghost btn-circle hover:bg-white/10 text-white hidden lg:flex ml-2"
                     aria-label="<?= __('Toggle theme') ?>"
                     x-cloak
-                    x-data="{ dark: document.documentElement.getAttribute('data-theme') === 'cakephp-dark' }"
-                    @click="
-                        dark = !dark;
-                        document.documentElement.setAttribute('data-theme', dark ? 'cakephp-dark' : 'cakephp');
-                        try { localStorage.setItem('theme', dark ? 'cakephp-dark' : 'cakephp'); } catch (_) {}
-                    "
+                    x-data
+                    @click="$store.theme.toggle()"
             >
-                <svg x-show="!dark" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                <svg x-show="!$store.theme.dark" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="
+                                    M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0
+                                    3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
                 </svg>
-                <svg x-show="dark" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                <svg x-show="$store.theme.dark" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="
+                                    M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25
+                                    12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
                 </svg>
             </button>
 
@@ -83,15 +84,23 @@
             <?php else : ?>
                 <div class="hidden lg:block lg:ml-2">
                     <?= $this->Form->postLink(
-                        '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg> Sign in'
-                        ,
+                        '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="
+                                    M12 0C5.37 0 0 ' . '5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 '
+                                    .
+                                    '0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.94'
+                                    . '5-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305
+                                    3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 ' .
+                                    '0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 '
+                                    . '.405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475
+                                    ' . '5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0
+                                    .315.225.69.825.57A12.02 12.02 0 0 0 24 ' . '12c0-6.63-5.37-12-12-12z"/></svg> Sign in',
                         [
                             'prefix' => false,
                             'plugin' => 'ADmad/SocialAuth',
                             'controller' => 'Auth',
                             'action' => 'login',
                             'provider' => 'github',
-                            '?' => ['redirect' => $this->request->getQuery('redirect')],
+                            '?' => ['redirect' => $this->getRequest()->getQuery('redirect')],
                         ],
                         [
                             'class' => 'btn btn-sm bg-white/10 text-white hover:bg-white/25 gap-2 whitespace-nowrap',
@@ -109,7 +118,7 @@
                     </svg>
                 </label>
                 <ul tabindex="0" class="menu menu-sm dropdown-content z-50 mt-3 w-48 rounded-2xl border border-base-200 bg-base-100 p-2 shadow-xl text-base-content">
-                    <li><?= $this->Html->link('Requirements', '/requirements') ?></li>
+                    <li><?= $this->Html->link('Requirements', '/requirements', ['x-interact:navigate.hover' => '']) ?></li>
                     <li><?= $this->Html->link('Docs', 'https://book.cakephp.org/', ['target' => '_blank', 'rel' => 'noopener']) ?></li>
                     <li><?= $this->Html->link('API', 'https://api.cakephp.org/', ['target' => '_blank', 'rel' => 'noopener']) ?></li>
                     <?php if (!$this->Identity->isLoggedIn()) : ?>
@@ -122,7 +131,7 @@
                                     'controller' => 'Auth',
                                     'action' => 'login',
                                     'provider' => 'github',
-                                    '?' => ['redirect' => $this->request->getQuery('redirect')],
+                                    '?' => ['redirect' => $this->getRequest()->getQuery('redirect')],
                                 ],
                             ) ?>
                         </li>
@@ -131,24 +140,24 @@
                         <button type="button"
                                 id="theme-toggle-mobile"
                                 class="flex items-center gap-2"
-                                x-data="{ dark: document.documentElement.getAttribute('data-theme') === 'cakephp-dark' }"
-                                @click="
-                                    dark = !dark;
-                                    document.documentElement.setAttribute('data-theme', dark ? 'cakephp-dark' : 'cakephp');
-                                    try { localStorage.setItem('theme', dark ? 'cakephp-dark' : 'cakephp'); } catch (_) {}
-                                "
+                                x-data
+                                @click="$store.theme.toggle()"
                         >
-                            <template x-if="!dark">
+                            <template x-if="!$store.theme.dark">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="
+                                    M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0
+                                    3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
                                 </svg>
                             </template>
-                            <template x-if="dark">
+                            <template x-if="$store.theme.dark">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="
+                                    M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25
+                                    12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
                                 </svg>
                             </template>
-                            <span x-text="dark ? '<?= __('Light mode') ?>' : '<?= __('Dark mode') ?>'"></span>
+                            <span x-text="$store.theme.dark ? '<?= __('Light mode') ?>' : '<?= __('Dark mode') ?>'"></span>
                         </button>
                     </li>
                 </ul>

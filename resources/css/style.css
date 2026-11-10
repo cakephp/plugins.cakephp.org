@@ -3,7 +3,6 @@
 @import "swiper/css";
 @import "swiper/css/navigation";
 @import "swiper/css/pagination";
-@import "slim-select/styles";
 @plugin "daisyui/index.js" {
     themes: cakephp --default, cakephp-dark;
 }
@@ -115,89 +114,6 @@
     content: "\0057";
 }
 
-.ss-main {
-    height: 100%;
-    --ss-primary-color: #d33c44;
-}
-
-[data-is-php-filter] + .ss-main {
-    --ss-primary-color: var(--color-cake-blue);
-}
-
-/* SlimSelect dark mode overrides */
-[data-theme="cakephp-dark"] .ss-main {
-    --ss-primary-color: #d33c44;
-    --ss-bg-color: hsl(0 0% 13%);
-    --ss-font-color: hsl(0 0% 88%);
-    --ss-border-color: hsl(0 0% 22%);
-    --ss-highlight-color: hsl(0 0% 17%);
-    --ss-spinner-color: hsl(0 0% 88%);
-}
-
-[data-theme="cakephp-dark"] [data-is-php-filter] + .ss-main {
-    --ss-primary-color: var(--color-cake-blue);
-}
-
-[data-theme="cakephp-dark"] .ss-content {
-    background: hsl(0 0% 13%);
-    border-color: hsl(0 0% 22%);
-}
-
-[data-theme="cakephp-dark"] .ss-content .ss-search input {
-    background: hsl(0 0% 17%);
-    border-color: hsl(0 0% 22%);
-    color: hsl(0 0% 88%);
-}
-
-[data-theme="cakephp-dark"] .ss-content .ss-list .ss-option {
-    color: hsl(0 0% 80%);
-}
-
-[data-theme="cakephp-dark"] .ss-content .ss-list .ss-option:hover,
-[data-theme="cakephp-dark"] .ss-content .ss-list .ss-option.ss-highlighted {
-    background: hsl(0 0% 17%);
-    color: hsl(0 0% 88%);
-}
-
-[data-theme="cakephp-dark"] .ss-content .ss-list .ss-option.ss-selected {
-    color: #d33c44;
-    background: hsl(0 0% 17%);
-}
-
-[data-theme="cakephp-dark"] .ss-content .ss-list .ss-option.ss-disabled {
-    color: hsl(0 0% 35%);
-}
-
-[data-theme="cakephp-dark"] .ss-single-selected {
-    background: hsl(0 0% 13%);
-    border-color: hsl(0 0% 22%);
-    color: hsl(0 0% 88%);
-}
-
-[data-theme="cakephp-dark"] .ss-single-selected .ss-arrow span {
-    border-color: hsl(0 0% 60%);
-}
-
-[data-theme="cakephp-dark"] .ss-multi-selected {
-    background: hsl(0 0% 13%);
-    border-color: hsl(0 0% 22%);
-    color: hsl(0 0% 88%);
-}
-
-[data-theme="cakephp-dark"] .ss-multi-selected .ss-values .ss-value {
-    background: hsl(0 0% 22%);
-    color: hsl(0 0% 88%);
-}
-
-[data-theme="cakephp-dark"] .ss-multi-selected .ss-values .ss-value .ss-value-delete svg path {
-    fill: hsl(0 0% 60%);
-}
-
-[data-theme="cakephp-dark"] .ss-content .ss-list .ss-option[aria-selected="true"] {
-    background: #d33c44;
-    color: #fff;
-}
-
 /* Dark mode: darker navbar background */
 [data-theme="cakephp-dark"] .navbar-top {
     background-color: hsl(0 65% 12%) !important;
@@ -216,14 +132,24 @@
     opacity: 1;
 }
 
-.htmx-indicator {
-    opacity: 1;
-    transition: opacity 0.2s ease;
+.page-loading-bar {
+    animation: page-loading 1s ease-in-out infinite;
 }
 
-.htmx-request .htmx-indicator,
-.htmx-request.htmx-indicator {
-    opacity: 1;
+@keyframes page-loading {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(300%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .page-loading-bar {
+        animation: none;
+        width: 100%;
+    }
 }
 
 .main-loading-overlay {
@@ -235,21 +161,13 @@
     justify-content: center;
     background: hsl(210 40% 98% / 0.72);
     backdrop-filter: blur(2px);
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
+    opacity: 1;
+    pointer-events: auto;
     transition: opacity 0.2s ease;
 }
 
 [data-theme="cakephp-dark"] .main-loading-overlay {
     background: hsl(0 0% 8% / 0.78);
-}
-
-body.is-htmx-loading .main-loading-overlay,
-.main-loading-overlay.htmx-request {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
 }
 
 .main-loading-indicator-card {

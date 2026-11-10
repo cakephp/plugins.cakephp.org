@@ -32,46 +32,24 @@ $canonicalUrl = $this->Url->build($request->getPath() ?: '/', ['fullBase' => tru
     <?php if ($request->getQueryParams() !== []) : ?>
         <meta name="robots" content="noindex,nofollow">
     <?php endif; ?>
-    <script>
-        (function() {
-            try {
-                var theme = localStorage.getItem('theme');
-                if (theme !== 'cakephp' && theme !== 'cakephp-dark') {
-                    theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'cakephp-dark' : 'cakephp';
-                }
-                document.documentElement.setAttribute('data-theme', theme);
-            } catch (_) {
-                document.documentElement.setAttribute('data-theme', 'cakephp');
-            }
-        })();
-    </script>
+    <?= $this->Html->script('theme', ['x-interact:asset' => 'reload']) ?>
 
-    <?= $this->Html->css(['cake']) ?>
+    <?= $this->Html->css('cake.css?v=' . (is_file(WWW_ROOT . 'css/cake.css') ? filemtime(WWW_ROOT . 'css/cake.css') : 'dev'), ['x-interact:asset' => 'reload']) ?>
 
-    <?= $this->Html->script('app.js', ['type' => 'module']) ?>
+    <?= $this->Html->script('app.js?v=' . (is_file(WWW_ROOT . 'js/app.js') ? filemtime(WWW_ROOT . 'js/app.js') : 'dev'), ['defer' => true, 'x-interact:asset' => 'reload']) ?>
 
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
     <?= $this->fetch('script') ?>
 </head>
-<body class="overflow-x-hidden bg-base-100" hx-indicator="#main-loading-overlay">
+<body class="overflow-x-hidden bg-base-100">
     <?= $this->element('navbar') ?>
-    <div id="above-content-slot">
-        <?php if ($this->fetch('above_content')) : ?>
-            <div class="w-full border-b overflow-hidden border-cake-red/20 bg-cake-red/5">
-                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <?= $this->fetch('above_content') ?>
-                </div>
-            </div>
-        <?php endif; ?>
+    <div class="pointer-events-none fixed inset-x-0 top-0 z-100 h-1 overflow-hidden bg-base-100/30"
+         x-data x-show="$store.interactNavigation.loading()" x-cloak
+         role="progressbar" aria-label="<?= __('Loading page') ?>">
+        <div class="page-loading-bar h-full w-1/3 bg-cake-blue"></div>
     </div>
-    <div id="main-loading-overlay" class="htmx-indicator main-loading-overlay" aria-hidden="true">
-        <div class="main-loading-indicator-card flex items-center gap-3 rounded-2xl border border-base-300 bg-base-100/95 px-4 py-3 shadow-2xl">
-            <span class="loading loading-ring loading-xl text-cake-red" aria-hidden="true"></span>
-            <span class="text-sm font-semibold text-base-content"><?= __('Loading content...') ?></span>
-        </div>
-    </div>
-    <main class="main container mx-auto">
+    <main class="main">
         <?= $this->Flash->render() ?>
         <?= $this->fetch('content') ?>
     </main>

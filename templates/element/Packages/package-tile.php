@@ -1,12 +1,13 @@
 <?php
 /**
- * @var \App\View\AppView $this
+ * @var \App\View\IslandTemplateView $this
  * @var \App\Model\Entity\Package $package
  * @var bool $isFeatured
+ * @var array<string, mixed> $catalogueQuery
  */
 $isFeatured = $isFeatured ?? false;
-$query = $this->getRequest()->getQueryParams();
-$currentPath = $this->getRequest()->getPath() ?: '/';
+$query = $catalogueQuery;
+$currentPath = $this->Url->build(['controller' => 'Packages', 'action' => 'index', 'plugin' => null]);
 $buildFilterUrl = static function (string $path, array $params): string {
     $queryString = http_build_query($params, '', '&', PHP_QUERY_RFC3986);
     $queryString = preg_replace('/%5B\d+%5D=/', '%5B%5D=', $queryString) ?? $queryString;
@@ -44,6 +45,7 @@ $compatibilityGroups = [
     ],
 ];
 ?>
+<div class="h-full" x-data="compatibilityCard">
 <article class="card h-full rounded-3xl border border-base-300 bg-base-100 shadow-sm transition hover:-translate-y-1 hover:shadow-lg overflow-hidden">
     <a class="card-header block bg-base-200 px-5 py-4 transition hover:bg-base-100 border-b border-base-300"
        target="_blank" rel="noopener noreferrer" href="<?= h($package->repo_url) ?>">
@@ -70,7 +72,7 @@ $compatibilityGroups = [
 
         <div class="mt-5 border-t border-dashed pt-4">
             <div class="grid gap-4 grid-cols-2">
-                <?php foreach ($compatibilityGroups as $compatibilityGroup): ?>
+                <?php foreach ($compatibilityGroups as $compatibilityGroup) : ?>
                     <?php if (!$compatibilityGroup['tags']) : ?>
                         <?php continue; ?>
                     <?php endif; ?>
@@ -84,13 +86,13 @@ $compatibilityGroups = [
                             <?= h($compatibilityGroup['name']) ?>
                         </p>
                         <div class="flex flex-wrap gap-2">
-                            <?php foreach ($tagGroups as $majorVersion => $tags): ?>
+                            <?php foreach ($tagGroups as $majorVersion => $tags) : ?>
                                 <?php
                                 $groupSlugs = array_keys(array_column($tags, null, 'slug'));
                                 $isActive = (bool)array_intersect($existingSlugs, $groupSlugs);
                                 ?>
                                 <button type="button"
-                                        onclick="document.getElementById('<?= h($dialogId) ?>').showModal()"
+                                        @click="openDialog($event)" data-dialog-id="<?= h($dialogId) ?>"
                                         class="btn btn-xs <?= $isActive ? $compatibilityGroup['activeClass'] : $compatibilityGroup['inactiveClass'] ?>">
                                     <?= h($majorVersion) ?>.x
                                 </button>
@@ -135,7 +137,7 @@ $compatibilityGroups = [
         </div>
     </div>
 </article>
-<?php foreach ($compatibilityGroups as $compatibilityGroup): ?>
+<?php foreach ($compatibilityGroups as $compatibilityGroup) : ?>
     <?php if (!$compatibilityGroup['tags']) : ?>
         <?php continue; ?>
     <?php endif; ?>
@@ -149,11 +151,11 @@ $compatibilityGroups = [
             <h3 class="mb-1 text-base font-semibold"><?= h($package->package) ?></h3>
             <p class="mb-4 text-xs opacity-50"><?= h($filterByVersionLabel($compatibilityGroup['name'])) ?></p>
             <div class="space-y-4">
-                <?php foreach ($tagGroups as $majorVersion => $tags): ?>
+                <?php foreach ($tagGroups as $majorVersion => $tags) : ?>
                     <div>
                         <p class="mb-2 text-xs font-semibold uppercase tracking-wider opacity-50"><?= $compatibilityGroup['groupLabel']((string)$majorVersion) ?></p>
                         <div class="flex flex-wrap gap-2">
-                            <?php foreach ($tags as $tag): ?>
+                            <?php foreach ($tags as $tag) : ?>
                                 <?php
                                 $slug = $tag->slug;
                                 $tagIsActive = in_array($slug, $existingSlugs, true);
@@ -164,6 +166,9 @@ $compatibilityGroups = [
                                 unset($tagQuery['page']);
                                 ?>
                                 <a rel="nofollow"
+                                   @click="toggleVersion($event)"
+                                   data-version-group="<?= h($compatibilityGroup['slugsQueryKey']) ?>"
+                                   data-version-slug="<?= h($slug) ?>"
                                    href="<?= h($buildFilterUrl($currentPath, $tagQuery)) ?>"
                                    class="btn btn-xs <?= $tagIsActive ? $compatibilityGroup['dialogActiveClass'] : $compatibilityGroup['dialogInactiveClass'] ?>">
                                     <?= h($compatibilityGroup['tagLabel']($tag)) ?>
@@ -182,3 +187,5 @@ $compatibilityGroups = [
         <form method="dialog" class="modal-backdrop"><button><?= __('Close') ?></button></form>
     </dialog>
 <?php endforeach; ?>
+
+</div>
