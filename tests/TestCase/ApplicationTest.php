@@ -130,9 +130,10 @@ class ApplicationTest extends TestCase
         $requests = [
             ['/', 'GET', [], 90],
             ['/', 'GET', ['search' => 'users'], 15],
-            ['/plugins/1', 'GET', [], 90],
-            ['/plugins/by/dereuromark', 'GET', [], 90],
-            ['/plugins/by/dereuromark', 'GET', ['search' => 'tools'], 15],
+            ['/plugins/markstory/asset_compress', 'GET', [], 90],
+            ['/plugins/vendor.name/plugin_name.json', 'GET', [], 90],
+            ['/plugins/dereuromark', 'GET', [], 90],
+            ['/plugins/dereuromark', 'GET', ['search' => 'tools'], 15],
             ['/_interact/update', 'POST', [], 30],
         ];
         foreach ($requests as [$path, $method, $query, $limit]) {

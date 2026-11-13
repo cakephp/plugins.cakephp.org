@@ -55,9 +55,14 @@ class PackagesController extends AppController
     /**
      * Provide a normal detail URL for direct links and browsers without JavaScript.
      */
-    public function view(string $id): void
+    public function view(string $namespace, string $name): void
     {
-        $package = $this->fetchTable(PackagesTable::class)->get($id, contain: ['Tags', 'Categories']);
+        $package = $this->fetchTable(PackagesTable::class)->find()
+            ->where([
+                'Packages.package' => strtolower($namespace . '/' . $name),
+            ])
+            ->contain(['Tags', 'Categories'])
+            ->firstOrFail();
         $this->set(compact('package'));
     }
 }

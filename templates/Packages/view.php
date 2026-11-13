@@ -4,6 +4,12 @@
  * @var \App\Model\Entity\Package $package
  */
 $this->assign('title', $package->package);
+[$namespace, $name] = explode('/', $package->package, 2);
+$this->assign('canonicalUrl', $this->Url->build([
+    '_name' => 'plugin:view',
+    'namespace' => $namespace,
+    'name' => $name,
+], ['fullBase' => true]));
 ?>
 <div class="plugin-page site-width">
     <h1 class="sr-only"><?= h($package->package) ?></h1>

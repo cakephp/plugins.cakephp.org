@@ -11,8 +11,12 @@ foreach (['CakePHP' => $package->cake_php_tag_groups, 'PHP' => $package->php_tag
         $summaries[] = $label . ' ' . implode(', ', $majors);
     }
 }
-$detailsUrl = $this->Url->build(['_name' => 'plugin:view', 'id' => $package->id]);
-$packageNamespace = explode('/', $package->package, 2)[0];
+[$packageNamespace, $packageName] = explode('/', $package->package, 2);
+$detailsUrl = $this->Url->build([
+    '_name' => 'plugin:view',
+    'namespace' => $packageNamespace,
+    'name' => $packageName,
+]);
 ?>
 <article class="package-row" id="package-<?= (int)$package->id ?>" data-package-row>
     <div class="min-w-0">

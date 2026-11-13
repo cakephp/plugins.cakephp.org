@@ -18,6 +18,38 @@ const register = (Alpine) => {
         },
     })
 
+    Alpine.data('namespaceCounters', () => ({
+        frame: null,
+        init() {
+            const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
+            if (motion.matches) return
+            const counters = Array.from(this.$el.querySelectorAll('[data-count-up-value]'), (element, index) => ({
+                element,
+                total: Number(element.dataset.countUpValue),
+                final: element.textContent.trim(),
+                delay: index * 200,
+            }))
+            const formatter = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 })
+            const started = performance.now()
+            const tick = now => {
+                let complete = true
+                for (const counter of counters) {
+                    const progress = motion.matches ? 1 : Math.max(0, Math.min((now - started - counter.delay) / 1100, 1))
+                    const eased = 1 - (1 - progress) ** 3
+                    counter.element.textContent = progress === 1
+                        ? counter.final
+                        : formatter.format(Math.round(counter.total * eased)).replace('K', 'k')
+                    complete &&= progress === 1
+                }
+                this.frame = complete ? null : requestAnimationFrame(tick)
+            }
+            this.frame = requestAnimationFrame(tick)
+        },
+        destroy() {
+            if (this.frame !== null) cancelAnimationFrame(this.frame)
+        },
+    }))
+
     Alpine.data('catalogue', () => ({
         categorySearch: '',
         categoriesToggled(event) {

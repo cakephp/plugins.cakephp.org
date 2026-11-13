@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Controller;
 
 use App\Model\Table\PackagesTable;
+use App\Service\GithubProfileService;
 use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
@@ -90,10 +91,86 @@ class PackagesControllerTest extends TestCase
      */
     public function testPublicPluginDetails(): void
     {
-        $this->get('/plugins/1');
+        $this->get('/plugins/markstory/asset_compress');
         $this->assertResponseOk();
         $this->assertResponseContains('composer require markstory/asset_compress');
         $this->assertResponseContains('https://packagist.org/packages/markstory/asset_compress');
+        $this->assertResponseContains('href="/plugins/markstory"');
+        $this->assertResponseContains('rel="canonical" href="' . Router::url([
+            '_name' => 'plugin:view',
+            'namespace' => 'markstory',
+            'name' => 'asset_compress',
+        ], true) . '"');
+    }
+
+    /**
+     * Composer punctuation remains literal, including names ending in a response extension.
+     */
+    public function testPackageRoutePreservesDotsAndUnderscores(): void
+    {
+        $this->fetchTable(PackagesTable::class)->updateAll([
+            'package' => 'vendor.name/plugin_name.json',
+        ], ['id' => 2]);
+        $this->get('/plugins/vendor.name/plugin_name.json');
+        $this->assertResponseOk();
+        $this->assertNoRedirect();
+        $this->assertResponseContains('composer require vendor.name/plugin_name.json');
+        $this->assertResponseContains('rel="canonical" href="' . Router::url([
+            '_name' => 'plugin:view',
+            'namespace' => 'vendor.name',
+            'name' => 'plugin_name.json',
+        ], true) . '"');
+    }
+
+    /**
+     * Detail lookups use the complete package name and expose its stored lowercase canonical URL.
+     */
+    public function testPackageLookupAndCanonicalUrl(): void
+    {
+        $this->get('/plugins/MARKSTORY/ASSET_COMPRESS');
+        $this->assertResponseOk();
+        $this->assertNoRedirect();
+        $this->assertResponseContains('rel="canonical" href="' . Router::url([
+            '_name' => 'plugin:view',
+            'namespace' => 'markstory',
+            'name' => 'asset_compress',
+        ], true) . '"');
+        foreach (['/plugins/markstory/asset-compress', '/plugins/another-vendor/asset_compress'] as $path) {
+            $this->get($path);
+            $this->assertResponseCode(404);
+        }
+    }
+
+    /**
+     * The hierarchy does not reserve "by" or numeric namespaces for the removed routes.
+     */
+    public function testPackageHierarchyHasNoReservedNamespacePrefixes(): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        foreach (['by', '123'] as $namespace) {
+            $packages->updateAll([
+                'package' => $namespace . '/cakephp-tools',
+            ], ['id' => 2]);
+            $this->get('/plugins/' . $namespace);
+            $this->assertResponseOk();
+            $this->assertNoRedirect();
+            $this->assertResponseContains('href="/plugins/' . $namespace . '/cakephp-tools"');
+            $this->get('/plugins/' . $namespace . '/cakephp-tools');
+            $this->assertResponseOk();
+            $this->assertNoRedirect();
+        }
+    }
+
+    /**
+     * Old public routes are removed without compatibility redirects.
+     */
+    public function testOldPublicUrlsAreNotRedirected(): void
+    {
+        foreach (['/plugins/1', '/plugins/by/dereuromark'] as $path) {
+            $this->get($path);
+            $this->assertResponseCode(404);
+            $this->assertNoRedirect();
+        }
     }
 
     /**
@@ -101,7 +178,7 @@ class PackagesControllerTest extends TestCase
      */
     public function testMissingPluginDetails(): void
     {
-        $this->get('/plugins/99999');
+        $this->get('/plugins/missing/package');
         $this->assertResponseCode(404);
     }
 
@@ -110,15 +187,20 @@ class PackagesControllerTest extends TestCase
      */
     public function testNamespacePage(): void
     {
-        $this->get('/plugins/by/dereuromark?search=no-match');
+        $service = $this->createMock(GithubProfileService::class);
+        $service->expects($this->never())->method('profile');
+        $this->mockService(GithubProfileService::class, static fn(): GithubProfileService => $service);
+        $this->get('/plugins/dereuromark?search=no-match');
         $this->assertResponseOk();
         $this->assertResponseContains('Plugins by dereuromark');
         $this->assertResponseContains('href="https://github.com/dereuromark"');
         $this->assertResponseContains('href="https://packagist.org/packages/dereuromark/"');
-        $this->assertResponseContains('data-namespace-stat="downloads">20,000');
+        $this->assertResponseContains('data-namespace-stat="downloads">20k');
         $this->assertResponseContains('data-namespace-stat="stars">300');
         $this->assertResponseContains('No plugins found');
-        $this->assertResponseContains('action="/plugins/by/dereuromark"');
+        $this->assertResponseContains('action="/plugins/dereuromark"');
+        $this->assertResponseContains('data-namespace-profile-loading');
+        $this->assertResponseContains('skeleton');
         $this->assertResponseContains('rel="canonical" href="' . Router::url([
             '_name' => 'plugin:namespace',
             'namespace' => 'dereuromark',
@@ -132,10 +214,10 @@ class PackagesControllerTest extends TestCase
      */
     public function testNamespaceCanonicalUrlAndMissingNamespace(): void
     {
-        $this->get('/plugins/by/Dereuromark?search=tools&sort=stars');
+        $this->get('/plugins/Dereuromark?search=tools&sort=stars');
         $this->assertResponseCode(301);
-        $this->assertRedirect('/plugins/by/dereuromark?search=tools&sort=stars');
-        $this->get('/plugins/by/not-a-namespace');
+        $this->assertRedirect('/plugins/dereuromark?search=tools&sort=stars');
+        $this->get('/plugins/not-a-namespace');
         $this->assertResponseCode(404);
     }
 
@@ -145,7 +227,7 @@ class PackagesControllerTest extends TestCase
     public function testNamespaceOmitsAmbiguousGithubProfile(): void
     {
         $this->fetchTable(PackagesTable::class)->updateAll(['repo_url' => 'https://github.com/another-owner/plugin'], ['id' => 2]);
-        $this->get('/plugins/by/vendor');
+        $this->get('/plugins/vendor');
         $this->assertResponseOk();
         $this->assertResponseNotContains('GitHub profile');
         $this->assertResponseContains('href="https://packagist.org/packages/vendor/"');

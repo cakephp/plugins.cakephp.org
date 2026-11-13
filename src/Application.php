@@ -20,12 +20,14 @@ use ADmad\SocialAuth\Middleware\SocialAuthMiddleware;
 use App\Command\SyncPackagesCommand;
 use App\Event\AfterGithubIdentify;
 use App\Http\RateLimit\AtomicFixedWindowRateLimiter;
+use App\Island\NamespaceProfileIsland;
 use App\Middleware\ThemeCookieMiddleware;
 use App\Model\Table\PackagesTable;
 use App\Model\Table\UsersTable;
 use App\Policy\RequestPolicy;
 use App\Service\AwesomeListImporter;
 use App\Service\AwesomeListParser;
+use App\Service\GithubProfileService;
 use App\Service\PackagistImporter;
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
@@ -203,7 +205,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                         }
 
                         return !in_array($request->getMethod(), ['GET', 'HEAD'], true)
-                            || !($path === '' || $path === '/packages' || preg_match('#^/plugins/(?:[0-9]+|by/[A-Za-z0-9][A-Za-z0-9_.-]*)$#', $path));
+                            || !($path === '' || $path === '/packages' || preg_match('#^/plugins/[A-Za-z0-9][A-Za-z0-9_.-]*(?:/[A-Za-z0-9][A-Za-z0-9_.-]*)?$#', $path));
                     },
                 ]),
             );
@@ -223,6 +225,8 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
     {
         $container->addShared(PackagesTable::class, static fn(): RepositoryInterface => FactoryLocator::get('Table')->get(PackagesTable::class));
         $container->addShared(Client::class);
+        $container->addShared(GithubProfileService::class)->addArgument(Client::class);
+        $container->add(NamespaceProfileIsland::class)->addArgument(GithubProfileService::class);
         $container->addShared(AwesomeListParser::class);
         $container->addShared('packagist.http', static function (): Client {
             $client = new Client();

@@ -63,7 +63,7 @@ class CatalogueIslandTest extends TestCase
      */
     public function testNamespaceScopeSurvivesUpdates(): void
     {
-        $request = new ServerRequest(['url' => 'http://localhost/plugins/by/vendor']);
+        $request = new ServerRequest(['url' => 'http://localhost/plugins/vendor']);
         $island = $this->testIsland('Catalogue', ['namespace' => 'vendor'], request: $request)
             ->assertDontSee('data-featured-plugins')
             ->assertDontSee('markstory/asset_compress')
@@ -77,7 +77,7 @@ class CatalogueIslandTest extends TestCase
             ->assertSet('namespace', 'vendor')
             ->assertDontSee('data-featured-plugins')
             ->assertDontSee('markstory/asset_compress');
-        $this->assertStringContainsString('/plugins/by/vendor?', $island->result()->html);
+        $this->assertStringContainsString('/plugins/vendor?', $island->result()->html);
         $this->assertStringNotContainsString('/_interact/update?', $island->result()->html);
     }
 

@@ -41,6 +41,8 @@ Configure::write('PublicRequestProtection.rateLimitEnabled', false);
 // Fixture-derived options must never populate the development application's cache.
 Cache::drop('default');
 Cache::setConfig('default', ['className' => ArrayEngine::class]);
+Cache::drop('github_profiles');
+Cache::setConfig('github_profiles', ['className' => ArrayEngine::class]);
 
 if (empty($_SERVER['HTTP_HOST']) && !Configure::read('App.fullBaseUrl')) {
     Configure::write('App.fullBaseUrl', 'http://localhost');

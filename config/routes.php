@@ -59,16 +59,26 @@ return function (RouteBuilder $routes): void {
          * to use (in this case, templates/Pages/home.php)...
          */
         $builder->connect('/', ['controller' => 'Packages', 'action' => 'index']);
-        $builder->get('/plugins/by/{namespace}', [
+        $packageSegment = '[A-Za-z0-9][A-Za-z0-9_.-]*';
+        $builder->get('/plugins/{namespace}/{name}', [
+            'controller' => 'Packages',
+            'action' => 'view',
+        ], 'plugin:view')
+            ->setPatterns([
+                'namespace' => $packageSegment,
+                'name' => $packageSegment,
+            ])
+            ->setPass(['namespace', 'name'])
+            ->setExtensions([]);
+        $builder->get('/plugins/{namespace}', [
             'controller' => 'Packages',
             'action' => 'byNamespace',
         ], 'plugin:namespace')
             ->setPatterns([
-                'namespace' => '[A-Za-z0-9][A-Za-z0-9_.-]*',
+                'namespace' => $packageSegment,
             ])
-            ->setPass(['namespace']);
-        $builder->get('/plugins/{id}', ['controller' => 'Packages', 'action' => 'view'], 'plugin:view')
-            ->setPatterns(['id' => '[0-9]+'])->setPass(['id']);
+            ->setPass(['namespace'])
+            ->setExtensions([]);
         $builder->connect('/requirements', ['controller' => 'Pages', 'action' => 'display', 'requirements']);
 
         /*

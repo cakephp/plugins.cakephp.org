@@ -157,6 +157,14 @@ return [
             'url' => env('CACHE_DEFAULT_URL'),
         ],
 
+        'github_profiles' => [
+            'className' => FileEngine::class,
+            'path' => CACHE . 'github_profiles' . DS,
+            'prefix' => 'plugins_github_profiles_',
+            'duration' => '+1 day',
+            'url' => env('CACHE_GITHUB_PROFILES_URL'),
+        ],
+
         'rate_limit' => [
             'className' => FileEngine::class,
             'path' => CACHE . 'rate_limit' . DS,
