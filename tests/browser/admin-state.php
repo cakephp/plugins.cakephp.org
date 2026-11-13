@@ -32,13 +32,17 @@ if ($mode === 'revoke') {
     $connection->exec("UPDATE users SET role = 'user' WHERE id = 1");
     exit;
 }
+if ($mode === 'suspend') {
+    $connection->exec('UPDATE users SET is_active = 0 WHERE id = 1');
+    exit;
+}
 if (!in_array($mode, ['1', '2', '3'], true)) {
     throw new RuntimeException('Unknown browser fixture identity.');
 }
 session_save_path(dirname(__DIR__, 2) . '/tmp/browser-sessions');
 session_id(bin2hex(random_bytes(16)));
 session_start();
-$_SESSION = ['Auth' => ['id' => (int)$mode]];
+$_SESSION = ['AuthId' => (int)$mode];
 $cookie = ['name' => session_name(), 'value' => session_id()];
 session_write_close();
 echo json_encode($cookie, JSON_THROW_ON_ERROR);

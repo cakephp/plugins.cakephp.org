@@ -45,6 +45,10 @@ test('admin manages roles and suspension through the standard Interact endpoint'
     await dialog.getByRole('button', { name: 'Review change' }).click()
     await dialog.getByRole('button', { name: 'Confirm change' }).click()
     await expect(row).toContainText('Active')
+    await page.getByRole('link', { name: 'Sign out' }).click()
+    await expect(page).toHaveURL('/')
+    await page.goto('/admin/users')
+    await expect(page).toHaveURL(/\/?redirect=%2Fadmin%2Fusers/)
 })
 
 test('featured editorial changes, preview and removal reach public cards', async ({ page, context }) => {
@@ -114,15 +118,21 @@ test('cancel discards the editor draft and saving retains listing filters and so
     await expect(page.locator('tbody tr')).toHaveCount(1)
 })
 
-test('admin updates reject access revoked after mounting', async ({ page, context }) => {
-    await signIn(context)
-    await page.goto('/admin/featured-plugins')
-    fixtures('revoke')
-    const response = page.waitForResponse(response => response.url().endsWith('/_interact/update'))
-    await page.getByRole('button', { name: 'Add featured plugin' }).click()
-    expect((await response).status()).toBe(403)
-    await expect(page.getByRole('dialog')).toHaveCount(0)
-})
+for (const mode of ['revoke', 'suspend']) {
+    test(`admin updates reject ${mode} after mounting without a login redirect`, async ({ page, context }) => {
+        await signIn(context)
+        await page.goto('/admin/featured-plugins')
+        fixtures(mode)
+        const pending = page.waitForResponse(response => response.url().endsWith('/_interact/update'))
+        await page.getByRole('button', { name: 'Add featured plugin' }).click()
+        const response = await pending
+        expect(response.status()).toBe(403)
+        expect(response.headers()['content-type']).toContain('application/json')
+        expect((await response.json()).error.code).toBe('forbidden')
+        await expect(page).toHaveURL('/admin/featured-plugins')
+        await expect(page.getByRole('dialog')).toHaveCount(0)
+    })
+}
 
 test('admin adds an existing catalogue plugin and disables its feature', async ({ page, context }) => {
     await signIn(context)

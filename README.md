@@ -105,6 +105,10 @@ The local `Admin` plugin provides `/admin/users` and `/admin/featured-plugins`.
 It reuses GitHub sign-in, the public theme preference, and Interact's standard
 update endpoint. Every admin island checks current authorization on every request.
 Sidebar links use Interact navigation, including the return to the public site.
+CakePHP's request authorization middleware protects admin pages. Authentication's
+`PrimaryKeySession` reloads active users on each request; SocialAuth stores only
+their ID in `AuthId`. Existing full-identity sessions require signing in again
+after deploying this change.
 The plugin owns the admin interface; shared models, migrations, and access services
 remain in the application.
 

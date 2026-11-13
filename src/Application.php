@@ -20,10 +20,9 @@ use ADmad\SocialAuth\Middleware\SocialAuthMiddleware;
 use App\Command\SyncPackagesCommand;
 use App\Event\AfterGithubIdentify;
 use App\Http\RateLimit\AtomicFixedWindowRateLimiter;
-use App\Middleware\AdminAccessMiddleware;
-use App\Middleware\RefreshIdentityMiddleware;
 use App\Middleware\ThemeCookieMiddleware;
 use App\Model\Table\PackagesTable;
+use App\Model\Table\UsersTable;
 use App\Policy\RequestPolicy;
 use App\Service\AwesomeListImporter;
 use App\Service\AwesomeListParser;
@@ -35,7 +34,9 @@ use Authentication\Middleware\AuthenticationMiddleware;
 use Authorization\AuthorizationService;
 use Authorization\AuthorizationServiceInterface;
 use Authorization\AuthorizationServiceProviderInterface;
+use Authorization\Exception\MissingIdentityException;
 use Authorization\Middleware\AuthorizationMiddleware;
+use Authorization\Middleware\RequestAuthorizationMiddleware;
 use Authorization\Policy\MapResolver;
 use Cake\Core\Configure;
 use Cake\Core\ContainerInterface;
@@ -124,11 +125,12 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             ->add($csrf)
 
             ->add(new ThemeCookieMiddleware())
-            ->add(new RefreshIdentityMiddleware())
 
             ->add(new SocialAuthMiddleware([
                 'finder' => 'active',
                 'loginUrl' => '/',
+                'userId' => true,
+                'sessionKey' => 'AuthId',
                 // SocialConnect Auth service's providers config. https://github.com/SocialConnect/auth/blob/master/README.md
                 'serviceConfig' => [
                     'provider' => [
@@ -152,7 +154,14 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
 
             ->add(new AuthenticationMiddleware($this))
             ->add(new AuthorizationMiddleware($this))
-            ->add(new AdminAccessMiddleware());
+            ->add(new RequestAuthorizationMiddleware([
+                'unauthorizedHandler' => [
+                    'className' => 'Authorization.Redirect',
+                    'exceptions' => [MissingIdentityException::class],
+                    'url' => '/',
+                    'queryParam' => 'redirect',
+                ],
+            ]));
 
         $requestProtection = (array)Configure::read('PublicRequestProtection', []);
         $trustedProxyIps = (array)($requestProtection['trustedProxyIps'] ?? []);
@@ -249,9 +258,20 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             'queryParam' => 'redirect',
         ]);
 
-        // Load the authenticators. Session should be first.
-        // Session just uses session data directly as identity, no identifier needed.
-        $service->loadAuthenticator('Authentication.Session');
+        // Resolve current access on each request; legacy full-identity sessions are ignored.
+        $service->loadAuthenticator('Authentication.PrimaryKeySession', [
+            'sessionKey' => 'AuthId',
+            'identifier' => [
+                'className' => 'Authentication.Token',
+                'tokenField' => 'id',
+                'dataField' => 'key',
+                'resolver' => [
+                    'className' => 'Authentication.Orm',
+                    'userModel' => UsersTable::class,
+                    'finder' => 'active',
+                ],
+            ],
+        ]);
 
         return $service;
     }

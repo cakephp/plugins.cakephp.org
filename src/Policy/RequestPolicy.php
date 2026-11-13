@@ -5,6 +5,7 @@ namespace App\Policy;
 
 use App\Model\Enum\UserRole;
 use App\Model\Table\UsersTable;
+use Authorization\Exception\MissingIdentityException;
 use Authorization\IdentityInterface;
 use Authorization\Policy\RequestPolicyInterface;
 use Cake\Http\ServerRequest;
@@ -25,8 +26,11 @@ class RequestPolicy implements RequestPolicyInterface
         if ($request->getParam('plugin') !== 'Admin') {
             return true;
         }
+        if (!$identity instanceof IdentityInterface) {
+            throw new MissingIdentityException(['identity']);
+        }
 
-        return $identity instanceof IdentityInterface && $this->fetchTable(UsersTable::class)->exists([
+        return $this->fetchTable(UsersTable::class)->exists([
             'id' => $identity['id'],
             'role' => UserRole::Admin,
             'is_active' => true,

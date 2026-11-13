@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Admin\Test\TestCase\Controller;
 
+use App\Model\Enum\UserRole;
+use App\Model\Table\UsersTable;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -26,7 +28,7 @@ class AdminControllerTest extends TestCase
      */
     public function testUserForbidden(): void
     {
-        $this->session(['Auth' => ['id' => 2]]);
+        $this->session(['AuthId' => 2]);
         $this->get('/admin/users');
         $this->assertResponseCode(403);
     }
@@ -36,7 +38,7 @@ class AdminControllerTest extends TestCase
      */
     public function testAdminPages(): void
     {
-        $this->session(['Auth' => ['id' => 1]]);
+        $this->session(['AuthId' => 1]);
         $this->get('/admin/users');
         $this->assertResponseOk();
         $this->assertResponseContains('Admin navigation');
@@ -48,16 +50,61 @@ class AdminControllerTest extends TestCase
     }
 
     /**
-     * A previously privileged session is refreshed before policy evaluation.
+     * ID-only authentication reloads role and active status on each request.
      */
     public function testStaleRoleAndSuspension(): void
     {
-        $this->session(['Auth' => ['id' => 2, 'role' => 'admin', 'is_active' => true]]);
+        $this->session(['AuthId' => 1]);
+        $this->get('/admin/users');
+        $this->assertResponseOk();
+        $table = $this->fetchTable(UsersTable::class);
+        $table->updateAll(['role' => UserRole::User], ['id' => 1]);
         $this->get('/admin/users');
         $this->assertResponseCode(403);
-        $this->session(['Auth' => ['id' => 3, 'role' => 'admin', 'is_active' => true]]);
+        $table->updateAll([
+            'role' => UserRole::Admin,
+            'is_active' => false,
+        ], ['id' => 1]);
         $this->get('/admin/users');
         $this->assertRedirect('/?redirect=%2Fadmin%2Fusers');
+    }
+
+    /**
+     * Full-identity sessions from the old authenticator are never interpreted as IDs.
+     */
+    public function testLegacySessionRequiresSignIn(): void
+    {
+        $this->session([
+            'Auth' => [
+                'id' => 1,
+                'role' => 'admin',
+                'is_active' => true,
+            ],
+        ]);
+        $this->get('/admin/users');
+        $this->assertRedirect('/?redirect=%2Fadmin%2Fusers');
+    }
+
+    /**
+     * Deleted accounts cannot continue using an existing authenticated session.
+     */
+    public function testDeletedUserCannotAccessAdmin(): void
+    {
+        $this->session(['AuthId' => 1]);
+        $this->fetchTable(UsersTable::class)->deleteAll(['id' => 1]);
+        $this->get('/admin/users');
+        $this->assertRedirect('/?redirect=%2Fadmin%2Fusers');
+    }
+
+    /**
+     * The existing logout action clears the native ID-only session.
+     */
+    public function testLogoutClearsIdentity(): void
+    {
+        $this->session(['AuthId' => 1]);
+        $this->get('/users/logout');
+        $this->assertRedirect('/');
+        $this->assertSession(null, 'AuthId');
     }
 
     /**
@@ -65,7 +112,7 @@ class AdminControllerTest extends TestCase
      */
     public function testCsrf(): void
     {
-        $this->session(['Auth' => ['id' => 1]]);
+        $this->session(['AuthId' => 1]);
         $this->post('/_interact/update', []);
         $this->assertResponseCode(403);
     }

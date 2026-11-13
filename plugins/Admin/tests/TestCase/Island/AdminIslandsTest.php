@@ -10,6 +10,7 @@ use App\Model\Table\PackagesTable;
 use App\Model\Table\UsersTable;
 use Authentication\Identity;
 use Authorization\Exception\ForbiddenException;
+use Authorization\Exception\MissingIdentityException;
 use Authorization\Identity as AuthorizedIdentity;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
@@ -97,7 +98,7 @@ class AdminIslandsTest extends TestCase
      */
     public function testGuestCannotMount(): void
     {
-        $this->expectException(ForbiddenException::class);
+        $this->expectException(MissingIdentityException::class);
         $this->testIsland('Admin.Users', request: $this->adminRequest(null));
     }
 
