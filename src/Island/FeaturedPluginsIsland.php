@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Island;
 
+use App\Model\Table\FeaturedPluginsTable;
 use App\Model\Table\PackagesTable;
-use Cake\Core\Configure;
 use Interact\Attribute\State;
 use Interact\Island;
 
@@ -59,10 +59,15 @@ class FeaturedPluginsIsland extends Island
     /**
      * Read featured metadata keyed by package name.
      *
-     * @return array<string, array{logo: string|null}>
+     * @return array<string, array{logo: string|null, title: string|null, description: string|null}>
      */
     protected function featured(): array
     {
-        return (array)Configure::read('Packages.featured', []);
+        $metadata = [];
+        foreach ($this->fetchTable(FeaturedPluginsTable::class)->find()->where(['enabled' => true])->all() as $entry) {
+            $metadata[$entry->package] = ['logo' => $entry->logo, 'title' => $entry->title, 'description' => $entry->description];
+        }
+
+        return $metadata;
     }
 }

@@ -4,12 +4,13 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Island;
 
 use Cake\Cache\Cache;
-use Cake\Core\Configure;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Interact\TestSuite\IslandTestTrait;
 use Override;
+use Tags\Model\Table\TaggedTable;
+use Tags\Model\Table\TagsTable;
 
 /**
  * Exercises catalogue selections through real signed island updates.
@@ -22,7 +23,7 @@ class CatalogueIslandTest extends TestCase
      * @var list<string>
      */
     #[Override]
-    protected array $fixtures = ['app.Packages', 'app.Categories', 'app.CategoriesPackages', 'plugin.Tags.Tags', 'plugin.Tags.Tagged'];
+    protected array $fixtures = ['app.FeaturedPlugins', 'app.Packages', 'app.Categories', 'app.CategoriesPackages', 'plugin.Tags.Tags', 'plugin.Tags.Tagged'];
 
     /**
      * Category and membership changes are live, reloadable and reset pagination.
@@ -62,7 +63,6 @@ class CatalogueIslandTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Configure::write('Packages.featured', ['markstory/asset_compress' => ['logo' => null]]);
         Cache::delete('package_filter_tags_v1');
     }
 
@@ -159,9 +159,9 @@ class CatalogueIslandTest extends TestCase
      */
     public function testDetailVersionRetainsOtherSelections(): void
     {
-        $tags = $this->fetchTable('Tags.Tags');
+        $tags = $this->fetchTable(TagsTable::class);
         $tag = $tags->saveOrFail($tags->newEntity(['slug' => 'cakephp-4-4', 'label' => 'CakePHP: 4.4']));
-        $tagged = $this->fetchTable('Tags.Tagged');
+        $tagged = $this->fetchTable(TaggedTable::class);
         $tagged->saveOrFail($tagged->newEntity(['tag_id' => $tag->id, 'fk_id' => 1, 'fk_model' => 'Packages']));
         $this->testIsland('Catalogue')
             ->fill(['search' => 'asset', 'paging.sort' => 'downloads'])

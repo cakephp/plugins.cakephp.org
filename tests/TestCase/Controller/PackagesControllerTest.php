@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller;
 
-use Cake\Core\Configure;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use Override;
@@ -24,7 +23,7 @@ class PackagesControllerTest extends TestCase
      */
     #[Override]
     protected array $fixtures = [
-        'app.Packages',
+        'app.FeaturedPlugins', 'app.Packages',
         'plugin.Tags.Tags',
         'plugin.Tags.Tagged',
     ];
@@ -35,7 +34,6 @@ class PackagesControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Configure::write('Packages.featured', ['markstory/asset_compress' => ['logo' => null]]);
     }
 
     /**

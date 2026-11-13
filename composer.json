@@ -8,12 +8,13 @@
         "php": "^8.5",
         "admad/cakephp-social-auth": "^2.2",
         "cakephp/authentication": "^4.0",
+        "cakephp/authorization": "^3.0",
         "cakephp/cakephp": "5.4.*",
         "cakephp/migrations": "^5.0.0",
         "cakephp/plugin-installer": "^2.0",
         "dereuromark/cakephp-tags": "^3.0",
         "friendsofcake/search": "^7.5",
-        "josbeir/cakephp-interact": "^0.2",
+        "josbeir/cakephp-interact": "^0.2.1",
         "josbeir/cakephp-vite": "^0.1.4",
         "knplabs/packagist-api": "^3.0",
         "league/commonmark": "^2.7",
@@ -36,12 +37,14 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "App\\": "src/",
+            "Admin\\": "plugins/Admin/src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "App\\Test\\": "tests/",
+            "Admin\\Test\\": "plugins/Admin/tests/",
             "Cake\\Test\\": "vendor/cakephp/cakephp/tests/"
         }
     },

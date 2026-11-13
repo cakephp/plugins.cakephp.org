@@ -1,6 +1,15 @@
 import 'vite/modulepreload-polyfill'
 
 const register = (Alpine) => {
+    Alpine.data('adminNavigation', () => ({ open: false }))
+
+    Alpine.data('adminDialog', () => ({
+        init() {
+            // Keep the server-rendered open attribute across morphs and enter the native modal layer.
+            this.$el.removeAttribute('open')
+            this.$el.showModal()
+        },
+    }))
     Alpine.store('theme', {
         dark: document.documentElement.dataset.theme === 'cakephp-dark',
         apply(event) {

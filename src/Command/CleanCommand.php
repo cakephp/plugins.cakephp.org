@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use App\Model\Table\PackagesTable;
 use Cake\Cache\Cache;
 use Cake\Command\Command;
 use Cake\Console\Arguments;
@@ -58,7 +59,7 @@ class CleanCommand extends Command
             return;
         }
 
-        $packagesTable = $this->fetchTable('Packages');
+        $packagesTable = $this->fetchTable(PackagesTable::class);
         $allPackages = $packagesTable->find()->all();
 
         foreach ($allPackages as $package) {

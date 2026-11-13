@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9df7a35774f30bc92672c7b898254e91",
+    "content-hash": "09bbbfd9826c6cc598249ab1cd42b51e",
     "packages": [
         {
             "name": "admad/cakephp-social-auth",
@@ -120,6 +120,72 @@
                 "source": "https://github.com/cakephp/authentication"
             },
             "time": "2026-07-08T03:44:13+00:00"
+        },
+        {
+            "name": "cakephp/authorization",
+            "version": "3.5.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cakephp/authorization.git",
+                "reference": "6727b15a3006da323c23306d241e15efdca77a9c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cakephp/authorization/zipball/6727b15a3006da323c23306d241e15efdca77a9c",
+                "reference": "6727b15a3006da323c23306d241e15efdca77a9c",
+                "shasum": ""
+            },
+            "require": {
+                "cakephp/http": "^5.1",
+                "php": ">=8.1",
+                "psr/http-client": "^1.0",
+                "psr/http-message": "^1.1 || ^2.0",
+                "psr/http-server-handler": "^1.0",
+                "psr/http-server-middleware": "^1.0"
+            },
+            "require-dev": {
+                "cakephp/authentication": "^3.0 || ^4.0",
+                "cakephp/bake": "^3.2",
+                "cakephp/cakephp": "^5.1",
+                "cakephp/cakephp-codesniffer": "^5.1",
+                "phpunit/phpunit": "^10.5.58 || ^11.5.3 || ^12.4 || ^13.0"
+            },
+            "suggest": {
+                "cakephp/http": "To use \"RequestPolicyInterface\" (Not needed separately if using full CakePHP framework).",
+                "cakephp/orm": "To use \"OrmResolver\" (Not needed separately if using full CakePHP framework)."
+            },
+            "type": "cakephp-plugin",
+            "autoload": {
+                "psr-4": {
+                    "Authorization\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "CakePHP Community",
+                    "homepage": "https://github.com/cakephp/authorization/graphs/contributors"
+                }
+            ],
+            "description": "Authorization abstraction layer plugin for CakePHP",
+            "keywords": [
+                "access",
+                "auth",
+                "authorization",
+                "cakephp"
+            ],
+            "support": {
+                "docs": "https://cakephp.org/authorization/2/en/",
+                "forum": "https://stackoverflow.com/tags/cakephp",
+                "irc": "irc://irc.freenode.org/cakephp",
+                "issues": "https://github.com/cakephp/authorization/issues",
+                "source": "https://github.com/cakephp/authorization"
+            },
+            "time": "2026-07-07T14:41:50+00:00",
+            "published-time": "2026-07-07T14:47:21+00:00"
         },
         {
             "name": "cakephp/cakephp",
@@ -1004,16 +1070,16 @@
         },
         {
             "name": "josbeir/cakephp-interact",
-            "version": "0.2.0",
+            "version": "0.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/josbeir/cakephp-interact.git",
-                "reference": "5fb351e15f4d327d8ffc205d395c7f2504a83907"
+                "reference": "681e4dbf5cd8468c0a3a487b5c239cc7e93b2b07"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/josbeir/cakephp-interact/zipball/5fb351e15f4d327d8ffc205d395c7f2504a83907",
-                "reference": "5fb351e15f4d327d8ffc205d395c7f2504a83907",
+                "url": "https://api.github.com/repos/josbeir/cakephp-interact/zipball/681e4dbf5cd8468c0a3a487b5c239cc7e93b2b07",
+                "reference": "681e4dbf5cd8468c0a3a487b5c239cc7e93b2b07",
                 "shasum": ""
             },
             "require": {
@@ -1021,14 +1087,20 @@
                 "php": "^8.5"
             },
             "require-dev": {
+                "cakephp/authentication": "^3.0",
+                "cakephp/authorization": "^3.0",
+                "cakephp/bake": "^3.8",
                 "cakephp/mago-rules": "dev-main",
-                "carthage-software/mago": "^1.47",
+                "carthage-software/mago": "^1.59",
                 "josbeir/cakephp-mercure": "^0.3.1",
-                "phpunit/phpunit": "^12.5",
-                "rector/rector": "^2.7",
+                "phpunit/phpunit": "^12.5 || ^13.0",
+                "rector/rector": "^2.8.1",
                 "symfony/process": "^8.0"
             },
             "suggest": {
+                "cakephp/authentication": "Use AuthenticationTrait for direct access to the application's authentication service. Install ^3.0 for CakePHP 5.",
+                "cakephp/authorization": "Use AuthorizationTrait for optional policy checks and scopes in islands. Install ^3.0 for CakePHP 5.",
+                "cakephp/bake": "Generate island classes and matching templates with bin/cake bake island. Install as a development dependency.",
                 "josbeir/cakephp-mercure": "Mercure 1.x publishing and subscription authorization with the CakePHP 5 compatible package."
             },
             "type": "cakephp-plugin",
@@ -1049,10 +1121,10 @@
             "description": "Reactive server-rendered PHP islands for CakePHP.",
             "support": {
                 "issues": "https://github.com/josbeir/cakephp-interact/issues",
-                "source": "https://github.com/josbeir/cakephp-interact/tree/0.2.0"
+                "source": "https://github.com/josbeir/cakephp-interact/tree/0.2.1"
             },
-            "time": "2026-11-07T09:29:14+00:00",
-            "published-time": "2026-11-07T09:30:27+00:00"
+            "time": "2026-11-12T10:18:43+00:00",
+            "published-time": "2026-11-12T10:22:33+00:00"
         },
         {
             "name": "josbeir/cakephp-vite",

@@ -20,8 +20,11 @@ use ADmad\SocialAuth\Middleware\SocialAuthMiddleware;
 use App\Command\SyncPackagesCommand;
 use App\Event\AfterGithubIdentify;
 use App\Http\RateLimit\AtomicFixedWindowRateLimiter;
+use App\Middleware\AdminAccessMiddleware;
+use App\Middleware\RefreshIdentityMiddleware;
 use App\Middleware\ThemeCookieMiddleware;
 use App\Model\Table\PackagesTable;
+use App\Policy\RequestPolicy;
 use App\Service\AwesomeListImporter;
 use App\Service\AwesomeListParser;
 use App\Service\PackagistImporter;
@@ -29,6 +32,11 @@ use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
 use Authentication\AuthenticationServiceProviderInterface;
 use Authentication\Middleware\AuthenticationMiddleware;
+use Authorization\AuthorizationService;
+use Authorization\AuthorizationServiceInterface;
+use Authorization\AuthorizationServiceProviderInterface;
+use Authorization\Middleware\AuthorizationMiddleware;
+use Authorization\Policy\MapResolver;
 use Cake\Core\Configure;
 use Cake\Core\ContainerInterface;
 use Cake\Datasource\FactoryLocator;
@@ -42,6 +50,7 @@ use Cake\Http\Middleware\BodyParserMiddleware;
 use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\Middleware\RateLimitMiddleware;
 use Cake\Http\MiddlewareQueue;
+use Cake\Http\ServerRequest;
 use Cake\ORM\Locator\TableLocator;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
@@ -55,7 +64,7 @@ use SocialConnect\OAuth2\Provider\GitHub;
  * This defines the bootstrapping logic and middleware layers you
  * want to use in your application.
  */
-class Application extends BaseApplication implements AuthenticationServiceProviderInterface
+class Application extends BaseApplication implements AuthenticationServiceProviderInterface, AuthorizationServiceProviderInterface
 {
     /**
      * Load all the application configuration and bootstrap logic.
@@ -115,8 +124,11 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             ->add($csrf)
 
             ->add(new ThemeCookieMiddleware())
+            ->add(new RefreshIdentityMiddleware())
 
             ->add(new SocialAuthMiddleware([
+                'finder' => 'active',
+                'loginUrl' => '/',
                 // SocialConnect Auth service's providers config. https://github.com/SocialConnect/auth/blob/master/README.md
                 'serviceConfig' => [
                     'provider' => [
@@ -138,7 +150,9 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                 ],
             ]))
 
-            ->add(new AuthenticationMiddleware($this));
+            ->add(new AuthenticationMiddleware($this))
+            ->add(new AuthorizationMiddleware($this))
+            ->add(new AdminAccessMiddleware());
 
         $requestProtection = (array)Configure::read('PublicRequestProtection', []);
         $trustedProxyIps = (array)($requestProtection['trustedProxyIps'] ?? []);
@@ -240,5 +254,16 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
         $service->loadAuthenticator('Authentication.Session');
 
         return $service;
+    }
+
+    /**
+     * Share request policies between admin routes and island updates.
+     */
+    public function getAuthorizationService(ServerRequestInterface $request): AuthorizationServiceInterface
+    {
+        $resolver = new MapResolver();
+        $resolver->map(ServerRequest::class, RequestPolicy::class);
+
+        return new AuthorizationService($resolver);
     }
 }

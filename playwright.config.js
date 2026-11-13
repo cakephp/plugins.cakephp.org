@@ -8,7 +8,7 @@ export default defineConfig({
     use: { baseURL: 'http://127.0.0.1:8765', trace: 'retain-on-failure' },
     projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
     webServer: {
-        command: 'php tests/browser/setup.php && php -S 127.0.0.1:8765 -t webroot webroot/index.php 2>tmp/browser-server.log',
+        command: 'php tests/browser/setup.php && php -d session.save_path=tmp/browser-sessions -S 127.0.0.1:8765 -t webroot webroot/index.php 2>tmp/browser-server.log',
         url: 'http://127.0.0.1:8765',
         reuseExistingServer: false,
         env: {

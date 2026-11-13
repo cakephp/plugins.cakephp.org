@@ -113,21 +113,6 @@ return [
     'Packages' => [
         // Resolve moved or ambiguous Awesome-list repositories to an exact Composer package name.
         'awesomeAliases' => [],
-        'featured' => [
-            // Optional logo URL or image path; null uses a name-based emblem.
-            'cakedc/users' => ['logo' => null],
-            'dereuromark/cakephp-ide-helper' => ['logo' => 'https://dereuromark.github.io/cakephp-ide-helper/logo.svg'],
-            'dereuromark/cakephp-queue' => ['logo' => 'https://dereuromark.github.io/cakephp-queue/logo.svg'],
-            'dereuromark/cakephp-tools' => ['logo' => 'https://dereuromark.github.io/cakephp-tools/logo.svg'],
-            'friendsofcake/cakepdf' => ['logo' => null],
-            'friendsofcake/crud' => ['logo' => null],
-            'friendsofcake/search' => ['logo' => null],
-            'josbeir/cakephp-interact' => ['logo' => 'https://www.cakeinteract.dev/docs/branding/interact-mark.svg'],
-            'josbeir/cakephp-vite' => ['logo' => null],
-            'josegonzalez/cakephp-upload' => ['logo' => null],
-            'lordsimal/cakephp-sentry' => ['logo' => null],
-            'markstory/asset_compress' => ['logo' => null],
-        ],
     ],
 
     'CakeVite' => [
