@@ -5,11 +5,11 @@ namespace App\Event;
 
 use ADmad\SocialAuth\Middleware\SocialAuthMiddleware;
 use App\Model\Entity\User;
+use App\Model\Enum\UserRole;
 use Cake\Event\EventInterface;
 use Cake\Event\EventListenerInterface;
 use Cake\Http\Client;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Cake\Utility\Hash;
 
 class AfterGithubIdentify implements EventListenerInterface
 {
@@ -49,21 +49,17 @@ class AfterGithubIdentify implements EventListenerInterface
             ],
         ]);
 
-        $response = $http->get('https://api.github.com/user/orgs');
-        if (!$response->isOk()) {
+        $response = $http->get('https://api.github.com/user/memberships/orgs/cakephp');
+        if (!$response->isOk() && $response->getStatusCode() !== 404) {
             return;
         }
 
-        $data = $response->getJson();
-        $orgs = Hash::extract($data, '{n}.login');
-
-        $isCakePHPDev = false;
-        if (in_array('cakephp', $orgs, true)) {
-            $isCakePHPDev = true;
-        }
+        $isCakePHPDev = $response->isOk() && ($response->getJson()['state'] ?? null) === 'active';
 
         $usersTable = $this->getTableLocator()->get('Users');
-        $user = $usersTable->patchEntity($user, ['is_cakephp_dev' => $isCakePHPDev]);
-        $usersTable->save($user);
+        // Organization membership is authoritative, even for the last administrator.
+        $user->set('is_cakephp_dev', $isCakePHPDev);
+        $user->set('role', $isCakePHPDev ? UserRole::Admin : UserRole::User);
+        $usersTable->saveOrFail($user);
     }
 }
