@@ -58,7 +58,10 @@ return function (RouteBuilder $routes): void {
          * its action called 'display', and we pass a param to select the view file
          * to use (in this case, templates/Pages/home.php)...
          */
-        $builder->connect('/', ['controller' => 'Packages', 'action' => 'index']);
+        $builder->connect('/', [
+            'controller' => 'Packages',
+            'action' => 'index',
+        ], ['_name' => 'plugin:index']);
         $packageSegment = '[A-Za-z0-9][A-Za-z0-9_.-]*';
         $builder->get('/plugins/{namespace}/{name}', [
             'controller' => 'Packages',

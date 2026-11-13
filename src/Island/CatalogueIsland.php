@@ -183,9 +183,7 @@ class CatalogueIsland extends Island
                 '_name' => 'plugin:namespace',
                 'namespace' => $this->namespace,
             ] : [
-                'plugin' => null,
-                'controller' => 'Packages',
-                'action' => 'index',
+                '_name' => 'plugin:index',
             ],
         ];
     }

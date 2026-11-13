@@ -68,7 +68,12 @@ $groups = [
             <div class="plugin-category-links">
                 <?php foreach ($package->categories as $category) : ?>
                     <a class="category-label badge badge-outline"
-                       href="<?= $this->Url->build(['plugin' => null, 'controller' => 'Packages', 'action' => 'index', '?' => ['category' => $category->slug]]) ?>"
+                       href="<?= $this->Url->build([
+                           '_name' => 'plugin:index',
+                           '?' => [
+                               'category' => $category->slug,
+                           ],
+                       ]) ?>"
                        data-filter-package-category data-category-slug="<?= h($category->slug) ?>"><?= h($category->name) ?></a>
                 <?php endforeach; ?>
             </div>
@@ -109,7 +114,12 @@ $groups = [
                             <?php $version = str_replace($group['label'] . ': ', '', $tag->label); ?>
                             <a class="version-pill badge badge-outline"
                                aria-label="<?= h($group['label'] . ' ' . $version) ?>"
-                               href="<?= $this->Url->build(['controller' => 'Packages', 'action' => 'index', 'plugin' => null, '?' => [$group['query'] => [$tag->slug]]]) ?>"
+                               href="<?= $this->Url->build([
+                                   '_name' => 'plugin:index',
+                                   '?' => [
+                                       $group['query'] => [$tag->slug],
+                                   ],
+                               ]) ?>"
                                data-filter-package-version data-version-group="<?= h($group['query']) ?>" data-version-slug="<?= h($tag->slug) ?>">
                                 <?= h($version) ?>
                             </a>

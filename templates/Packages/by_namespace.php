@@ -15,7 +15,9 @@ $statLabels = [
 <header class="namespace-hero" data-namespace-banner>
     <div class="site-width relative">
         <div class="namespace-toolbar">
-            <?= $this->Html->link('← ' . __('Browse all plugins'), '/', [
+            <?= $this->Html->link('← ' . __('Browse all plugins'), [
+                '_name' => 'plugin:index',
+            ], [
                 'class' => 'inline-flex min-h-8 items-center text-sm text-muted',
                 'x-interact:navigate' => '',
             ]) ?>
