@@ -19,6 +19,7 @@
 $sortLabels = [
     'latest_stable_release_date' => __('Latest release'),
     'downloads' => __('Downloads'),
+    'monthly_downloads' => __('Monthly downloads'),
     'stars' => __('Stars'),
 ];
 $sortLabel = $sortLabels[$catalogueQuery['sort']] ?? __('Latest release');
@@ -162,6 +163,7 @@ $clearCategoryUrl = $this->Url->build($catalogueRoute + [
                         <div class="sort-options dropdown-content">
                             <?= $this->Paginator->sort('latest_stable_release_date', __('Latest release'), ['direction' => 'desc']) ?>
                             <?= $this->Paginator->sort('downloads', __('Downloads'), ['direction' => 'desc']) ?>
+                            <?= $this->Paginator->sort('monthly_downloads', __('Monthly downloads'), ['direction' => 'desc']) ?>
                             <?= $this->Paginator->sort('stars', __('Stars'), ['direction' => 'desc']) ?>
                         </div>
                     </details>

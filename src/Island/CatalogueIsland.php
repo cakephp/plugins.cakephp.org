@@ -46,7 +46,7 @@ class CatalogueIsland extends Island
     #[Pagination(
         settings: [
             'limit' => 21,
-            'sortableFields' => ['downloads', 'stars', 'latest_stable_release_date'],
+            'sortableFields' => ['downloads', 'monthly_downloads', 'stars', 'latest_stable_release_date'],
             'order' => ['Packages.latest_stable_release_date' => 'desc', 'Packages.id' => 'desc'],
         ],
         url: ['page' => 'page', 'sort' => 'sort', 'direction' => 'direction'],

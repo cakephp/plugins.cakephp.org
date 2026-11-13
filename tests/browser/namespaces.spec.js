@@ -55,6 +55,23 @@ test('namespace hero totals and catalogue results use the Composer prefix', asyn
     await page.screenshot({ path: 'tmp/namespace-desktop.png', animations: 'disabled' })
 })
 
+test('monthly downloads sort works in the catalogue and namespace lists', async ({ page }) => {
+    for (const path of ['/', '/plugins/vendor']) {
+        await page.goto(path)
+        await page.evaluate(() => { window.monthlySortMarker = 'retained' })
+        await chooseSort(page, 'Monthly downloads')
+        await expect(page).toHaveURL(/sort=monthly_downloads/)
+        await expect(rows(page).first()).toContainText(path === '/' ? 'dereuromark/cakephp-tools' : 'vendor/package-01')
+        await chooseSort(page, 'Monthly downloads ↓')
+        await expect(page).toHaveURL(/direction=asc/)
+        await expect(rows(page).first()).toContainText('vendor/package-23')
+        expect(await page.evaluate(() => window.monthlySortMarker)).toBe('retained')
+        await page.reload()
+        await expect(page.getByLabel('Sort plugins', { exact: true })).toContainText('Monthly downloads')
+        await expect(rows(page).first()).toContainText('vendor/package-23')
+    }
+})
+
 test('search, version filters, sorting and reset retain the namespace and hero', async ({ page }) => {
     await page.goto('/plugins/vendor')
     await page.evaluate(() => { window.namespaceMarker = 'retained' })
