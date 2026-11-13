@@ -4,8 +4,11 @@ declare(strict_types=1);
 namespace App\Model\Table;
 
 use App\Model\Filter\PackagesCollection;
+use ArrayObject;
 use Cake\Cache\Cache;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Datasource\EntityInterface;
+use Cake\Event\EventInterface;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -106,6 +109,20 @@ class PackagesTable extends Table
     }
 
     /**
+     * Derive the indexed vendor whenever an import creates or renames a package.
+     *
+     * @param \Cake\Event\EventInterface $event Save event.
+     * @param \Cake\Datasource\EntityInterface $entity Package being saved.
+     * @param \ArrayObject<string, mixed> $options Save options.
+     */
+    public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
+    {
+        if ($entity->isNew() || $entity->isDirty('package')) {
+            $entity->set('namespace', strtolower(explode('/', (string)$entity->get('package'), 2)[0]));
+        }
+    }
+
+    /**
      * Build the public catalogue with its version associations.
      *
      * @param \Cake\ORM\Query\SelectQuery<\App\Model\Entity\Package> $query Query instance.
@@ -135,24 +152,16 @@ class PackagesTable extends Table
     }
 
     /**
-     * Match a literal Composer vendor prefix, including namespaces containing underscores.
+     * Match the indexed Composer namespace exactly.
      *
      * @param \Cake\ORM\Query\SelectQuery<\App\Model\Entity\Package> $query Package query.
      * @return \Cake\ORM\Query\SelectQuery<\App\Model\Entity\Package>
      */
     public function findNamespace(SelectQuery $query, string $namespace): SelectQuery
     {
-        $prefix = strtr($namespace, [
-            '!' => '!!',
-            '%' => '!%',
-            '_' => '!_',
-        ]) . '/%';
-
-        // Expression-owned bindings survive the ORM's eager-loading subqueries.
-        return $query->where(new QueryExpression([
-            $query->expr()->like($this->aliasField('package'), $prefix),
-            "ESCAPE '!'",
-        ], [], ''));
+        return $query->where([
+            $this->aliasField('namespace') => $namespace,
+        ]);
     }
 
     /**

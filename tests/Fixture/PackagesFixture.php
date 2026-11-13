@@ -64,6 +64,11 @@ class PackagesFixture extends TestFixture
             ];
         }
 
+        foreach ($this->records as &$record) {
+            $record['namespace'] = strtolower(explode('/', $record['package'], 2)[0]);
+        }
+        unset($record);
+
         parent::init();
     }
 }

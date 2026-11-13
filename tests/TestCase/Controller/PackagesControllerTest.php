@@ -108,9 +108,11 @@ class PackagesControllerTest extends TestCase
      */
     public function testPackageRoutePreservesDotsAndUnderscores(): void
     {
-        $this->fetchTable(PackagesTable::class)->updateAll([
+        $packages = $this->fetchTable(PackagesTable::class);
+        $package = $packages->patchEntity($packages->get(2), [
             'package' => 'vendor.name/plugin_name.json',
-        ], ['id' => 2]);
+        ]);
+        $packages->saveOrFail($package);
         $this->get('/plugins/vendor.name/plugin_name.json');
         $this->assertResponseOk();
         $this->assertNoRedirect();
@@ -148,9 +150,10 @@ class PackagesControllerTest extends TestCase
     {
         $packages = $this->fetchTable(PackagesTable::class);
         foreach (['by', '123'] as $namespace) {
-            $packages->updateAll([
+            $package = $packages->patchEntity($packages->get(2), [
                 'package' => $namespace . '/cakephp-tools',
-            ], ['id' => 2]);
+            ]);
+            $packages->saveOrFail($package);
             $this->get('/plugins/' . $namespace);
             $this->assertResponseOk();
             $this->assertNoRedirect();

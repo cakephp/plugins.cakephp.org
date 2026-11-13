@@ -61,6 +61,7 @@ class PackagistImporterTest extends TestCase
         $package = $packages->get(1, contain: ['Categories', 'Tags']);
         $this->assertCount(2, $package->categories);
         $this->assertSame('Updated plugin description', $package->description);
+        $this->assertSame('markstory', $package->namespace);
         $this->assertSame('5.1.0', $package->latest_stable_version);
         $this->assertEquals(new Date('2026-04-05'), $package->latest_stable_release_date);
         $this->assertContains('cakephp-5-4', array_column($package->tags, 'slug'));

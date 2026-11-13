@@ -12,6 +12,7 @@ use Tags\Model\Entity\Tag;
  *
  * @property int $id
  * @property string $package
+ * @property string $namespace
  * @property string $description
  * @property string $repo_url
  * @property int $downloads
@@ -42,6 +43,7 @@ class Package extends Entity
     #[Override]
     protected array $_accessible = [
         'id' => false,
+        'namespace' => false,
         '*' => true,
     ];
 

@@ -88,15 +88,50 @@ class PackagesTableTest extends TestCase
     public function testNamespaceMatching(): void
     {
         $packages = $this->fetchTable(PackagesTable::class);
-        $packages->updateAll(['package' => 'vendor_extra/one'], ['id' => 2]);
-        $packages->updateAll(['package' => 'vendorXextra/two'], ['id' => 3]);
-        $packages->updateAll(['package' => 'vendor_extra_more/three'], ['id' => 4]);
-        $packages->updateAll(['package' => 'vendor.extra/four'], ['id' => 5]);
+        $names = [
+            2 => 'vendor_extra/one',
+            3 => 'vendorXextra/two',
+            4 => 'vendor_extra_more/three',
+            5 => 'vendor.extra/four',
+        ];
+        foreach ($names as $id => $name) {
+            $package = $packages->get($id);
+            $package->package = $name;
+            $packages->saveOrFail($package);
+        }
         $this->assertSame([2], $packages->find('namespace', namespace: 'vendor_extra')->all()->extract('id')->toList());
         $this->assertSame([5], $packages->find('namespace', namespace: 'vendor.extra')->all()->extract('id')->toList());
         $this->assertSame(0, $packages->find('namespace', namespace: 'vendor%')->count());
         $this->assertSame(0, $packages->find('namespace', namespace: "vendor' OR 1=1")->count());
         $this->assertSame(19, $packages->find('namespace', namespace: 'vendor')->count());
+    }
+
+    /**
+     * Imports derive the namespace, and renames cannot retain a stale or forged vendor.
+     */
+    public function testNamespaceIsDerivedOnCreateAndRename(): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        $package = $packages->newEntity([
+            'package' => 'Example_Vendor/plugin',
+            'namespace' => 'forged',
+            'description' => 'Example package.',
+            'repo_url' => 'https://github.com/example/plugin',
+            'downloads' => 100,
+            'stars' => 10,
+            'latest_stable_version' => '1.0.0',
+            'latest_stable_release_date' => null,
+        ]);
+        $packages->saveOrFail($package);
+        $this->assertSame('example_vendor', $packages->get($package->id)->namespace);
+        $package = $packages->patchEntity($package, [
+            'package' => 'different.vendor/plugin',
+            'namespace' => 'forged-again',
+        ]);
+        $packages->saveOrFail($package);
+        $this->assertSame('different.vendor', $packages->get($package->id)->namespace);
+        $this->assertSame(0, $packages->find('namespace', namespace: 'example_vendor')->count());
+        $this->assertSame(1, $packages->find('namespace', namespace: 'different.vendor')->count());
     }
 
     /**
