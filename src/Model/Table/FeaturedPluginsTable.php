@@ -3,6 +3,10 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use App\Model\Enum\FeaturedPluginStatus;
+use ArrayObject;
+use Cake\Event\EventInterface;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -29,7 +33,12 @@ class FeaturedPluginsTable extends Table
         parent::initialize($config);
         $this->setDisplayField('package');
         $this->addBehavior('Timestamp');
-        $this->belongsTo('CataloguePackages', ['className' => 'Packages', 'foreignKey' => 'package', 'bindingKey' => 'package', 'propertyName' => 'catalogue_package']);
+        $this->belongsTo('CataloguePackages', [
+            'className' => PackagesTable::class,
+            'foreignKey' => 'package',
+            'bindingKey' => 'package',
+            'propertyName' => 'catalogue_package',
+        ]);
     }
 
     /**
@@ -44,10 +53,28 @@ class FeaturedPluginsTable extends Table
             ->scalar('description')->maxLength('description', 2000)->allowEmptyString('description')
             ->scalar('logo')->maxLength('logo', 2048)->allowEmptyString('logo')
             ->add('logo', 'imageLocation', [
-                'rule' => static fn(string $value): bool => (str_starts_with($value, 'https://') && filter_var($value, FILTER_VALIDATE_URL) !== false)
-                    || (bool)preg_match('#^/img/[a-zA-Z0-9_./-]+$#D', $value) && !str_contains($value, '..'),
+                'rule' => static fn(mixed $value): bool => is_string($value) && (
+                    (str_starts_with($value, 'https://') && filter_var($value, FILTER_VALIDATE_URL) !== false)
+                    || (bool)preg_match('#^/img/[a-zA-Z0-9_./-]+$#D', $value) && !str_contains($value, '..')
+                ),
                 'message' => 'Use an HTTPS URL or a local /img/ path.',
             ]);
+    }
+
+    /**
+     * Validate the same trimmed override values that entity setters persist.
+     *
+     * @param \Cake\Event\EventInterface $event Marshal event.
+     * @param \ArrayObject<string, mixed> $data Input fields.
+     * @param \ArrayObject<string, mixed> $options Marshal options.
+     */
+    public function beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options): void
+    {
+        foreach (['logo', 'title', 'description'] as $field) {
+            if (isset($data[$field]) && is_string($data[$field])) {
+                $data[$field] = trim($data[$field]);
+            }
+        }
     }
 
     /**
@@ -56,7 +83,32 @@ class FeaturedPluginsTable extends Table
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->isUnique(['package']), ['errorField' => 'package']);
+        $rules->addCreate($rules->existsIn(['package'], 'CataloguePackages'), 'cataloguePackage', [
+            'errorField' => 'package',
+            'message' => 'Choose an existing plugin.',
+        ]);
 
         return $rules;
+    }
+
+    /**
+     * Build the management listing with catalogue counts and availability.
+     *
+     * @param \Cake\ORM\Query\SelectQuery<\App\Model\Entity\FeaturedPlugin> $query Featured entry query.
+     * @return \Cake\ORM\Query\SelectQuery<\App\Model\Entity\FeaturedPlugin>
+     */
+    public function findAdminListing(SelectQuery $query, string $search = '', ?FeaturedPluginStatus $status = null): SelectQuery
+    {
+        $query->contain(['CataloguePackages']);
+        if (trim($search) !== '') {
+            $query->where(['FeaturedPlugins.package LIKE' => '%' . trim($search) . '%']);
+        }
+        if ($status === FeaturedPluginStatus::Unavailable) {
+            $query->where(['CataloguePackages.id IS' => null]);
+        } elseif ($status instanceof FeaturedPluginStatus) {
+            $query->where(['FeaturedPlugins.enabled' => $status === FeaturedPluginStatus::Enabled]);
+        }
+
+        return $query;
     }
 }

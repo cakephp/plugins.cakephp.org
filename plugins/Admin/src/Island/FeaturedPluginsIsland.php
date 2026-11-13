@@ -5,7 +5,6 @@ namespace Admin\Island;
 
 use App\Model\Enum\FeaturedPluginStatus;
 use App\Model\Table\FeaturedPluginsTable;
-use App\Model\Table\PackagesTable;
 use Cake\Http\Exception\BadRequestException;
 use Interact\Attribute\Action;
 use Interact\Attribute\Pagination;
@@ -24,7 +23,10 @@ class FeaturedPluginsIsland extends AdminIsland
     #[Pagination(
         settings: [
             'limit' => 20,
-            'order' => ['FeaturedPlugins.package' => 'asc', 'FeaturedPlugins.id' => 'asc'],
+            'order' => [
+                'FeaturedPlugins.package' => 'asc',
+                'FeaturedPlugins.id' => 'asc',
+            ],
             'sortableFields' => [
                 'package' => 'FeaturedPlugins.package',
                 'title' => 'FeaturedPlugins.title',
@@ -33,8 +35,15 @@ class FeaturedPluginsIsland extends AdminIsland
                 'enabled' => 'FeaturedPlugins.enabled',
             ],
         ],
-        url: ['page' => 'page', 'sort' => 'sort', 'direction' => 'direction'],
-        defaults: ['sort' => 'package', 'direction' => 'asc'],
+        url: [
+            'page' => 'page',
+            'sort' => 'sort',
+            'direction' => 'direction',
+        ],
+        defaults: [
+            'sort' => 'package',
+            'direction' => 'asc',
+        ],
     )]
     public PaginationState $paging;
 
@@ -43,24 +52,6 @@ class FeaturedPluginsIsland extends AdminIsland
 
     #[State]
     public ?int $editingId = null;
-
-    #[State(writable: true)]
-    public string $packageSearch = '';
-
-    #[State]
-    public string $package = '';
-
-    #[State(writable: true)]
-    public bool $enabled = true;
-
-    #[State(writable: true)]
-    public string $logo = '';
-
-    #[State(writable: true)]
-    public string $title = '';
-
-    #[State(writable: true)]
-    public string $description = '';
 
     #[State]
     public ?int $removingId = null;
@@ -79,75 +70,34 @@ class FeaturedPluginsIsland extends AdminIsland
     }
 
     /**
-     * Start an empty editorial draft.
+     * Mount a fresh child editor for a new feature.
      */
     #[Action]
     public function create(): void
     {
         $this->editing = true;
-        $this->editingId = null;
-        $this->packageSearch = $this->package = $this->logo = $this->title = $this->description = $this->message = '';
-        $this->enabled = true;
+        $this->editingId = $this->removingId = null;
+        $this->message = '';
     }
 
     /**
-     * Only existing catalogue entries may be selected for a new feature.
-     */
-    #[Action]
-    public function selectPackage(int $id): void
-    {
-        if ($this->editingId !== null || !$this->editing) {
-            throw new BadRequestException('Start a new featured entry first.');
-        }
-        $this->package = $this->fetchTable(PackagesTable::class)->get($id)->package;
-        $this->packageSearch = '';
-    }
-
-    /**
-     * Load an existing entry, including entries missing from the catalogue.
+     * Key the editor by record so each entry receives a fresh draft.
      */
     #[Action]
     public function edit(int $id): void
     {
-        $entry = $this->fetchTable(FeaturedPluginsTable::class)->get($id);
         $this->editing = true;
         $this->editingId = $id;
-        $this->package = $entry->package;
-        $this->enabled = $entry->enabled;
-        $this->logo = $entry->logo ?? '';
-        $this->title = $entry->title ?? '';
-        $this->description = $entry->description ?? '';
-        $this->packageSearch = $this->message = '';
+        $this->removingId = null;
+        $this->message = '';
     }
 
     /**
-     * Validate and save plain-text overrides without changing imported metadata.
+     * Refresh the list only after a successful editor save.
      */
-    #[Action]
-    public function save(): void
+    #[Action(on: 'featured-plugin-saved')]
+    public function saved(): void
     {
-        if (!$this->editing) {
-            throw new BadRequestException('Open the featured editor first.');
-        }
-        $table = $this->fetchTable(FeaturedPluginsTable::class);
-        if ($this->editingId === null && !$this->fetchTable(PackagesTable::class)->exists(['package' => $this->package])) {
-            $this->setErrors(['package' => ['Choose an existing plugin.']]);
-
-            return;
-        }
-        $entry = $this->editingId !== null ? $table->get($this->editingId) : $table->newEmptyEntity();
-        $entry = $table->patchEntity($entry, [
-            'package' => $this->package,
-            'enabled' => $this->enabled,
-            'logo' => trim($this->logo) === '' ? null : trim($this->logo),
-            'title' => trim($this->title) === '' ? null : trim($this->title),
-            'description' => trim($this->description) === '' ? null : trim($this->description),
-        ]);
-        if (!$table->save($entry)) {
-            $this->setErrors($entry->getErrors() ?: ['_form' => ['Unable to save this featured plugin.']]);
-
-            return;
-        }
         $this->cancel();
         $this->message = 'Featured plugin saved.';
     }
@@ -155,7 +105,7 @@ class FeaturedPluginsIsland extends AdminIsland
     /**
      * Discard the draft and any removal confirmation.
      */
-    #[Action]
+    #[Action(on: 'featured-plugin-editor-closed')]
     public function cancel(): void
     {
         $this->editing = false;
@@ -195,31 +145,14 @@ class FeaturedPluginsIsland extends AdminIsland
     public function viewData(): array
     {
         $status = FeaturedPluginStatus::tryFrom($this->status);
-        if (mb_strlen($this->search) > 100 || mb_strlen($this->packageSearch) > 100 || ($this->status !== '' && $status === null)) {
+        if (mb_strlen($this->search) > 100 || ($this->status !== '' && $status === null)) {
             throw new BadRequestException('Invalid featured plugin filters.');
         }
         $table = $this->fetchTable(FeaturedPluginsTable::class);
-        $query = $table->find()->contain(['CataloguePackages']);
-        if (trim($this->search) !== '') {
-            $query->where(['FeaturedPlugins.package LIKE' => '%' . trim($this->search) . '%']);
-        }
-        if ($status === FeaturedPluginStatus::Unavailable) {
-            $query->where(['CataloguePackages.id IS' => null]);
-        } elseif ($status !== null) {
-            $query->where(['FeaturedPlugins.enabled' => $status === FeaturedPluginStatus::Enabled]);
-        }
-        $packages = $this->fetchTable(PackagesTable::class);
-        $matches = [];
-        if ($this->editing && $this->editingId === null && $this->package === '') {
-            $matches = $packages->find()->select(['id', 'package'])->where(['package LIKE' => '%' . trim($this->packageSearch) . '%'])
-                ->orderByAsc('package')->limit(10)->all();
-        }
+        $query = $table->find('adminListing', search: $this->search, status: $status);
 
         return [
             'entries' => $this->paginate($query),
-            'matches' => $matches,
-            'previewLogo' => $this->logo !== '' && $table->getValidator()->validate(['logo' => $this->logo], false) === [] ? $this->logo : null,
-            'previewPackage' => $this->editing && $this->package !== '' ? $packages->find()->where(['package' => $this->package])->first() : null,
             'removingEntry' => $this->removingId !== null ? $table->get($this->removingId) : null,
         ];
     }

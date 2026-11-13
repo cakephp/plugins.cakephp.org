@@ -6,6 +6,7 @@ namespace Admin\Test\TestCase\Island;
 use App\Application;
 use App\Model\Enum\UserRole;
 use App\Model\Table\FeaturedPluginsTable;
+use App\Model\Table\PackagesTable;
 use App\Model\Table\UsersTable;
 use Authentication\Identity;
 use Authorization\Exception\ForbiddenException;
@@ -39,7 +40,10 @@ class AdminIslandsTest extends TestCase
     {
         $island = $this->testIsland('Admin.Users', request: $this->adminRequest());
         $island->set('search', 'member')->assertSee('member@example.com')->assertDontSee('suspended@example.com')
-            ->call('edit', 2)->fill(['role' => 'admin', 'active' => false])->call('confirm')->assertSet('confirming', true)
+            ->call('edit', 2)->fill([
+                'role' => 'admin',
+                'active' => false,
+            ])->call('confirm')->assertSet('confirming', true)
             ->call('save')->assertSee('User access updated.');
         $user = $this->fetchTable(UsersTable::class)->get(2);
         $this->assertSame(UserRole::Admin, $user->role);
@@ -78,6 +82,17 @@ class AdminIslandsTest extends TestCase
     }
 
     /**
+     * The independently mounted editor checks access on its own updates too.
+     */
+    public function testRevokedEditorSnapshotDenied(): void
+    {
+        $island = $this->testIsland('Admin.FeaturedPluginEditor', ['entryId' => 1], request: $this->adminRequest());
+        $this->fetchTable(UsersTable::class)->updateAll(['role' => 'user'], ['id' => 1]);
+        $this->expectException(ForbiddenException::class);
+        $island->set('draft.title', 'Unauthorized change')->call('save');
+    }
+
+    /**
      * Guessing a plugin island name never grants access to guests.
      */
     public function testGuestCannotMount(): void
@@ -92,14 +107,21 @@ class AdminIslandsTest extends TestCase
     public function testFeaturedManagement(): void
     {
         $table = $this->fetchTable(FeaturedPluginsTable::class);
-        $island = $this->testIsland('Admin.FeaturedPlugins', request: $this->adminRequest());
-        $island->call('create')->set('packageSearch', 'package-01')->assertSee('vendor/package-01')->call('selectPackage', 2)
-            ->fill(['title' => 'Our pick', 'description' => 'Editorial description', 'logo' => 'javascript:alert(1)'])->call('save')->assertHasErrors(['logo']);
-        $island->set('logo', '/img/pick.svg')->call('save')->assertSee('Featured plugin saved.');
+        $request = $this->adminRequest();
+        $editor = $this->testIsland('Admin.FeaturedPluginEditor', request: $request);
+        $editor->set('packageSearch', 'package-01')->assertSee('vendor/package-01')->call('selectPackage', 2)
+            ->fill([
+                'draft.title' => 'Our pick',
+                'draft.description' => 'Editorial description',
+                'draft.logo' => 'javascript:alert(1)',
+            ])->call('save')->assertHasErrors(['logo']);
+        $editor->set('draft.logo', '/img/pick.svg')->call('save')->assertDispatched('featured-plugin-saved');
         $entry = $table->find()->where(['package' => 'vendor/package-01'])->firstOrFail();
         $this->assertSame('Our pick', $entry->title);
-        $island->call('edit', $entry->id)->set('enabled', false)->call('save');
+        $this->testIsland('Admin.FeaturedPluginEditor', ['entryId' => $entry->id], request: $request)
+            ->set('draft.enabled', false)->call('save')->assertDispatched('featured-plugin-saved');
         $this->assertFalse($table->get($entry->id)->enabled);
+        $island = $this->testIsland('Admin.FeaturedPlugins', request: $request);
         $island->call('confirmRemoval', $entry->id)->assertSee('Confirm removal')->call('remove');
         $this->assertFalse($table->exists(['id' => $entry->id]));
     }
@@ -109,7 +131,30 @@ class AdminIslandsTest extends TestCase
      */
     public function testDuplicateFeaturedEntry(): void
     {
-        $this->testIsland('Admin.FeaturedPlugins', request: $this->adminRequest())->call('create')->call('selectPackage', 1)->call('save')->assertHasErrors(['package']);
+        $this->testIsland('Admin.FeaturedPluginEditor', request: $this->adminRequest())
+            ->call('selectPackage', 1)->call('save')->assertHasErrors(['package']);
+    }
+
+    /**
+     * Whole-form drafts still use ORM validation and cannot change the selection.
+     */
+    public function testFeaturedDraftValidationAndFieldRestrictions(): void
+    {
+        $editor = $this->testIsland('Admin.FeaturedPluginEditor', ['entryId' => 1], request: $this->adminRequest());
+        $editor->fill([
+            'draft.logo' => ['invalid'],
+            'draft.title' => ['invalid'],
+        ])->call('save')->assertHasErrors(['logo', 'title']);
+        $editor->fill([
+            'draft.logo' => '',
+            'draft.title' => 'Editorial title',
+            'draft.package' => 'cakedc/users',
+            'draft.id' => 2,
+        ])->call('save')->assertDispatched('featured-plugin-saved');
+        $table = $this->fetchTable(FeaturedPluginsTable::class);
+        $this->assertSame('markstory/asset_compress', $table->get(1)->package);
+        $this->assertSame('Editorial title', $table->get(1)->title);
+        $this->assertNull($table->get(2)->title);
     }
 
     /**
@@ -118,10 +163,16 @@ class AdminIslandsTest extends TestCase
     public function testFeaturedCountSorting(): void
     {
         $island = $this->testIsland('Admin.FeaturedPlugins', request: $this->adminRequest());
-        $island->fill(['paging.sort' => 'stars', 'paging.direction' => 'asc']);
+        $island->fill([
+            'paging.sort' => 'stars',
+            'paging.direction' => 'asc',
+        ]);
         preg_match_all('/data-featured-id="(\d+)"/', $island->result()->html, $matches);
         $this->assertSame(['3', '1', '2'], $matches[1]);
-        $island->fill(['paging.sort' => 'downloads', 'paging.direction' => 'desc']);
+        $island->fill([
+            'paging.sort' => 'downloads',
+            'paging.direction' => 'desc',
+        ]);
         preg_match_all('/data-featured-id="(\d+)"/', $island->result()->html, $matches);
         $this->assertSame(['3', '2', '1'], $matches[1]);
     }
@@ -132,9 +183,12 @@ class AdminIslandsTest extends TestCase
     public function testUnavailableEntry(): void
     {
         $table = $this->fetchTable(FeaturedPluginsTable::class);
-        $entry = $table->saveOrFail($table->newEntity(['package' => 'missing/package', 'enabled' => true]));
-        $this->testIsland('Admin.FeaturedPlugins', request: $this->adminRequest())->set('status', 'unavailable')
-            ->assertSee('missing/package')->assertDontSee('markstory/asset_compress')->call('edit', $entry->id)->set('enabled', false)->call('save');
-        $this->assertFalse($table->get($entry->id)->enabled);
+        $request = $this->adminRequest();
+        $this->fetchTable(PackagesTable::class)->deleteAll(['package' => 'markstory/asset_compress']);
+        $this->testIsland('Admin.FeaturedPlugins', request: $request)->set('status', 'unavailable')
+            ->assertSee('markstory/asset_compress')->assertDontSee('cakedc/users');
+        $this->testIsland('Admin.FeaturedPluginEditor', ['entryId' => 1], request: $request)
+            ->set('draft.enabled', false)->call('save')->assertDispatched('featured-plugin-saved');
+        $this->assertFalse($table->get(1)->enabled);
     }
 }

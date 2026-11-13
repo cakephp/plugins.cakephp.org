@@ -145,6 +145,19 @@ class PackagesTable extends Table
     }
 
     /**
+     * Search canonical package names for the featured editor's picker.
+     *
+     * @param \Cake\ORM\Query\SelectQuery<\App\Model\Entity\Package> $query Package query.
+     * @return \Cake\ORM\Query\SelectQuery<\App\Model\Entity\Package>
+     */
+    public function findFeaturedCandidates(SelectQuery $query, string $search = ''): SelectQuery
+    {
+        return $query->select(['id', 'package'])
+            ->where(['package LIKE' => '%' . trim($search) . '%'])
+            ->orderByAsc('package');
+    }
+
+    /**
      * @return array<string, array{name: string, count: int}> Imported categories and their directory-wide package counts.
      */
     public function categoryOptions(): array

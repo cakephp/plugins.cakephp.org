@@ -33,9 +33,9 @@ class FeaturedPluginsIslandTest extends TestCase
     public function testMissingSelectionHasNoFeaturedEntries(): void
     {
         $table = $this->fetchTable(FeaturedPluginsTable::class);
-        $table->deleteAll([]);
+        $this->fetchTable(PackagesTable::class)->deleteAll([]);
         $this->testIsland('FeaturedPlugins')->assertDontSee('data-featured-plugins');
-        $table->saveOrFail($table->newEntity(['package' => 'missing/package', 'enabled' => true]));
+        $table->deleteAll([]);
         $this->testIsland('FeaturedPlugins')->assertDontSee('data-featured-plugins');
     }
 

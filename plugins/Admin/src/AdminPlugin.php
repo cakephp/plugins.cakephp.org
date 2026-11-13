@@ -17,9 +17,18 @@ class AdminPlugin extends BasePlugin
     public function routes(RouteBuilder $routes): void
     {
         $routes->plugin('Admin', ['path' => '/admin'], function (RouteBuilder $builder): void {
-            $builder->get('/', ['controller' => 'Users', 'action' => 'home'], 'admin:home');
-            $builder->get('/users', ['controller' => 'Users', 'action' => 'index'], 'admin:users');
-            $builder->get('/featured-plugins', ['controller' => 'FeaturedPlugins', 'action' => 'index'], 'admin:featured');
+            $builder->get('/', [
+                'controller' => 'Users',
+                'action' => 'home',
+            ], 'admin:home');
+            $builder->get('/users', [
+                'controller' => 'Users',
+                'action' => 'index',
+            ], 'admin:users');
+            $builder->get('/featured-plugins', [
+                'controller' => 'FeaturedPlugins',
+                'action' => 'index',
+            ], 'admin:featured');
         });
     }
 }

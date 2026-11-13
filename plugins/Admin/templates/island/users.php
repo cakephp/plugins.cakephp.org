@@ -16,6 +16,7 @@
 use App\Model\Enum\UserRole;
 use App\Model\Enum\UserStatus;
 
+$this->Form->templater()->load('Admin.form-templates');
 ?>
 <div>
     <h1 class="mb-2 text-3xl font-bold"><?= __('Users') ?></h1>
@@ -24,18 +25,27 @@ use App\Model\Enum\UserStatus;
     <div class="mb-5 flex flex-wrap gap-3">
         <label class="input min-w-48 flex-1">
             <span class="sr-only"><?= __('Search users') ?></span>
-            <input type="search" value="<?= h($search) ?>" placeholder="<?= __('Search username, name or email') ?>" maxlength="100" x-interact:model.live="search">
+            <?= $this->Form->search('search', [
+                'value' => $search,
+                'placeholder' => __('Search username, name or email'),
+                'maxlength' => 100,
+                'x-interact:model.live' => 'search',
+            ]) ?>
         </label>
-        <select class="select w-auto" aria-label="<?= __('Filter by role') ?>" x-interact:model.live="roleFilter">
-            <?php foreach (['' => __('All roles')] + $this->Form->enumOptions(UserRole::class) as $value => $label) : ?>
-                <option value="<?= h($value) ?>" <?= $roleFilter === $value ? 'selected' : '' ?>><?= h($label) ?></option>
-            <?php endforeach; ?>
-        </select>
-        <select class="select w-auto" aria-label="<?= __('Filter by status') ?>" x-interact:model.live="status">
-            <?php foreach (['' => __('All statuses')] + $this->Form->enumOptions(UserStatus::class) as $value => $label) : ?>
-                <option value="<?= h($value) ?>" <?= $status === $value ? 'selected' : '' ?>><?= h($label) ?></option>
-            <?php endforeach; ?>
-        </select>
+        <?= $this->Form->select('roleFilter', $this->Form->enumOptions(UserRole::class), [
+            'class' => 'select w-auto',
+            'aria-label' => __('Filter by role'),
+            'empty' => __('All roles'),
+            'value' => $roleFilter,
+            'x-interact:model.live' => 'roleFilter',
+        ]) ?>
+        <?= $this->Form->select('status', $this->Form->enumOptions(UserStatus::class), [
+            'class' => 'select w-auto',
+            'aria-label' => __('Filter by status'),
+            'empty' => __('All statuses'),
+            'value' => $status,
+            'x-interact:model.live' => 'status',
+        ]) ?>
     </div>
     <div class="overflow-x-auto rounded-box border border-base-300 bg-base-100">
         <table class="table">
@@ -72,7 +82,10 @@ use App\Model\Enum\UserStatus;
         <dialog open class="modal" x-data="adminDialog" @cancel.prevent="$server.call('cancel')" aria-labelledby="user-editor-title">
             <div class="modal-box">
                 <h2 id="user-editor-title" class="mb-5 text-xl font-bold"><?= __('Manage access for @{0}', h($editingUser->username)) ?></h2>
-                <?= $this->element('Admin.feedback', ['message' => '', 'errors' => $errors]) ?>
+                <?= $this->element('Admin.feedback', [
+                    'message' => '',
+                    'errors' => $errors,
+                ]) ?>
                 <?php if ($confirming) : ?>
                     <p><?= __('Set this account to {0} and {1}?', h(UserRole::tryFrom($role)?->label() ?? $role), h(UserStatus::fromActive($active)->label())) ?></p>
                     <div class="modal-action">
@@ -80,21 +93,38 @@ use App\Model\Enum\UserStatus;
                         <button type="button" class="btn btn-primary" @click="$server.call('save')" :disabled="$server.pending()"><?= __('Confirm change') ?></button>
                     </div>
                 <?php else : ?>
-                    <?= $this->Form->create(null, ['url' => false, 'x-interact:submit' => '$server.call("confirm")']) ?>
-                        <fieldset class="fieldset">
-                            <label for="user-role" class="label"><?= __('Role') ?></label>
-                            <select id="user-role" class="select w-full" x-interact:model="role">
-                                <?php foreach ($this->Form->enumOptions(UserRole::class) as $value => $label) : ?>
-                                    <option value="<?= h($value) ?>" <?= $role === $value ? 'selected' : '' ?>><?= h($label) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <label class="label mt-4">
-                                <input type="checkbox" class="toggle toggle-primary" x-interact:model="active" <?= $active ? 'checked' : '' ?>> <?= __('Account active') ?>
-                            </label>
+                    <?= $this->Form->create(null, [
+                        'url' => false,
+                        'x-interact:submit' => '$server.call("confirm")',
+                    ]) ?>
+                        <fieldset class="space-y-4">
+                            <?= $this->Form->control('role', [
+                                'id' => 'user-role',
+                                'type' => 'select',
+                                'class' => 'select w-full',
+                                'label' => __('Role'),
+                                'options' => $this->Form->enumOptions(UserRole::class),
+                                'value' => $role,
+                                'x-interact:model' => 'role',
+                            ]) ?>
+                            <?= $this->Form->control('active', [
+                                'type' => 'checkbox',
+                                'class' => 'toggle toggle-primary',
+                                'label' => [
+                                    'text' => __('Account active'),
+                                    'class' => 'label',
+                                ],
+                                'checked' => $active,
+                                'hiddenField' => false,
+                                'x-interact:model' => 'active',
+                            ]) ?>
                         </fieldset>
                         <div class="modal-action">
                             <button type="button" class="btn" @click="$server.call('cancel')" :disabled="$server.pending()"><?= __('Cancel') ?></button>
-                            <button type="submit" class="btn btn-primary" :disabled="$server.pending()"><?= __('Review change') ?></button>
+                            <?= $this->Form->button(__('Review change'), [
+                                'class' => 'btn btn-primary',
+                                ':disabled' => '$server.pending()',
+                            ]) ?>
                         </div>
                     <?= $this->Form->end() ?>
                 <?php endif; ?>

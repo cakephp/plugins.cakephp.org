@@ -104,6 +104,7 @@ The console command receives its importers through CakePHP's container.
 The local `Admin` plugin provides `/admin/users` and `/admin/featured-plugins`.
 It reuses GitHub sign-in, the public theme preference, and Interact's standard
 update endpoint. Every admin island checks current authorization on every request.
+Sidebar links use Interact navigation, including the return to the public site.
 The plugin owns the admin interface; shared models, migrations, and access services
 remain in the application.
 
@@ -141,6 +142,12 @@ overrides use imported package values. Logos accept HTTPS URLs or local `/img/`
 paths; missing or broken logos use a name-based emblem.
 All featured table data columns support sorting, including catalogue stars and
 downloads. Sorting and filters update through Interact without a page reload.
+The listing owns filters, pagination, and removal. A separate keyed editor island
+owns the package picker, draft, live preview, and saving. Preview requests update
+only that editor; a successful save dispatches an event to refresh the listing.
+Shared model finders, validation, and rules handle catalogue selection and overrides.
+The editor uses FormHelper with an entity context and Interact's whole-form draft
+binding; title, description, and logo controls opt into live preview updates.
 
 The migration preserves the previous configured selections once. Configuration
 then lives exclusively in the database. Package synchronization and cleanup leave

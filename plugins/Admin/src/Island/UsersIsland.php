@@ -26,7 +26,17 @@ class UsersIsland extends AdminIsland
     #[State(writable: true, url: true)]
     public string $status = '';
 
-    #[Pagination(settings: ['limit' => 20, 'order' => ['Users.username' => 'asc']], url: ['page' => 'page'])]
+    #[Pagination(
+        settings: [
+            'limit' => 20,
+            'order' => [
+                'Users.username' => 'asc',
+            ],
+        ],
+        url: [
+            'page' => 'page',
+        ],
+    )]
     public PaginationState $paging;
 
     #[State]
@@ -137,7 +147,14 @@ class UsersIsland extends AdminIsland
         $query = $table->find();
         if (trim($this->search) !== '') {
             $search = '%' . trim($this->search) . '%';
-            $query->where(['OR' => ['Users.username LIKE' => $search, 'Users.email LIKE' => $search, 'Users.first_name LIKE' => $search, 'Users.last_name LIKE' => $search]]);
+            $query->where([
+                'OR' => [
+                    'Users.username LIKE' => $search,
+                    'Users.email LIKE' => $search,
+                    'Users.first_name LIKE' => $search,
+                    'Users.last_name LIKE' => $search,
+                ],
+            ]);
         }
         if ($roleFilter !== null) {
             $query->where(['Users.role' => $roleFilter]);

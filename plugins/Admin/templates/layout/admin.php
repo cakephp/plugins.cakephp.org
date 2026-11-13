@@ -4,6 +4,10 @@
  */
 $theme = $this->getRequest()->getCookie('theme') === 'cakephp-dark' ? 'cakephp-dark' : 'cakephp';
 $controller = $this->getRequest()->getParam('controller');
+$navigation = [
+    'Users' => ['admin:users', __('Users')],
+    'FeaturedPlugins' => ['admin:featured', __('Featured plugins')],
+];
 ?>
 <!DOCTYPE html>
 <html lang="en" data-theme="<?= h($theme) ?>">
@@ -13,8 +17,22 @@ $controller = $this->getRequest()->getParam('controller');
     <meta name="robots" content="noindex,nofollow">
     <title><?= h($this->fetch('title')) ?> · CakePHP Plugins Admin</title>
     <?= $this->Html->meta('icon') ?>
-    <?= $this->Vite->css(['files' => ['resources/css/style.css'], 'block' => false, 'attributes' => ['x-interact:asset' => 'reload', 'timestamp' => false]]) ?>
-    <?= $this->Vite->script(['files' => ['resources/js/app.js'], 'block' => false, 'attributes' => ['x-interact:asset' => 'reload', 'timestamp' => false]]) ?>
+    <?= $this->Vite->css([
+        'files' => ['resources/css/style.css'],
+        'block' => false,
+        'attributes' => [
+            'x-interact:asset' => 'reload',
+            'timestamp' => false,
+        ],
+    ]) ?>
+    <?= $this->Vite->script([
+        'files' => ['resources/js/app.js'],
+        'block' => false,
+        'attributes' => [
+            'x-interact:asset' => 'reload',
+            'timestamp' => false,
+        ],
+    ]) ?>
     <?= $this->fetch('script') ?>
 </head>
 <body class="admin-shell bg-base-200 text-base-content">
@@ -31,7 +49,14 @@ $controller = $this->getRequest()->getParam('controller');
                 <div class="ml-auto flex items-center gap-3">
                     <?= $this->Interact->render('ThemeToggle', key: 'admin-theme') ?>
                     <span class="hidden text-sm sm:inline">@<?= h($this->User->username()) ?></span>
-                    <?= $this->Html->link(__('Sign out'), ['plugin' => false, 'prefix' => false, 'controller' => 'Users', 'action' => 'logout'], ['class' => 'btn btn-ghost btn-sm']) ?>
+                    <?= $this->Html->link(__('Sign out'), [
+                        'plugin' => false,
+                        'prefix' => false,
+                        'controller' => 'Users',
+                        'action' => 'logout',
+                    ], [
+                        'class' => 'btn btn-ghost btn-sm',
+                    ]) ?>
                 </div>
             </header>
             <main id="admin-content" class="mx-auto w-full max-w-7xl p-4 md:p-8" tabindex="-1">
@@ -42,17 +67,20 @@ $controller = $this->getRequest()->getParam('controller');
         <div class="drawer-side z-40">
             <label for="admin-drawer" aria-label="<?= __('Close navigation') ?>" class="drawer-overlay"></label>
             <aside id="admin-sidebar" class="flex min-h-full w-64 flex-col border-r border-base-300 bg-base-100 p-5">
-                <a href="/" class="mb-1 text-lg font-bold text-primary">CakePHP Plugins</a>
+                <a href="/" class="mb-1 text-lg font-bold text-primary" x-interact:navigate>CakePHP Plugins</a>
                 <p class="mb-8 text-sm opacity-60"><?= __('Admin backend') ?></p>
                 <nav aria-label="<?= __('Admin navigation') ?>">
                     <ul class="menu w-full gap-1 p-0">
-                        <?php foreach (['Users' => ['admin:users', __('Users')], 'FeaturedPlugins' => ['admin:featured', __('Featured plugins')]] as $name => [$route, $label]) : ?>
-                            <li><?= $this->Html->link($label, ['_name' => $route], [
+                        <?php foreach ($navigation as $name => [$route, $label]) : ?>
+                            <li><?= $this->Html->link($label, [
+                                '_name' => $route,
+                            ], [
                                 'class' => $controller === $name ? 'menu-active' : '',
                                 'aria-current' => $controller === $name ? 'page' : null,
+                                'x-interact:navigate' => '',
                             ]) ?></li>
                         <?php endforeach; ?>
-                        <li><a href="/" class="mt-5"><?= __('View site') ?> <span aria-hidden="true">↗</span></a></li>
+                        <li><a href="/" class="mt-5" x-interact:navigate><?= __('View site') ?> <span aria-hidden="true">↗</span></a></li>
                     </ul>
                 </nav>
             </aside>
