@@ -27,6 +27,7 @@ use App\Model\Table\UsersTable;
 use App\Policy\RequestPolicy;
 use App\Service\AwesomeListImporter;
 use App\Service\AwesomeListParser;
+use App\Service\GithubApiService;
 use App\Service\GithubProfileService;
 use App\Service\PackagistImporter;
 use Authentication\AuthenticationService;
@@ -45,7 +46,6 @@ use Cake\Core\ContainerInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
-use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
 use Cake\Http\Client;
 use Cake\Http\Client\ClientEvent;
@@ -85,8 +85,16 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                 new TableLocator()->allowFallbackClass(false),
             );
         }
+    }
 
-        EventManager::instance()->on(new AfterGithubIdentify());
+    /**
+     * Resolve authentication event listeners through CakePHP's container.
+     *
+     * @return list<class-string<\Cake\Event\EventListenerInterface>>
+     */
+    public function eventListeners(): array
+    {
+        return [AfterGithubIdentify::class];
     }
 
     /**
@@ -225,7 +233,12 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
     {
         $container->addShared(PackagesTable::class, static fn(): RepositoryInterface => FactoryLocator::get('Table')->get(PackagesTable::class));
         $container->addShared(Client::class);
-        $container->addShared(GithubProfileService::class)->addArgument(Client::class);
+        $container->addShared(GithubApiService::class)->addArguments([
+            Client::class,
+            (string)Configure::read('GitHub.apiToken', ''),
+        ]);
+        $container->addShared(GithubProfileService::class)->addArgument(GithubApiService::class);
+        $container->addShared(AfterGithubIdentify::class)->addArgument(GithubApiService::class);
         $container->add(NamespaceProfileIsland::class)->addArgument(GithubProfileService::class);
         $container->addShared(AwesomeListParser::class);
         $container->addShared('packagist.http', static function (): Client {

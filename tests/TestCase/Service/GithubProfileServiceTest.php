@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Service;
 
+use App\Service\GithubApiService;
 use App\Service\GithubProfileService;
 use Cake\Cache\Cache;
-use Cake\Http\Client;
 use Cake\Http\Client\Exception\ClientException;
 use Cake\Http\Client\Response;
 use Cake\TestSuite\TestCase;
@@ -30,8 +30,8 @@ class GithubProfileServiceTest extends TestCase
      */
     public function testProfileIsCachedAcrossRequestsAndCasing(): void
     {
-        $client = $this->createMock(Client::class);
-        $client->expects($this->once())->method('get')->with('https://api.github.com/users/cakedc')->willReturn(new Response(
+        $client = $this->createMock(GithubApiService::class);
+        $client->expects($this->once())->method('get')->with('/users/cakedc')->willReturn(new Response(
             ['HTTP/1.1 200 OK'],
             json_encode([
                 'login' => 'CakeDC',
@@ -55,11 +55,17 @@ class GithubProfileServiceTest extends TestCase
     #[DataProvider('unavailableProfiles')]
     public function testUnavailableProfileUsesCachedFallback(string $status, string $body): void
     {
-        $client = $this->createMock(Client::class);
+        $client = $this->createMock(GithubApiService::class);
         $client->expects($this->once())->method('get')->willReturn(new Response([$status], $body));
         $service = new GithubProfileService($client);
-        $this->assertNull($service->profile('example'));
-        $this->assertNull($service->profile('example'));
+        $this->assertSame([
+            'avatarUrl' => 'https://github.com/example.png?size=192',
+            'bio' => null,
+        ], $service->profile('example'));
+        $this->assertSame([
+            'avatarUrl' => 'https://github.com/example.png?size=192',
+            'bio' => null,
+        ], $service->profile('example'));
     }
 
     /**
@@ -81,11 +87,17 @@ class GithubProfileServiceTest extends TestCase
      */
     public function testNetworkFailureUsesCachedFallback(): void
     {
-        $client = $this->createMock(Client::class);
+        $client = $this->createMock(GithubApiService::class);
         $client->expects($this->once())->method('get')->willThrowException(new ClientException('Connection failed'));
         $service = new GithubProfileService($client);
-        $this->assertNull($service->profile('example'));
-        $this->assertNull($service->profile('example'));
+        $this->assertSame([
+            'avatarUrl' => 'https://github.com/example.png?size=192',
+            'bio' => null,
+        ], $service->profile('example'));
+        $this->assertSame([
+            'avatarUrl' => 'https://github.com/example.png?size=192',
+            'bio' => null,
+        ], $service->profile('example'));
     }
 
     /**
@@ -93,12 +105,12 @@ class GithubProfileServiceTest extends TestCase
      */
     public function testUnsafeAvatarAndEmptyBioAreOmitted(): void
     {
-        $client = $this->createStub(Client::class);
+        $client = $this->createStub(GithubApiService::class);
         $client->method('get')->willReturn(new Response(
             ['HTTP/1.1 200 OK'],
             '{"login":"example","avatar_url":"javascript:alert(1)","bio":"   "}',
         ));
-        $this->assertSame(['avatarUrl' => null, 'bio' => null], new GithubProfileService($client)->profile('example'));
+        $this->assertSame(['avatarUrl' => 'https://github.com/example.png?size=192', 'bio' => null], new GithubProfileService($client)->profile('example'));
     }
 
     /**
@@ -106,8 +118,22 @@ class GithubProfileServiceTest extends TestCase
      */
     public function testInvalidOwnerDoesNotFetch(): void
     {
-        $client = $this->createMock(Client::class);
+        $client = $this->createMock(GithubApiService::class);
         $client->expects($this->never())->method('get');
         $this->assertNull(new GithubProfileService($client)->profile('../users'));
+    }
+
+    /**
+     * Existing cached failures must not hide otherwise accessible public avatars.
+     */
+    public function testCachedRateLimitStillProvidesPublicAvatar(): void
+    {
+        Cache::pool('github_profiles')->set('github_profile_v2_lordsimal', [], 900);
+        $client = $this->createMock(GithubApiService::class);
+        $client->expects($this->never())->method('get');
+        $this->assertSame([
+            'avatarUrl' => 'https://github.com/lordsimal.png?size=192',
+            'bio' => null,
+        ], new GithubProfileService($client)->profile('LordSimal'));
     }
 }

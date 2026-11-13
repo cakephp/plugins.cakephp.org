@@ -108,6 +108,7 @@ return [
     'GitHub' => [
         'applicationId' => env('AUTH_ID_GITHUB'),
         'applicationSecret' => env('AUTH_SECRET_GITHUB'),
+        'apiToken' => env('GITHUB_API_TOKEN'),
     ],
 
     'Packages' => [

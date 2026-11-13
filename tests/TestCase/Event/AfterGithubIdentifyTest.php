@@ -8,7 +8,9 @@ use ADmad\SocialAuth\Model\Entity\SocialProfile;
 use App\Event\AfterGithubIdentify;
 use App\Model\Enum\UserRole;
 use App\Model\Table\UsersTable;
+use App\Service\GithubApiService;
 use Cake\Event\Event;
+use Cake\Http\Client;
 use Cake\Http\TestSuite\HttpClientTrait;
 use Cake\TestSuite\TestCase;
 use Override;
@@ -48,7 +50,7 @@ class AfterGithubIdentifyTest extends TestCase
             $this->newClientResponse($status, ['Content-Type: application/json'], $body),
         );
 
-        $listener = new AfterGithubIdentify();
+        $listener = new AfterGithubIdentify(new GithubApiService(new Client()));
         $listener->setTableLocator($this->getTableLocator());
         $listener->afterIdentify(new Event(SocialAuthMiddleware::EVENT_AFTER_IDENTIFY), $user);
 
