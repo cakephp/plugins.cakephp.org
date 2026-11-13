@@ -101,68 +101,14 @@ The console command receives its importers through CakePHP's container.
 
 ## Administration
 
-The local `Admin` plugin provides `/admin/users` and `/admin/featured-plugins`.
-It reuses GitHub sign-in, the public theme preference, and Interact's standard
-update endpoint. Every admin island checks current authorization on every request.
-Sidebar links use Interact navigation, including the return to the public site.
-CakePHP's request authorization middleware protects admin pages. Authentication's
-`PrimaryKeySession` reloads active users on each request; SocialAuth stores only
-their ID in `AuthId`. Existing full-identity sessions require signing in again
-after deploying this change.
-The plugin owns the admin interface; shared models, migrations, and access services
-remain in the application.
-
-Apply the application migrations, sign in with GitHub once, then promote that
-existing account from the console:
+Sign in with GitHub, then grant your account admin access:
 
 ```bash
 ddev exec bin/cake migrations migrate
 ddev exec bin/cake users your-github-username --role admin --active yes
 ```
 
-New and existing accounts default to active users. The `users` command without
-flags prompts for role and active status. Explicit flags also support suspension
-and reactivation:
-
-```bash
-ddev exec bin/cake users some-user --active no
-ddev exec bin/cake users some-user --active yes
-ddev exec bin/cake users some-user --role user
-```
-
-Admins can search/filter users and change their role or suspend/reactivate access.
-The interface prevents self-demotion and self-suspension, and both the console and
-interface preserve the last active admin. Role/status changes take effect on the
-next request in existing sessions. Suspended accounts may still browse anonymously.
-Roles use CakePHP's ORM-backed `UserRole` enum. Status labels and filter options
-come from shared enums; active/enabled flags remain booleans.
-
-### Featured plugins
-
-Manage featured selections in the admin interface. Entries have an enabled flag,
-optional logo, and optional plain-text title/description overrides. The homepage
-randomly displays up to three enabled entries that exist in the catalogue. Blank
-overrides use imported package values. Logos accept HTTPS URLs or local `/img/`
-paths; missing or broken logos use a name-based emblem.
-All featured table data columns support sorting, including catalogue stars and
-downloads. Sorting and filters update through Interact without a page reload.
-The listing owns filters, pagination, and removal. A separate keyed editor island
-owns the package picker, draft, live preview, and saving. Preview requests update
-only that editor; a successful save dispatches an event to refresh the listing.
-Shared model finders, validation, and rules handle catalogue selection and overrides.
-The editor uses FormHelper with an entity context and Interact's whole-form draft
-binding; title, description, and logo controls opt into live preview updates.
-
-The migration preserves the previous configured selections once. Configuration
-then lives exclusively in the database. Package synchronization and cleanup leave
-editorial settings intact; missing packages are marked unavailable in admin.
-
-### Admin browser tests
-
-The Playwright suite includes admin access, user management, featured-card editing,
-theme, and mobile navigation checks. Test identities are created by a CLI-only
-fixture helper against `tmp/browser.sqlite`, with sessions in `tmp/browser-sessions`.
-No application login bypass is installed.
+Manage users at `/admin/users` and featured plugins at `/admin/featured-plugins`.
 
 ## Get social auth working
 

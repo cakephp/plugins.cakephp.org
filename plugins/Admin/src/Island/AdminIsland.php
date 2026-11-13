@@ -15,7 +15,7 @@ abstract class AdminIsland extends Island
     use AuthorizationTrait;
 
     /**
-     * Recheck current database access on every mount and update.
+     * Authorize the current request identity on every mount and update.
      */
     public function authorize(IslandContext $context): void
     {

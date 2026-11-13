@@ -23,12 +23,12 @@ class AdminIslandsTest extends TestCase
     protected array $fixtures = ['app.Users', 'app.FeaturedPlugins', 'app.Packages'];
 
     /**
-     * Supply the same native service and decorated identity as HTTP middleware.
+     * Supply a fresh identity, preserving the session when deriving an update request.
      */
-    protected function adminRequest(?int $id = 1): ServerRequest
+    protected function adminRequest(?int $id = 1, ?ServerRequest $request = null): ServerRequest
     {
-        $request = new ServerRequest(['url' => '/admin/users']);
-        $authorization = new Application(CONFIG)->getAuthorizationService($request);
+        $request ??= new ServerRequest(['url' => '/admin/users']);
+        $authorization = $request->getAttribute('authorization') ?? new Application(CONFIG)->getAuthorizationService($request);
         $identity = $id !== null ? new AuthorizedIdentity($authorization, new Identity($this->fetchTable(UsersTable::class)->get($id))) : null;
 
         return $request->withAttribute('authorization', $authorization)->withAttribute('identity', $identity);
@@ -76,10 +76,11 @@ class AdminIslandsTest extends TestCase
      */
     public function testRevokedSnapshotDenied(): void
     {
-        $island = $this->testIsland('Admin.FeaturedPlugins', request: $this->adminRequest());
+        $request = $this->adminRequest();
+        $island = $this->testIsland('Admin.FeaturedPlugins', request: $request);
         $this->fetchTable(UsersTable::class)->updateAll(['role' => 'user'], ['id' => 1]);
         $this->expectException(ForbiddenException::class);
-        $island->call('create');
+        $island->withRequest($this->adminRequest(request: $request))->call('create');
     }
 
     /**
@@ -87,10 +88,11 @@ class AdminIslandsTest extends TestCase
      */
     public function testRevokedEditorSnapshotDenied(): void
     {
-        $island = $this->testIsland('Admin.FeaturedPluginEditor', ['entryId' => 1], request: $this->adminRequest());
+        $request = $this->adminRequest();
+        $island = $this->testIsland('Admin.FeaturedPluginEditor', ['entryId' => 1], request: $request);
         $this->fetchTable(UsersTable::class)->updateAll(['role' => 'user'], ['id' => 1]);
         $this->expectException(ForbiddenException::class);
-        $island->set('draft.title', 'Unauthorized change')->call('save');
+        $island->withRequest($this->adminRequest(request: $request))->set('draft.title', 'Unauthorized change')->call('save');
     }
 
     /**
