@@ -34,7 +34,8 @@ class PackagesController extends AppController
     public function byNamespace(string $namespace): ?Response
     {
         $canonicalNamespace = strtolower($namespace);
-        $stats = $this->fetchTable(PackagesTable::class)->namespaceStats($canonicalNamespace);
+        $packages = $this->fetchTable(PackagesTable::class);
+        $stats = $packages->namespaceStats($canonicalNamespace);
         if ($stats['plugins'] === 0) {
             throw new NotFoundException('Namespace not found.');
         }
@@ -45,7 +46,8 @@ class PackagesController extends AppController
                 '?' => $this->getRequest()->getQueryParams(),
             ], 301);
         }
-        $this->set(compact('namespace', 'stats'));
+        $githubUrl = $packages->namespaceGithubUrl($namespace);
+        $this->set(compact('namespace', 'stats', 'githubUrl'));
 
         return null;
     }

@@ -130,4 +130,30 @@ class PackagesTableTest extends TestCase
         $this->assertSame(0, $packages->find('catalogue', filters: ['search' => 'users'], namespace: 'markstory')->count());
         $this->assertSame(0, $packages->find('catalogue', filters: ['category' => 'authentication-authorization'], namespace: 'markstory')->count());
     }
+
+    /**
+     * Repository URLs identify a profile independently of the Composer namespace.
+     */
+    public function testNamespaceGithubProfile(): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        $this->assertSame('https://github.com/vendor', $packages->namespaceGithubUrl('vendor'));
+        $packages->updateAll(['repo_url' => 'https://www.github.com/Actual-Owner/plugin.git'], ['id' => 1]);
+        $this->assertSame('https://github.com/actual-owner', $packages->namespaceGithubUrl('markstory'));
+        $packages->updateAll(['repo_url' => 'git@github.com:Actual-Owner/plugin.git'], ['id' => 1]);
+        $this->assertSame('https://github.com/actual-owner', $packages->namespaceGithubUrl('markstory'));
+        $packages->updateAll(['repo_url' => 'https://github.com/another-owner/plugin'], ['id' => 2]);
+        $this->assertNull($packages->namespaceGithubUrl('vendor'));
+        $unsupportedUrls = [
+            'https://gitlab.com/markstory/plugin',
+            'https://github.com.example.com/markstory/plugin',
+            'https://github.com/markstory',
+            'https://github.com/invalid_owner/plugin',
+        ];
+        foreach ($unsupportedUrls as $url) {
+            $packages->updateAll(['repo_url' => $url], ['id' => 1]);
+            $this->assertNull($packages->namespaceGithubUrl('markstory'));
+        }
+        $this->assertNull($packages->namespaceGithubUrl('missing'));
+    }
 }

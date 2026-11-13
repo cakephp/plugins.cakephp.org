@@ -3,6 +3,7 @@
  * @var \App\View\AppView $this
  * @var string $namespace
  * @var array{plugins: int, downloads: int, stars: int} $stats
+ * @var string|null $githubUrl
  */
 $this->assign('title', __('Plugins by {0}', $namespace));
 $statLabels = [
@@ -30,15 +31,23 @@ $statLabels = [
                     <p class="mt-2 text-sm text-muted"><?= __('Explore CakePHP plugins published under {0}.', h($namespace)) ?></p>
                 </div>
             </div>
-            <dl class="stats stats-horizontal grid grid-cols-[1fr_2fr_1fr] bg-base-200/60 shadow-none md:shrink-0 md:grid-cols-3">
-                <?php foreach ($statLabels as $key => $label) : ?>
-                    <div class="stat min-w-0 px-2 py-4 md:px-5">
-                        <dt class="stat-title text-xs"><?= h($label) ?></dt>
-                        <dd class="stat-value text-base tabular-nums md:text-2xl" data-namespace-stat="<?= h($key) ?>"><?= $this->Number->format($stats[$key]) ?></dd>
-                    </div>
-                <?php endforeach; ?>
-            </dl>
+            <?php if ($githubUrl !== null) : ?>
+                <a class="btn btn-outline btn-sm self-start md:self-center [&_svg]:size-4" href="<?= h($githubUrl) ?>" target="_blank" rel="noopener noreferrer">
+                    <?= $this->element('github_icon') ?>
+                    <?= __('GitHub profile') ?> <span aria-hidden="true">↗</span>
+                </a>
+            <?php endif; ?>
         </div>
+    </section>
+    <section class="mt-4" aria-label="<?= __('Namespace statistics') ?>" data-namespace-stats>
+        <dl class="stats stats-horizontal grid w-full grid-cols-[1fr_2fr_1fr] rounded-2xl border border-base-300 bg-base-100 shadow-none md:grid-cols-3">
+            <?php foreach ($statLabels as $key => $label) : ?>
+                <div class="stat min-w-0 px-2 py-4 md:px-6 md:py-5">
+                    <dt class="stat-title text-xs"><?= h($label) ?></dt>
+                    <dd class="stat-value text-base tabular-nums md:text-2xl" data-namespace-stat="<?= h($key) ?>"><?= $this->Number->format($stats[$key]) ?></dd>
+                </div>
+            <?php endforeach; ?>
+        </dl>
     </section>
 </div>
 <?= $this->Interact->render('Catalogue', props: compact('namespace'), key: 'namespace-catalogue-' . $namespace) ?>

@@ -177,6 +177,32 @@ class PackagesTable extends Table
     }
 
     /**
+     * Link only an unambiguous GitHub repository owner, never guess from the Composer prefix.
+     */
+    public function namespaceGithubUrl(string $namespace): ?string
+    {
+        $owners = [];
+        $repositories = $this->find('namespace', namespace: $namespace)->select(['repo_url'])->distinct()->all();
+        foreach ($repositories as $package) {
+            $url = preg_replace('#^git@github\.com:#i', 'https://github.com/', trim($package->repo_url)) ?? $package->repo_url;
+            $host = strtolower((string)parse_url($url, PHP_URL_HOST));
+            if (!in_array($host, ['github.com', 'www.github.com'], true)) {
+                continue;
+            }
+            $parts = explode('/', trim((string)parse_url($url, PHP_URL_PATH), '/'));
+            if (count($parts) < 2 || $parts[1] === '' || !preg_match('/^[a-z0-9][a-z0-9-]*$/iD', $parts[0])) {
+                continue;
+            }
+            $owners[strtolower($parts[0])] = true;
+            if (count($owners) > 1) {
+                return null;
+            }
+        }
+
+        return $owners !== [] ? 'https://github.com/' . array_key_first($owners) : null;
+    }
+
+    /**
      * Load configured featured packages without changing their display order.
      *
      * @param \Cake\ORM\Query\SelectQuery<\App\Model\Entity\Package> $query Query instance.

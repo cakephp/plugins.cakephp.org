@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller;
 
+use App\Model\Table\PackagesTable;
 use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
@@ -112,6 +113,7 @@ class PackagesControllerTest extends TestCase
         $this->get('/plugins/by/dereuromark?search=no-match');
         $this->assertResponseOk();
         $this->assertResponseContains('Plugins by dereuromark');
+        $this->assertResponseContains('href="https://github.com/dereuromark"');
         $this->assertResponseContains('data-namespace-stat="downloads">20,000');
         $this->assertResponseContains('data-namespace-stat="stars">300');
         $this->assertResponseContains('No plugins found');
@@ -134,6 +136,17 @@ class PackagesControllerTest extends TestCase
         $this->assertRedirect('/plugins/by/dereuromark?search=tools&sort=stars');
         $this->get('/plugins/by/not-a-namespace');
         $this->assertResponseCode(404);
+    }
+
+    /**
+     * A namespace spanning different GitHub owners must not advertise an inferred profile.
+     */
+    public function testNamespaceOmitsAmbiguousGithubProfile(): void
+    {
+        $this->fetchTable(PackagesTable::class)->updateAll(['repo_url' => 'https://github.com/another-owner/plugin'], ['id' => 2]);
+        $this->get('/plugins/by/vendor');
+        $this->assertResponseOk();
+        $this->assertResponseNotContains('GitHub profile');
     }
 
     /**

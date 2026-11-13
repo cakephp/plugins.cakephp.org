@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test'
 
 const rows = page => page.locator('[data-package-row]')
 const hero = page => page.locator('[data-namespace-hero]')
+const stats = page => page.getByRole('region', { name: 'Namespace statistics', exact: true })
 const pageErrors = new WeakMap()
 const chooseSort = async (page, label) => {
     await page.getByLabel('Sort plugins', { exact: true }).click()
@@ -21,9 +22,11 @@ test.afterEach(async ({ page }) => {
 test('namespace hero totals and catalogue results use the Composer prefix', async ({ page }) => {
     await page.goto('/plugins/by/vendor')
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Plugins by vendor')
-    await expect(hero(page).locator('[data-namespace-stat="plugins"]')).toHaveText('23')
-    await expect(hero(page).locator('[data-namespace-stat="downloads"]')).toHaveText('22,701')
-    await expect(hero(page).locator('[data-namespace-stat="stars"]')).toHaveText('2,001')
+    await expect(hero(page).locator('[data-namespace-stat]')).toHaveCount(0)
+    await expect(hero(page).getByRole('link', { name: 'GitHub profile' })).toHaveAttribute('href', 'https://github.com/vendor')
+    await expect(stats(page).locator('[data-namespace-stat="plugins"]')).toHaveText('23')
+    await expect(stats(page).locator('[data-namespace-stat="downloads"]')).toHaveText('22,701')
+    await expect(stats(page).locator('[data-namespace-stat="stars"]')).toHaveText('2,001')
     await expect(rows(page)).toHaveCount(21)
     expect(await rows(page).evaluateAll(elements => elements.every(element => element.textContent.includes('vendor/package-')))).toBe(true)
     await expect(page.locator('[data-featured-plugins]')).toHaveCount(0)
@@ -42,7 +45,7 @@ test('search, version filters, sorting and reset retain the namespace and hero',
     await page.getByRole('button', { name: 'CakePHP 4.4', exact: true }).click()
     await expect(rows(page)).toHaveCount(0)
     await expect(page.getByText('No plugins found', { exact: true })).toBeVisible()
-    await expect(hero(page).locator('[data-namespace-stat="plugins"]')).toHaveText('23')
+    await expect(stats(page).locator('[data-namespace-stat="plugins"]')).toHaveText('23')
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex,nofollow')
     await page.getByRole('link', { name: 'Reset filters', exact: true }).click()
     await expect(rows(page)).toHaveCount(21)
@@ -88,13 +91,13 @@ test('category choices and detail filters stay within the namespace', async ({ p
     await expect(page).toHaveURL(/\/plugins\/by\/markstory\?/)
     await expect(page).toHaveURL(/category=code-analysis/)
     await expect(rows(page)).toHaveCount(1)
-    await expect(hero(page).locator('[data-namespace-stat="downloads"]')).toHaveText('5,000')
+    await expect(stats(page).locator('[data-namespace-stat="downloads"]')).toHaveText('5,000')
     await rows(page).getByRole('link', { name: 'markstory/asset_compress', exact: true }).click()
     await dialog.getByRole('link', { name: 'PHP 8.5', exact: true }).click()
     await expect(rows(page)).toHaveCount(1)
     await expect(page).toHaveURL(/\/plugins\/by\/markstory\?/)
     await expect(page).toHaveURL(/php_slugs/)
-    await expect(hero(page).locator('[data-namespace-stat="plugins"]')).toHaveText('1')
+    await expect(stats(page).locator('[data-namespace-stat="plugins"]')).toHaveText('1')
 })
 
 test('namespace links navigate from rows, modal details and standalone details', async ({ page }) => {
@@ -130,7 +133,7 @@ test('namespace pages support native links and search without JavaScript', async
         await page.getByRole('searchbox', { name: 'Search plugins', exact: true }).press('Enter')
         await expect(page).toHaveURL(/\/plugins\/by\/markstory\?/)
         await expect(rows(page)).toHaveCount(0)
-        await expect(hero(page).locator('[data-namespace-stat="plugins"]')).toHaveText('1')
+        await expect(stats(page).locator('[data-namespace-stat="plugins"]')).toHaveText('1')
         await page.getByRole('link', { name: 'Reset filters', exact: true }).click()
         await expect(rows(page)).toHaveCount(1)
         await page.goto('/plugins/by/vendor')
@@ -153,9 +156,9 @@ test('namespace hero fits mobile screens in both themes', async ({ page, context
             expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
             await page.screenshot({ path: `tmp/namespace-mobile-${theme}-${width}.png`, fullPage: true, animations: 'disabled' })
             // Real catalogue totals reach tens of millions; ensure values fit their individual cells.
-            await hero(page).locator('[data-namespace-stat="downloads"]').evaluate(element => { element.textContent = '62,789,075' })
-            await hero(page).locator('[data-namespace-stat="stars"]').evaluate(element => { element.textContent = '1,740' })
-            expect(await hero(page).locator('[data-namespace-stat]').evaluateAll(elements => elements.every(element => element.scrollWidth <= element.clientWidth))).toBe(true)
+            await stats(page).locator('[data-namespace-stat="downloads"]').evaluate(element => { element.textContent = '62,789,075' })
+            await stats(page).locator('[data-namespace-stat="stars"]').evaluate(element => { element.textContent = '1,740' })
+            expect(await stats(page).locator('[data-namespace-stat]').evaluateAll(elements => elements.every(element => element.scrollWidth <= element.clientWidth))).toBe(true)
         }
     }
 })
