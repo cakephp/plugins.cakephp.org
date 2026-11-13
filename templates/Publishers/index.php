@@ -9,3 +9,4 @@ $this->assign('title', __('Publishers'));
     </header>
 </div>
 <?= $this->Interact->render('Publishers', key: 'publishers-directory') ?>
+<?= $this->element('Packages/plugin-modal', ['catalogueFilters' => false]) ?>

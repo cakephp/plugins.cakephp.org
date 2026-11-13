@@ -221,7 +221,7 @@ class PackagesTable extends Table
      * @param list<string> $namespaces Visible namespace names.
      * @param string $sort Popularity metric; plugin-count rankings preview monthly downloads.
      * @param string|null $major CakePHP major; null includes all versions.
-     * @return array<string, array{githubUrl: string|null, plugins: list<array{package: string, name: string}>}>
+     * @return array<string, array{githubUrl: string|null, plugins: list<array{id: int, package: string, name: string}>}>
      */
     public function publisherDetails(array $namespaces, string $sort = 'monthly_downloads', ?string $major = null): array
     {
@@ -234,7 +234,7 @@ class PackagesTable extends Table
             'stars', 'downloads' => $sort,
             default => 'monthly_downloads',
         };
-        $packages = $this->find()->select(['namespace', 'package', 'repo_url'])
+        $packages = $this->find()->select(['id', 'namespace', 'package', 'repo_url'])
             ->where(['namespace IN' => $namespaces])
             ->orderBy([
                 $this->aliasField($metric) => 'DESC',
@@ -251,6 +251,7 @@ class PackagesTable extends Table
             }
             if (($major === null || $package->get('publisher_compatible')) && count($details[$namespace]['plugins']) < 2) {
                 $details[$namespace]['plugins'][] = [
+                    'id' => $package->id,
                     'package' => $package->package,
                     'name' => explode('/', $package->package, 2)[1],
                 ];

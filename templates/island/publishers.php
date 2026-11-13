@@ -2,7 +2,7 @@
 /**
  * @var \App\View\IslandTemplateView $this
  * @var \Cake\Datasource\Paging\PaginatedInterface<int, array<string, mixed>> $publishers
- * @var array<string, array{githubUrl: string|null, avatarUrl: string|null, plugins: list<array{package: string, name: string}>}> $details
+ * @var array<string, array{githubUrl: string|null, avatarUrl: string|null, plugins: list<array{id: int, package: string, name: string}>}> $details
  * @var array<string, string> $sortOptions
  * @var array<string, string> $versionOptions
  * @var string|null $selectedMajor
@@ -155,7 +155,9 @@ $statLabels = [
                                                 ], [
                                                     'class' => 'publisher-plugin badge badge-sm badge-soft',
                                                     'aria-label' => __('View {0} details', $plugin['package']),
-                                                    'x-interact:navigate' => '',
+                                                    'data-open-plugin' => true,
+                                                    'data-plugin-id' => $plugin['id'],
+                                                    'data-plugin-name' => $plugin['package'],
                                                 ]) ?>
                                             </li>
                                         <?php endforeach; ?>

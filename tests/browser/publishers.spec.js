@@ -77,7 +77,7 @@ test('live search and sorting preserve URL state and browser history', async ({ 
     await expect(page.getByRole('heading', { name: 'No publishers found' })).toBeVisible()
 })
 
-test('directory navigation and publisher and plugin links use Interact', async ({ page }) => {
+test('directory navigation uses Interact and popular plugins open the shared modal', async ({ page }) => {
     await page.goto('/')
     await page.evaluate(() => { window.publisherMarker = 'retained' })
     await page.locator('.desktop-nav').getByRole('link', { name: 'Publishers', exact: true }).click()
@@ -87,10 +87,49 @@ test('directory navigation and publisher and plugin links use Interact', async (
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('vendor')
     await page.getByRole('link', { name: '← Back', exact: true }).click()
     await expect(page).toHaveURL('/publishers')
-    await rows(page).first().getByRole('link', { name: 'View vendor/package-01 details', exact: true }).click()
-    await expect(page).toHaveURL('/plugins/vendor/package-01')
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('vendor/package-01')
+    const plugin = rows(page).first().getByRole('link', { name: 'View vendor/package-01 details', exact: true })
+    await plugin.click()
+    const dialog = page.getByRole('dialog')
+    await expect(dialog).toBeVisible()
+    await expect(dialog.locator('.plugin-details h2')).toHaveText('package-01')
+    await expect(page).toHaveURL('/publishers')
+    await dialog.getByRole('button', { name: 'Close plugin details', exact: true }).click()
+    await expect(dialog).not.toBeVisible()
+    await expect(plugin).toBeFocused()
     expect(await page.evaluate(() => window.publisherMarker)).toBe('retained')
+})
+
+test('popular-plugin modals retain publisher filters and version links navigate to the catalogue', async ({ page }) => {
+    await page.goto('/publishers?search=vendor&sort=stars&cakephp=all')
+    const origin = page.url()
+    await rows(page).first().getByRole('link', { name: 'View vendor/package-01 details', exact: true }).click()
+    const dialog = page.getByRole('dialog')
+    await expect(dialog.locator('.plugin-details h2')).toHaveText('package-01')
+    await expect(page).toHaveURL(origin)
+    await page.keyboard.press('Escape')
+    await expect(dialog).not.toBeVisible()
+    await expect(search(page)).toHaveValue('vendor')
+    await sort(page).selectOption('monthly_downloads')
+    await rows(page).first().getByRole('link', { name: 'View vendor/package-02 details', exact: true }).click()
+    await expect(dialog.locator('.plugin-details h2')).toHaveText('package-02')
+    await dialog.getByRole('link', { name: 'CakePHP 5.4', exact: true }).click()
+    await expect(page).toHaveURL(/\/\?cakephp_slugs/)
+    await expect(page.locator('[data-package-row]')).toHaveCount(21)
+})
+
+test('modified popular-plugin clicks keep the normal detail URL', async ({ page, context }) => {
+    await page.goto('/publishers')
+    const popupPromise = context.waitForEvent('page')
+    await rows(page).first().getByRole('link', { name: 'View vendor/package-01 details', exact: true }).click({ modifiers: ['ControlOrMeta'] })
+    const popup = await popupPromise
+    try {
+        await expect(popup).toHaveURL('/plugins/vendor/package-01')
+        await expect(popup.getByRole('heading', { level: 1 })).toHaveText('vendor/package-01')
+        await expect(page.getByRole('dialog')).not.toBeVisible()
+        await expect(page).toHaveURL('/publishers')
+    } finally {
+        await popup.close()
+    }
 })
 
 test('publisher back link retains overview filters after searching within a profile', async ({ page }) => {

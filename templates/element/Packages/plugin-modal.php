@@ -1,7 +1,10 @@
 <?php
-/** @var \App\View\AppView $this */
+/**
+ * @var \App\View\AppView $this
+ * @var bool|null $catalogueFilters
+ */
 ?>
-<div x-data="pluginModal" @plugin-open.window="open($event)">
+<div x-data="pluginModal" @click.window="activate($event)" @plugin-open.window="open($event)" data-catalogue-filters="<?= $catalogueFilters ?? true ? 'true' : 'false' ?>">
     <dialog class="modal" id="plugin-modal" x-ref="dialog" aria-labelledby="plugin-modal-label"
             @close="closed" @click="filter($event)">
         <div class="modal-box plugin-modal-box" x-ref="box">

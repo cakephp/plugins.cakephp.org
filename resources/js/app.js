@@ -70,15 +70,6 @@ const register = (Alpine) => {
         },
         activate(event) {
             if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
-            const plugin = event.target.closest('[data-open-plugin]')
-            if (plugin) {
-                event.preventDefault()
-                plugin.dispatchEvent(new CustomEvent('plugin-open', {
-                    bubbles: true,
-                    detail: { id: Number(plugin.dataset.pluginId), name: plugin.dataset.pluginName },
-                }))
-                return
-            }
             const sort = event.target.closest('.sort-option')
             if (sort) sort.closest('details')?.removeAttribute('open')
             const control = event.target.closest('[data-version-group][data-version-slug], [data-clear-catalogue], [data-category-slug], [data-toggle-awesome]')
@@ -112,6 +103,16 @@ const register = (Alpine) => {
         trigger: null,
         scrollPosition: 0,
         title: '',
+        activate(event) {
+            if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+            const plugin = event.target.closest('[data-open-plugin]')
+            if (!plugin || plugin.hasAttribute('download') || (plugin.target && plugin.target !== '_self')) return
+            event.preventDefault()
+            plugin.dispatchEvent(new CustomEvent('plugin-open', {
+                bubbles: true,
+                detail: { id: Number(plugin.dataset.pluginId), name: plugin.dataset.pluginName },
+            }))
+        },
         open(event) {
             this.trigger = event.target
             this.scrollPosition = window.scrollY
@@ -125,6 +126,7 @@ const register = (Alpine) => {
             window.scrollTo({ top: this.scrollPosition, behavior: 'instant' })
         },
         filter(event) {
+            if (this.$root.dataset.catalogueFilters === 'false') return
             if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
             const version = event.target.closest('[data-filter-package-version]')
             const category = event.target.closest('[data-filter-package-category]')
