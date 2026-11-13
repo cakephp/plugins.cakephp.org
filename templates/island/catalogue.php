@@ -13,6 +13,8 @@
  * @var array<string, array{name: string, count: int}> $categoryOptions
  * @var string $category
  * @var bool $awesomeOnly
+ * @var string|null $namespace
+ * @var array<string, mixed> $catalogueRoute
  */
 $sortLabels = [
     'latest_stable_release_date' => __('Latest release'),
@@ -20,24 +22,27 @@ $sortLabels = [
     'stars' => __('Stars'),
 ];
 $sortLabel = $sortLabels[$catalogueQuery['sort']] ?? __('Latest release');
-$clearUrl = $this->Url->build([
-    'controller' => 'Packages', 'action' => 'index', 'plugin' => null,
-    '?' => ['sort' => $catalogueQuery['sort'], 'direction' => $catalogueQuery['direction']],
+$clearUrl = $this->Url->build($catalogueRoute + [
+    '?' => [
+        'sort' => $catalogueQuery['sort'],
+        'direction' => $catalogueQuery['direction'],
+    ],
 ]);
-$clearCategoryUrl = $this->Url->build([
-    'controller' => 'Packages', 'action' => 'index', 'plugin' => null,
+$clearCategoryUrl = $this->Url->build($catalogueRoute + [
     '?' => array_replace($catalogueQuery, ['category' => '']),
 ]);
 ?>
 <div class="directory pt-4 md:pt-5 site-width" x-data="catalogue" @click="activate($event)" @keydown.escape="closeMenu($event)"
      @catalogue-version.window="selectVersion($event)" @catalogue-category.window="selectCategory($event)">
-    <h1 class="sr-only"><?= __('CakePHP plugins') ?></h1>
+    <?php if ($namespace === null) : ?>
+        <h1 class="sr-only"><?= __('CakePHP plugins') ?></h1>
+    <?php endif; ?>
 
     <div class="catalogue-discovery">
         <div class="mb-4 flex items-center gap-3 md:gap-4">
             <?= $this->Form->create(null, [
                 'type' => 'get',
-                'url' => ['controller' => 'Packages', 'action' => 'index', 'plugin' => null],
+                'url' => $catalogueRoute,
                 'class' => 'min-w-0 flex-1',
                 'id' => 'catalogue-search-form',
                 'role' => 'search',
@@ -107,7 +112,7 @@ $clearCategoryUrl = $this->Url->build([
                             ?>
                             <a class="version-pill badge badge-outline" role="button" aria-pressed="<?= $selected ? 'true' : 'false' ?>"
                                aria-label="<?= h($filter['prefix'] . ' ' . $version) ?>"
-                               href="<?= $this->Url->build(['controller' => 'Packages', 'action' => 'index', 'plugin' => null, '?' => $filterQuery]) ?>"
+                               href="<?= $this->Url->build($catalogueRoute + ['?' => $filterQuery]) ?>"
                                @keydown.space.prevent="$el.click()"
                                data-version-group="<?= h($filter['name']) ?>" data-version-slug="<?= h($slug) ?>">
                                 <?= h($version) ?>
@@ -118,7 +123,7 @@ $clearCategoryUrl = $this->Url->build([
             <?php endforeach; ?>
         </div>
 
-        <?= $this->element('Packages/category_browser', compact('categoryOptions', 'category', 'catalogueQuery', 'clearCategoryUrl')) ?>
+        <?= $this->element('Packages/category_browser', compact('categoryOptions', 'category', 'catalogueQuery', 'clearCategoryUrl', 'catalogueRoute')) ?>
     </div>
 
     <?php if ($showFeatured) : ?>
@@ -140,7 +145,7 @@ $clearCategoryUrl = $this->Url->build([
             <div class="catalogue-controls">
                 <?php $awesomeQuery = array_replace($catalogueQuery, ['awesome' => $awesomeOnly ? '0' : '1']); ?>
                 <a class="curation-toggle btn btn-outline" role="button" aria-pressed="<?= $awesomeOnly ? 'true' : 'false' ?>"
-                   href="<?= $this->Url->build(['plugin' => null, 'controller' => 'Packages', 'action' => 'index', '?' => $awesomeQuery]) ?>"
+                   href="<?= $this->Url->build($catalogueRoute + ['?' => $awesomeQuery]) ?>"
                    data-toggle-awesome @keydown.space.prevent="$el.click()">
                     <?= $this->element('awesome_logo') ?>
                     <?= __('Awesome only') ?>
@@ -180,7 +185,7 @@ $clearCategoryUrl = $this->Url->build([
                 </div>
             <?php else : ?>
                 <?php foreach ($packages as $package) : ?>
-                    <?= $this->element('Packages/package-row', compact('package')) ?>
+                    <?= $this->element('Packages/package-row', compact('package', 'namespace')) ?>
                 <?php endforeach; ?>
             <?php endif; ?>
         </div>

@@ -108,6 +108,7 @@ return [
     'GitHub' => [
         'applicationId' => env('AUTH_ID_GITHUB'),
         'applicationSecret' => env('AUTH_SECRET_GITHUB'),
+        'apiToken' => env('GITHUB_API_TOKEN'),
     ],
 
     'Packages' => [
@@ -155,6 +156,14 @@ return [
             'className' => FileEngine::class,
             'path' => CACHE,
             'url' => env('CACHE_DEFAULT_URL'),
+        ],
+
+        'github_profiles' => [
+            'className' => FileEngine::class,
+            'path' => CACHE . 'github_profiles' . DS,
+            'prefix' => 'plugins_github_profiles_',
+            'duration' => '+1 day',
+            'url' => env('CACHE_GITHUB_PROFILES_URL'),
         ],
 
         'rate_limit' => [

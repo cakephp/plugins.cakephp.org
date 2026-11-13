@@ -7,6 +7,7 @@ use App\Service\AwesomeListImporter;
  * @var string $category
  * @var array<string, mixed> $catalogueQuery
  * @var string $clearCategoryUrl
+ * @var array<string, mixed> $catalogueRoute
  */
 $allCategoriesSelected = $category === '';
 ?>
@@ -46,7 +47,7 @@ $allCategoriesSelected = $category === '';
                 $categoryQuery = array_replace($catalogueQuery, ['category' => $slug]);
                 $categorySelected = $slug === $category;
                 ?>
-                <a class="category-choice" href="<?= $this->Url->build(['plugin' => null, 'controller' => 'Packages', 'action' => 'index', '?' => $categoryQuery]) ?>"
+                <a class="category-choice" href="<?= $this->Url->build($catalogueRoute + ['?' => $categoryQuery]) ?>"
                    data-category-slug="<?= h($slug) ?>" data-category-name="<?= h($option['name']) ?>"
                    aria-label="<?= h(__n('{0}, {1} plugin', '{0}, {1} plugins', $option['count'], $option['name'], $option['count'])) ?>"
                    title="<?= __('Total plugins in this category') ?>" x-show="matchesCategory($el.dataset.categoryName)" <?= $categorySelected ? 'aria-current="true"' : '' ?>>

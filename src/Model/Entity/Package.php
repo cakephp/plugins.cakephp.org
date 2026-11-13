@@ -12,9 +12,11 @@ use Tags\Model\Entity\Tag;
  *
  * @property int $id
  * @property string $package
+ * @property string $namespace
  * @property string $description
  * @property string $repo_url
  * @property int $downloads
+ * @property int|null $monthly_downloads
  * @property int $stars
  * @property string|null $latest_stable_version
  * @property \Cake\I18n\Date|null $latest_stable_release_date
@@ -42,6 +44,7 @@ class Package extends Entity
     #[Override]
     protected array $_accessible = [
         'id' => false,
+        'namespace' => false,
         '*' => true,
     ];
 

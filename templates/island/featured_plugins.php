@@ -21,7 +21,11 @@
                     $tone = ['rose', 'violet', 'amber'][hexdec(substr(hash('sha256', $package->package), 0, 4)) % 3];
                     ?>
                     <article class="featured-item group" data-plugin-tone="<?= $tone ?>">
-                        <a class="featured-card" href="<?= $this->Url->build(['_name' => 'plugin:view', 'id' => $package->id]) ?>"
+                        <a class="featured-card" href="<?= $this->Url->build([
+                            '_name' => 'plugin:view',
+                            'namespace' => $vendor,
+                            'name' => $name,
+                        ]) ?>"
                            aria-label="<?= __('View {0} details', h($package->package)) ?>"
                            data-open-plugin data-plugin-id="<?= (int)$package->id ?>" data-plugin-name="<?= h($package->package) ?>">
                             <?= $this->element('Packages/plugin-avatar', [

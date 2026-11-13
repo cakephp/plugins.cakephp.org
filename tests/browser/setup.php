@@ -54,6 +54,12 @@ foreach ($fixture->records as $record) {
     }
 }
 Cache::clearAll();
+foreach (['vendor', 'markstory', 'dereuromark', 'cakedc'] as $owner) {
+    Cache::pool('github_profiles')->set('github_profile_v2_' . $owner, [
+        'avatarUrl' => 'https://avatars.githubusercontent.com/u/123',
+        'bio' => $owner === 'cakedc' ? null : 'CakePHP plugins by ' . $owner . '.',
+    ], 3600);
+}
 if (!is_dir(TMP . 'browser-sessions')) {
     mkdir(TMP . 'browser-sessions', 0700, true);
 }

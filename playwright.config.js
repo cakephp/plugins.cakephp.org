@@ -17,6 +17,7 @@ export default defineConfig({
             DEBUG: 'false',
             RATE_LIMIT_ENABLED: 'false',
             CACHE_DEFAULT_URL: 'array://',
+            CACHE_GITHUB_PROFILES_URL: `file://${fileURLToPath(new URL('./tmp/browser-github-profiles/', import.meta.url))}`,
             CACHE_MODEL_URL: 'array://',
             CACHE_PERSISTENT_URL: 'array://',
         },

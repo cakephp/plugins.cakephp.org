@@ -58,9 +58,34 @@ return function (RouteBuilder $routes): void {
          * its action called 'display', and we pass a param to select the view file
          * to use (in this case, templates/Pages/home.php)...
          */
-        $builder->connect('/', ['controller' => 'Packages', 'action' => 'index']);
-        $builder->get('/plugins/{id}', ['controller' => 'Packages', 'action' => 'view'], 'plugin:view')
-            ->setPatterns(['id' => '[0-9]+'])->setPass(['id']);
+        $builder->connect('/', [
+            'controller' => 'Packages',
+            'action' => 'index',
+        ], ['_name' => 'plugin:index']);
+        $builder->get('/publishers', [
+            'controller' => 'Publishers',
+            'action' => 'index',
+        ], 'publisher:index');
+        $packageSegment = '[A-Za-z0-9][A-Za-z0-9_.-]*';
+        $builder->get('/plugins/{namespace}/{name}', [
+            'controller' => 'Packages',
+            'action' => 'view',
+        ], 'plugin:view')
+            ->setPatterns([
+                'namespace' => $packageSegment,
+                'name' => $packageSegment,
+            ])
+            ->setPass(['namespace', 'name'])
+            ->setExtensions([]);
+        $builder->get('/plugins/{namespace}', [
+            'controller' => 'Packages',
+            'action' => 'byNamespace',
+        ], 'plugin:namespace')
+            ->setPatterns([
+                'namespace' => $packageSegment,
+            ])
+            ->setPass(['namespace'])
+            ->setExtensions([]);
         $builder->connect('/requirements', ['controller' => 'Pages', 'action' => 'display', 'requirements']);
 
         /*

@@ -7,6 +7,7 @@ use App\Model\Table\PackagesTable;
 use Cake\Http\Exception\BadRequestException;
 use Interact\Attribute\Action;
 use Interact\Attribute\Pagination;
+use Interact\Attribute\Prop;
 use Interact\Attribute\State;
 use Interact\Island;
 use Interact\Pagination\PaginationState;
@@ -18,6 +19,9 @@ use Interact\UpdatedPaths;
  */
 class CatalogueIsland extends Island
 {
+    #[Prop]
+    public ?string $namespace = null;
+
     #[State(writable: true, url: true)]
     public string $search = '';
 
@@ -148,7 +152,7 @@ class CatalogueIsland extends Island
             throw new BadRequestException('Search query is too long.');
         }
         $options = $this->packages->filterOptions();
-        $categoryOptions = $this->packages->categoryOptions();
+        $categoryOptions = $this->packages->categoryOptions($this->namespace);
         if (!array_key_exists($this->category, $categoryOptions)) {
             $this->category = '';
         }
@@ -164,8 +168,8 @@ class CatalogueIsland extends Island
             'direction' => $this->paging->direction,
         ];
         $hasFilters = trim($this->search) !== '' || $this->cakephpSlugs !== [] || $this->phpSlugs !== [] || $this->category !== '' || $this->awesomeOnly;
-        $showFeatured = !$hasFilters && $this->paging->page === 1;
-        $packages = $this->paginate($this->packages->find('catalogue', filters: $query));
+        $showFeatured = $this->namespace === null && !$hasFilters && $this->paging->page === 1;
+        $packages = $this->paginate($this->packages->find('catalogue', filters: $query, namespace: $this->namespace));
 
         return [
             'packages' => $packages,
@@ -175,6 +179,12 @@ class CatalogueIsland extends Island
             'phpTags' => $options['php'],
             'catalogueQuery' => $query,
             'categoryOptions' => $categoryOptions,
+            'catalogueRoute' => $this->namespace !== null ? [
+                '_name' => 'plugin:namespace',
+                'namespace' => $this->namespace,
+            ] : [
+                '_name' => 'plugin:index',
+            ],
         ];
     }
 }

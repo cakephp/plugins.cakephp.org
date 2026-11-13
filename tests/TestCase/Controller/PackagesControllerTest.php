@@ -3,9 +3,13 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller;
 
+use App\Model\Table\PackagesTable;
+use App\Service\GithubProfileService;
+use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use Override;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * App\Controller\PackagesController Test Case
@@ -24,6 +28,7 @@ class PackagesControllerTest extends TestCase
     #[Override]
     protected array $fixtures = [
         'app.FeaturedPlugins', 'app.Packages',
+        'app.Categories', 'app.CategoriesPackages',
         'plugin.Tags.Tags',
         'plugin.Tags.Tagged',
     ];
@@ -87,10 +92,89 @@ class PackagesControllerTest extends TestCase
      */
     public function testPublicPluginDetails(): void
     {
-        $this->get('/plugins/1');
+        $this->get('/plugins/markstory/asset_compress');
         $this->assertResponseOk();
         $this->assertResponseContains('composer require markstory/asset_compress');
         $this->assertResponseContains('https://packagist.org/packages/markstory/asset_compress');
+        $this->assertResponseContains('href="/plugins/markstory"');
+        $this->assertResponseContains('rel="canonical" href="' . Router::url([
+            '_name' => 'plugin:view',
+            'namespace' => 'markstory',
+            'name' => 'asset_compress',
+        ], true) . '"');
+    }
+
+    /**
+     * Composer punctuation remains literal, including names ending in a response extension.
+     */
+    public function testPackageRoutePreservesDotsAndUnderscores(): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        $package = $packages->patchEntity($packages->get(2), [
+            'package' => 'vendor.name/plugin_name.json',
+        ]);
+        $packages->saveOrFail($package);
+        $this->get('/plugins/vendor.name/plugin_name.json');
+        $this->assertResponseOk();
+        $this->assertNoRedirect();
+        $this->assertResponseContains('composer require vendor.name/plugin_name.json');
+        $this->assertResponseContains('rel="canonical" href="' . Router::url([
+            '_name' => 'plugin:view',
+            'namespace' => 'vendor.name',
+            'name' => 'plugin_name.json',
+        ], true) . '"');
+    }
+
+    /**
+     * Detail lookups use the complete package name and expose its stored lowercase canonical URL.
+     */
+    public function testPackageLookupAndCanonicalUrl(): void
+    {
+        $this->get('/plugins/MARKSTORY/ASSET_COMPRESS');
+        $this->assertResponseOk();
+        $this->assertNoRedirect();
+        $this->assertResponseContains('rel="canonical" href="' . Router::url([
+            '_name' => 'plugin:view',
+            'namespace' => 'markstory',
+            'name' => 'asset_compress',
+        ], true) . '"');
+        foreach (['/plugins/markstory/asset-compress', '/plugins/another-vendor/asset_compress'] as $path) {
+            $this->get($path);
+            $this->assertResponseCode(404);
+        }
+    }
+
+    /**
+     * The hierarchy does not reserve "by" or numeric namespaces for the removed routes.
+     */
+    public function testPackageHierarchyHasNoReservedNamespacePrefixes(): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        foreach (['by', '123'] as $namespace) {
+            $package = $packages->patchEntity($packages->get(2), [
+                'package' => $namespace . '/cakephp-tools',
+            ]);
+            $packages->saveOrFail($package);
+            $this->get('/plugins/' . $namespace);
+            $this->assertResponseOk();
+            $this->assertNoRedirect();
+            $this->assertResponseContains('href="/plugins/' . $namespace . '/cakephp-tools"');
+            $this->get('/plugins/' . $namespace . '/cakephp-tools');
+            $this->assertResponseOk();
+            $this->assertNoRedirect();
+        }
+    }
+
+    /**
+     * Old public routes are removed without compatibility redirects.
+     */
+    public function testOldPublicUrlsAreNotRedirected(): void
+    {
+        foreach (['/plugins/1', '/plugins/by/dereuromark'] as $path) {
+            $this->get($path);
+            $this->assertResponseCode(404);
+            $this->assertNoRedirect();
+        }
     }
 
     /**
@@ -98,8 +182,91 @@ class PackagesControllerTest extends TestCase
      */
     public function testMissingPluginDetails(): void
     {
-        $this->get('/plugins/99999');
+        $this->get('/plugins/missing/package');
         $this->assertResponseCode(404);
+    }
+
+    /**
+     * Namespace pages are public, scoped, and expose totals unaffected by filters.
+     */
+    public function testNamespacePage(): void
+    {
+        $service = $this->createMock(GithubProfileService::class);
+        $service->expects($this->never())->method('profile');
+        $this->mockService(GithubProfileService::class, static fn(): GithubProfileService => $service);
+        $this->get('/plugins/dereuromark?search=no-match');
+        $this->assertResponseOk();
+        $this->assertResponseContains('Plugins by dereuromark');
+        $this->assertResponseContains('href="https://github.com/dereuromark"');
+        $this->assertResponseContains('href="https://packagist.org/packages/dereuromark/"');
+        $this->assertResponseContains('data-namespace-stat="downloads">20k');
+        $this->assertResponseContains('data-namespace-stat="stars">300');
+        $this->assertResponseContains('No plugins found');
+        $this->assertResponseContains('action="/plugins/dereuromark"');
+        $this->assertResponseContains('data-namespace-profile-loading');
+        $this->assertResponseContains('skeleton');
+        $this->assertResponseContains('rel="canonical" href="' . Router::url([
+            '_name' => 'plugin:namespace',
+            'namespace' => 'dereuromark',
+        ], true) . '"');
+        $this->assertResponseNotContains('data-featured-plugins');
+        $this->assertResponseNotContains('markstory/asset_compress');
+    }
+
+    /**
+     * Canonical casing retains query strings, while unknown namespaces return 404.
+     */
+    public function testNamespaceCanonicalUrlAndMissingNamespace(): void
+    {
+        $this->get('/plugins/Dereuromark?search=tools&sort=stars');
+        $this->assertResponseCode(301);
+        $this->assertRedirect('/plugins/dereuromark?search=tools&sort=stars');
+        $this->get('/plugins/not-a-namespace');
+        $this->assertResponseCode(404);
+    }
+
+    /**
+     * Return to local referring pages with their filters; direct visits keep a catalogue fallback.
+     */
+    #[DataProvider('namespaceReferrers')]
+    public function testNamespaceBackLink(?string $referrer, string $expected): void
+    {
+        if ($referrer !== null) {
+            $this->configRequest([
+                'environment' => [
+                    'HTTP_REFERER' => str_starts_with($referrer, '/') ? Router::url($referrer, true) : $referrer,
+                ],
+            ]);
+        }
+        $this->get('/plugins/vendor');
+        $this->assertResponseOk();
+        $this->assertResponseRegExp('/<a[^>]+href="' . preg_quote(h($expected), '/') . '"[^>]*>← Back<\/a>/');
+    }
+
+    /**
+     * @return array<string, array{string|null, string}>
+     */
+    public static function namespaceReferrers(): array
+    {
+        return [
+            'publisher overview' => ['/publishers?search=vendor&sort=stars&cakephp=all', '/publishers?search=vendor&sort=stars&cakephp=all'],
+            'filtered catalogue' => ['/?search=tools&sort=downloads', '/?search=tools&sort=downloads'],
+            'direct visit' => [null, '/'],
+            'external visit' => ['https://example.com/publishers', '/'],
+            'self reference' => ['/plugins/vendor?sort=downloads', '/'],
+        ];
+    }
+
+    /**
+     * A namespace spanning different GitHub owners must not advertise an inferred profile.
+     */
+    public function testNamespaceOmitsAmbiguousGithubProfile(): void
+    {
+        $this->fetchTable(PackagesTable::class)->updateAll(['repo_url' => 'https://github.com/another-owner/plugin'], ['id' => 2]);
+        $this->get('/plugins/vendor');
+        $this->assertResponseOk();
+        $this->assertResponseNotContains('GitHub profile');
+        $this->assertResponseContains('href="https://packagist.org/packages/vendor/"');
     }
 
     /**

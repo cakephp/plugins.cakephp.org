@@ -3,11 +3,14 @@ declare(strict_types=1);
 
 namespace App\View;
 
+use App\View\Helper\NumberHelper;
 use Interact\View\Helper\PaginatorHelper;
 use Interact\View\TemplateView;
 
 /**
  * Shares application presentation templates with isolated island renders.
+ *
+ * @property \App\View\Helper\NumberHelper $Number
  */
 class IslandTemplateView extends TemplateView
 {
@@ -19,6 +22,7 @@ class IslandTemplateView extends TemplateView
         parent::initialize();
         $this->addHelper('Form', ['templates' => 'form-templates', 'autoSetCustomValidity' => false]);
         $this->addHelper('Html', ['templates' => 'html-templates']);
+        $this->addHelper('Number', ['className' => NumberHelper::class]);
         $this->addHelper('Paginator', ['className' => PaginatorHelper::class, 'templates' => 'paginator-templates']);
     }
 }

@@ -174,9 +174,106 @@ body::before {
     & h1 { @apply mb-2 text-[clamp(1.875rem,3.5vw,2.5rem)] leading-tight font-bold tracking-[-0.025em]; }
     & p { @apply text-muted; }
 }
+.namespace-hero {
+    @apply relative isolate overflow-hidden border-b border-base-300 bg-base-100;
+    --namespace-rose: color-mix(in srgb, var(--color-primary) 28%, transparent);
+    &::before, &::after {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        pointer-events: none;
+    }
+    &::before {
+        inset: -45%;
+        background:
+            radial-gradient(ellipse at 15% 45%, var(--namespace-rose), transparent 50%),
+            radial-gradient(ellipse at 75% 35%, var(--glow-violet), transparent 50%),
+            radial-gradient(ellipse at 60% 80%, var(--glow-amber), transparent 45%);
+        animation: namespace-gradient 22s ease-in-out infinite alternate;
+    }
+    &::after {
+        inset: -60%;
+        background: radial-gradient(ellipse at 60% 50%, var(--glow-violet), transparent 58%);
+        animation: namespace-light 30s ease-in-out infinite alternate;
+    }
+}
+[data-theme="cakephp"] .namespace-hero {
+    --namespace-rose: color-mix(in srgb, var(--color-cake-red) 46%, transparent);
+    --glow-violet: #7d85dd66;
+    --glow-amber: #ffb98166;
+    background-color: var(--color-base-200);
+}
+.namespace-profile {
+    @apply grid min-w-0 items-center gap-8 pt-24 pb-12 md:gap-10 lg:min-h-72 lg:grid-cols-[minmax(0,1fr)_auto]
+        lg:gap-16 lg:py-20;
+}
+.namespace-toolbar {
+    @apply absolute inset-x-0 top-3 flex items-center justify-between gap-3 md:top-4;
+}
+.namespace-title {
+    @apply text-[clamp(1.75rem,5vw,4rem)] leading-none font-bold tracking-[-0.055em] wrap-anywhere;
+}
+.namespace-avatar {
+    @apply relative size-14 overflow-hidden rounded-xl bg-primary/10 text-lg font-semibold text-primary
+        md:size-24 md:rounded-2xl md:text-2xl;
+    & img { @apply absolute inset-0 size-full object-cover; }
+}
+.namespace-identity {
+    @apply flex min-w-0 items-center gap-4 md:gap-5;
+    min-height: max(6rem, calc(clamp(1.75rem, 5vw, 4rem) + 3.25rem));
+}
+.namespace-description {
+    @apply mt-3 line-clamp-2 max-w-[42ch] text-sm leading-5 text-muted;
+}
+.namespace-profile-links {
+    @apply mt-2 ml-18 flex gap-1 md:ml-29;
+}
+.namespace-profile-link {
+    @apply size-8 min-h-8 border-0 bg-transparent p-0 text-muted shadow-none hover:bg-base-100/40 hover:text-primary;
+    & svg { @apply size-4.5; }
+}
+@media (pointer: coarse) {
+    .namespace-profile-link { @apply size-11 min-h-11; }
+}
+.namespace-statistics {
+    @apply w-full min-w-0 md:max-w-lg lg:w-[30rem];
+}
+.namespace-stat-value {
+    @apply text-[clamp(1.5rem,2.8vw,2.5rem)] leading-tight font-semibold tracking-tight tabular-nums;
+}
+@keyframes namespace-gradient {
+    from { transform: translate3d(-4%, -3%, 0) rotate(-6deg) scale(1); }
+    to { transform: translate3d(5%, 4%, 0) rotate(7deg) scale(1.12); }
+}
+@keyframes namespace-light {
+    from { transform: translate3d(4%, 0, 0) rotate(-15deg); }
+    to { transform: translate3d(-4%, 3%, 0) rotate(20deg); }
+}
 .catalogue-discovery {
     @apply mb-6 rounded-2xl border border-base-300 bg-base-100 p-4 md:p-5;
 }
+.publisher-controls {
+    @apply mb-5 flex flex-col gap-3 rounded-2xl border border-base-300 bg-base-100 p-4 md:flex-row md:items-center md:p-5;
+}
+.publisher-row {
+    @apply grid grid-cols-1 items-center gap-4 border-b border-base-300 p-4
+        hover:bg-row-hover/40 md:grid-cols-[minmax(0,1fr)_19rem] md:p-5;
+}
+.publisher-rank {
+    @apply absolute -right-2 -bottom-1 z-10 min-h-6 min-w-7 rounded-full border-2 border-base-100
+        bg-base-content px-1.5 text-xs leading-none font-semibold text-base-100 tabular-nums;
+}
+.publisher-avatar {
+    @apply relative size-14 overflow-hidden rounded-xl bg-primary/10 text-lg font-semibold text-primary md:size-16;
+    & img { @apply absolute inset-0 size-full object-cover; }
+}
+.publisher-name {
+    @apply text-lg leading-tight font-semibold wrap-anywhere;
+    & a { @apply text-base-content hover:text-primary; }
+}
+.publisher-plugin { @apply h-auto max-w-full px-2 py-1 text-xs whitespace-normal text-muted wrap-anywhere hover:text-primary; }
+.publisher-statistics { @apply grid grid-cols-3 gap-x-4 md:gap-x-6; }
+.publisher-statistics > div { @apply row-span-2 grid grid-rows-subgrid; }
 .reset-filters {
     @apply inline-flex min-h-10 shrink-0 items-center justify-center gap-1.5 text-[0.8125rem] font-medium
         whitespace-nowrap max-md:w-10;
@@ -466,7 +563,9 @@ body::before {
 @keyframes page-loading { from { transform: translateX(-100%); } to { transform: translateX(300%); } }
 @media (prefers-reduced-motion: reduce) {
     .page-loading-bar, .loading { animation: none; }
+    .namespace-hero::before, .namespace-hero::after { animation: none; }
 }
 @media (forced-colors: active) {
     body::before { display: none; }
+    .namespace-hero::before, .namespace-hero::after { display: none; }
 }

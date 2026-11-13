@@ -17,7 +17,7 @@
 $cakeDescription = 'CakePHP Plugins';
 $request = $this->getRequest();
 $theme = $request->getCookie('theme') === 'cakephp-dark' ? 'cakephp-dark' : 'cakephp';
-$canonicalUrl = $this->Url->build($request->getPath() ?: '/', ['fullBase' => true]);
+$canonicalUrl = $this->fetch('canonicalUrl') ?: $this->Url->build($request->getPath() ?: '/', ['fullBase' => true]);
 ?>
 <!DOCTYPE html>
 <html data-theme="<?= h($theme) ?>">
