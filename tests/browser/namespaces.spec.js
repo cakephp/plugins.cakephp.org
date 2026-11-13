@@ -1,0 +1,169 @@
+import { test, expect } from '@playwright/test'
+
+const rows = page => page.locator('[data-package-row]')
+const hero = page => page.locator('[data-namespace-hero]')
+const pageErrors = new WeakMap()
+const chooseSort = async (page, label) => {
+    await page.getByLabel('Sort plugins', { exact: true }).click()
+    await page.locator('.sort-options').getByRole('link', { name: label, exact: true }).click()
+}
+
+test.beforeEach(async ({ page }) => {
+    const errors = []
+    page.on('pageerror', error => errors.push(error.message))
+    pageErrors.set(page, errors)
+})
+
+test.afterEach(async ({ page }) => {
+    expect(pageErrors.get(page)).toEqual([])
+})
+
+test('namespace hero totals and catalogue results use the Composer prefix', async ({ page }) => {
+    await page.goto('/plugins/by/vendor')
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Plugins by vendor')
+    await expect(hero(page).locator('[data-namespace-stat="plugins"]')).toHaveText('23')
+    await expect(hero(page).locator('[data-namespace-stat="downloads"]')).toHaveText('22,701')
+    await expect(hero(page).locator('[data-namespace-stat="stars"]')).toHaveText('2,001')
+    await expect(rows(page)).toHaveCount(21)
+    expect(await rows(page).evaluateAll(elements => elements.every(element => element.textContent.includes('vendor/package-')))).toBe(true)
+    await expect(page.locator('[data-featured-plugins]')).toHaveCount(0)
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'http://127.0.0.1:8765/plugins/by/vendor')
+    await expect(page.locator('meta[name="robots"]')).toHaveCount(0)
+    await page.screenshot({ path: 'tmp/namespace-desktop.png', fullPage: true, animations: 'disabled' })
+})
+
+test('search, version filters, sorting and reset retain the namespace and hero', async ({ page }) => {
+    await page.goto('/plugins/by/vendor')
+    await page.evaluate(() => { window.namespaceMarker = 'retained' })
+    await chooseSort(page, 'Downloads')
+    await page.getByRole('searchbox', { name: 'Search plugins', exact: true }).fill('package-01')
+    await expect(rows(page)).toHaveCount(1)
+    await expect(rows(page)).toContainText('vendor/package-01')
+    await page.getByRole('button', { name: 'CakePHP 4.4', exact: true }).click()
+    await expect(rows(page)).toHaveCount(0)
+    await expect(page.getByText('No plugins found', { exact: true })).toBeVisible()
+    await expect(hero(page).locator('[data-namespace-stat="plugins"]')).toHaveText('23')
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex,nofollow')
+    await page.getByRole('link', { name: 'Reset filters', exact: true }).click()
+    await expect(rows(page)).toHaveCount(21)
+    await expect(page).toHaveURL('/plugins/by/vendor?sort=downloads')
+    expect(await page.evaluate(() => window.namespaceMarker)).toBe('retained')
+    await expect(page.getByRole('search')).toHaveAttribute('action', '/plugins/by/vendor')
+})
+
+test('pagination and history stay on the namespace page', async ({ page }) => {
+    await page.goto('/plugins/by/vendor')
+    await page.evaluate(() => { window.namespaceMarker = 'retained' })
+    await page.getByRole('link', { name: 'Last', exact: true }).click()
+    await expect(page).toHaveURL('/plugins/by/vendor?page=2')
+    await expect(rows(page)).toHaveCount(2)
+    await page.getByRole('link', { name: 'First', exact: true }).click()
+    await expect(page).toHaveURL('/plugins/by/vendor')
+    await expect(rows(page)).toHaveCount(21)
+    await page.goBack()
+    await expect(page).toHaveURL('/plugins/by/vendor?page=2')
+    await expect(rows(page)).toHaveCount(2)
+    await page.goForward()
+    await expect(rows(page)).toHaveCount(21)
+    expect(await page.evaluate(() => window.namespaceMarker)).toBe('retained')
+    await page.reload()
+    await expect(rows(page)).toHaveCount(21)
+})
+
+test('category choices and detail filters stay within the namespace', async ({ page }) => {
+    await page.goto('/plugins/by/markstory')
+    await page.getByText('Browse categories', { exact: true }).click()
+    const categories = page.getByRole('group', { name: 'Plugin categories', exact: true })
+    await expect(categories.getByRole('link', { name: 'Asset Management, 1 plugin', exact: true })).toBeVisible()
+    await expect(categories.getByRole('link', { name: /Authentication/ })).toHaveCount(0)
+    await categories.getByRole('link', { name: 'Asset Management, 1 plugin', exact: true }).click()
+    await expect(page).toHaveURL('/plugins/by/markstory?category=asset-management')
+    await expect(rows(page)).toHaveCount(1)
+    await page.getByRole('button', { name: 'Awesome only', exact: true }).click()
+    await expect(rows(page)).toHaveCount(1)
+    await rows(page).getByRole('link', { name: 'markstory/asset_compress', exact: true }).click()
+    const dialog = page.getByRole('dialog')
+    await dialog.getByRole('link', { name: 'Code Analysis', exact: true }).click()
+    await expect(dialog).not.toBeVisible()
+    await expect(page).toHaveURL(/\/plugins\/by\/markstory\?/)
+    await expect(page).toHaveURL(/category=code-analysis/)
+    await expect(rows(page)).toHaveCount(1)
+    await expect(hero(page).locator('[data-namespace-stat="downloads"]')).toHaveText('5,000')
+    await rows(page).getByRole('link', { name: 'markstory/asset_compress', exact: true }).click()
+    await dialog.getByRole('link', { name: 'PHP 8.5', exact: true }).click()
+    await expect(rows(page)).toHaveCount(1)
+    await expect(page).toHaveURL(/\/plugins\/by\/markstory\?/)
+    await expect(page).toHaveURL(/php_slugs/)
+    await expect(hero(page).locator('[data-namespace-stat="plugins"]')).toHaveText('1')
+})
+
+test('namespace links navigate from rows, modal details and standalone details', async ({ page }) => {
+    await page.goto('/')
+    await page.evaluate(() => { window.namespaceMarker = 'retained' })
+    await page.getByRole('link', { name: 'More by dereuromark', exact: true }).click()
+    await expect(page).toHaveURL('/plugins/by/dereuromark')
+    expect(await page.evaluate(() => window.namespaceMarker)).toBe('retained')
+    await page.goBack()
+    await expect(page).toHaveURL('/')
+    await page.locator('#package-26').getByRole('link', { name: 'dereuromark/cakephp-tools', exact: true }).click()
+    await page.getByRole('dialog').getByRole('link', { name: 'View all plugins by dereuromark', exact: true }).click()
+    await expect(page).toHaveURL('/plugins/by/dereuromark')
+    await expect(page.getByRole('dialog')).not.toBeVisible()
+    await expect(hero(page)).toBeVisible()
+    expect(await page.evaluate(() => window.namespaceMarker)).toBe('retained')
+    await page.goto('/plugins/26')
+    await page.evaluate(() => { window.namespaceMarker = 'retained' })
+    await page.getByRole('link', { name: 'View all plugins by dereuromark', exact: true }).click()
+    await expect(page).toHaveURL('/plugins/by/dereuromark')
+    expect(await page.evaluate(() => window.namespaceMarker)).toBe('retained')
+})
+
+test('namespace pages support native links and search without JavaScript', async ({ browser }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false })
+    const page = await context.newPage()
+    try {
+        await page.goto('/plugins/by/markstory')
+        await page.getByText('Browse categories', { exact: true }).click()
+        await page.getByRole('link', { name: 'Asset Management, 1 plugin', exact: true }).click()
+        await expect(page).toHaveURL(/\/plugins\/by\/markstory\?.*category=asset-management/)
+        await page.getByRole('searchbox', { name: 'Search plugins', exact: true }).fill('no-match')
+        await page.getByRole('searchbox', { name: 'Search plugins', exact: true }).press('Enter')
+        await expect(page).toHaveURL(/\/plugins\/by\/markstory\?/)
+        await expect(rows(page)).toHaveCount(0)
+        await expect(hero(page).locator('[data-namespace-stat="plugins"]')).toHaveText('1')
+        await page.getByRole('link', { name: 'Reset filters', exact: true }).click()
+        await expect(rows(page)).toHaveCount(1)
+        await page.goto('/plugins/by/vendor')
+        await page.getByRole('link', { name: 'Last', exact: true }).click()
+        await expect(page).toHaveURL('/plugins/by/vendor?page=2')
+        await expect(rows(page)).toHaveCount(2)
+    } finally {
+        await context.close()
+    }
+})
+
+test('namespace hero fits mobile screens in both themes', async ({ page, context }) => {
+    for (const width of [390, 320]) {
+        await page.setViewportSize({ width, height: 844 })
+        for (const theme of ['cakephp', 'cakephp-dark']) {
+            await context.addCookies([{ name: 'theme', value: theme, domain: '127.0.0.1', path: '/' }])
+            await page.goto('/plugins/by/dereuromark')
+            await expect(page.locator('html')).toHaveAttribute('data-theme', theme)
+            await expect(hero(page)).toBeVisible()
+            expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
+            await page.screenshot({ path: `tmp/namespace-mobile-${theme}-${width}.png`, fullPage: true, animations: 'disabled' })
+            // Real catalogue totals reach tens of millions; ensure values fit their individual cells.
+            await hero(page).locator('[data-namespace-stat="downloads"]').evaluate(element => { element.textContent = '62,789,075' })
+            await hero(page).locator('[data-namespace-stat="stars"]').evaluate(element => { element.textContent = '1,740' })
+            expect(await hero(page).locator('[data-namespace-stat]').evaluateAll(elements => elements.every(element => element.scrollWidth <= element.clientWidth))).toBe(true)
+        }
+    }
+})
+
+test('namespace URLs canonicalize casing and unknown namespaces return 404', async ({ page }) => {
+    await page.goto('/plugins/by/Dereuromark?search=tools&sort=stars')
+    await expect(page).toHaveURL('/plugins/by/dereuromark?search=tools&sort=stars')
+    await expect(rows(page)).toHaveCount(1)
+    const response = await page.goto('/plugins/by/unknown-namespace')
+    expect(response.status()).toBe(404)
+})

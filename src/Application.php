@@ -203,7 +203,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                         }
 
                         return !in_array($request->getMethod(), ['GET', 'HEAD'], true)
-                            || !($path === '' || $path === '/packages' || preg_match('#^/plugins/[0-9]+$#', $path));
+                            || !($path === '' || $path === '/packages' || preg_match('#^/plugins/(?:[0-9]+|by/[A-Za-z0-9][A-Za-z0-9_.-]*)$#', $path));
                     },
                 ]),
             );

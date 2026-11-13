@@ -2,6 +2,7 @@
 /**
  * @var \App\View\IslandTemplateView $this
  * @var \App\Model\Entity\Package $package
+ * @var string|null $namespace
  */
 $summaries = [];
 foreach (['CakePHP' => $package->cake_php_tag_groups, 'PHP' => $package->php_tag_groups] as $label => $groups) {
@@ -11,6 +12,7 @@ foreach (['CakePHP' => $package->cake_php_tag_groups, 'PHP' => $package->php_tag
     }
 }
 $detailsUrl = $this->Url->build(['_name' => 'plugin:view', 'id' => $package->id]);
+$packageNamespace = explode('/', $package->package, 2)[0];
 ?>
 <article class="package-row" id="package-<?= (int)$package->id ?>" data-package-row>
     <div class="min-w-0">
@@ -20,6 +22,15 @@ $detailsUrl = $this->Url->build(['_name' => 'plugin:view', 'id' => $package->id]
             </a>
         </h3>
         <p class="line-clamp-2 text-[0.9375rem] wrap-anywhere"><?= h($package->description ?: __('No description available.')) ?></p>
+        <?php if ($namespace !== $packageNamespace) : ?>
+            <?= $this->Html->link(__('More by {0}', $packageNamespace), [
+                '_name' => 'plugin:namespace',
+                'namespace' => $packageNamespace,
+            ], [
+                'class' => 'mt-1 inline-flex min-h-6 items-center text-xs text-muted hover:text-primary',
+                'x-interact:navigate' => '',
+            ]) ?>
+        <?php endif; ?>
         <?php if ($package->categories) : ?>
             <div class="mt-2 flex flex-wrap items-center gap-1.5">
                 <?= $this->element('Packages/awesome_badge', compact('package')) ?>

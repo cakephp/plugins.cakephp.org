@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller;
 
+use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use Override;
@@ -24,6 +25,7 @@ class PackagesControllerTest extends TestCase
     #[Override]
     protected array $fixtures = [
         'app.FeaturedPlugins', 'app.Packages',
+        'app.Categories', 'app.CategoriesPackages',
         'plugin.Tags.Tags',
         'plugin.Tags.Tagged',
     ];
@@ -99,6 +101,38 @@ class PackagesControllerTest extends TestCase
     public function testMissingPluginDetails(): void
     {
         $this->get('/plugins/99999');
+        $this->assertResponseCode(404);
+    }
+
+    /**
+     * Namespace pages are public, scoped, and expose totals unaffected by filters.
+     */
+    public function testNamespacePage(): void
+    {
+        $this->get('/plugins/by/dereuromark?search=no-match');
+        $this->assertResponseOk();
+        $this->assertResponseContains('Plugins by dereuromark');
+        $this->assertResponseContains('data-namespace-stat="downloads">20,000');
+        $this->assertResponseContains('data-namespace-stat="stars">300');
+        $this->assertResponseContains('No plugins found');
+        $this->assertResponseContains('action="/plugins/by/dereuromark"');
+        $this->assertResponseContains('rel="canonical" href="' . Router::url([
+            '_name' => 'plugin:namespace',
+            'namespace' => 'dereuromark',
+        ], true) . '"');
+        $this->assertResponseNotContains('data-featured-plugins');
+        $this->assertResponseNotContains('markstory/asset_compress');
+    }
+
+    /**
+     * Canonical casing retains query strings, while unknown namespaces return 404.
+     */
+    public function testNamespaceCanonicalUrlAndMissingNamespace(): void
+    {
+        $this->get('/plugins/by/Dereuromark?search=tools&sort=stars');
+        $this->assertResponseCode(301);
+        $this->assertRedirect('/plugins/by/dereuromark?search=tools&sort=stars');
+        $this->get('/plugins/by/not-a-namespace');
         $this->assertResponseCode(404);
     }
 

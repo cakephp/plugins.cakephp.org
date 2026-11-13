@@ -112,8 +112,11 @@ class PackagesTable extends Table
      * @param array<string, mixed> $filters Accepted search and version filters.
      * @return \Cake\ORM\Query\SelectQuery<\App\Model\Entity\Package>
      */
-    public function findCatalogue(SelectQuery $query, array $filters): SelectQuery
+    public function findCatalogue(SelectQuery $query, array $filters, ?string $namespace = null): SelectQuery
     {
+        if ($namespace !== null) {
+            $query->find('namespace', namespace: $namespace);
+        }
         $query->find('search', search: $filters)
             ->contain(['Categories', 'Tags' => static fn(SelectQuery $tags) => $tags->orderByDesc('Tags.label')]);
         if (!empty($filters['category']) || !empty($filters['awesome'])) {
@@ -129,6 +132,48 @@ class PackagesTable extends Table
         }
 
         return $query;
+    }
+
+    /**
+     * Match a literal Composer vendor prefix, including namespaces containing underscores.
+     *
+     * @param \Cake\ORM\Query\SelectQuery<\App\Model\Entity\Package> $query Package query.
+     * @return \Cake\ORM\Query\SelectQuery<\App\Model\Entity\Package>
+     */
+    public function findNamespace(SelectQuery $query, string $namespace): SelectQuery
+    {
+        $prefix = strtr($namespace, [
+            '!' => '!!',
+            '%' => '!%',
+            '_' => '!_',
+        ]) . '/%';
+
+        // Expression-owned bindings survive the ORM's eager-loading subqueries.
+        return $query->where(new QueryExpression([
+            $query->expr()->like($this->aliasField('package'), $prefix),
+            "ESCAPE '!'",
+        ], [], ''));
+    }
+
+    /**
+     * Hero totals cover the namespace before any interactive filters are applied.
+     *
+     * @return array{plugins: int, downloads: int, stars: int}
+     */
+    public function namespaceStats(string $namespace): array
+    {
+        $query = $this->find('namespace', namespace: $namespace);
+        $totals = $query->select([
+            'plugins' => $query->func()->count('*'),
+            'downloads' => $query->func()->sum('Packages.downloads'),
+            'stars' => $query->func()->sum('Packages.stars'),
+        ])->first();
+
+        return [
+            'plugins' => (int)($totals?->get('plugins') ?? 0),
+            'downloads' => (int)($totals?->get('downloads') ?? 0),
+            'stars' => (int)($totals?->get('stars') ?? 0),
+        ];
     }
 
     /**
@@ -158,15 +203,20 @@ class PackagesTable extends Table
     }
 
     /**
-     * @return array<string, array{name: string, count: int}> Imported categories and their directory-wide package counts.
+     * @return array<string, array{name: string, count: int}> Categories and counts within the current catalogue scope.
      */
-    public function categoryOptions(): array
+    public function categoryOptions(?string $namespace = null): array
     {
         $query = $this->Categories->find();
         $query->select(['Categories.slug', 'Categories.name', 'package_count' => $query->func()->count('CategoryMemberships.package_id')])
             ->leftJoin(['CategoryMemberships' => 'categories_packages'], ['CategoryMemberships.category_id = Categories.id'])
             ->groupBy(['Categories.id', 'Categories.slug', 'Categories.name'])
             ->orderByAsc('Categories.name');
+        if ($namespace !== null) {
+            $query->where([
+                'CategoryMemberships.package_id IN' => $this->find('namespace', namespace: $namespace)->select(['id']),
+            ]);
+        }
         $options = [];
         foreach ($query->all() as $category) {
             $options[$category->get('slug')] = ['name' => $category->get('name'), 'count' => (int)$category->get('package_count')];

@@ -81,4 +81,53 @@ class PackagesTableTest extends TestCase
             'vendor/package-07', 'vendor/package-08', 'vendor/package-09',
         ], $results->extract('package')->toList());
     }
+
+    /**
+     * Namespace matching is literal and ends at the Composer vendor separator.
+     */
+    public function testNamespaceMatching(): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        $packages->updateAll(['package' => 'vendor_extra/one'], ['id' => 2]);
+        $packages->updateAll(['package' => 'vendorXextra/two'], ['id' => 3]);
+        $packages->updateAll(['package' => 'vendor_extra_more/three'], ['id' => 4]);
+        $packages->updateAll(['package' => 'vendor.extra/four'], ['id' => 5]);
+        $this->assertSame([2], $packages->find('namespace', namespace: 'vendor_extra')->all()->extract('id')->toList());
+        $this->assertSame([5], $packages->find('namespace', namespace: 'vendor.extra')->all()->extract('id')->toList());
+        $this->assertSame(0, $packages->find('namespace', namespace: 'vendor%')->count());
+        $this->assertSame(0, $packages->find('namespace', namespace: "vendor' OR 1=1")->count());
+        $this->assertSame(19, $packages->find('namespace', namespace: 'vendor')->count());
+    }
+
+    /**
+     * Totals and category counts cover only the requested namespace.
+     */
+    public function testNamespaceStatisticsAndCategories(): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        $this->assertSame([
+            'plugins' => 23,
+            'downloads' => 22701,
+            'stars' => 2001,
+        ], $packages->namespaceStats('vendor'));
+        $this->assertSame([
+            'plugins' => 0,
+            'downloads' => 0,
+            'stars' => 0,
+        ], $packages->namespaceStats('missing'));
+        $this->assertSame([
+            'asset-management' => [
+                'name' => 'Asset Management',
+                'count' => 1,
+            ],
+            'code-analysis' => [
+                'name' => 'Code Analysis',
+                'count' => 1,
+            ],
+        ], $packages->categoryOptions('markstory'));
+        $this->assertSame([], $packages->categoryOptions('vendor'));
+        $this->assertSame(1, $packages->find('catalogue', filters: ['awesome' => true], namespace: 'markstory')->count());
+        $this->assertSame(0, $packages->find('catalogue', filters: ['search' => 'users'], namespace: 'markstory')->count());
+        $this->assertSame(0, $packages->find('catalogue', filters: ['category' => 'authentication-authorization'], namespace: 'markstory')->count());
+    }
 }

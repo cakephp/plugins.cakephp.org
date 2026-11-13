@@ -131,6 +131,8 @@ class ApplicationTest extends TestCase
             ['/', 'GET', [], 90],
             ['/', 'GET', ['search' => 'users'], 15],
             ['/plugins/1', 'GET', [], 90],
+            ['/plugins/by/dereuromark', 'GET', [], 90],
+            ['/plugins/by/dereuromark', 'GET', ['search' => 'tools'], 15],
             ['/_interact/update', 'POST', [], 30],
         ];
         foreach ($requests as [$path, $method, $query, $limit]) {

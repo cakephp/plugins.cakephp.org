@@ -8,6 +8,7 @@ use Cake\Http\Exception\BadRequestException;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Interact\TestSuite\IslandTestTrait;
+use InvalidArgumentException;
 use Override;
 use Tags\Model\Table\TaggedTable;
 use Tags\Model\Table\TagsTable;
@@ -55,6 +56,52 @@ class CatalogueIslandTest extends TestCase
     public function testUnknownCategoryIsCleared(): void
     {
         $this->testIsland('Catalogue')->call('selectCategory', 'not-a-category')->assertSet('category', '');
+    }
+
+    /**
+     * Paging, filtering and resetting retain the server-owned namespace scope.
+     */
+    public function testNamespaceScopeSurvivesUpdates(): void
+    {
+        $request = new ServerRequest(['url' => 'http://localhost/plugins/by/vendor']);
+        $island = $this->testIsland('Catalogue', ['namespace' => 'vendor'], request: $request)
+            ->assertDontSee('data-featured-plugins')
+            ->assertDontSee('markstory/asset_compress')
+            ->set('paging.page', 2)
+            ->assertSet('paging.page', 2)
+            ->set('search', 'package-01')
+            ->assertSet('paging.page', 1)
+            ->assertSee('vendor/package-01')
+            ->assertDontSee('vendor/package-02')
+            ->call('clearFilters')
+            ->assertSet('namespace', 'vendor')
+            ->assertDontSee('data-featured-plugins')
+            ->assertDontSee('markstory/asset_compress');
+        $this->assertStringContainsString('/plugins/by/vendor?', $island->result()->html);
+        $this->assertStringNotContainsString('/_interact/update?', $island->result()->html);
+    }
+
+    /**
+     * Namespaced category choices exclude unrelated categories and remain stable while searching.
+     */
+    public function testNamespaceCategoryChoices(): void
+    {
+        $this->testIsland('Catalogue', ['namespace' => 'markstory'])
+            ->assertSee('Asset Management')
+            ->assertDontSee('Authentication & Authorization')
+            ->set('search', 'no-match')
+            ->assertSee('Asset Management')
+            ->assertSee('No plugins found');
+    }
+
+    /**
+     * Browser updates cannot replace the namespace supplied by the hosting page.
+     */
+    public function testNamespaceCannotBeChangedByUpdates(): void
+    {
+        $island = $this->testIsland('Catalogue', ['namespace' => 'vendor']);
+        $this->expectException(InvalidArgumentException::class);
+        $island->set('namespace', 'cakedc');
     }
 
     /**

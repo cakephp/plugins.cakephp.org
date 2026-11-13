@@ -14,7 +14,15 @@ $groups = [
 ?>
 <article class="plugin-details" id="plugin-details-<?= (int)$package->id ?>">
     <header class="plugin-details-heading">
-        <p class="mb-1 text-[0.9375rem] font-medium text-muted wrap-anywhere"><?= h($vendor) ?> /</p>
+        <p class="mb-1 text-[0.9375rem] font-medium text-muted wrap-anywhere">
+            <?= $this->Html->link($vendor, [
+                '_name' => 'plugin:namespace',
+                'namespace' => $vendor,
+            ], [
+                'aria-label' => __('View all plugins by {0}', $vendor),
+                'x-interact:navigate' => '',
+            ]) ?> /
+        </p>
         <h2><?= h($name ?: $vendor) ?></h2>
         <?= $this->element('Packages/awesome_badge', compact('package')) ?>
         <p class="mt-4 text-base leading-[1.7] text-base-content wrap-anywhere"><?= h($package->description ?: __('No description available.')) ?></p>
