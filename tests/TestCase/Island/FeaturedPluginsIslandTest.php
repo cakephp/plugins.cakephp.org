@@ -7,11 +7,13 @@ use App\Model\Table\FeaturedPluginsTable;
 use App\Model\Table\PackagesTable;
 use Cake\TestSuite\TestCase;
 use Interact\TestSuite\IslandTestTrait;
+use Override;
 
 class FeaturedPluginsIslandTest extends TestCase
 {
     use IslandTestTrait;
 
+    #[Override]
     protected array $fixtures = ['app.FeaturedPlugins', 'app.Packages', 'plugin.Tags.Tags', 'plugin.Tags.Tagged'];
 
     /**

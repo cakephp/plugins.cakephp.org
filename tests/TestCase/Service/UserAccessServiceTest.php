@@ -7,9 +7,11 @@ use App\Model\Enum\UserRole;
 use App\Model\Table\UsersTable;
 use App\Service\UserAccessService;
 use Cake\TestSuite\TestCase;
+use Override;
 
 class UserAccessServiceTest extends TestCase
 {
+    #[Override]
     protected array $fixtures = ['app.Users'];
 
     /**

@@ -9,9 +9,11 @@ use App\Model\Table\UsersTable;
 use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
+use Override;
 
 class UsersTableTest extends TestCase
 {
+    #[Override]
     protected array $fixtures = ['app.Users'];
 
     /**

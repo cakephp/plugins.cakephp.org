@@ -26,7 +26,7 @@ class RequestPolicy implements RequestPolicyInterface
             return true;
         }
 
-        return $identity !== null && $this->fetchTable(UsersTable::class)->exists([
+        return $identity instanceof IdentityInterface && $this->fetchTable(UsersTable::class)->exists([
             'id' => $identity['id'],
             'role' => UserRole::Admin,
             'is_active' => true,

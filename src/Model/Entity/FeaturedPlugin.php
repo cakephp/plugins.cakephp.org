@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Model\Entity;
 
 use Cake\ORM\Entity;
+use Override;
 
 /**
  * @property int $id
@@ -16,6 +17,7 @@ use Cake\ORM\Entity;
  */
 class FeaturedPlugin extends Entity
 {
+    #[Override]
     protected array $_accessible = [
         'package' => true,
         'enabled' => true,

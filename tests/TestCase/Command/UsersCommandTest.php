@@ -7,11 +7,13 @@ use App\Model\Enum\UserRole;
 use App\Model\Table\UsersTable;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use Override;
 
 class UsersCommandTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
 
+    #[Override]
     protected array $fixtures = ['app.Users'];
 
     /**
