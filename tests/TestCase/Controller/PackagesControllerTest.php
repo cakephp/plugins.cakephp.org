@@ -114,6 +114,7 @@ class PackagesControllerTest extends TestCase
         $this->assertResponseOk();
         $this->assertResponseContains('Plugins by dereuromark');
         $this->assertResponseContains('href="https://github.com/dereuromark"');
+        $this->assertResponseContains('href="https://packagist.org/packages/dereuromark/"');
         $this->assertResponseContains('data-namespace-stat="downloads">20,000');
         $this->assertResponseContains('data-namespace-stat="stars">300');
         $this->assertResponseContains('No plugins found');
@@ -147,6 +148,7 @@ class PackagesControllerTest extends TestCase
         $this->get('/plugins/by/vendor');
         $this->assertResponseOk();
         $this->assertResponseNotContains('GitHub profile');
+        $this->assertResponseContains('href="https://packagist.org/packages/vendor/"');
     }
 
     /**

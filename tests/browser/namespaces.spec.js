@@ -24,6 +24,14 @@ test('namespace hero totals and catalogue results use the Composer prefix', asyn
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Plugins by vendor')
     await expect(hero(page).locator('[data-namespace-stat]')).toHaveCount(0)
     await expect(hero(page).getByRole('link', { name: 'GitHub profile' })).toHaveAttribute('href', 'https://github.com/vendor')
+    await expect(hero(page).getByRole('link', { name: 'Packagist', exact: true })).toHaveAttribute('href', 'https://packagist.org/packages/vendor/')
+    await expect(hero(page).getByRole('link', { name: 'Packagist', exact: true })).toHaveAttribute('target', '_blank')
+    await expect(hero(page).getByRole('link', { name: 'GitHub profile' })).toHaveText('')
+    await expect(hero(page).getByRole('link', { name: 'Packagist', exact: true })).toHaveText('')
+    const headingBounds = await hero(page).boundingBox()
+    const statsBounds = await stats(page).boundingBox()
+    expect(statsBounds.x).toBeGreaterThan(headingBounds.x + headingBounds.width)
+    expect(statsBounds.y).toBe(headingBounds.y)
     await expect(stats(page).locator('[data-namespace-stat="plugins"]')).toHaveText('23')
     await expect(stats(page).locator('[data-namespace-stat="downloads"]')).toHaveText('22,701')
     await expect(stats(page).locator('[data-namespace-stat="stars"]')).toHaveText('2,001')
@@ -32,7 +40,7 @@ test('namespace hero totals and catalogue results use the Composer prefix', asyn
     await expect(page.locator('[data-featured-plugins]')).toHaveCount(0)
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'http://127.0.0.1:8765/plugins/by/vendor')
     await expect(page.locator('meta[name="robots"]')).toHaveCount(0)
-    await page.screenshot({ path: 'tmp/namespace-desktop.png', fullPage: true, animations: 'disabled' })
+    await page.screenshot({ path: 'tmp/namespace-desktop.png', animations: 'disabled' })
 })
 
 test('search, version filters, sorting and reset retain the namespace and hero', async ({ page }) => {
