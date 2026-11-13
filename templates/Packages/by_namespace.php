@@ -4,6 +4,7 @@
  * @var string $namespace
  * @var array{plugins: int, downloads: int, stars: int} $stats
  * @var string|null $githubUrl
+ * @var array|string $backUrl
  */
 $this->assign('title', __('Plugins by {0}', $namespace));
 $statLabels = [
@@ -15,9 +16,7 @@ $statLabels = [
 <header class="namespace-hero" data-namespace-banner>
     <div class="site-width relative">
         <div class="namespace-toolbar">
-            <?= $this->Html->link('← ' . __('Browse all plugins'), [
-                '_name' => 'plugin:index',
-            ], [
+            <?= $this->Html->link('← ' . __('Back'), $backUrl, [
                 'class' => 'inline-flex min-h-8 items-center text-sm text-muted',
                 'x-interact:navigate' => '',
             ]) ?>
@@ -40,7 +39,7 @@ $statLabels = [
                 ]) ?>
             <?php endif; ?>
             <section class="namespace-statistics" aria-label="<?= __('Namespace statistics') ?>" data-namespace-stats x-data="namespaceCounters">
-                <dl class="grid grid-cols-3 gap-4 md:gap-8">
+                <dl class="grid grid-cols-3 gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_minmax(0,1fr)] md:gap-10">
                     <?php foreach ($statLabels as $key => $label) : ?>
                         <div class="flex min-w-0 flex-col gap-2">
                             <dt class="order-1 text-xs text-muted md:text-sm"><?= h($label) ?></dt>

@@ -19,16 +19,29 @@ class GithubProfileService
     }
 
     /**
-     * @return array{avatarUrl: string|null, bio: string|null}|null
+     * Build an avatar URL without performing an API request.
      */
-    public function profile(string $owner): ?array
+    public function avatarUrl(string $owner, int $size = 192): ?string
     {
         if (!preg_match('/^[a-z0-9][a-z0-9-]*$/iD', $owner)) {
             return null;
         }
+
+        return 'https://github.com/' . rawurlencode(strtolower($owner)) . '.png?size=' . $size;
+    }
+
+    /**
+     * @return array{avatarUrl: string|null, bio: string|null}|null
+     */
+    public function profile(string $owner): ?array
+    {
+        $avatarUrl = $this->avatarUrl($owner);
+        if ($avatarUrl === null) {
+            return null;
+        }
         $owner = strtolower($owner);
         $fallback = [
-            'avatarUrl' => 'https://github.com/' . rawurlencode($owner) . '.png?size=192',
+            'avatarUrl' => $avatarUrl,
             'bio' => null,
         ];
         $key = 'github_profile_v2_' . $owner;

@@ -6,6 +6,7 @@ namespace App\Model\Table;
 use App\Model\Filter\PackagesCollection;
 use ArrayObject;
 use Cake\Cache\Cache;
+use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
@@ -91,6 +92,10 @@ class PackagesTable extends Table
             ->notEmptyString('downloads');
 
         $validator
+            ->nonNegativeInteger('monthly_downloads')
+            ->allowEmptyString('monthly_downloads');
+
+        $validator
             ->integer('stars')
             ->requirePresence('stars', 'create')
             ->notEmptyString('stars');
@@ -165,6 +170,141 @@ class PackagesTable extends Table
     }
 
     /**
+     * Rank Composer namespaces from packages supporting the selected CakePHP major.
+     *
+     * @param \Cake\ORM\Query\SelectQuery $query Package query.
+     * @param string $search Case-insensitive namespace substring.
+     * @param string $sort Popularity metric.
+     * @param string|null $major CakePHP major; null includes all versions.
+     * @return \Cake\ORM\Query\SelectQuery
+     */
+    public function findPublishers(SelectQuery $query, string $search = '', string $sort = 'monthly_downloads', ?string $major = null): SelectQuery
+    {
+        $query->select([
+            'namespace' => $this->aliasField('namespace'),
+            'plugins' => $query->func()->count('*'),
+            'downloads' => $query->func()->sum($this->aliasField('downloads')),
+            'monthly_downloads' => $query->expr()->case()
+                ->when($query->expr()->eq($query->func()->count($this->aliasField('monthly_downloads')), $query->func()->count('*')))
+                ->then($query->func()->sum($this->aliasField('monthly_downloads'))),
+            'stars' => $query->func()->sum($this->aliasField('stars')),
+            'latest_release' => $query->func()->max($this->aliasField('latest_stable_release_date'))->setReturnType('string'),
+        ])->where([
+            $this->aliasField('namespace') . ' !=' => '',
+        ])->groupBy($this->aliasField('namespace'));
+
+        if ($major !== null) {
+            $query->where($query->expr()->exists($this->publisherCompatibility($major)));
+        }
+
+        $search = mb_strtolower(trim($search));
+        if ($search !== '') {
+            $query->where($query->expr()->gt(new FunctionExpression('INSTR', [
+                $this->aliasField('namespace') => 'identifier',
+                $search,
+            ]), 0, 'integer'));
+        }
+        $sort = match ($sort) {
+            'downloads', 'stars', 'plugins' => $sort,
+            default => 'monthly_downloads',
+        };
+
+        return $query->orderBy([
+            $sort => 'DESC',
+            $this->aliasField('namespace') => 'ASC',
+        ]);
+    }
+
+    /**
+     * Batch profile owners and two popular plugins for the visible publishers.
+     *
+     * @param list<string> $namespaces Visible namespace names.
+     * @param string $sort Popularity metric; plugin-count rankings preview monthly downloads.
+     * @param string|null $major CakePHP major; null includes all versions.
+     * @return array<string, array{githubUrl: string|null, plugins: list<array{package: string, name: string}>}>
+     */
+    public function publisherDetails(array $namespaces, string $sort = 'monthly_downloads', ?string $major = null): array
+    {
+        if ($namespaces === []) {
+            return [];
+        }
+        $details = array_fill_keys($namespaces, ['githubUrl' => null, 'plugins' => []]);
+        $owners = [];
+        $metric = match ($sort) {
+            'stars', 'downloads' => $sort,
+            default => 'monthly_downloads',
+        };
+        $packages = $this->find()->select(['namespace', 'package', 'repo_url'])
+            ->where(['namespace IN' => $namespaces])
+            ->orderBy([
+                $this->aliasField($metric) => 'DESC',
+                $this->aliasField('package') => 'ASC',
+            ]);
+        if ($major !== null) {
+            $packages->select(['publisher_compatible' => $packages->expr()->exists($this->publisherCompatibility($major))]);
+        }
+        foreach ($packages->all() as $package) {
+            $namespace = $package->namespace;
+            $owner = $this->githubOwner($package->repo_url);
+            if ($owner !== null) {
+                $owners[$namespace][$owner] = true;
+            }
+            if (($major === null || $package->get('publisher_compatible')) && count($details[$namespace]['plugins']) < 2) {
+                $details[$namespace]['plugins'][] = [
+                    'package' => $package->package,
+                    'name' => explode('/', $package->package, 2)[1],
+                ];
+            }
+        }
+        foreach ($owners as $namespace => $namespaceOwners) {
+            if (count($namespaceOwners) === 1) {
+                $details[$namespace]['githubUrl'] = 'https://github.com/' . array_key_first($namespaceOwners);
+            }
+        }
+
+        return $details;
+    }
+
+    /**
+     * EXISTS counts a compatible package once even when several minor-version tags match.
+     *
+     * @return \Cake\ORM\Query\SelectQuery
+     */
+    private function publisherCompatibility(string $major): SelectQuery
+    {
+        $junction = $this->Tagged->getTarget();
+        $alias = $junction->getAlias();
+
+        return $junction->find()->select([$alias . '.fk_id'])
+            ->innerJoin(['PublisherVersion' => $this->Tags->getTarget()->getTable()], ['PublisherVersion.id = ' . $alias . '.tag_id'])
+            ->where([
+                $alias . '.fk_model' => $this->getAlias(),
+                'PublisherVersion.slug LIKE' => 'cakephp-' . $major . '-%',
+            ])
+            ->where(static fn(QueryExpression $exp) => $exp->equalFields($alias . '.fk_id', 'Packages.id'));
+    }
+
+    /**
+     * Derive supported major choices from the catalogue's existing compatibility metadata.
+     *
+     * @return list<string>
+     */
+    public function publisherMajors(): array
+    {
+        $majors = [];
+        foreach (array_keys($this->filterOptions()['cakephp']) as $slug) {
+            if (preg_match('/^cakephp-(\d+)-\d+$/D', $slug, $matches)) {
+                $major = $matches[1];
+                if (!in_array($major, $majors, true)) {
+                    $majors[] = $major;
+                }
+            }
+        }
+
+        return $majors;
+    }
+
+    /**
      * Hero totals cover the namespace before any interactive filters are applied.
      *
      * @return array{plugins: int, downloads: int, stars: int}
@@ -193,22 +333,35 @@ class PackagesTable extends Table
         $owners = [];
         $repositories = $this->find('namespace', namespace: $namespace)->select(['repo_url'])->distinct()->all();
         foreach ($repositories as $package) {
-            $url = preg_replace('#^git@github\.com:#i', 'https://github.com/', trim($package->repo_url)) ?? $package->repo_url;
-            $host = strtolower((string)parse_url($url, PHP_URL_HOST));
-            if (!in_array($host, ['github.com', 'www.github.com'], true)) {
-                continue;
+            $owner = $this->githubOwner($package->repo_url);
+            if ($owner !== null) {
+                $owners[$owner] = true;
             }
-            $parts = explode('/', trim((string)parse_url($url, PHP_URL_PATH), '/'));
-            if (count($parts) < 2 || $parts[1] === '' || !preg_match('/^[a-z0-9][a-z0-9-]*$/iD', $parts[0])) {
-                continue;
-            }
-            $owners[strtolower($parts[0])] = true;
             if (count($owners) > 1) {
                 return null;
             }
         }
 
         return $owners !== [] ? 'https://github.com/' . array_key_first($owners) : null;
+    }
+
+    /**
+     * Resolve repository owners consistently for profile pages and publisher rows.
+     */
+    private function githubOwner(string $url): ?string
+    {
+        $url = preg_replace('#^git@github\.com:#i', 'https://github.com/', trim($url)) ?? $url;
+        $host = strtolower((string)parse_url($url, PHP_URL_HOST));
+        $parts = explode('/', trim((string)parse_url($url, PHP_URL_PATH), '/'));
+        if (
+            !in_array($host, ['github.com', 'www.github.com'], true) ||
+            count($parts) < 2 || $parts[1] === '' ||
+            !preg_match('/^[a-z0-9][a-z0-9-]*$/iD', $parts[0])
+        ) {
+            return null;
+        }
+
+        return strtolower($parts[0]);
     }
 
     /**

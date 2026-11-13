@@ -106,7 +106,7 @@ class PackagistImporter
     }
 
     /**
-     * @return array{package: string, description: string, repo_url: string, downloads: int, stars: int, tag_list: array, latest_stable_version: ?string, latest_stable_release_date: ?\Cake\I18n\Date, is_abandoned: bool}
+     * @return array{package: string, description: string, repo_url: string, downloads: int, monthly_downloads: int, stars: int, tag_list: array, latest_stable_version: ?string, latest_stable_release_date: ?\Cake\I18n\Date, is_abandoned: bool}
      */
     private function getDataForPackage(string $packageName): array
     {
@@ -119,6 +119,7 @@ class PackagistImporter
                 'description' => $metaDetails->getDescription(),
                 'repo_url' => $metaDetails->getRepository(),
                 'downloads' => $metaDetails->getDownloads()->getTotal(),
+                'monthly_downloads' => $metaDetails->getDownloads()->getMonthly(),
                 'stars' => $metaDetails->getGithubStars(),
                 'tag_list' => [],
                 'latest_stable_version' => null,
@@ -166,6 +167,7 @@ class PackagistImporter
             'description' => $metaDetails->getDescription(),
             'repo_url' => $metaDetails->getRepository(),
             'downloads' => $metaDetails->getDownloads()->getTotal(),
+            'monthly_downloads' => $metaDetails->getDownloads()->getMonthly(),
             'stars' => $metaDetails->getGithubStars(),
             'tag_list' => $meta,
             'latest_stable_version' => $latestStable ? $latestStable->getVersion() : null,

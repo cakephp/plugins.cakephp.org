@@ -16,6 +16,7 @@ use Tags\Model\Entity\Tag;
  * @property string $description
  * @property string $repo_url
  * @property int $downloads
+ * @property int|null $monthly_downloads
  * @property int $stars
  * @property string|null $latest_stable_version
  * @property \Cake\I18n\Date|null $latest_stable_release_date

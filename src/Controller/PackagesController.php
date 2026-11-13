@@ -47,7 +47,11 @@ class PackagesController extends AppController
             ], 301);
         }
         $githubUrl = $packages->namespaceGithubUrl($namespace);
-        $this->set(compact('namespace', 'stats', 'githubUrl'));
+        $backUrl = $this->getRequest()->referer();
+        if ($backUrl === null || parse_url($backUrl, PHP_URL_PATH) === $this->getRequest()->getPath()) {
+            $backUrl = ['_name' => 'plugin:index'];
+        }
+        $this->set(compact('namespace', 'stats', 'githubUrl', 'backUrl'));
 
         return null;
     }

@@ -66,6 +66,12 @@ class PackagesFixture extends TestFixture
 
         foreach ($this->records as &$record) {
             $record['namespace'] = strtolower(explode('/', $record['package'], 2)[0]);
+            $record['monthly_downloads'] = match ($record['id']) {
+                1 => 150,
+                25 => 1200,
+                26 => 2000,
+                default => 100 - $record['id'],
+            };
         }
         unset($record);
 

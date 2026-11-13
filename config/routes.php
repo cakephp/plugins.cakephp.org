@@ -62,6 +62,10 @@ return function (RouteBuilder $routes): void {
             'controller' => 'Packages',
             'action' => 'index',
         ], ['_name' => 'plugin:index']);
+        $builder->get('/publishers', [
+            'controller' => 'Publishers',
+            'action' => 'index',
+        ], 'publisher:index');
         $packageSegment = '[A-Za-z0-9][A-Za-z0-9_.-]*';
         $builder->get('/plugins/{namespace}/{name}', [
             'controller' => 'Packages',

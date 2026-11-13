@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Model\Table;
 
 use App\Model\Table\PackagesTable;
+use Cake\Cache\Cache;
 use Cake\TestSuite\TestCase;
 use Override;
 
@@ -16,7 +17,16 @@ class PackagesTableTest extends TestCase
      * @var list<string>
      */
     #[Override]
-    protected array $fixtures = ['app.Packages', 'app.Categories', 'app.CategoriesPackages', 'plugin.Tags.Tags', 'plugin.Tags.Tagged'];
+    protected array $fixtures = ['app.Packages', 'app.Categories', 'app.CategoriesPackages', 'app.PublisherVersions', 'app.PublisherTagged'];
+
+    /**
+     * Version options must reflect this test's compatibility fixtures.
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Cache::delete('package_filter_tags_v1');
+    }
 
     /**
      * Grid counts represent unique packages in each category across the directory.
@@ -190,5 +200,109 @@ class PackagesTableTest extends TestCase
             $this->assertNull($packages->namespaceGithubUrl('markstory'));
         }
         $this->assertNull($packages->namespaceGithubUrl('missing'));
+    }
+
+    /**
+     * Rankings use namespace totals, with stable alphabetical ties.
+     */
+    public function testPublisherRankings(): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        $downloads = $packages->unhydratedFind('publishers')->all()->toList();
+        $this->assertSame(['vendor', 'dereuromark', 'cakedc', 'markstory'], array_column($downloads, 'namespace'));
+        $this->assertEquals([
+            'namespace' => 'vendor',
+            'plugins' => 23,
+            'downloads' => 22701,
+            'monthly_downloads' => 2001,
+            'stars' => 2001,
+            'latest_release' => '2025-02-24',
+        ], $downloads[0]);
+        $this->assertSame(['vendor', 'cakedc', 'markstory', 'dereuromark'], $packages->unhydratedFind('publishers', sort: 'stars')->all()->extract('namespace')->toList());
+        $this->assertSame(['vendor', 'cakedc', 'dereuromark', 'markstory'], $packages->unhydratedFind('publishers', sort: 'plugins')->all()->extract('namespace')->toList());
+        $this->assertEquals($downloads, $packages->unhydratedFind('publishers', sort: 'unknown')->all()->toList());
+        $packages->updateAll(['downloads' => 5000], ['id' => 25]);
+        $this->assertSame(['vendor', 'dereuromark', 'cakedc', 'markstory'], $packages->unhydratedFind('publishers', sort: 'downloads')->all()->extract('namespace')->toList());
+    }
+
+    /**
+     * Search uses literal substrings rather than SQL wildcard semantics.
+     */
+    public function testPublisherSearch(): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        $this->assertSame(['dereuromark'], $packages->unhydratedFind('publishers', search: ' REURO ')->all()->extract('namespace')->toList());
+        $this->assertSame(0, $packages->unhydratedFind('publishers', search: '%')->count());
+        $package = $packages->get(2);
+        $package->package = 'vendor_extra/package';
+        $packages->saveOrFail($package);
+        $this->assertSame(['vendor_extra'], $packages->unhydratedFind('publishers', search: '_')->all()->extract('namespace')->toList());
+    }
+
+    /**
+     * Previews are bounded, metric-aware, and consider every repository owner.
+     */
+    public function testPublisherDetails(): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        $details = $packages->publisherDetails(['vendor', 'markstory']);
+        $this->assertSame(['vendor/package-01', 'vendor/package-02'], array_column($details['vendor']['plugins'], 'package'));
+        $this->assertSame('https://github.com/vendor', $details['vendor']['githubUrl']);
+        $this->assertCount(1, $details['markstory']['plugins']);
+        $packages->updateAll(['stars' => 999, 'repo_url' => 'https://github.com/another-owner/plugin'], ['id' => 24]);
+        $this->assertNull($packages->publisherDetails(['vendor'])['vendor']['githubUrl']);
+        $this->assertSame(['vendor/package-23', 'vendor/package-01'], array_column($packages->publisherDetails(['vendor'], 'stars')['vendor']['plugins'], 'package'));
+        $this->assertSame(['vendor/package-01', 'vendor/package-02'], array_column($packages->publisherDetails(['vendor'], 'plugins')['vendor']['plugins'], 'package'));
+        $this->assertSame([], $packages->publisherDetails([]));
+    }
+
+    /**
+     * Legacy-only packages cannot inflate current-major totals or previews.
+     */
+    public function testPublisherCompatibilityScope(): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        $this->assertSame(['5', '4'], $packages->publisherMajors());
+        $packages->updateAll([
+            'monthly_downloads' => 999999,
+            'downloads' => 99999999,
+            'stars' => 99999,
+        ], ['id' => 25]);
+        $this->assertSame('cakedc', $packages->unhydratedFind('publishers')->first()['namespace']);
+        $current = $packages->unhydratedFind('publishers', major: '5')->all()->toList();
+        $this->assertSame(['vendor', 'dereuromark', 'markstory'], array_column($current, 'namespace'));
+        $this->assertEquals(1, $current[2]['plugins']);
+        $this->assertEquals(150, $current[2]['monthly_downloads']);
+        $this->assertSame('2025-01-15', $current[2]['latest_release']);
+
+        $packages->Tagged->updateAll(['tag_id' => 3], ['fk_id' => 24, 'fk_model' => 'Packages']);
+        $packages->updateAll([
+            'monthly_downloads' => 999999,
+            'repo_url' => 'https://github.com/another-owner/plugin',
+        ], ['id' => 24]);
+        $vendor = $packages->unhydratedFind('publishers', major: '5', search: 'vendor')->first();
+        $this->assertEquals(22, $vendor['plugins']);
+        $this->assertEquals(1925, $vendor['monthly_downloads']);
+        $details = $packages->publisherDetails(['vendor'], major: '5');
+        $this->assertSame(['package-01', 'package-02'], array_column($details['vendor']['plugins'], 'name'));
+        $this->assertNull($details['vendor']['githubUrl']);
+        $this->assertSame('cakedc', $packages->unhydratedFind('publishers', major: '4')->first()['namespace']);
+    }
+
+    /**
+     * Recent usage can reverse lifetime rankings; missing data is never treated as zero.
+     */
+    public function testMonthlyRankingsAndUnknownCounts(): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        $packages->updateAll(['monthly_downloads' => 3000], ['id' => 1]);
+        $this->assertSame('markstory', $packages->unhydratedFind('publishers', major: '5')->first()['namespace']);
+        $this->assertSame('vendor', $packages->unhydratedFind('publishers', major: '5', sort: 'downloads')->first()['namespace']);
+        $packages->updateAll(['monthly_downloads' => null], ['id' => 2]);
+        $vendor = $packages->unhydratedFind('publishers', search: 'vendor')->first();
+        $this->assertNull($vendor['monthly_downloads']);
+        $packages->updateAll(['monthly_downloads' => 0], ['id' => 1]);
+        $this->assertSame(['dereuromark', 'markstory', 'vendor'], $packages->unhydratedFind('publishers', major: '5')->all()->extract('namespace')->toList());
+        $this->assertEquals(0, $packages->unhydratedFind('publishers', search: 'markstory')->first()['monthly_downloads']);
     }
 }

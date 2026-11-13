@@ -7,10 +7,24 @@ use App\Model\Enum\UserRole;
 
 $minimal = $minimal ?? false;
 $requirements = $this->getRequest()->getPath() === '/requirements';
+$publishers = $this->getRequest()->getPath() === '/publishers';
 $loggedIn = !$minimal && $this->Identity->isLoggedIn();
 $links = [
-    ['label' => __('Browse plugins'), 'url' => '/', 'active' => !$requirements],
-    ['label' => __('Listing requirements'), 'url' => '/requirements', 'active' => $requirements],
+    [
+        'label' => __('Browse plugins'),
+        'url' => '/',
+        'active' => !$requirements && !$publishers,
+    ],
+    [
+        'label' => __('Publishers'),
+        'url' => ['_name' => 'publisher:index'],
+        'active' => $publishers,
+    ],
+    [
+        'label' => __('Listing requirements'),
+        'url' => '/requirements',
+        'active' => $requirements,
+    ],
 ];
 $loginUrl = [
     'prefix' => false, 'plugin' => 'ADmad/SocialAuth', 'controller' => 'Auth', 'action' => 'login', 'provider' => 'github',

@@ -9,6 +9,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use Override;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * App\Controller\PackagesController Test Case
@@ -222,6 +223,38 @@ class PackagesControllerTest extends TestCase
         $this->assertRedirect('/plugins/dereuromark?search=tools&sort=stars');
         $this->get('/plugins/not-a-namespace');
         $this->assertResponseCode(404);
+    }
+
+    /**
+     * Return to local referring pages with their filters; direct visits keep a catalogue fallback.
+     */
+    #[DataProvider('namespaceReferrers')]
+    public function testNamespaceBackLink(?string $referrer, string $expected): void
+    {
+        if ($referrer !== null) {
+            $this->configRequest([
+                'environment' => [
+                    'HTTP_REFERER' => str_starts_with($referrer, '/') ? Router::url($referrer, true) : $referrer,
+                ],
+            ]);
+        }
+        $this->get('/plugins/vendor');
+        $this->assertResponseOk();
+        $this->assertResponseRegExp('/<a[^>]+href="' . preg_quote(h($expected), '/') . '"[^>]*>← Back<\/a>/');
+    }
+
+    /**
+     * @return array<string, array{string|null, string}>
+     */
+    public static function namespaceReferrers(): array
+    {
+        return [
+            'publisher overview' => ['/publishers?search=vendor&sort=stars&cakephp=all', '/publishers?search=vendor&sort=stars&cakephp=all'],
+            'filtered catalogue' => ['/?search=tools&sort=downloads', '/?search=tools&sort=downloads'],
+            'direct visit' => [null, '/'],
+            'external visit' => ['https://example.com/publishers', '/'],
+            'self reference' => ['/plugins/vendor?sort=downloads', '/'],
+        ];
     }
 
     /**

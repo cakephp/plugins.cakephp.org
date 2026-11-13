@@ -43,7 +43,10 @@ class PackagistImporterTest extends TestCase
         $version = new Version();
         $version->fromArray(['version' => '5.1.0', 'time' => '2026-04-05T11:22:33+00:00', 'require' => ['php' => '^8.2', 'cakephp/cakephp' => '^5.0']]);
         $downloads = new Downloads();
-        $downloads->fromArray(['total' => 12345]);
+        $downloads->fromArray([
+            'total' => 12345,
+            'monthly' => 1234,
+        ]);
         $metadata = new Package();
         $metadata->fromArray([
             'description' => 'Updated plugin description', 'repository' => 'https://github.com/markstory/asset_compress',
@@ -62,6 +65,7 @@ class PackagistImporterTest extends TestCase
         $this->assertCount(2, $package->categories);
         $this->assertSame('Updated plugin description', $package->description);
         $this->assertSame('markstory', $package->namespace);
+        $this->assertSame(1234, $package->monthly_downloads);
         $this->assertSame('5.1.0', $package->latest_stable_version);
         $this->assertEquals(new Date('2026-04-05'), $package->latest_stable_release_date);
         $this->assertContains('cakephp-5-4', array_column($package->tags, 'slug'));

@@ -130,6 +130,8 @@ class ApplicationTest extends TestCase
         $requests = [
             ['/', 'GET', [], 90],
             ['/', 'GET', ['search' => 'users'], 15],
+            ['/publishers', 'GET', [], 90],
+            ['/publishers', 'GET', ['sort' => 'stars'], 15],
             ['/plugins/markstory/asset_compress', 'GET', [], 90],
             ['/plugins/vendor.name/plugin_name.json', 'GET', [], 90],
             ['/plugins/dereuromark', 'GET', [], 90],

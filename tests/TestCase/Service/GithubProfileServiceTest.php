@@ -124,6 +124,18 @@ class GithubProfileServiceTest extends TestCase
     }
 
     /**
+     * Directory avatars do not consume API quota.
+     */
+    public function testAvatarUrlDoesNotFetchMetadata(): void
+    {
+        $github = $this->createMock(GithubApiService::class);
+        $github->expects($this->never())->method('get');
+        $service = new GithubProfileService($github);
+        $this->assertSame('https://github.com/example.png?size=96', $service->avatarUrl('Example', 96));
+        $this->assertNull($service->avatarUrl('invalid_owner'));
+    }
+
+    /**
      * Existing cached failures must not hide otherwise accessible public avatars.
      */
     public function testCachedRateLimitStillProvidesPublicAvatar(): void

@@ -236,7 +236,7 @@ body::before {
     .namespace-profile-link { @apply size-11 min-h-11; }
 }
 .namespace-statistics {
-    @apply w-full min-w-0 md:max-w-md lg:w-96;
+    @apply w-full min-w-0 md:max-w-lg lg:w-[30rem];
 }
 .namespace-stat-value {
     @apply text-[clamp(1.5rem,2.8vw,2.5rem)] leading-tight font-semibold tracking-tight tabular-nums;
@@ -252,6 +252,28 @@ body::before {
 .catalogue-discovery {
     @apply mb-6 rounded-2xl border border-base-300 bg-base-100 p-4 md:p-5;
 }
+.publisher-controls {
+    @apply mb-5 flex flex-col gap-3 rounded-2xl border border-base-300 bg-base-100 p-4 md:flex-row md:items-center md:p-5;
+}
+.publisher-row {
+    @apply grid grid-cols-1 items-center gap-4 border-b border-base-300 p-4
+        hover:bg-row-hover/40 md:grid-cols-[minmax(0,1fr)_19rem] md:p-5;
+}
+.publisher-rank {
+    @apply absolute -right-2 -bottom-1 z-10 min-h-6 min-w-7 rounded-full border-2 border-base-100
+        bg-base-content px-1.5 text-xs leading-none font-semibold text-base-100 tabular-nums;
+}
+.publisher-avatar {
+    @apply relative size-14 overflow-hidden rounded-xl bg-primary/10 text-lg font-semibold text-primary md:size-16;
+    & img { @apply absolute inset-0 size-full object-cover; }
+}
+.publisher-name {
+    @apply text-lg leading-tight font-semibold wrap-anywhere;
+    & a { @apply text-base-content hover:text-primary; }
+}
+.publisher-plugin { @apply h-auto max-w-full px-2 py-1 text-xs whitespace-normal text-muted wrap-anywhere hover:text-primary; }
+.publisher-statistics { @apply grid grid-cols-3 gap-x-4 md:gap-x-6; }
+.publisher-statistics > div { @apply row-span-2 grid grid-rows-subgrid; }
 .reset-filters {
     @apply inline-flex min-h-10 shrink-0 items-center justify-center gap-1.5 text-[0.8125rem] font-medium
         whitespace-nowrap max-md:w-10;

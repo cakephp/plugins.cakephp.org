@@ -17,19 +17,13 @@ declare(strict_types=1);
 namespace App;
 
 use ADmad\SocialAuth\Middleware\SocialAuthMiddleware;
-use App\Command\SyncPackagesCommand;
 use App\Event\AfterGithubIdentify;
 use App\Http\RateLimit\AtomicFixedWindowRateLimiter;
-use App\Island\NamespaceProfileIsland;
 use App\Middleware\ThemeCookieMiddleware;
 use App\Model\Table\PackagesTable;
 use App\Model\Table\UsersTable;
 use App\Policy\RequestPolicy;
-use App\Service\AwesomeListImporter;
-use App\Service\AwesomeListParser;
 use App\Service\GithubApiService;
-use App\Service\GithubProfileService;
-use App\Service\PackagistImporter;
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
 use Authentication\AuthenticationServiceProviderInterface;
@@ -57,6 +51,7 @@ use Cake\Http\ServerRequest;
 use Cake\ORM\Locator\TableLocator;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
+use League\Container\ReflectionContainer;
 use Packagist\Api\Client as PackagistClient;
 use Psr\Http\Message\ServerRequestInterface;
 use SocialConnect\OAuth2\Provider\GitHub;
@@ -213,7 +208,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                         }
 
                         return !in_array($request->getMethod(), ['GET', 'HEAD'], true)
-                            || !($path === '' || $path === '/packages' || preg_match('#^/plugins/[A-Za-z0-9][A-Za-z0-9_.-]*(?:/[A-Za-z0-9][A-Za-z0-9_.-]*)?$#', $path));
+                            || !in_array($path, ['', '/packages', '/publishers'], true) && !preg_match('#^/plugins/[A-Za-z0-9][A-Za-z0-9_.-]*(?:/[A-Za-z0-9][A-Za-z0-9_.-]*)?$#', $path);
                     },
                 ]),
             );
@@ -231,16 +226,14 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
      */
     public function services(ContainerInterface $container): void
     {
+        // Interact constructs fresh island roots separately from cached service dependencies.
+        $container->delegate(new ReflectionContainer(cacheResolutions: !Configure::read('debug')));
         $container->addShared(PackagesTable::class, static fn(): RepositoryInterface => FactoryLocator::get('Table')->get(PackagesTable::class));
         $container->addShared(Client::class);
         $container->addShared(GithubApiService::class)->addArguments([
             Client::class,
             (string)Configure::read('GitHub.apiToken', ''),
         ]);
-        $container->addShared(GithubProfileService::class)->addArgument(GithubApiService::class);
-        $container->addShared(AfterGithubIdentify::class)->addArgument(GithubApiService::class);
-        $container->add(NamespaceProfileIsland::class)->addArgument(GithubProfileService::class);
-        $container->addShared(AwesomeListParser::class);
         $container->addShared('packagist.http', static function (): Client {
             $client = new Client();
             $userAgent = (string)env('PACKAGIST_USER_AGENT', 'plugins.cakephp.org (https://plugins.cakephp.org; mailto=security@cakephp.org)');
@@ -252,9 +245,6 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             return $client;
         });
         $container->addShared(PackagistClient::class)->addArgument('packagist.http');
-        $container->addShared(PackagistImporter::class)->addArguments([PackagesTable::class, PackagistClient::class]);
-        $container->addShared(AwesomeListImporter::class)->addArguments([PackagesTable::class, Client::class, AwesomeListParser::class]);
-        $container->add(SyncPackagesCommand::class)->addArguments([PackagistImporter::class, AwesomeListImporter::class]);
     }
 
     /**
