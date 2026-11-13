@@ -30,7 +30,6 @@ $statLabels = [
                     <div class="min-w-0">
                         <p class="mb-1 text-xs font-semibold uppercase tracking-wider text-muted"><?= __('Composer namespace') ?></p>
                         <h1 id="namespace-title" class="text-2xl leading-tight font-bold wrap-anywhere md:text-3xl"><?= __('Plugins by {0}', h($namespace)) ?></h1>
-                        <p class="mt-2 text-sm text-muted"><?= __('Explore CakePHP plugins published under {0}.', h($namespace)) ?></p>
                     </div>
                 </div>
                 <div class="flex flex-wrap gap-2 self-start md:self-center">
