@@ -68,4 +68,17 @@ class PackagesTableTest extends TestCase
         $this->assertSame(26, $packages->find('catalogue', filters: [])->count());
         $this->assertSame(0, $packages->find('catalogue', filters: ['search' => 'no-matching-plugin'])->count());
     }
+
+    /**
+     * The editorial picker searches canonical names in a stable order.
+     */
+    public function testFeaturedCandidates(): void
+    {
+        $results = $this->fetchTable(PackagesTable::class)->find('featuredCandidates', search: ' package-0 ')->all();
+        $this->assertSame([
+            'vendor/package-01', 'vendor/package-02', 'vendor/package-03',
+            'vendor/package-04', 'vendor/package-05', 'vendor/package-06',
+            'vendor/package-07', 'vendor/package-08', 'vendor/package-09',
+        ], $results->extract('package')->toList());
+    }
 }

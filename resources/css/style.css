@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@source "../../plugins/Admin/templates";
 @source not "../../wireframes-plugins.html";
 @plugin "daisyui/index.js" {
     themes: cakephp --default, cakephp-dark;

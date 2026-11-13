@@ -15,6 +15,8 @@ use Override;
  * @property string $email
  * @property string $username
  * @property bool $is_cakephp_dev
+ * @property \App\Model\Enum\UserRole $role
+ * @property bool $is_active
  * @property \Cake\I18n\DateTime $created
  * @property \Cake\I18n\DateTime|null $modified
  *
@@ -35,23 +37,7 @@ class User extends Entity
     protected array $_accessible = [
         '*' => true,
         'id' => false,
+        'role' => false,
+        'is_active' => false,
     ];
-
-    public const FIELD_ID = 'id';
-
-    public const FIELD_FIRST_NAME = 'first_name';
-
-    public const FIELD_LAST_NAME = 'last_name';
-
-    public const FIELD_EMAIL = 'email';
-
-    public const FIELD_USERNAME = 'username';
-
-    public const FIELD_CREATED = 'created';
-
-    public const FIELD_MODIFIED = 'modified';
-
-    public const FIELD_SOCIAL_PROFILE = 'social_profile';
-
-    public const FIELD_IS_CAKEPHP_DEV = 'is_cakephp_dev';
 }

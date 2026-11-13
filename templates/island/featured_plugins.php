@@ -2,7 +2,7 @@
 /**
  * @var \App\View\IslandTemplateView $this
  * @var list<\App\Model\Entity\Package> $featuredPackages
- * @var array<string, array{logo: string|null}> $featuredMetadata
+ * @var array<string, array{logo: string|null, title: string|null, description: string|null}> $featuredMetadata
  */
 ?>
 <div>
@@ -32,12 +32,12 @@
                                 <div class="flex items-start justify-between gap-2.5">
                                     <div class="featured-card-name">
                                         <span class="mb-0.5 block text-xs leading-[1.6] text-muted"><?= h($vendor) ?></span>
-                                        <h3><?= h($name ?: $vendor) ?></h3>
+                                        <h3><?= h($featuredMetadata[$package->package]['title'] ?? ($name ?: $vendor)) ?></h3>
                                         <?= $this->element('Packages/awesome_badge', compact('package')) ?>
                                     </div>
                                     <span class="featured-card-arrow" aria-hidden="true">→</span>
                                 </div>
-                                <p class="featured-description"><?= h($package->description ?: __('No description available.')) ?></p>
+                                <p class="featured-description"><?= h($featuredMetadata[$package->package]['description'] ?? ($package->description ?: __('No description available.'))) ?></p>
                             </div>
                             <div class="featured-card-footer">
                                 <span class="inline-flex items-center gap-1.5">

@@ -14,6 +14,7 @@
     <testsuites>
         <testsuite name="app">
             <directory>tests/TestCase/</directory>
+            <directory>plugins/Admin/tests/TestCase/</directory>
         </testsuite>
         <!-- Add plugin test suites here. -->
     </testsuites>

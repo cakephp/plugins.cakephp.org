@@ -4,7 +4,9 @@ declare(strict_types=1);
 use App\Application;
 use App\Test\Fixture\CategoriesFixture;
 use App\Test\Fixture\CategoriesPackagesFixture;
+use App\Test\Fixture\FeaturedPluginsFixture;
 use App\Test\Fixture\PackagesFixture;
+use App\Test\Fixture\UsersFixture;
 use Cake\Cache\Cache;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlite;
@@ -26,6 +28,13 @@ if (
 ConnectionManager::alias('default', 'test');
 // Only catalogue and tag tables are needed; OAuth itself is not exercised here.
 new Migrator()->runMany([['connection' => 'default'], ['connection' => 'default', 'plugin' => 'Tags']]);
+$connection->delete('featured_plugins', []);
+foreach (new FeaturedPluginsFixture()->records as $record) {
+    $connection->insert('featured_plugins', $record);
+}
+foreach (new UsersFixture()->records as $record) {
+    $connection->insert('users', $record);
+}
 $fixture = new PackagesFixture();
 foreach ($fixture->records as $record) {
     $connection->insert('packages', $record);
@@ -45,3 +54,6 @@ foreach ($fixture->records as $record) {
     }
 }
 Cache::clearAll();
+if (!is_dir(TMP . 'browser-sessions')) {
+    mkdir(TMP . 'browser-sessions', 0700, true);
+}

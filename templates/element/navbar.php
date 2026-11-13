@@ -3,6 +3,8 @@
  * @var \App\View\AppView $this
  * @var bool|null $minimal
  */
+use App\Model\Enum\UserRole;
+
 $minimal = $minimal ?? false;
 $requirements = $this->getRequest()->getPath() === '/requirements';
 $loggedIn = !$minimal && $this->Identity->isLoggedIn();
@@ -40,6 +42,9 @@ $loginUrl = [
                                 <?= h($this->User->displayName()) ?>
                                 <span>@<?= h($this->User->username()) ?></span>
                             </p>
+                            <?php if ($this->Identity->get('role') === UserRole::Admin && $this->Identity->get('is_active')) : ?>
+                                <?= $this->Html->link(__('Admin'), ['_name' => 'admin:home'], ['class' => 'nav-link']) ?>
+                            <?php endif; ?>
                             <?= $this->Html->link(__('Sign out'), ['controller' => 'Users', 'action' => 'logout'], ['class' => 'nav-link']) ?>
                         </div>
                     </details>
@@ -68,6 +73,9 @@ $loginUrl = [
                         <?php endforeach; ?>
                         <?php if ($loggedIn) : ?>
                             <p class="menu-identity"><?= h($this->User->displayName()) ?></p>
+                            <?php if ($this->Identity->get('role') === UserRole::Admin && $this->Identity->get('is_active')) : ?>
+                                <?= $this->Html->link(__('Admin'), ['_name' => 'admin:home'], ['class' => 'nav-link']) ?>
+                            <?php endif; ?>
                             <?= $this->Html->link(__('Sign out'), ['controller' => 'Users', 'action' => 'logout'], ['class' => 'nav-link']) ?>
                         <?php else : ?>
                             <?= $this->Form->postLink(__('Sign in with GitHub'), $loginUrl, ['class' => 'action-link btn btn-outline']) ?>

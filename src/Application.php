@@ -22,6 +22,8 @@ use App\Event\AfterGithubIdentify;
 use App\Http\RateLimit\AtomicFixedWindowRateLimiter;
 use App\Middleware\ThemeCookieMiddleware;
 use App\Model\Table\PackagesTable;
+use App\Model\Table\UsersTable;
+use App\Policy\RequestPolicy;
 use App\Service\AwesomeListImporter;
 use App\Service\AwesomeListParser;
 use App\Service\PackagistImporter;
@@ -29,6 +31,13 @@ use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
 use Authentication\AuthenticationServiceProviderInterface;
 use Authentication\Middleware\AuthenticationMiddleware;
+use Authorization\AuthorizationService;
+use Authorization\AuthorizationServiceInterface;
+use Authorization\AuthorizationServiceProviderInterface;
+use Authorization\Exception\MissingIdentityException;
+use Authorization\Middleware\AuthorizationMiddleware;
+use Authorization\Middleware\RequestAuthorizationMiddleware;
+use Authorization\Policy\MapResolver;
 use Cake\Core\Configure;
 use Cake\Core\ContainerInterface;
 use Cake\Datasource\FactoryLocator;
@@ -42,6 +51,7 @@ use Cake\Http\Middleware\BodyParserMiddleware;
 use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\Middleware\RateLimitMiddleware;
 use Cake\Http\MiddlewareQueue;
+use Cake\Http\ServerRequest;
 use Cake\ORM\Locator\TableLocator;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
@@ -55,7 +65,7 @@ use SocialConnect\OAuth2\Provider\GitHub;
  * This defines the bootstrapping logic and middleware layers you
  * want to use in your application.
  */
-class Application extends BaseApplication implements AuthenticationServiceProviderInterface
+class Application extends BaseApplication implements AuthenticationServiceProviderInterface, AuthorizationServiceProviderInterface
 {
     /**
      * Load all the application configuration and bootstrap logic.
@@ -117,6 +127,10 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             ->add(new ThemeCookieMiddleware())
 
             ->add(new SocialAuthMiddleware([
+                'finder' => 'active',
+                'loginUrl' => '/',
+                'userId' => true,
+                'sessionKey' => 'AuthId',
                 // SocialConnect Auth service's providers config. https://github.com/SocialConnect/auth/blob/master/README.md
                 'serviceConfig' => [
                     'provider' => [
@@ -138,7 +152,16 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                 ],
             ]))
 
-            ->add(new AuthenticationMiddleware($this));
+            ->add(new AuthenticationMiddleware($this))
+            ->add(new AuthorizationMiddleware($this))
+            ->add(new RequestAuthorizationMiddleware([
+                'unauthorizedHandler' => [
+                    'className' => 'Authorization.Redirect',
+                    'exceptions' => [MissingIdentityException::class],
+                    'url' => '/',
+                    'queryParam' => 'redirect',
+                ],
+            ]));
 
         $requestProtection = (array)Configure::read('PublicRequestProtection', []);
         $trustedProxyIps = (array)($requestProtection['trustedProxyIps'] ?? []);
@@ -235,10 +258,32 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             'queryParam' => 'redirect',
         ]);
 
-        // Load the authenticators. Session should be first.
-        // Session just uses session data directly as identity, no identifier needed.
-        $service->loadAuthenticator('Authentication.Session');
+        // Resolve current access on each request; legacy full-identity sessions are ignored.
+        $service->loadAuthenticator('Authentication.PrimaryKeySession', [
+            'sessionKey' => 'AuthId',
+            'identifier' => [
+                'className' => 'Authentication.Token',
+                'tokenField' => 'id',
+                'dataField' => 'key',
+                'resolver' => [
+                    'className' => 'Authentication.Orm',
+                    'userModel' => UsersTable::class,
+                    'finder' => 'active',
+                ],
+            ],
+        ]);
 
         return $service;
+    }
+
+    /**
+     * Share request policies between admin routes and island updates.
+     */
+    public function getAuthorizationService(ServerRequestInterface $request): AuthorizationServiceInterface
+    {
+        $resolver = new MapResolver();
+        $resolver->map(ServerRequest::class, RequestPolicy::class);
+
+        return new AuthorizationService($resolver);
     }
 }

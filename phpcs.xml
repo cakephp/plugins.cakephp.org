@@ -16,4 +16,5 @@
     <file>tests/</file>
     <file>config/</file>
     <file>templates/</file>
+    <file>plugins/Admin/</file>
 </ruleset>

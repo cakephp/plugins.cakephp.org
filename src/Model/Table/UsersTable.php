@@ -4,8 +4,12 @@ declare(strict_types=1);
 namespace App\Model\Table;
 
 use ADmad\SocialAuth\Model\Entity\SocialProfile;
+use App\Model\Enum\UserRole;
+use Cake\Database\Type\EnumType;
 use Cake\Datasource\EntityInterface;
+use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Session;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -46,6 +50,7 @@ class UsersTable extends Table
         $this->setTable('users');
         $this->setDisplayField('first_name');
         $this->setPrimaryKey('id');
+        $this->getSchema()->setColumnType('role', EnumType::from(UserRole::class));
 
         $this->addBehavior('Timestamp');
     }
@@ -58,6 +63,8 @@ class UsersTable extends Table
      */
     public function validationDefault(Validator $validator): Validator
     {
+        $validator->enum('role', UserRole::class)->notEmptyString('role');
+        $validator->boolean('is_active')->notEmptyString('is_active');
         $validator
             ->scalar('first_name')
             ->maxLength('first_name', 255)
@@ -98,6 +105,17 @@ class UsersTable extends Table
     }
 
     /**
+     * Exclude suspended users when resolving a linked GitHub profile.
+     *
+     * @param \Cake\ORM\Query\SelectQuery $query User query.
+     * @return \Cake\ORM\Query\SelectQuery
+     */
+    public function findActive(SelectQuery $query): SelectQuery
+    {
+        return $query->where(['Users.is_active' => true]);
+    }
+
+    /**
      * @param \Cake\Datasource\EntityInterface $profile The data from github
      * @param \Cake\Http\Session $session The current session
      * @return \App\Model\Entity\User|\Cake\Datasource\EntityInterface|mixed
@@ -121,6 +139,8 @@ class UsersTable extends Table
         if (!$user) {
             // Create new user account
             $user = $this->newEntity([]);
+        } elseif (!$user->is_active) {
+            throw new ForbiddenException('This account is suspended.');
         }
 
         $user = $this->patchEntity($user, [

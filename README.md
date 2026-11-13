@@ -99,21 +99,16 @@ in `Packages.awesomeAliases` in `config/app.php`:
 Both importers and the Markdown parser are registered in `Application::services()`.
 The console command receives its importers through CakePHP's container.
 
-## Featured plugin logos
+## Administration
 
-Set an optional logo URL or image path alongside the package name in
-`Packages.featured` in `config/app.php`:
+Sign in with GitHub, then grant your account admin access:
 
-```php
-'featured' => [
-    'cakedc/users' => ['logo' => '/img/plugins/users.svg'],
-    'vendor/plugin' => ['logo' => 'https://example.com/plugin-logo.png'],
-    'friendsofcake/crud' => ['logo' => null],
-],
+```bash
+ddev exec bin/cake migrations migrate
+ddev exec bin/cake users your-github-username --role admin --active yes
 ```
 
-A null or broken logo falls back to the name-based emblem. Each entry can hold
-additional metadata alongside `logo` as needed.
+Manage users at `/admin/users` and featured plugins at `/admin/featured-plugins`.
 
 ## Get social auth working
 

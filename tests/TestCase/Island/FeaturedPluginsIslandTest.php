@@ -3,66 +3,62 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Island;
 
-use Cake\Core\Configure;
+use App\Model\Table\FeaturedPluginsTable;
+use App\Model\Table\PackagesTable;
 use Cake\TestSuite\TestCase;
 use Interact\TestSuite\IslandTestTrait;
 use Override;
 
-/**
- * Exercises the featured selection independently of catalogue pagination.
- */
 class FeaturedPluginsIslandTest extends TestCase
 {
     use IslandTestTrait;
 
-    /**
-     * @var list<string>
-     */
     #[Override]
-    protected array $fixtures = ['app.Packages', 'plugin.Tags.Tags', 'plugin.Tags.Tagged'];
+    protected array $fixtures = ['app.FeaturedPlugins', 'app.Packages', 'plugin.Tags.Tags', 'plugin.Tags.Tagged'];
 
     /**
-     * Refreshing preserves the shuffled order and honors removed configuration entries.
+     * Keep mount order while honoring current enabled state on every update.
      */
     public function testSelectionOrderSurvivesRefresh(): void
     {
-        Configure::write('Packages.featured', [
-            'markstory/asset_compress' => ['logo' => 'https://example.com/asset-compress.svg'],
-            'cakedc/users' => ['logo' => null],
-        ]);
         $island = $this->testIsland('FeaturedPlugins');
         $order = $island->result()->state['order'];
-        $island->sync()->assertSet('order', $order)
-            ->assertSee('markstory/asset_compress')->assertSee('cakedc/users')
-            ->assertSee('https://example.com/asset-compress.svg');
-
-        Configure::write('Packages.featured', ['cakedc/users' => ['logo' => null]]);
-        $island->sync()->assertSee('cakedc/users')->assertDontSee('markstory/asset_compress');
+        $this->fetchTable(FeaturedPluginsTable::class)->updateAll(['enabled' => false], ['id' => 1]);
+        $island->sync()->assertSet('order', $order)->assertDontSee('markstory/asset_compress')->assertSee('cakedc/users');
     }
 
     /**
-     * Empty or missing configured packages leave no featured entries behind.
+     * Empty and unavailable selections hide the featured region.
      */
     public function testMissingSelectionHasNoFeaturedEntries(): void
     {
-        Configure::write('Packages.featured', []);
+        $table = $this->fetchTable(FeaturedPluginsTable::class);
+        $this->fetchTable(PackagesTable::class)->deleteAll([]);
         $this->testIsland('FeaturedPlugins')->assertDontSee('data-featured-plugins');
-        Configure::write('Packages.featured', ['missing/package' => ['logo' => null]]);
+        $table->deleteAll([]);
         $this->testIsland('FeaturedPlugins')->assertDontSee('data-featured-plugins');
     }
 
     /**
-     * The static recommendation section contains at most three configured packages.
+     * The random pool is bounded to three available, distinct packages.
      */
     public function testSelectionIsBoundedToThreePackages(): void
     {
-        Configure::write('Packages.featured', [
-            'markstory/asset_compress' => ['logo' => null],
-            'cakedc/users' => ['logo' => null],
-            'dereuromark/cakephp-tools' => ['logo' => null],
-            'vendor/package-01' => ['logo' => null],
-        ]);
+        $table = $this->fetchTable(FeaturedPluginsTable::class);
+        $table->saveOrFail($table->newEntity(['package' => 'vendor/package-01', 'enabled' => true]));
         $island = $this->testIsland('FeaturedPlugins');
         $this->assertSame(3, substr_count($island->result()->html, 'data-plugin-tone='));
+    }
+
+    /**
+     * Editorial values are escaped and never change imported package metadata.
+     */
+    public function testEditorialOverrides(): void
+    {
+        $this->fetchTable(FeaturedPluginsTable::class)->updateAll([
+            'title' => '<b>Curated title</b>', 'description' => '<script>example</script>', 'logo' => '/img/custom.svg',
+        ], ['id' => 1]);
+        $this->testIsland('FeaturedPlugins')->assertSee('<b>Curated title</b>')->assertSee('<script>example</script>')->assertSee('/img/custom.svg');
+        $this->assertSame('Featured package used to verify the homepage slider.', $this->fetchTable(PackagesTable::class)->get(1)->description);
     }
 }
