@@ -14,11 +14,12 @@ use Override;
  *
  * @property \Cake\View\Helper\HtmlHelper $Html
  * @property \Authentication\View\Helper\IdentityHelper $Identity
+ * @property \App\View\Helper\GithubHelper $Github
  */
 class UserHelper extends Helper
 {
     #[Override]
-    protected array $helpers = ['Html', 'Authentication.Identity'];
+    protected array $helpers = ['Html', 'Authentication.Identity', 'Github'];
 
     /**
      * Get the username of the logged-in user.
@@ -62,7 +63,7 @@ class UserHelper extends Helper
             return null;
         }
 
-        return 'https://github.com/' . urlencode($username) . '.png?size=' . $size;
+        return $this->Github->avatarUrl($username, $size);
     }
 
     /**

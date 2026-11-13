@@ -226,7 +226,7 @@ body::before {
     @apply mt-3 line-clamp-2 max-w-[42ch] text-sm leading-5 text-muted;
 }
 .namespace-profile-links {
-    @apply mt-2 ml-18 flex gap-1 md:ml-29;
+    @apply mt-2 ml-18 flex items-center gap-1 md:ml-29;
 }
 .namespace-profile-link {
     @apply size-8 min-h-8 border-0 bg-transparent p-0 text-muted shadow-none hover:bg-base-100/40 hover:text-primary;

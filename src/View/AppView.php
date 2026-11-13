@@ -26,6 +26,7 @@ use Cake\View\View;
  * @link https://book.cakephp.org/5/en/views.html#the-app-view
  * @property \Authentication\View\Helper\IdentityHelper $Identity
  * @property \App\View\Helper\UserHelper $User
+ * @property \App\View\Helper\GithubHelper $Github
  * @property \App\View\Helper\NumberHelper $Number
  * @property \Interact\View\Helper\InteractHelper $Interact
  * @property \CakeVite\View\Helper\ViteHelper $Vite
@@ -49,6 +50,7 @@ class AppView extends View
         $this->loadHelper('Number', ['className' => NumberHelper::class]);
         $this->loadHelper('Authentication.Identity');
         $this->loadHelper('User');
+        $this->loadHelper('Github');
         $this->loadHelper('Interact.Interact');
         $this->loadHelper('CakeVite.Vite');
     }

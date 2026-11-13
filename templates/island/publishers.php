@@ -2,7 +2,7 @@
 /**
  * @var \App\View\IslandTemplateView $this
  * @var \Cake\Datasource\Paging\PaginatedInterface<int, array<string, mixed>> $publishers
- * @var array<string, array{githubUrl: string|null, avatarUrl: string|null, plugins: list<array{id: int, package: string, name: string}>}> $details
+ * @var array<string, array{githubUrl: string|null, plugins: list<array{id: int, package: string, name: string}>}> $details
  * @var array<string, string> $sortOptions
  * @var array<string, string> $versionOptions
  * @var string|null $selectedMajor
@@ -115,24 +115,16 @@ $statLabels = [
                         ?>
                         <li class="publisher-row" data-publisher-namespace="<?= h($namespace) ?>">
                             <div class="flex min-w-0 items-start gap-3 md:gap-4">
-                                <div class="avatar avatar-placeholder relative shrink-0" x-data="{ failed: false }">
-                                    <div class="publisher-avatar" aria-hidden="true">
-                                        <span><?= h(mb_strtoupper(mb_substr($namespace, 0, 2))) ?></span>
-                                        <?php if ($detail['avatarUrl'] !== null) : ?>
-                                            <?= $this->Html->image($detail['avatarUrl'], [
-                                                'alt' => '',
-                                                'width' => 64,
-                                                'height' => 64,
-                                                'loading' => 'lazy',
-                                                'decoding' => 'async',
-                                                'referrerpolicy' => 'no-referrer',
-                                                'x-show' => '!failed',
-                                                '@error' => 'failed = true',
-                                                'x-init' => 'failed = $el.complete && $el.naturalWidth === 0',
-                                                'data-publisher-avatar' => '',
-                                            ]) ?>
-                                        <?php endif; ?>
-                                    </div>
+                                <div class="avatar avatar-placeholder relative shrink-0">
+                                    <?= $this->Github->avatar($namespace, $detail['githubUrl'], [
+                                        'class' => 'publisher-avatar',
+                                        'size' => 64,
+                                        'requestSize' => 96,
+                                        'imageAttributes' => [
+                                            'loading' => 'lazy',
+                                            'data-publisher-avatar' => '',
+                                        ],
+                                    ]) ?>
                                     <?php if ($showRanks) : ?>
                                         <span class="publisher-rank badge badge-sm" data-publisher-rank aria-label="<?= __('Rank {0}', $rankStart) ?>">#<?= $rankStart++ ?></span>
                                     <?php endif; ?>

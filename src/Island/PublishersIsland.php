@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Island;
 
 use App\Model\Table\PackagesTable;
-use App\Service\GithubProfileService;
 use Cake\Http\Exception\BadRequestException;
 use Interact\Attribute\Action;
 use Interact\Attribute\Pagination;
@@ -37,13 +36,6 @@ class PublishersIsland extends Island
         history: true,
     )]
     public PaginationState $paging;
-
-    /**
-     * Only the pure avatar URL builder is needed; profile lookups remain on profile pages.
-     */
-    public function __construct(private readonly GithubProfileService $profiles)
-    {
-    }
 
     /**
      * Preserve explicit history paging while resetting pages after filter changes.
@@ -111,12 +103,6 @@ class PublishersIsland extends Island
             $namespaces[] = $publisher['namespace'];
         }
         $details = $packages->publisherDetails($namespaces, $this->sort, $major);
-        foreach ($details as &$detail) {
-            $detail['avatarUrl'] = $detail['githubUrl'] !== null
-                ? $this->profiles->avatarUrl(basename($detail['githubUrl']), 96)
-                : null;
-        }
-        unset($detail);
 
         return [
             'publishers' => $publishers,

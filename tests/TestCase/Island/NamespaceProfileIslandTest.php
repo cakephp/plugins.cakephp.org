@@ -45,7 +45,7 @@ class NamespaceProfileIslandTest extends TestCase
             'namespace' => 'example',
             'githubUrl' => 'https://github.com/example',
         ])->assertSee('EX')
-            ->assertSee('Plugins for your CakePHP projects.')->assertDontSee('data-namespace-avatar');
+            ->assertSee('Plugins for your CakePHP projects.')->assertSee('https://github.com/example.png?size=192');
     }
 
     /**

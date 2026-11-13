@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Utility\GithubAvatar;
 use Cake\Cache\Cache;
 use Psr\Http\Client\ClientExceptionInterface;
 
@@ -19,23 +20,11 @@ class GithubProfileService
     }
 
     /**
-     * Build an avatar URL without performing an API request.
-     */
-    public function avatarUrl(string $owner, int $size = 192): ?string
-    {
-        if (!preg_match('/^[a-z0-9][a-z0-9-]*$/iD', $owner)) {
-            return null;
-        }
-
-        return 'https://github.com/' . rawurlencode(strtolower($owner)) . '.png?size=' . $size;
-    }
-
-    /**
      * @return array{avatarUrl: string|null, bio: string|null}|null
      */
     public function profile(string $owner): ?array
     {
-        $avatarUrl = $this->avatarUrl($owner);
+        $avatarUrl = GithubAvatar::url($owner);
         if ($avatarUrl === null) {
             return null;
         }

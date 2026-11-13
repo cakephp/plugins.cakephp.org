@@ -17,6 +17,10 @@ test.beforeEach(async ({ page }) => {
         contentType: 'image/png',
         path: 'webroot/img/packagist-logo.png',
     }))
+    await page.route('https://github.com/*.png*', route => route.fulfill({
+        contentType: 'image/png',
+        path: 'webroot/img/packagist-logo.png',
+    }))
 })
 
 test.afterEach(async ({ page }) => {
@@ -226,6 +230,64 @@ test('a failed avatar leaves readable initials and the generic description', asy
     await expect(hero(page).locator('.namespace-avatar')).toContainText('CA')
     await expect(hero(page).locator('[data-namespace-description]')).toHaveText('Plugins for your CakePHP projects.')
 })
+
+test('a failed profile mount keeps the hero stable and retries without blocking search', async ({ page }) => {
+    let release
+    const gate = new Promise(resolve => { release = resolve })
+    await page.route('**/_interact/update', async route => {
+        await gate
+        await route.abort()
+    }, { times: 1 })
+    await page.goto('/plugins/vendor')
+    const banner = page.locator('[data-namespace-banner]')
+    const loadingBounds = await banner.boundingBox()
+    release()
+    const retry = hero(page).getByRole('button', { name: 'Retry profile', exact: true })
+    await expect(retry).toBeVisible()
+    await expect(hero(page).locator('.skeleton')).toBeHidden()
+    await expect(hero(page).locator('[data-namespace-avatar]')).toBeVisible()
+    expect(await banner.boundingBox()).toEqual(loadingBounds)
+    await page.evaluate(() => { window.profileRecoveryMarker = 'retained' })
+    await page.getByRole('searchbox', { name: 'Search plugins', exact: true }).fill('package-01')
+    await expect(rows(page)).toHaveCount(1)
+    await page.screenshot({ path: 'tmp/namespace-profile-retry.png', animations: 'disabled' })
+    await retry.click()
+    await expect(page.locator('[data-namespace-profile]')).toBeVisible()
+    await expect(hero(page).locator('[data-namespace-description]')).toHaveText('CakePHP plugins by vendor.')
+    await expect(rows(page)).toHaveCount(1)
+    expect(await page.evaluate(() => window.profileRecoveryMarker)).toBe('retained')
+    expect(await banner.boundingBox()).toEqual(loadingBounds)
+})
+
+for (const [code, status] of [['snapshot_expired', 409], ['csrf_failed', 403]]) {
+    test(`${code} profile failures reload natively and retain filters`, async ({ page }) => {
+        await page.route('**/_interact/update', route => route.fulfill({
+            status,
+            contentType: 'application/json',
+            headers: { Interact: 'true' },
+            body: JSON.stringify({ version: 1, error: { code, message: 'A fresh profile request is required.' } }),
+        }), { times: 1 })
+        await page.setViewportSize({ width: 320, height: 844 })
+        await page.goto('/plugins/vendor?search=package-01&sort=monthly_downloads')
+        const reload = hero(page).getByRole('link', { name: 'Reload page', exact: true })
+        await expect(reload).toBeVisible()
+        await expect(hero(page).getByRole('button', { name: 'Retry profile', exact: true })).toBeHidden()
+        await expect(hero(page).locator('[data-namespace-avatar]')).toBeVisible()
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+        await page.getByRole('searchbox', { name: 'Search plugins', exact: true }).fill('package-02')
+        await expect(rows(page)).toHaveCount(1)
+        await expect(rows(page).first()).toContainText('vendor/package-02')
+        await page.screenshot({ path: `tmp/namespace-profile-${code}.png`, animations: 'disabled' })
+        const origin = page.url()
+        const navigation = page.waitForResponse(response => response.request().isNavigationRequest() && response.url() === origin)
+        await reload.click()
+        await navigation
+        await expect(page.locator('[data-namespace-profile]')).toBeVisible()
+        await expect(page).toHaveURL(origin)
+        await expect(rows(page)).toHaveCount(1)
+        await expect(hero(page).locator('[data-namespace-description]')).toHaveText('CakePHP plugins by vendor.')
+    })
+}
 
 test('namespace counters count up in sequence without shifting the layout', async ({ page }) => {
     await page.clock.install({ time: new Date('2026-01-01T00:00:00Z') })

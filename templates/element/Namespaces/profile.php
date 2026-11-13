@@ -10,25 +10,12 @@ $packagistUrl = 'https://packagist.org/packages/' . rawurlencode($namespace) . '
 ?>
 <section class="min-w-0" aria-labelledby="namespace-title" data-namespace-hero>
     <div class="namespace-identity">
-        <div class="avatar avatar-placeholder shrink-0" x-data="{ failed: false }" aria-hidden="true">
-            <div class="namespace-avatar">
-                <span><?= h(mb_strtoupper(mb_substr($namespace, 0, 2))) ?></span>
-                <?php if ($loading) : ?>
-                    <div class="skeleton absolute inset-0 rounded-[inherit] motion-reduce:animate-none" x-show="!$server.error"></div>
-                <?php elseif ($profile['avatarUrl'] ?? null) : ?>
-                    <?= $this->Html->image($profile['avatarUrl'], [
-                        'alt' => '',
-                        'width' => 96,
-                        'height' => 96,
-                        'decoding' => 'async',
-                        'referrerpolicy' => 'no-referrer',
-                        'x-show' => '!failed',
-                        '@error' => 'failed = true',
-                        'x-init' => 'failed = $el.complete && $el.naturalWidth === 0',
-                        'data-namespace-avatar' => '',
-                    ]) ?>
-                <?php endif; ?>
-            </div>
+        <div class="avatar avatar-placeholder shrink-0">
+            <?= $this->Github->avatar($namespace, $githubUrl, [
+                'avatarUrl' => $profile['avatarUrl'] ?? null,
+                'loading' => $loading,
+                'imageAttributes' => ['data-namespace-avatar' => ''],
+            ]) ?>
         </div>
         <div class="min-w-0 flex-1">
             <h1 id="namespace-title" class="namespace-title"><?= h($namespace) ?></h1>
@@ -51,5 +38,15 @@ $packagistUrl = 'https://packagist.org/packages/' . rawurlencode($namespace) . '
                 'class' => 'size-5.5',
             ]) ?>
         </a>
+        <?php if ($loading) : ?>
+            <span class="sr-only" role="alert" x-show="$server.error" x-cloak><?= __('Profile details are temporarily unavailable.') ?></span>
+            <button type="button" class="btn btn-ghost btn-xs ml-1 text-muted hover:text-primary"
+                    title="<?= __('Profile details are temporarily unavailable.') ?>"
+                    @click="$server.sync()" :disabled="$server.busy"
+                    x-show="$server.error && $server.error.recovery === 'retry'" x-cloak><?= __('Retry profile') ?></button>
+            <a href="" class="btn btn-ghost btn-xs ml-1 text-muted hover:text-primary"
+                    title="<?= __('Reload to refresh the profile request.') ?>"
+                    x-show="$server.error && $server.error.recovery === 'reload'" x-cloak><?= __('Reload page') ?></a>
+        <?php endif; ?>
     </nav>
 </section>
