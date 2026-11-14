@@ -11,12 +11,6 @@ use Cake\Log\Engine\FileLog;
 use Cake\Mailer\Transport\MailTransport;
 use function Cake\Core\env;
 
-$rateLimitCacheUrl = env('RATE_LIMIT_CACHE_URL', env('REDIS_URL'));
-$rateLimitEnabled = filter_var(
-    env('RATE_LIMIT_ENABLED', $rateLimitCacheUrl !== null),
-    FILTER_VALIDATE_BOOL,
-);
-
 return [
     /*
      * Debug Level:
@@ -130,20 +124,6 @@ return [
     ],
 
     /*
-     * Protection for public page requests and the Interact update endpoint.
-     *
-     * RATE_LIMIT_CACHE_URL must be a redis:// DSN. The rate limiter remains
-     * disabled until that shared, atomic cache has been configured.
-     */
-    'PublicRequestProtection' => [
-        'rateLimitEnabled' => $rateLimitEnabled && is_string($rateLimitCacheUrl) && str_starts_with($rateLimitCacheUrl, 'redis://'),
-        'limit' => (int)env('RATE_LIMIT_REQUESTS', 6000),
-        'browseLimit' => (int)env('RATE_LIMIT_BROWSE_REQUESTS', 90),
-        'filteredLimit' => (int)env('RATE_LIMIT_FILTERED_REQUESTS', 15),
-        'window' => 60,
-    ],
-
-    /*
      * Configure the cache adapters.
      */
     'Cache' => [
@@ -169,13 +149,6 @@ return [
             'url' => env('CACHE_GITHUB_PROFILES_URL', env('REDIS_URL')),
             'fallback' => false,
         ],
-
-        'rate_limit' => [
-            'className' => RedisEngine::class,
-            'duration' => '+1 minute',
-            'prefix' => 'plugins_rate_limit_',
-            'fallback' => false,
-        ] + ($rateLimitCacheUrl ? ['url' => $rateLimitCacheUrl] : []),
 
         /*
          * Configure the cache used for general framework caching.

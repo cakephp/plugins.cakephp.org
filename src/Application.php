@@ -18,7 +18,6 @@ namespace App;
 
 use ADmad\SocialAuth\Middleware\SocialAuthMiddleware;
 use App\Event\AfterGithubIdentify;
-use App\Http\RateLimit\AtomicFixedWindowRateLimiter;
 use App\Middleware\ThemeCookieMiddleware;
 use App\Model\Table\PackagesTable;
 use App\Model\Table\UsersTable;
@@ -45,7 +44,6 @@ use Cake\Http\Client;
 use Cake\Http\Client\ClientEvent;
 use Cake\Http\Middleware\BodyParserMiddleware;
 use Cake\Http\Middleware\CsrfProtectionMiddleware;
-use Cake\Http\Middleware\RateLimitMiddleware;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Locator\TableLocator;
@@ -168,49 +166,6 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                     'queryParam' => 'redirect',
                 ],
             ]));
-
-        $requestProtection = (array)Configure::read('PublicRequestProtection', []);
-        if ($requestProtection['rateLimitEnabled'] ?? false) {
-            $limiterResolver = static fn(ServerRequestInterface $request): string => $request->getMethod() === 'POST'
-                ? 'interact'
-                : ($request->getQueryParams() === [] ? 'browse' : 'filtered');
-            $middlewareQueue->insertBefore(
-                RoutingMiddleware::class,
-                new RateLimitMiddleware([
-                    'cache' => 'rate_limit',
-                    'headers' => true,
-                    'strategyClass' => AtomicFixedWindowRateLimiter::class,
-                    'limit' => $requestProtection['limit'] ?? 6000,
-                    'window' => $requestProtection['window'] ?? 60,
-                    'ipHeader' => 'remote_addr',
-                    'limiterResolver' => $limiterResolver,
-                    'limiters' => [
-                        'browse' => [
-                            'limit' => $requestProtection['browseLimit'] ?? 90,
-                        ],
-                        'filtered' => [
-                            'limit' => $requestProtection['filteredLimit'] ?? 15,
-                        ],
-                        'interact' => [
-                            'limit' => $requestProtection['limit'] ?? 6000,
-                        ],
-                    ],
-                    'keyGenerator' => static fn(string $identifier, ServerRequestInterface $request): string => 'public_rate_limit_'
-                        . $limiterResolver($request) . '_' . hash('sha256', $identifier),
-                    'skipCheck' => static function (ServerRequestInterface $request): bool {
-                        $path = rtrim($request->getUri()->getPath(), '/');
-                        if ($path === '/_interact/update') {
-                            return $request->getMethod() !== 'POST';
-                        }
-                        if ($path === '/admin' || str_starts_with($path, '/admin/') || $path === '/auth' || str_starts_with($path, '/auth/')) {
-                            return true;
-                        }
-
-                        return !in_array($request->getMethod(), ['GET', 'HEAD'], true);
-                    },
-                ]),
-            );
-        }
 
         return $middlewareQueue;
     }

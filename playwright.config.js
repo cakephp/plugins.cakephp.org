@@ -15,8 +15,6 @@ export default defineConfig({
             APP_NAME: 'plugins-browser-tests',
             DATABASE_URL: `sqlite://127.0.0.1/${database}`,
             DEBUG: 'false',
-            RATE_LIMIT_ENABLED: 'false',
-            RATE_LIMIT_CACHE_URL: 'array://',
             CACHE_DEFAULT_URL: 'array://',
             CACHE_CATALOGUE_URL: `file://${fileURLToPath(new URL('./tmp/browser-catalogue/', import.meta.url))}`,
             CACHE_GITHUB_PROFILES_URL: `file://${fileURLToPath(new URL('./tmp/browser-github-profiles/', import.meta.url))}`,

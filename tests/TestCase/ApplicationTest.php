@@ -17,20 +17,13 @@ declare(strict_types=1);
 namespace App\Test\TestCase;
 
 use App\Application;
-use Cake\Cache\Cache;
-use Cake\Cache\Engine\ArrayEngine;
 use Cake\Core\Configure;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
-use Cake\Http\Exception\TooManyRequestsException;
-use Cake\Http\Middleware\RateLimitMiddleware;
 use Cake\Http\MiddlewareQueue;
-use Cake\Http\Response;
-use Cake\Http\ServerRequest;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
-use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * ApplicationTest class
@@ -38,35 +31,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 class ApplicationTest extends TestCase
 {
     use IntegrationTestTrait;
-
-    /**
-     * @var array<string, mixed>|null
-     */
-    protected ?array $rateLimitCacheConfig = null;
-
-    /**
-     * Isolate middleware counters from development and production Redis settings.
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->rateLimitCacheConfig = Cache::getConfig('rate_limit');
-        Cache::drop('rate_limit');
-        Cache::setConfig('rate_limit', ['className' => ArrayEngine::class]);
-        Configure::write('PublicRequestProtection.rateLimitEnabled', false);
-    }
-
-    /**
-     * Restore the application's rate-limit cache after each test.
-     */
-    protected function tearDown(): void
-    {
-        Cache::drop('rate_limit');
-        if ($this->rateLimitCacheConfig !== null) {
-            Cache::setConfig('rate_limit', $this->rateLimitCacheConfig);
-        }
-        parent::tearDown();
-    }
 
     /**
      * Test bootstrap in production.
@@ -132,138 +96,5 @@ class ApplicationTest extends TestCase
         foreach ($middleware as $layer) {
             $this->assertNotInstanceOf(AssetMiddleware::class, $layer);
         }
-    }
-
-    /**
-     * Public reads are throttled separately from Interact while admin/auth bypass.
-     */
-    public function testPublicRequestProfiles(): void
-    {
-        Configure::write('debug', false);
-        $limiter = $this->rateLimiter();
-        $handler = $this->createStub(RequestHandlerInterface::class);
-        $handler->method('handle')->willReturn(new Response());
-        $requests = [
-            ['/', 'GET', [], 90],
-            ['/', 'GET', ['search' => 'users'], 15],
-            ['/publishers', 'GET', [], 90],
-            ['/publishers', 'GET', ['sort' => 'stars'], 15],
-            ['/plugins/markstory/asset_compress', 'GET', [], 90],
-            ['/plugins/dereuromark', 'GET', ['search' => 'tools'], 15],
-            ['/', 'HEAD', [], 90],
-            ['/_interact/update', 'POST', [], 6000],
-        ];
-        foreach ($requests as [$path, $method, $query, $limit]) {
-            $request = new ServerRequest([
-                'url' => $path,
-                'environment' => [
-                    'REQUEST_METHOD' => $method,
-                    'REMOTE_ADDR' => '203.0.113.1',
-                ],
-            ])->withQueryParams($query);
-            $response = $limiter->process($request, $handler);
-            $this->assertSame((string)$limit, $response->getHeaderLine('X-RateLimit-Limit'));
-        }
-        foreach ([['/auth/login', 'GET'], ['/auth/callback', 'GET'], ['/admin', 'GET'], ['/admin/users', 'POST'], ['/_interact/update', 'GET']] as [$path, $method]) {
-            $request = new ServerRequest([
-                'url' => $path,
-                'environment' => [
-                    'REQUEST_METHOD' => $method,
-                ],
-            ]);
-            $this->assertFalse($limiter->process($request, $handler)->hasHeader('X-RateLimit-Limit'));
-        }
-    }
-
-    /**
-     * Exhausting filtered reads must not exhaust ordinary browsing or island updates.
-     */
-    public function testFilteredRequestsAreThrottledIndependently(): void
-    {
-        Configure::write('PublicRequestProtection.filteredLimit', 2);
-        Configure::write('PublicRequestProtection.browseLimit', 1);
-        Configure::write('PublicRequestProtection.limit', 1);
-        $limiter = $this->rateLimiter();
-        $handler = $this->createStub(RequestHandlerInterface::class);
-        $handler->method('handle')->willReturn(new Response());
-        $request = new ServerRequest([
-            'url' => '/',
-            'environment' => [
-                'REQUEST_METHOD' => 'GET',
-                'REMOTE_ADDR' => '203.0.113.9',
-            ],
-        ]);
-        $filtered = $request->withQueryParams(['search' => 'asset']);
-        $limiter->process($filtered, $handler);
-        $this->assertSame('0', $limiter->process($filtered->withQueryParams(['search' => 'users']), $handler)->getHeaderLine('X-RateLimit-Remaining'));
-        $this->assertSame('0', $limiter->process($request, $handler)->getHeaderLine('X-RateLimit-Remaining'));
-        $update = $request->withUri($request->getUri()->withPath('/_interact/update'))->withMethod('POST');
-        $this->assertSame('0', $limiter->process($update, $handler)->getHeaderLine('X-RateLimit-Remaining'));
-        $this->expectException(TooManyRequestsException::class);
-        $limiter->process($filtered, $handler);
-    }
-
-    /**
-     * The live-update transport cannot bypass the atomic counter.
-     */
-    public function testInteractUpdatesAreThrottled(): void
-    {
-        Configure::write('PublicRequestProtection.limit', 2);
-        $limiter = $this->rateLimiter();
-        $handler = $this->createStub(RequestHandlerInterface::class);
-        $handler->method('handle')->willReturn(new Response());
-        $request = new ServerRequest([
-            'url' => '/_interact/update',
-            'environment' => [
-                'REQUEST_METHOD' => 'POST',
-                'REMOTE_ADDR' => '203.0.113.2',
-            ],
-        ]);
-        $limiter->process($request, $handler);
-        $limiter->process($request, $handler);
-        $this->expectException(TooManyRequestsException::class);
-        $limiter->process($request, $handler);
-    }
-
-    /**
-     * Spoofed forwarding headers cannot change the connecting IP's quota.
-     */
-    public function testForwardedHeadersCannotChangeQuota(): void
-    {
-        Configure::write('PublicRequestProtection.limit', 1);
-        $limiter = $this->rateLimiter();
-        $handler = $this->createStub(RequestHandlerInterface::class);
-        $handler->method('handle')->willReturn(new Response());
-        $request = new ServerRequest([
-            'url' => '/_interact/update',
-            'environment' => [
-                'REQUEST_METHOD' => 'POST',
-                'REMOTE_ADDR' => '203.0.113.3',
-            ],
-        ])->withHeader('X-Forwarded-For', '198.51.100.1')->withHeader('CF-Connecting-IP', '198.51.100.1');
-        $this->assertSame('0', $limiter->process($request, $handler)->getHeaderLine('X-RateLimit-Remaining'));
-        $this->assertSame('0', $limiter->process($request->withEnv('REMOTE_ADDR', '203.0.113.4'), $handler)->getHeaderLine('X-RateLimit-Remaining'));
-        try {
-            $limiter->process($request->withHeader('X-Forwarded-For', '198.51.100.2')->withHeader('CF-Connecting-IP', '198.51.100.2'), $handler);
-            $this->fail('Forwarded headers must not reset the counter.');
-        } catch (TooManyRequestsException $exception) {
-            $this->assertArrayHasKey('Retry-After', $exception->getHeaders());
-        }
-    }
-
-    /**
-     * Resolve the enabled limiter from the actual application middleware queue.
-     */
-    protected function rateLimiter(): RateLimitMiddleware
-    {
-        Configure::write('PublicRequestProtection.rateLimitEnabled', true);
-        $middleware = new Application(dirname(__DIR__, 2) . '/config')->middleware(new MiddlewareQueue());
-        foreach ($middleware as $limiter) {
-            if ($limiter instanceof RateLimitMiddleware) {
-                return $limiter;
-            }
-        }
-
-        $this->fail('Rate limiting middleware was not registered.');
     }
 }

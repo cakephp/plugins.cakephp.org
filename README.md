@@ -4,12 +4,6 @@ This repository contains the code responsible for https://plugins.cakephp.org
 
 ## Request handling
 
-Public pages and Interact updates use CakePHP's `RateLimitMiddleware` with the existing
-atomic Redis counter. `RATE_LIMIT_CACHE_URL` selects the cache, defaulting to
-Dokku's `REDIS_URL`. Rate limiting is enabled when a Redis URL is configured;
-`RATE_LIMIT_ENABLED=false` disables it for local development or maintenance.
-The production container includes the PHP Redis extension.
-
 Public catalogue data is cached in Redis for one day. `CACHE_CATALOGUE_URL`
 selects the connection, defaulting to Dokku's `REDIS_URL`. DDEV includes Redis.
 `CACHE_CATALOGUE_DURATION` overrides the TTL. Imports and catalogue cleanup clear
@@ -17,12 +11,7 @@ this cache; Interact responses and signed snapshots are rendered fresh.
 Default and GitHub profile caches also use `REDIS_URL`, with optional
 `CACHE_DEFAULT_URL` and `CACHE_GITHUB_PROFILES_URL` overrides.
 
-Emergency public-page limits are 90 plain GET/HEAD requests and 15 requests with
-query parameters per minute, configured through `RATE_LIMIT_BROWSE_REQUESTS` and
-`RATE_LIMIT_FILTERED_REQUESTS`. Interact updates retain a separate 6,000/minute
-quota configured through `RATE_LIMIT_REQUESTS`. Counters use the connecting IP,
-so visitors behind the same proxy share these limits. `/admin` and `/auth` paths
-bypass throttling; admin island updates use the shared Interact endpoint.
+Production rate limiting is configured in Nginx on the Dokku host.
 
 Interactive regions use Cake Interact's shipped runtime. Catalogue input
 validation remains in the islands and the framework paginator.
