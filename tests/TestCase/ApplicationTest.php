@@ -135,34 +135,25 @@ class ApplicationTest extends TestCase
     }
 
     /**
-     * Only POST updates consume quota; normal pages and admin paths are skipped.
+     * Public reads are throttled separately from Interact while admin/auth bypass.
      */
-    public function testOnlyInteractUpdatesConsumeQuota(): void
+    public function testPublicRequestProfiles(): void
     {
         Configure::write('debug', false);
         $limiter = $this->rateLimiter();
         $handler = $this->createStub(RequestHandlerInterface::class);
         $handler->method('handle')->willReturn(new Response());
         $requests = [
-            ['/', 'GET', []],
-            ['/', 'GET', ['search' => 'users']],
-            ['/publishers', 'GET', []],
-            ['/publishers', 'GET', ['sort' => 'stars']],
-            ['/plugins/markstory/asset_compress', 'GET', []],
-            ['/plugins/vendor.name/plugin_name.json', 'GET', []],
-            ['/plugins/dereuromark', 'GET', []],
-            ['/plugins/dereuromark', 'GET', ['search' => 'tools']],
-            ['/', 'HEAD', []],
-            ['/requirements', 'GET', []],
-            ['/auth/login', 'POST', []],
-            ['/admin', 'GET', []],
-            ['/admin/users', 'GET', []],
-            ['/admin/users', 'POST', []],
-            ['/admin/_interact/update', 'POST', []],
-            ['/_interact/update', 'GET', []],
-            ['/_interact/update', 'HEAD', []],
+            ['/', 'GET', [], 90],
+            ['/', 'GET', ['search' => 'users'], 15],
+            ['/publishers', 'GET', [], 90],
+            ['/publishers', 'GET', ['sort' => 'stars'], 15],
+            ['/plugins/markstory/asset_compress', 'GET', [], 90],
+            ['/plugins/dereuromark', 'GET', ['search' => 'tools'], 15],
+            ['/', 'HEAD', [], 90],
+            ['/_interact/update', 'POST', [], 6000],
         ];
-        foreach ($requests as [$path, $method, $query]) {
+        foreach ($requests as [$path, $method, $query, $limit]) {
             $request = new ServerRequest([
                 'url' => $path,
                 'environment' => [
@@ -171,18 +162,45 @@ class ApplicationTest extends TestCase
                 ],
             ])->withQueryParams($query);
             $response = $limiter->process($request, $handler);
-            $this->assertFalse($response->hasHeader('X-RateLimit-Limit'), $method . ' ' . $path);
+            $this->assertSame((string)$limit, $response->getHeaderLine('X-RateLimit-Limit'));
         }
+        foreach ([['/auth/login', 'GET'], ['/auth/callback', 'GET'], ['/admin', 'GET'], ['/admin/users', 'POST'], ['/_interact/update', 'GET']] as [$path, $method]) {
+            $request = new ServerRequest([
+                'url' => $path,
+                'environment' => [
+                    'REQUEST_METHOD' => $method,
+                ],
+            ]);
+            $this->assertFalse($limiter->process($request, $handler)->hasHeader('X-RateLimit-Limit'));
+        }
+    }
+
+    /**
+     * Exhausting filtered reads must not exhaust ordinary browsing or island updates.
+     */
+    public function testFilteredRequestsAreThrottledIndependently(): void
+    {
+        Configure::write('PublicRequestProtection.filteredLimit', 2);
+        Configure::write('PublicRequestProtection.browseLimit', 1);
+        Configure::write('PublicRequestProtection.limit', 1);
+        $limiter = $this->rateLimiter();
+        $handler = $this->createStub(RequestHandlerInterface::class);
+        $handler->method('handle')->willReturn(new Response());
         $request = new ServerRequest([
-            'url' => '/_interact/update',
+            'url' => '/',
             'environment' => [
-                'REQUEST_METHOD' => 'POST',
-                'REMOTE_ADDR' => '203.0.113.1',
+                'REQUEST_METHOD' => 'GET',
+                'REMOTE_ADDR' => '203.0.113.9',
             ],
         ]);
-        $response = $limiter->process($request, $handler);
-        $this->assertSame('6000', $response->getHeaderLine('X-RateLimit-Limit'));
-        $this->assertSame('5999', $response->getHeaderLine('X-RateLimit-Remaining'));
+        $filtered = $request->withQueryParams(['search' => 'asset']);
+        $limiter->process($filtered, $handler);
+        $this->assertSame('0', $limiter->process($filtered->withQueryParams(['search' => 'users']), $handler)->getHeaderLine('X-RateLimit-Remaining'));
+        $this->assertSame('0', $limiter->process($request, $handler)->getHeaderLine('X-RateLimit-Remaining'));
+        $update = $request->withUri($request->getUri()->withPath('/_interact/update'))->withMethod('POST');
+        $this->assertSame('0', $limiter->process($update, $handler)->getHeaderLine('X-RateLimit-Remaining'));
+        $this->expectException(TooManyRequestsException::class);
+        $limiter->process($filtered, $handler);
     }
 
     /**

@@ -171,6 +171,9 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
 
         $requestProtection = (array)Configure::read('PublicRequestProtection', []);
         if ($requestProtection['rateLimitEnabled'] ?? false) {
+            $limiterResolver = static fn(ServerRequestInterface $request): string => $request->getMethod() === 'POST'
+                ? 'interact'
+                : ($request->getQueryParams() === [] ? 'browse' : 'filtered');
             $middlewareQueue->insertBefore(
                 RoutingMiddleware::class,
                 new RateLimitMiddleware([
@@ -180,8 +183,31 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                     'limit' => $requestProtection['limit'] ?? 6000,
                     'window' => $requestProtection['window'] ?? 60,
                     'ipHeader' => 'remote_addr',
-                    'skipCheck' => static fn(ServerRequestInterface $request): bool => $request->getMethod() !== 'POST'
-                        || rtrim($request->getUri()->getPath(), '/') !== '/_interact/update',
+                    'limiterResolver' => $limiterResolver,
+                    'limiters' => [
+                        'browse' => [
+                            'limit' => $requestProtection['browseLimit'] ?? 90,
+                        ],
+                        'filtered' => [
+                            'limit' => $requestProtection['filteredLimit'] ?? 15,
+                        ],
+                        'interact' => [
+                            'limit' => $requestProtection['limit'] ?? 6000,
+                        ],
+                    ],
+                    'keyGenerator' => static fn(string $identifier, ServerRequestInterface $request): string => 'public_rate_limit_'
+                        . $limiterResolver($request) . '_' . hash('sha256', $identifier),
+                    'skipCheck' => static function (ServerRequestInterface $request): bool {
+                        $path = rtrim($request->getUri()->getPath(), '/');
+                        if ($path === '/_interact/update') {
+                            return $request->getMethod() !== 'POST';
+                        }
+                        if ($path === '/admin' || str_starts_with($path, '/admin/') || $path === '/auth' || str_starts_with($path, '/auth/')) {
+                            return true;
+                        }
+
+                        return !in_array($request->getMethod(), ['GET', 'HEAD'], true);
+                    },
                 ]),
             );
         }

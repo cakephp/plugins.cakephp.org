@@ -4,7 +4,7 @@ This repository contains the code responsible for https://plugins.cakephp.org
 
 ## Request handling
 
-Interact updates use CakePHP's `RateLimitMiddleware` with the existing
+Public pages and Interact updates use CakePHP's `RateLimitMiddleware` with the existing
 atomic Redis counter. `RATE_LIMIT_CACHE_URL` selects the cache, defaulting to
 Dokku's `REDIS_URL`. Rate limiting is enabled when a Redis URL is configured;
 `RATE_LIMIT_ENABLED=false` disables it for local development or maintenance.
@@ -17,11 +17,12 @@ this cache; Interact responses and signed snapshots are rendered fresh.
 Default and GitHub profile caches also use `REDIS_URL`, with optional
 `CACHE_DEFAULT_URL` and `CACHE_GITHUB_PROFILES_URL` overrides.
 
-A generous shared limit of 6,000 Interact updates per minute per connecting IP
-provides a coarse safeguard. `RATE_LIMIT_REQUESTS` overrides it. Forwarded IP
-headers are ignored, so visitors behind the same proxy may share the limit.
-Normal page requests, including `/admin` paths, bypass throttling; admin island
-updates use the shared Interact endpoint and remain subject to the limit.
+Emergency public-page limits are 90 plain GET/HEAD requests and 15 requests with
+query parameters per minute, configured through `RATE_LIMIT_BROWSE_REQUESTS` and
+`RATE_LIMIT_FILTERED_REQUESTS`. Interact updates retain a separate 6,000/minute
+quota configured through `RATE_LIMIT_REQUESTS`. Counters use the connecting IP,
+so visitors behind the same proxy share these limits. `/admin` and `/auth` paths
+bypass throttling; admin island updates use the shared Interact endpoint.
 
 Interactive regions use Cake Interact's shipped runtime. Catalogue input
 validation remains in the islands and the framework paginator.
