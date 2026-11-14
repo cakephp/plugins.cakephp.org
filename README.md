@@ -2,20 +2,6 @@
 
 This repository contains the code responsible for https://plugins.cakephp.org
 
-## Request handling
-
-Public catalogue data is cached in Redis for one day. `CACHE_CATALOGUE_URL`
-selects the connection, defaulting to Dokku's `REDIS_URL`. DDEV includes Redis.
-`CACHE_CATALOGUE_DURATION` overrides the TTL. Imports and catalogue cleanup clear
-this cache; Interact responses and signed snapshots are rendered fresh.
-Default and GitHub profile caches also use `REDIS_URL`, with optional
-`CACHE_DEFAULT_URL` and `CACHE_GITHUB_PROFILES_URL` overrides.
-
-Production rate limiting is configured in Nginx on the Dokku host.
-
-Interactive regions use Cake Interact's shipped runtime. Catalogue input
-validation remains in the islands and the framework paginator.
-
 ## Starting local development
 
 You need PHP 8.5 and [DDEV](https://docs.ddev.com/en/stable/) installed and configured on your machine.
