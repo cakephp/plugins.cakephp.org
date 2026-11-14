@@ -1,5 +1,6 @@
 # Based on Dokku v0.38.34's default template; compare when upgrading Dokku.
 # https://github.com/dokku/dokku/blob/v0.38.34/plugins/nginx-vhosts/templates/nginx.conf.sigil
+# Uses the standalone HTTP/2 directive supported by Nginx 1.25.1 and newer.
 # Maps and zones belong at http scope, outside the generated server blocks.
 map "$request_method:$uri" $plugins_browse_limit_key {
   default "";
@@ -27,14 +28,9 @@ limit_req_zone $plugins_interact_limit_key zone=plugins_interact:10m rate=10r/s;
 {{ $is_redirect := and (not $is_ssl) (eq $listen_port "80") $.SSL_INUSE }}
 server {
   {{ if $is_ssl }}
-  {{ if eq $.HTTP2_DIRECTIVE_SUPPORTED "true" }}
   listen      [{{ $.NGINX_BIND_ADDRESS_IP6 }}]:{{ $listen_port }} ssl;
   listen      {{ if $.NGINX_BIND_ADDRESS_IP4 }}{{ $.NGINX_BIND_ADDRESS_IP4 }}:{{end}}{{ $listen_port }} ssl;
   http2 on;
-  {{ else }}
-  listen      [{{ $.NGINX_BIND_ADDRESS_IP6 }}]:{{ $listen_port }} ssl http2;
-  listen      {{ if $.NGINX_BIND_ADDRESS_IP4 }}{{ $.NGINX_BIND_ADDRESS_IP4 }}:{{end}}{{ $listen_port }} ssl http2;
-  {{ end }}
   {{ else }}
   listen      [{{ $.NGINX_BIND_ADDRESS_IP6 }}]:{{ $listen_port }};
   listen      {{ if $.NGINX_BIND_ADDRESS_IP4 }}{{ $.NGINX_BIND_ADDRESS_IP4 }}:{{end}}{{ $listen_port }};
@@ -86,7 +82,6 @@ server {
     gzip_comp_level  6;
 
     proxy_pass  http://{{ $.APP }}-{{ $upstream_port }};
-    {{ if and $is_ssl (eq $.HTTP2_PUSH_SUPPORTED "true") }}http2_push_preload on; {{ end }}
     proxy_http_version {{ $.PROXY_HTTP_VERSION }};
     proxy_connect_timeout {{ $.PROXY_CONNECT_TIMEOUT }};
     proxy_read_timeout {{ $.PROXY_READ_TIMEOUT }};
@@ -146,14 +141,9 @@ server {
 {{ if $.DOKKU_APP_WEB_LISTENERS }}
 {{ $is_ssl := eq $scheme "grpcs" }}
 server {
-  {{ if eq $.HTTP2_DIRECTIVE_SUPPORTED "true" }}
   listen      [{{ $.NGINX_BIND_ADDRESS_IP6 }}]:{{ $listen_port }}{{ if $is_ssl }} ssl{{ end }};
   listen      {{ if $.NGINX_BIND_ADDRESS_IP4 }}{{ $.NGINX_BIND_ADDRESS_IP4 }}:{{end}}{{ $listen_port }}{{ if $is_ssl }} ssl{{ end }};
   http2 on;
-  {{ else }}
-  listen      [{{ $.NGINX_BIND_ADDRESS_IP6 }}]:{{ $listen_port }}{{ if $is_ssl }} ssl{{ end }} http2;
-  listen      {{ if $.NGINX_BIND_ADDRESS_IP4 }}{{ $.NGINX_BIND_ADDRESS_IP4 }}:{{end}}{{ $listen_port }}{{ if $is_ssl }} ssl{{ end }} http2;
-  {{ end }}
   {{ if $.NOSSL_SERVER_NAME }}server_name {{ $.NOSSL_SERVER_NAME }}; {{ end }}
   access_log  {{ $.NGINX_ACCESS_LOG_PATH }}{{ if and ($.NGINX_ACCESS_LOG_FORMAT) (ne $.NGINX_ACCESS_LOG_PATH "off") }} {{ $.NGINX_ACCESS_LOG_FORMAT }}{{ end }};
   error_log   {{ $.NGINX_ERROR_LOG_PATH }};
