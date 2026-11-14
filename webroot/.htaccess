@@ -1,5 +1,9 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
+
+    # Retired plugin URLs never need to reach the application.
+    RewriteRule ^p(?:/|$) - [G]
+
     RewriteCond %{HTTP_USER_AGENT} meta-externalagent [NC]
     RewriteCond %{QUERY_STRING} (^|&)(keyword|cakephp_slugs|php_slugs|sort|direction|page)(%5B|=) [NC]
     RewriteRule ^ - [R=429,L]
