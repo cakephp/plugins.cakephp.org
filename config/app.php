@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\View\IslandTemplateView;
 use Cake\Cache\Engine\FileEngine;
+use Cake\Cache\Engine\RedisEngine;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Log\Engine\FileLog;
@@ -15,10 +16,6 @@ $rateLimitEnabled = filter_var(
     env('RATE_LIMIT_ENABLED', $rateLimitCacheUrl !== null),
     FILTER_VALIDATE_BOOL,
 );
-$trustedProxyIps = array_values(array_filter(array_map(
-    trim(...),
-    explode(',', (string)env('TRUSTED_PROXY_IPS', '172.17.0.1')),
-)));
 
 return [
     /*
@@ -133,42 +130,46 @@ return [
     ],
 
     /*
-     * Protection for the public package listing and Interact update endpoint.
+     * Protection for the Interact update endpoint.
      *
      * RATE_LIMIT_CACHE_URL must be a redis:// DSN. The rate limiter remains
      * disabled until that shared, atomic cache has been configured.
      */
     'PublicRequestProtection' => [
         'rateLimitEnabled' => $rateLimitEnabled && is_string($rateLimitCacheUrl) && str_starts_with($rateLimitCacheUrl, 'redis://'),
-        'trustedProxyIps' => $trustedProxyIps,
-        'rateLimits' => [
-            'browse' => ['limit' => 90, 'window' => 60],
-            'filtered' => ['limit' => 15, 'window' => 60],
-            'interact' => ['limit' => 30, 'window' => 60],
-        ],
+        'limit' => (int)env('RATE_LIMIT_REQUESTS', 6000),
+        'window' => 60,
     ],
 
     /*
      * Configure the cache adapters.
      */
     'Cache' => [
+        'catalogue' => [
+            'className' => RedisEngine::class,
+            'prefix' => 'plugins_catalogue_',
+            'duration' => env('CACHE_CATALOGUE_DURATION', '+1 day'),
+            'url' => env('CACHE_CATALOGUE_URL', env('REDIS_URL')),
+            'fallback' => false,
+        ],
+
         'default' => [
-            'className' => FileEngine::class,
-            'path' => CACHE,
-            'url' => env('CACHE_DEFAULT_URL'),
+            'className' => RedisEngine::class,
+            'prefix' => 'plugins_default_',
+            'url' => env('CACHE_DEFAULT_URL', env('REDIS_URL')),
+            'fallback' => false,
         ],
 
         'github_profiles' => [
-            'className' => FileEngine::class,
-            'path' => CACHE . 'github_profiles' . DS,
+            'className' => RedisEngine::class,
             'prefix' => 'plugins_github_profiles_',
             'duration' => '+1 day',
-            'url' => env('CACHE_GITHUB_PROFILES_URL'),
+            'url' => env('CACHE_GITHUB_PROFILES_URL', env('REDIS_URL')),
+            'fallback' => false,
         ],
 
         'rate_limit' => [
-            'className' => FileEngine::class,
-            'path' => CACHE . 'rate_limit' . DS,
+            'className' => RedisEngine::class,
             'duration' => '+1 minute',
             'prefix' => 'plugins_rate_limit_',
             'fallback' => false,

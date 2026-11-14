@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Model\Table\PackagesTable;
+use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Http\Client;
 use RuntimeException;
@@ -98,6 +99,7 @@ class AwesomeListImporter
             }
             $categories->deleteAll($active === [] ? [] : ['id NOT IN' => $active]);
         });
+        Cache::clear('catalogue');
 
         return ['matched' => count($matched), 'unmatched' => array_keys($unmatched)];
     }

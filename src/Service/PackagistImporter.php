@@ -100,7 +100,7 @@ class PackagistImporter
                 Log::warning('Unable to delete package', ['package' => $package->package, 'errors' => $package->getErrors()]);
             }
         }
-        Cache::delete('package_filter_tags_v1');
+        Cache::clear('catalogue');
 
         return $result;
     }

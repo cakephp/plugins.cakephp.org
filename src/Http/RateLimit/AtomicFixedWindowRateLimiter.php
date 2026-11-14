@@ -5,6 +5,7 @@ namespace App\Http\RateLimit;
 
 use Cake\Cache\CacheEngineInterface;
 use Cake\Http\RateLimit\RateLimiterInterface;
+use DebugKit\Cache\Engine\DebugEngine;
 use LogicException;
 use Psr\SimpleCache\CacheInterface;
 use RuntimeException;
@@ -24,6 +25,10 @@ class AtomicFixedWindowRateLimiter implements RateLimiterInterface
      */
     public function __construct(CacheInterface $cache)
     {
+        // DebugKit's wrapper inherits a non-atomic add() instead of forwarding it.
+        while ($cache instanceof DebugEngine) {
+            $cache = $cache->engine();
+        }
         if (!$cache instanceof CacheEngineInterface) {
             throw new RuntimeException('Rate limiting requires a CakePHP cache engine.');
         }

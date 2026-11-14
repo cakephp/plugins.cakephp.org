@@ -14,7 +14,8 @@ hooks:
         -   exec-host: ddev mysql < .ddev/mysql/init_test_db.sql
 use_dns_when_possible: true
 composer_version: "2"
-web_environment: []
+web_environment:
+    - REDIS_URL=redis://redis:6379
 corepack_enable: false
 nodejs_version: "24"
 web_extra_exposed_ports:

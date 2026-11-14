@@ -1,11 +1,22 @@
 <?php
 declare(strict_types=1);
 
+use Cake\Cache\Cache;
+use Cake\Cache\Engine\FileEngine;
+
 // Extra publishers exist only for the directory pagination browser test.
 if (PHP_SAPI !== 'cli') {
     http_response_code(404);
     exit;
 }
+require dirname(__DIR__, 2) . '/vendor/autoload.php';
+// Match Playwright's isolated cache, never the development application's Redis.
+Cache::setConfig('browser_catalogue', [
+    'className' => FileEngine::class,
+    'path' => dirname(__DIR__, 2) . '/tmp/browser-catalogue/',
+    'prefix' => 'plugins_catalogue_',
+]);
+Cache::clear('browser_catalogue');
 $database = dirname(__DIR__, 2) . '/tmp/browser.sqlite';
 $connection = new PDO('sqlite:' . $database);
 $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

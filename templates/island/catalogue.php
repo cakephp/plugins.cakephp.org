@@ -28,9 +28,13 @@ $clearUrl = $this->Url->build($catalogueRoute + [
         'sort' => $catalogueQuery['sort'],
         'direction' => $catalogueQuery['direction'],
     ],
+], [
+    'escape' => false,
 ]);
 $clearCategoryUrl = $this->Url->build($catalogueRoute + [
     '?' => array_replace($catalogueQuery, ['category' => '']),
+], [
+    'escape' => false,
 ]);
 ?>
 <div class="directory pt-4 md:pt-5 site-width" x-data="catalogue" @click="activate($event)" @keydown.escape="closeMenu($event)"

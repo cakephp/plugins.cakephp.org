@@ -110,7 +110,7 @@ const register = (Alpine) => {
             event.preventDefault()
             plugin.dispatchEvent(new CustomEvent('plugin-open', {
                 bubbles: true,
-                detail: { id: Number(plugin.dataset.pluginId), name: plugin.dataset.pluginName },
+                detail: { id: Number(plugin.dataset.pluginId), name: plugin.dataset.pluginName, url: plugin.href },
             }))
         },
         open(event) {
@@ -140,8 +140,10 @@ const register = (Alpine) => {
 
     Alpine.data('pluginDetails', () => ({
         id: null,
+        url: '',
         load(event) {
             this.id = event.detail.id
+            this.url = event.detail.url
             return this.$server.call('show', this.id)
         },
         retry() { return this.$server.call('show', this.id) },

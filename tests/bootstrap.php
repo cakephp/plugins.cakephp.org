@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\ArrayEngine;
+use Cake\Cache\Engine\NullEngine;
 use Cake\Chronos\Chronos;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
@@ -43,6 +44,9 @@ Cache::drop('default');
 Cache::setConfig('default', ['className' => ArrayEngine::class]);
 Cache::drop('github_profiles');
 Cache::setConfig('github_profiles', ['className' => ArrayEngine::class]);
+// Cache-specific tests enable an isolated cache; other tests always read their own fixtures.
+Cache::drop('catalogue');
+Cache::setConfig('catalogue', ['className' => NullEngine::class]);
 
 if (empty($_SERVER['HTTP_HOST']) && !Configure::read('App.fullBaseUrl')) {
     Configure::write('App.fullBaseUrl', 'http://localhost');

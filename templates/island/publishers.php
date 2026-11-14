@@ -27,6 +27,8 @@ if ($cakephp !== 'current') {
 $clearUrl = $this->Url->build([
     '_name' => 'publisher:index',
     '?' => $clearQuery,
+], [
+    'escape' => false,
 ]);
 $statLabels = [
     'plugins' => __('Plugins'),

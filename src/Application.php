@@ -104,16 +104,17 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             'httponly' => true,
         ]);
 
-        $middlewareQueue
-            // Catch any exceptions in the lower layers,
-            // and make an error page/response
-            ->add(new ErrorHandlerMiddleware(Configure::read('Error'), $this))
+        // Catch any exceptions in the lower layers and make an error page/response.
+        $middlewareQueue->add(new ErrorHandlerMiddleware(Configure::read('Error'), $this));
 
-            // Handle plugin/theme assets like CakePHP normally does.
-            ->add(new AssetMiddleware([
+        // Production serves symlinked plugin assets directly through the web server.
+        if (Configure::read('debug')) {
+            $middlewareQueue->add(new AssetMiddleware([
                 'cacheTime' => Configure::read('Asset.cacheTime'),
-            ]))
+            ]));
+        }
 
+        $middlewareQueue
             // Add routing middleware.
             // If you have a large number of routes connected, turning on routes
             // caching in production could improve performance.
@@ -169,47 +170,18 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             ]));
 
         $requestProtection = (array)Configure::read('PublicRequestProtection', []);
-        $trustedProxyIps = (array)($requestProtection['trustedProxyIps'] ?? []);
         if ($requestProtection['rateLimitEnabled'] ?? false) {
-            $middlewareQueue->insertAfter(
-                AssetMiddleware::class,
+            $middlewareQueue->insertBefore(
+                RoutingMiddleware::class,
                 new RateLimitMiddleware([
                     'cache' => 'rate_limit',
                     'headers' => true,
                     'strategyClass' => AtomicFixedWindowRateLimiter::class,
-                    'identifierCallback' => static function (ServerRequestInterface $request) use ($trustedProxyIps): string {
-                        $remoteAddress = (string)($request->getServerParams()['REMOTE_ADDR'] ?? 'unknown');
-                        if (!in_array($remoteAddress, $trustedProxyIps, true)) {
-                            return $remoteAddress;
-                        }
-
-                        $forwardedFor = trim(explode(',', $request->getHeaderLine('X-Forwarded-For'))[0] ?? '');
-                        if (filter_var($forwardedFor, FILTER_VALIDATE_IP) === false) {
-                            return $remoteAddress;
-                        }
-
-                        return $forwardedFor;
-                    },
-                    'limiterResolver' => static function (ServerRequestInterface $request): string {
-                        if ($request->getMethod() === 'POST') {
-                            return 'interact';
-                        }
-
-                        return $request->getQueryParams() === [] ? 'browse' : 'filtered';
-                    },
-                    'limiters' => $requestProtection['rateLimits'] ?? [],
-                    'skipCheck' => static function (ServerRequestInterface $request): bool {
-                        $path = rtrim($request->getUri()->getPath(), '/');
-                        if (str_ends_with($path, '.json')) {
-                            $path = substr($path, 0, -5);
-                        }
-                        if ($path === '/_interact/update') {
-                            return $request->getMethod() !== 'POST';
-                        }
-
-                        return !in_array($request->getMethod(), ['GET', 'HEAD'], true)
-                            || !in_array($path, ['', '/packages', '/publishers'], true) && !preg_match('#^/plugins/[A-Za-z0-9][A-Za-z0-9_.-]*(?:/[A-Za-z0-9][A-Za-z0-9_.-]*)?$#', $path);
-                    },
+                    'limit' => $requestProtection['limit'] ?? 6000,
+                    'window' => $requestProtection['window'] ?? 60,
+                    'ipHeader' => 'remote_addr',
+                    'skipCheck' => static fn(ServerRequestInterface $request): bool => $request->getMethod() !== 'POST'
+                        || rtrim($request->getUri()->getPath(), '/') !== '/_interact/update',
                 ]),
             );
         }

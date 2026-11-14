@@ -61,11 +61,10 @@ class PackagesController extends AppController
      */
     public function view(string $namespace, string $name): void
     {
-        $package = $this->fetchTable(PackagesTable::class)->find()
+        $package = $this->fetchTable(PackagesTable::class)->find('publicDetails')
             ->where([
                 'Packages.package' => strtolower($namespace . '/' . $name),
             ])
-            ->contain(['Tags', 'Categories'])
             ->firstOrFail();
         $this->set(compact('package'));
     }

@@ -38,6 +38,25 @@ test('production assets use hashed URLs and Interact reload tracking', async ({ 
     await expect(page.locator('script[src*="@vite/client"]')).toHaveCount(0)
 })
 
+test('filter reset links escape query separators once', async ({ page }) => {
+    await page.goto('/?search=asset&category=asset-management&sort=downloads&direction=asc')
+    const links = page.locator('a[data-clear-catalogue], a[data-category-slug=""]')
+    expect(await links.count()).toBeGreaterThan(0)
+    for (const href of await links.evaluateAll(elements => elements.map(element => element.href))) {
+        const url = new URL(href)
+        expect([...url.searchParams.keys()].some(key => key.startsWith('amp;'))).toBe(false)
+        expect(url.searchParams.get('sort')).toBe('downloads')
+        expect(url.searchParams.get('direction')).toBe('asc')
+    }
+
+    await page.goto('/publishers?search=vendor&sort=stars&cakephp=all')
+    const href = await page.getByRole('link', { name: 'Clear search', exact: true }).getAttribute('href')
+    const url = new URL(href, page.url())
+    expect([...url.searchParams.keys()].some(key => key.startsWith('amp;'))).toBe(false)
+    expect(url.searchParams.get('sort')).toBe('stars')
+    expect(url.searchParams.get('cakephp')).toBe('all')
+})
+
 test('category and Awesome filters combine live and reset without losing sort', async ({ page }) => {
     await expect(featured(page).locator('.awesome-badge')).toHaveCount(2)
     await page.getByRole('button', { name: 'Awesome only', exact: true }).click()
@@ -329,6 +348,27 @@ test('loading a different plugin hides stale details and a failed request can be
     await expect(dialog.locator('.plugin-install-command code')).toHaveText(`composer require ${name}`)
     await expect(dialog.locator('.plugin-install-command code')).not.toHaveText(previous)
     await expect(dialog.getByRole('alert')).toBeHidden()
+})
+
+test('throttled plugin details offer a working normal page link', async ({ page }) => {
+    await page.route('**/_interact/update', route => route.fulfill({
+        status: 429,
+        headers: { 'Retry-After': '60' },
+        contentType: 'application/json',
+        body: '{}',
+    }), { times: 1 })
+    const trigger = rows(page).first().locator('.package-name a')
+    const href = await trigger.getAttribute('href')
+    const name = (await trigger.innerText()).trim()
+    await trigger.click()
+    const dialog = page.locator('#plugin-modal')
+    await expect(dialog.getByRole('alert')).toContainText('Too many requests')
+    await expect(dialog.getByRole('button', { name: 'Retry', exact: true })).toBeHidden()
+    await expect(dialog.getByRole('link', { name: 'Reload page', exact: true })).toBeHidden()
+    await expect(dialog.getByRole('link', { name: 'Open plugin page', exact: true })).toHaveAttribute('href', new URL(href, page.url()).href)
+    await dialog.getByRole('link', { name: 'Open plugin page', exact: true }).click()
+    await expect(page).toHaveURL(new URL(href, page.url()).href)
+    await expect(page.locator('.plugin-install-command code')).toHaveText(`composer require ${name}`)
 })
 
 test('modal fits mobile screens and contains keyboard focus', async ({ page }) => {

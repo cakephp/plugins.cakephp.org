@@ -32,7 +32,7 @@ RUN composer install \
     --prefer-dist \
     --optimize-autoloader
 
-RUN DEBUG=false bin/cake plugin assets symlink Interact
+RUN DEBUG=false bin/cake plugin assets symlink
 
 RUN mkdir -p logs tmp tmp/cache/models tmp/cache/persistent tmp/cache/views tmp/sessions tmp/tests \
     && chown -R www-data:www-data logs tmp \

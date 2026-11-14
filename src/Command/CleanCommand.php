@@ -66,6 +66,6 @@ class CleanCommand extends Command
             $packagesTable->delete($package);
         }
 
-        Cache::delete('package_filter_tags_v1');
+        Cache::clear('catalogue');
     }
 }

@@ -153,7 +153,7 @@ class PackagesTable extends Table
             $query->where(static fn(QueryExpression $exp) => $exp->exists($membership));
         }
 
-        return $query;
+        return $this->cachePublicQuery($query, 'catalogue', count: true);
     }
 
     /**
@@ -209,10 +209,12 @@ class PackagesTable extends Table
             default => 'monthly_downloads',
         };
 
-        return $query->orderBy([
+        $query->orderBy([
             $sort => 'DESC',
             $this->aliasField('namespace') => 'ASC',
         ]);
+
+        return $this->cachePublicQuery($query, 'publishers', count: true);
     }
 
     /**
@@ -243,7 +245,7 @@ class PackagesTable extends Table
         if ($major !== null) {
             $packages->select(['publisher_compatible' => $packages->expr()->exists($this->publisherCompatibility($major))]);
         }
-        foreach ($packages->all() as $package) {
+        foreach ($this->cachePublicQuery($packages, 'publisher_details')->all() as $package) {
             $namespace = $package->namespace;
             $owner = $this->githubOwner($package->repo_url);
             if ($owner !== null) {
@@ -313,11 +315,12 @@ class PackagesTable extends Table
     public function namespaceStats(string $namespace): array
     {
         $query = $this->find('namespace', namespace: $namespace);
-        $totals = $query->select([
+        $query->select([
             'plugins' => $query->func()->count('*'),
             'downloads' => $query->func()->sum('Packages.downloads'),
             'stars' => $query->func()->sum('Packages.stars'),
-        ])->first();
+        ]);
+        $totals = $this->cachePublicQuery($query, 'namespace_stats')->first();
 
         return [
             'plugins' => (int)($totals?->get('plugins') ?? 0),
@@ -332,7 +335,8 @@ class PackagesTable extends Table
     public function namespaceGithubUrl(string $namespace): ?string
     {
         $owners = [];
-        $repositories = $this->find('namespace', namespace: $namespace)->select(['repo_url'])->distinct()->all();
+        $query = $this->find('namespace', namespace: $namespace)->select(['repo_url'])->distinct();
+        $repositories = $this->cachePublicQuery($query, 'namespace_github')->all();
         foreach ($repositories as $package) {
             $owner = $this->githubOwner($package->repo_url);
             if ($owner !== null) {
@@ -392,6 +396,17 @@ class PackagesTable extends Table
     }
 
     /**
+     * Share public detail data between the normal page and the on-demand modal.
+     *
+     * @param \Cake\ORM\Query\SelectQuery<\App\Model\Entity\Package> $query Package query.
+     * @return \Cake\ORM\Query\SelectQuery<\App\Model\Entity\Package>
+     */
+    public function findPublicDetails(SelectQuery $query): SelectQuery
+    {
+        return $this->cachePublicQuery($query->contain(['Tags', 'Categories']), 'details');
+    }
+
+    /**
      * @return array<string, array{name: string, count: int}> Categories and counts within the current catalogue scope.
      */
     public function categoryOptions(?string $namespace = null): array
@@ -407,7 +422,7 @@ class PackagesTable extends Table
             ]);
         }
         $options = [];
-        foreach ($query->all() as $category) {
+        foreach ($this->cachePublicQuery($query, 'categories')->all() as $category) {
             $options[$category->get('slug')] = ['name' => $category->get('name'), 'count' => (int)$category->get('package_count')];
         }
 
@@ -436,6 +451,40 @@ class PackagesTable extends Table
             }
 
             return $options;
-        });
+        }, 'catalogue');
+    }
+
+    /**
+     * Cache final query results and optional pagination totals, never island snapshots.
+     *
+     * @template TSubject of \Cake\Datasource\EntityInterface|array
+     * @param \Cake\ORM\Query\SelectQuery<TSubject> $query Public read query.
+     * @return \Cake\ORM\Query\SelectQuery<TSubject>
+     */
+    private function cachePublicQuery(SelectQuery $query, string $scope, bool $count = false): SelectQuery
+    {
+        $query->cache(static fn(SelectQuery $query): string => self::publicCacheKey($query, $scope), 'catalogue');
+        if ($count) {
+            $query->counter(static function (SelectQuery $query) use ($scope): int {
+                return Cache::remember(self::publicCacheKey($query, $scope . '_count'), $query->count(...), 'catalogue');
+            });
+        }
+
+        return $query;
+    }
+
+    /**
+     * Resolve after pagination so SQL includes its limit, offset, order and bindings.
+     *
+     * @param \Cake\ORM\Query\SelectQuery $query Final public read query.
+     */
+    private static function publicCacheKey(SelectQuery $query, string $scope): string
+    {
+        return $scope . '_' . hash('sha256', serialize([
+            $query->getConnection()->configName(),
+            $query->sql(),
+            $query->getValueBinder()->bindings(),
+            $query->isHydrationEnabled(),
+        ]));
     }
 }
