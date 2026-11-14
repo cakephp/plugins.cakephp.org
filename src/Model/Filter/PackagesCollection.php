@@ -35,7 +35,13 @@ class PackagesCollection extends FilterCollection
     {
         $this->callback($filterName, [
             'callback' => function (SelectQuery $query, array $args) use ($filterName): bool {
-                $query->find('tagged', value: $args[$filterName]);
+                $value = $args[$filterName];
+                if (is_array($value)) {
+                    // Selection order and duplicates must not fragment the query cache.
+                    $value = array_values(array_unique($value));
+                    sort($value, SORT_STRING);
+                }
+                $query->find('tagged', value: $value);
 
                 return true;
             },

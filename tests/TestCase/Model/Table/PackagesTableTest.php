@@ -7,6 +7,9 @@ use App\Model\Table\PackagesTable;
 use Cake\Cache\Cache;
 use Cake\TestSuite\TestCase;
 use Override;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
+use Stringable;
 
 /**
  * Covers the directory's search and its inclusion of configured featured packages.
@@ -54,6 +57,52 @@ class PackagesTableTest extends TestCase
         $this->assertSame(0, $packages->find('catalogue', filters: ['category' => 'asset-management', 'search' => 'users'])->count());
         $this->assertSame(1, $packages->find('catalogue', filters: ['awesome' => true, 'search' => 'users'])->count());
         $this->assertSame(26, $packages->find('catalogue', filters: [])->count());
+    }
+
+    /**
+     * A filtered page loads its associations by ID without repeating the page query.
+     */
+    public function testCatalogueLoadsPageAssociationsWithoutRepeatingFilters(): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        $packages->Tagged->getTarget()->getConnection()->insert('tags_tagged', [
+            'tag_id' => 3,
+            'fk_id' => 1,
+            'fk_model' => 'Articles',
+            'created' => '2026-01-01 00:00:00',
+            'modified' => '2026-01-01 00:00:00',
+        ]);
+        $filters = ['cakephp_slugs' => ['cakephp-5-4', 'cakephp-4-4']];
+        // Warm schema metadata before recording only the catalogue SQL.
+        $packages->find('catalogue', filters: $filters)->limit(2)->all()->toArray();
+        $queries = [];
+        $logger = $this->createStub(LoggerInterface::class);
+        $logger->method('debug')->willReturnCallback(static function (string|Stringable $message) use (&$queries): void {
+            $queries[] = str_replace(['`', '"'], '', (string)$message);
+        });
+        $driver = $packages->getConnection()->getDriver();
+        $previousLogger = $driver->getLogger();
+        $driver->setLogger($logger);
+        try {
+            $query = $packages->find('catalogue', filters: $filters)->orderByAsc('Packages.id')->limit(2);
+            $this->assertSame(26, $query->count());
+            $results = $query->all()->toArray();
+        } finally {
+            $driver->setLogger($previousLogger ?? new NullLogger());
+            if (!$previousLogger instanceof LoggerInterface) {
+                $driver->disableQueryLogging();
+            }
+        }
+        $this->assertSame([1, 2], array_column($results, 'id'));
+        $this->assertSame([1, 2], array_column($results[0]->tags, 'id'));
+        $this->assertSame([1, 3], array_column($results[0]->categories, 'id'));
+        $this->assertSame([], $results[1]->categories);
+        $this->assertCount(4, $queries);
+        foreach (['FROM tags_tags Tags', 'FROM categories Categories'] as $association) {
+            $sql = array_values(array_filter($queries, static fn(string $sql): bool => str_contains($sql, $association)));
+            $this->assertCount(1, $sql);
+            $this->assertStringNotContainsString('FROM packages', $sql[0]);
+        }
     }
 
     /**

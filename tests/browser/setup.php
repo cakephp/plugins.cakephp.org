@@ -27,7 +27,15 @@ if (
 // Fixture schema reflection must use the same isolated database as the browser server.
 ConnectionManager::alias('default', 'test');
 // Only catalogue and tag tables are needed; OAuth itself is not exercised here.
-new Migrator()->runMany([['connection' => 'default'], ['connection' => 'default', 'plugin' => 'Tags']]);
+new Migrator()->runMany([
+    [
+        'connection' => 'default',
+        'plugin' => 'Tags',
+    ],
+    [
+        'connection' => 'default',
+    ],
+]);
 $connection->delete('featured_plugins', []);
 foreach (new FeaturedPluginsFixture()->records as $record) {
     $connection->insert('featured_plugins', $record);

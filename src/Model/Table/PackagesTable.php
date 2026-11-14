@@ -58,7 +58,11 @@ class PackagesTable extends Table
             'collectionClass' => PackagesCollection::class,
         ]);
         $this->addBehavior('Tags.Tag', ['taggedCounter' => false]);
-        $this->belongsToMany('Categories')->setSort(['Categories.name' => 'ASC']);
+        // Load associations for the selected page IDs without repeating its filters.
+        $this->Tags->setStrategy('select');
+        $this->belongsToMany('Categories')
+            ->setStrategy('select')
+            ->setSort(['Categories.name' => 'ASC']);
     }
 
     /**

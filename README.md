@@ -16,8 +16,8 @@ ddev exec bin/cake plugin assets symlink Interact
 Next you need to apply migrations to create the database tables:
 
 ```bash
-ddev exec bin/cake migrations migrate
 ddev exec bin/cake migrations migrate -p Tags
+ddev exec bin/cake migrations migrate
 ddev exec bin/cake migrations migrate -p ADmad/SocialAuth
 ```
 

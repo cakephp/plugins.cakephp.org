@@ -123,6 +123,31 @@ class PackagesCacheTest extends TestCase
     }
 
     /**
+     * Equivalent version selections reuse cached rows and counts despite URL order.
+     */
+    public function testVersionSelectionOrderAndDuplicatesShareCache(): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        $query = $packages->find('catalogue', filters: [
+            'cakephp_slugs' => ['cakephp-5-4', 'cakephp-4-4'],
+        ])->orderByAsc('Packages.id')->limit(2);
+        $before = $query->all()->toArray();
+        $this->assertSame(26, $query->count());
+        $packages->updateAll(['description' => 'Changed after cache warmup'], ['id' => 1]);
+        $packages->getConnection()->delete('packages', ['id' => 26]);
+
+        $filters = ['cakephp_slugs' => ['cakephp-4-4', 'cakephp-5-4', 'cakephp-4-4']];
+        $cached = $packages->find('catalogue', filters: $filters)->orderByAsc('Packages.id')->limit(2);
+        $this->assertSame($before[0]->description, $cached->all()->first()->description);
+        $this->assertSame(26, $cached->count());
+
+        Cache::clear('catalogue');
+        $fresh = $packages->find('catalogue', filters: $filters)->orderByAsc('Packages.id')->limit(2);
+        $this->assertSame('Changed after cache warmup', $fresh->all()->first()->description);
+        $this->assertSame(25, $fresh->count());
+    }
+
+    /**
      * Publisher aggregates retain grouping, compatibility, search and hydration.
      */
     public function testPublisherCacheSeparatesRankingsAndDetails(): void

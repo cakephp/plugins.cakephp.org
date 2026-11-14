@@ -30,9 +30,9 @@ use Migrations\TestSuite\Migrator;
  * Add additional configuration/setup your application needs when running
  * unit tests in this file.
  */
-require dirname(__DIR__) . '/vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
-require dirname(__DIR__) . '/config/bootstrap.php';
+require __DIR__ . '/../config/bootstrap.php';
 
 // PHP rendering tests use dev-server tags; browser tests exercise the built manifest.
 Configure::write('CakeVite.forceProductionMode', false);
@@ -89,7 +89,7 @@ ConnectionHelper::dropTables('test');
 // (new SchemaLoader())->loadSqlFiles('./tests/schema.sql', 'test');
 
 new Migrator()->runMany([
-    [],
     ['plugin' => 'Tags'],
+    [],
     ['plugin' => 'ADmad/SocialAuth'],
 ]);
