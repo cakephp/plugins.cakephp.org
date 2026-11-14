@@ -301,6 +301,8 @@ test('namespace counters count up in sequence without shifting the layout', asyn
         return { x, y, width, height }
     }))
     await page.clock.runFor(100)
+    // Profile hydration is independent of the counters and can briefly hide its hero.
+    await expect(page.locator('[data-namespace-profile]')).toBeVisible()
     const initialBounds = await counterBounds()
     expect(Number(await plugins.textContent())).toBeGreaterThan(0)
     await expect(downloads).toHaveText('0')
