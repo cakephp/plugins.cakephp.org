@@ -34,7 +34,8 @@ class DevelopmentCompatibilityTest extends TestCase
         ]);
         $packages->saveOrFail($package);
         Cache::clear('catalogue');
-        $this->assertSame($development, $packages->get($package->id)->development_compatibility);
+        // MySQL normalizes JSON object key order; MariaDB preserves insertion order.
+        $this->assertEquals($development, $packages->get($package->id)->development_compatibility);
         $this->assertSame(26, $packages->find('catalogue', filters: [])->count());
         $this->assertSame(['major' => '5', 'plugins' => 25], $packages->ecosystemStats()['current_support']);
         $this->assertSame(26, $packages->ecosystemStats()['plugins']);
