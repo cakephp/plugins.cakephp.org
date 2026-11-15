@@ -3,7 +3,13 @@
  * @var \App\View\IslandTemplateView $this
  * @var \App\Model\Entity\Package $package
  * @var string|null $namespace
+ * @var string $sort
  */
+[$statLabel, $statValue] = match ($sort) {
+    'monthly_downloads' => [__('Monthly downloads'), $package->monthly_downloads],
+    'stars' => [__('Stars'), $package->stars],
+    default => [__('Downloads'), $package->downloads],
+};
 $summaries = [];
 foreach (['CakePHP' => $package->cake_php_tag_groups, 'PHP' => $package->php_tag_groups] as $label => $groups) {
     if ($groups) {
@@ -53,8 +59,8 @@ $detailsUrl = $this->Url->build([
     <div class="package-summary">
         <dl class="package-meta">
             <div>
-                <dt><?= __('Downloads') ?></dt>
-                <dd><?= $this->Number->format($package->downloads) ?></dd>
+                <dt><?= h($statLabel) ?></dt>
+                <dd title="<?= $statValue !== null ? h($this->Number->format($statValue)) : __('Awaiting package sync') ?>"><?= $statValue !== null ? $this->Number->format($statValue) : '—' ?></dd>
             </div>
         </dl>
         <a class="inline-flex min-h-8 items-center gap-1.5 text-[0.8125rem] font-[550]" href="<?= $detailsUrl ?>" aria-label="<?= __('View {0} details', h($package->package)) ?>"

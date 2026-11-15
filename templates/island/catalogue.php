@@ -191,7 +191,11 @@ $clearCategoryUrl = $this->Url->build($catalogueRoute + [
                 </div>
             <?php else : ?>
                 <?php foreach ($packages as $package) : ?>
-                    <?= $this->element('Packages/package-row', compact('package', 'namespace')) ?>
+                    <?= $this->element('Packages/package-row', [
+                        'package' => $package,
+                        'namespace' => $namespace,
+                        'sort' => $catalogueQuery['sort'],
+                    ]) ?>
                 <?php endforeach; ?>
             <?php endif; ?>
         </div>
