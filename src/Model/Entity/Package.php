@@ -20,6 +20,7 @@ use Tags\Model\Entity\Tag;
  * @property int $stars
  * @property string|null $latest_stable_version
  * @property \Cake\I18n\Date|null $latest_stable_release_date
+ * @property \App\Model\Entity\FeaturedPlugin|null $community_pick
  * @property array<\App\Model\Entity\Category> $categories
  * @property-read array<\Tags\Model\Entity\Tag> $cake_php_tags
  * @property-read array<int, array<\Tags\Model\Entity\Tag>> $cake_php_tag_groups

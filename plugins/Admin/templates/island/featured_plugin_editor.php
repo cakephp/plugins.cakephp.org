@@ -82,8 +82,9 @@ $this->Form->templater()->load('Admin.form-templates');
                         ]) ?>
                         <p class="text-sm opacity-60"><?= __('Leave overrides blank to use catalogue values. Missing logos use a name-based emblem.') ?></p>
                     </fieldset>
-                    <section class="mt-5 rounded-box border border-base-300 bg-base-200 p-5" aria-label="<?= __('Card preview') ?>">
+                    <section class="community-pick-row mt-5 rounded-box border border-base-300 p-5" aria-label="<?= __('Card preview') ?>">
                         <p class="mb-3 text-xs font-semibold uppercase opacity-60"><?= __('Card preview') ?></p>
+                        <span class="community-pick-badge"><?= $this->element('Packages/community_pick_icon') ?> <?= __('Community pick') ?></span>
                         <?= $this->element('Packages/plugin-avatar', [
                             'packageName' => $package,
                             'logo' => $entry->logo,

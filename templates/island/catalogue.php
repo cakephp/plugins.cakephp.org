@@ -1,7 +1,6 @@
 <?php
 /**
  * @var \App\View\IslandTemplateView $this
- * @var bool $showFeatured
  * @var bool $hasFilters
  * @var string $search
  * @var \Cake\Datasource\Paging\PaginatedInterface<int, \App\Model\Entity\Package> $packages
@@ -12,6 +11,7 @@
  * @var list<string> $phpSlugs
  * @var array<string, array{name: string, count: int}> $categoryOptions
  * @var string $category
+ * @var bool $featuredOnly
  * @var bool $awesomeOnly
  * @var string|null $namespace
  * @var array<string, mixed> $catalogueRoute
@@ -75,6 +75,9 @@ $clearCategoryUrl = $this->Url->build($catalogueRoute + [
                 <?= $this->Form->hidden('direction', ['value' => $catalogueQuery['direction']]) ?>
                 <?php if ($category !== '') : ?>
                     <?= $this->Form->hidden('category', ['value' => $category]) ?>
+                <?php endif; ?>
+                <?php if ($featuredOnly) : ?>
+                    <?= $this->Form->hidden('featured', ['value' => '1']) ?>
                 <?php endif; ?>
                 <?php if ($awesomeOnly) : ?>
                     <?= $this->Form->hidden('awesome', ['value' => '1']) ?>
@@ -155,10 +158,6 @@ $clearCategoryUrl = $this->Url->build($catalogueRoute + [
         </div>
     </div>
 
-    <?php if ($showFeatured) : ?>
-        <?= $this->Interact->render('FeaturedPlugins', key: 'featured-plugins') ?>
-    <?php endif; ?>
-
     <section class="catalogue-panel" id="packages-index-content" aria-label="<?= __('Plugin directory') ?>">
         <div class="catalogue-toolbar">
             <div class="catalogue-summary">
@@ -172,6 +171,13 @@ $clearCategoryUrl = $this->Url->build($catalogueRoute + [
                 <?php endif; ?>
             </div>
             <div class="catalogue-controls">
+                <?php $featuredQuery = array_replace($catalogueQuery, ['featured' => $featuredOnly ? '0' : '1']); ?>
+                <a class="curation-toggle community-picks-toggle btn btn-outline" role="button" aria-pressed="<?= $featuredOnly ? 'true' : 'false' ?>"
+                   href="<?= $this->Url->build($catalogueRoute + ['?' => $featuredQuery]) ?>"
+                   data-toggle-featured @keydown.space.prevent="$el.click()">
+                    <?= $this->element('Packages/community_pick_icon') ?>
+                    <?= __('Community picks') ?>
+                </a>
                 <?php $awesomeQuery = array_replace($catalogueQuery, ['awesome' => $awesomeOnly ? '0' : '1']); ?>
                 <a class="curation-toggle btn btn-outline" role="button" aria-pressed="<?= $awesomeOnly ? 'true' : 'false' ?>"
                    href="<?= $this->Url->build($catalogueRoute + ['?' => $awesomeQuery]) ?>"
@@ -183,7 +189,7 @@ $clearCategoryUrl = $this->Url->build($catalogueRoute + [
                     <span class="text-muted"><?= __('Sort by') ?></span>
                     <details class="sort-menu dropdown dropdown-end">
                         <summary aria-label="<?= __('Sort plugins') ?>">
-                            <?= h($sortLabel) ?>
+                            <span class="truncate"><?= h($sortLabel) ?></span>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                                 <path d="m4 6 4 4 4-4" stroke-linecap="round" stroke-linejoin="round"></path>
                             </svg>

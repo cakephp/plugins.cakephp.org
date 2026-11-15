@@ -19,6 +19,8 @@ use Cake\Validation\Validator;
 /**
  * Packages Model
  *
+ * @property \Cake\ORM\Association\HasOne<\App\Model\Table\FeaturedPluginsTable> $CommunityPicks
+ *
  * @property \Cake\ORM\Association\HasMany<\Tags\Model\Table\TaggedTable> $Tagged
  * @property \Cake\ORM\Association\BelongsToMany<\Tags\Model\Table\TagsTable> $Tags
  * @property \Cake\ORM\Association\BelongsToMany<\App\Model\Table\CategoriesTable> $Categories
@@ -61,6 +63,13 @@ class PackagesTable extends Table
         $this->belongsToMany('Categories')
             ->setStrategy('select')
             ->setSort(['Categories.name' => 'ASC']);
+        $this->hasOne('CommunityPicks', [
+            'className' => FeaturedPluginsTable::class,
+            'foreignKey' => 'package',
+            'bindingKey' => 'package',
+            'propertyName' => 'community_pick',
+            'conditions' => ['CommunityPicks.enabled' => true],
+        ]);
     }
 
     /**
@@ -142,7 +151,10 @@ class PackagesTable extends Table
             $query->find('namespace', namespace: $namespace);
         }
         $query->find('search', search: $filters)
-            ->contain(['Categories', 'Tags' => static fn(SelectQuery $tags) => $tags->orderByDesc('Tags.label')]);
+            ->contain(['CommunityPicks', 'Categories', 'Tags' => static fn(SelectQuery $tags) => $tags->orderByDesc('Tags.label')]);
+        if (!empty($filters['featured'])) {
+            $query->where(['CommunityPicks.id IS NOT' => null]);
+        }
         if (!empty($filters['category']) || !empty($filters['awesome'])) {
             $junction = $this->Categories->junction();
             $alias = $junction->getAlias();
@@ -447,19 +459,6 @@ class PackagesTable extends Table
         }
 
         return strtolower($parts[0]);
-    }
-
-    /**
-     * Load configured featured packages without changing their display order.
-     *
-     * @param \Cake\ORM\Query\SelectQuery<\App\Model\Entity\Package> $query Query instance.
-     * @param list<string> $names Configured package names.
-     * @return \Cake\ORM\Query\SelectQuery<\App\Model\Entity\Package>
-     */
-    public function findFeatured(SelectQuery $query, array $names): SelectQuery
-    {
-        return $query->where(['Packages.package IN' => $names])
-            ->contain(['Categories', 'Tags' => static fn(SelectQuery $tags) => $tags->orderByDesc('Tags.label')]);
     }
 
     /**

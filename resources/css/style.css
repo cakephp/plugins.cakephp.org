@@ -336,26 +336,6 @@ body::before {
         aria-pressed:text-primary-content forced-colors:aria-pressed:outline-2
         forced-colors:aria-pressed:outline-[Highlight];
 }
-.featured-section {
-    @apply mb-6;
-    & > h2 { @apply mb-3 flex items-center gap-2 text-base leading-[1.6] font-[650]; }
-    & > h2 svg { @apply size-4 text-primary; }
-}
-.featured-grid {
-    @apply grid grid-flow-col auto-cols-[min(80vw,20rem)] gap-3 overflow-x-auto p-0.5 pb-2 snap-x snap-proximity
-        [scrollbar-width:thin] [scrollbar-color:var(--color-control)_transparent] md:grid-flow-row md:auto-cols-auto
-        md:grid-cols-3 md:gap-4 md:overflow-visible md:p-0;
-}
-.featured-item {
-    @apply min-w-0 snap-start overflow-hidden rounded-2xl border border-base-300;
-    --plugin-accent: var(--color-cake-red);
-    background: radial-gradient(ellipse at top left, color-mix(in srgb, var(--plugin-accent) 14%, transparent), transparent 75%), var(--color-base-100);
-}
-.featured-card {
-    @apply grid h-full grid-cols-[3rem_minmax(0,1fr)] grid-rows-[1fr_auto] items-start gap-x-3 p-4 text-base-content
-        no-underline hover:text-base-content focus-visible:rounded-2xl focus-visible:outline-offset-[-4px] md:gap-x-4
-        md:p-5;
-}
 .plugin-avatar-tile {
     @apply relative grid size-12 place-items-center rounded-[0.875rem] border text-lg leading-[1.6] font-bold
         tracking-[-0.035em];
@@ -363,27 +343,6 @@ body::before {
     background: color-mix(in srgb, var(--plugin-accent) 17%, var(--color-base-100));
     color: color-mix(in srgb, var(--color-base-content) 85%, var(--plugin-accent));
     & img { @apply absolute inset-0 size-full rounded-[inherit] bg-base-100 object-contain p-1.5; }
-}
-.featured-card-arrow {
-    @apply grid size-7.5 shrink-0 place-items-center rounded-full border border-base-300 bg-base-100 text-base
-        leading-[1.6] text-muted group-hover:border-primary group-hover:text-primary group-focus-within:border-primary
-        group-focus-within:text-primary;
-}
-.featured-card-name {
-    @apply min-w-0 wrap-anywhere;
-    & h3 { @apply text-[1.0625rem] leading-[1.35] font-[650] text-base-content; }
-    & .awesome-badge { @apply mt-2; }
-}
-.featured-description {
-    @apply mt-2.5 mb-5 line-clamp-2 min-h-[2.625rem] text-sm leading-normal text-muted wrap-anywhere;
-}
-.featured-card-footer {
-    @apply col-span-full flex flex-wrap items-center justify-between gap-2 border-t border-base-300 pt-3 text-xs
-        leading-[1.6] text-muted tabular-nums;
-}
-.featured-release {
-    @apply h-auto max-w-full rounded-md border-base-300 bg-base-100 px-1.5 py-0.25 text-xs leading-[1.6] text-muted
-        wrap-anywhere;
 }
 .awesome-badge {
     @apply h-auto gap-1 rounded-md border-0 px-1.75 py-0.5 text-[0.6875rem] leading-normal font-semibold
@@ -433,18 +392,20 @@ body::before {
     @apply rounded-2xl border border-base-300 bg-base-100;
 }
 .catalogue-toolbar {
-    @apply flex flex-wrap items-center justify-between gap-3 border-b border-base-300 px-4 py-3.5 md:px-5;
+    @apply grid grid-cols-2 items-center justify-between gap-3 border-b border-base-300 px-4 py-3.5 md:flex md:px-5;
 }
 .result-count {
     @apply mr-1 h-auto min-h-6 rounded-md border-0 px-1.75 py-0 text-[0.8125rem] leading-[1.6] tabular-nums;
 }
 .catalogue-controls {
-    @apply flex w-full max-w-full flex-wrap items-center gap-2 text-sm leading-[1.6] max-[384px]:justify-between
-        md:w-auto md:gap-4;
+    @apply contents text-sm leading-[1.6] md:flex md:w-auto md:flex-wrap md:items-center md:gap-4;
+    & > .curation-toggle { @apply row-start-2 min-w-0 max-md:px-2 max-md:text-xs max-[360px]:text-[0.6875rem]; }
 }
 .sort-control {
-    @apply flex items-center gap-2;
+    @apply col-start-2 row-start-1 flex min-w-0 items-center gap-2;
     & > span { @apply hidden md:inline; }
+    & > .sort-menu { @apply max-md:w-full; }
+    & summary { @apply max-md:w-full max-md:min-w-0 max-md:gap-2 max-md:px-2 max-md:text-xs; }
 }
 .sort-menu {
     @apply relative;
@@ -472,6 +433,32 @@ body::before {
 .package-row {
     @apply grid grid-cols-1 gap-2 border-b border-base-300 p-4 hover:bg-row-hover/55 md:grid-cols-[minmax(0,1fr)_8rem]
         md:gap-6 md:px-5 md:py-4.5;
+}
+.package-identity {
+    @apply min-w-0;
+}
+.community-pick-row {
+    @apply relative;
+    --plugin-accent: var(--color-primary);
+    background: linear-gradient(110deg, color-mix(in srgb, var(--color-primary) 6%, var(--color-base-100)), color-mix(in srgb, #7d85dd 5%, var(--color-base-100)) 65%, var(--color-base-100));
+    box-shadow: inset 3px 0 0 color-mix(in srgb, var(--color-primary) 70%, var(--color-base-300));
+    & .package-identity { @apply flex items-start gap-3 md:gap-4; }
+    & .plugin-avatar-tile { @apply size-10 text-base md:size-12 md:text-lg; }
+    & .package-name { @apply mb-1; }
+    &:hover, &:focus-within {
+        background: linear-gradient(110deg, color-mix(in srgb, var(--color-primary) 10%, var(--color-base-100)), color-mix(in srgb, #7d85dd 8%, var(--color-base-100)) 65%, var(--color-base-100));
+    }
+}
+.community-pick-badge {
+    @apply mb-2 inline-flex items-center gap-1.25 text-[0.6875rem] leading-normal font-semibold tracking-[0.06em] text-primary uppercase;
+    & svg { @apply size-3.5 fill-primary/12; }
+}
+.community-pick-title {
+    @apply mb-1 text-sm font-semibold text-base-content;
+}
+.community-picks-toggle svg { @apply size-3.5; }
+@media (forced-colors: active) {
+    .community-pick-row { border-inline-start: 3px solid Highlight; }
 }
 .package-name {
     @apply mb-2 text-lg leading-[1.4] font-[650] wrap-anywhere;
@@ -582,12 +569,6 @@ body::before {
     & p { @apply mb-4; }
 }
 
-.featured-item[data-plugin-tone="violet"] { --plugin-accent: #7d85dd; }
-.featured-item[data-plugin-tone="amber"] { --plugin-accent: #d49b67; }
-.featured-item:hover, .featured-item:focus-within {
-    border-color: color-mix(in srgb, var(--plugin-accent) 65%, var(--color-base-300));
-    box-shadow: 0 4px 20px color-mix(in srgb, var(--plugin-accent) 10%, transparent);
-}
 .flash-message { @apply my-4 flex items-start gap-4 rounded-lg border border-base-300 bg-base-100 p-4 text-base-content shadow-none; }
 .flash-message > p { @apply m-0 flex-1; }
 .flash-error { @apply border-error; }

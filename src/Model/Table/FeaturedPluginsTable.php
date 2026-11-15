@@ -5,6 +5,8 @@ namespace App\Model\Table;
 
 use App\Model\Enum\FeaturedPluginStatus;
 use ArrayObject;
+use Cake\Cache\Cache;
+use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
@@ -44,6 +46,29 @@ class FeaturedPluginsTable extends Table
             'bindingKey' => 'package',
             'propertyName' => 'catalogue_package',
         ]);
+    }
+
+    /**
+     * Editorial changes affect both cached rows and community-pick filter counts.
+     *
+     * @return array<string, mixed>
+     */
+    public function implementedEvents(): array
+    {
+        return parent::implementedEvents() + [
+            'Model.afterSaveCommit' => 'clearCatalogueCache',
+            'Model.afterDeleteCommit' => 'clearCatalogueCache',
+        ];
+    }
+
+    /**
+     * @param \Cake\Event\EventInterface<self> $event Completed editorial change.
+     * @param \Cake\Datasource\EntityInterface $entity Changed entry.
+     * @param \ArrayObject<string, mixed> $options Save or delete options.
+     */
+    public function clearCatalogueCache(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
+    {
+        Cache::clear('catalogue');
     }
 
     /**

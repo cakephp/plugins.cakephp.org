@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 use App\Test\Fixture\FeaturedPluginsFixture;
 use App\Test\Fixture\UsersFixture;
+use Cake\Cache\Cache;
+use Cake\Cache\Engine\FileEngine;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlite;
 use Cake\Datasource\ConnectionManager;
@@ -18,6 +20,12 @@ ConnectionManager::setConfig('test', ['className' => Connection::class, 'driver'
 $connection = new PDO('sqlite:' . $database);
 $mode = $argv[1] ?? 'reset';
 if ($mode === 'reset') {
+    Cache::setConfig('browser_catalogue', [
+        'className' => FileEngine::class,
+        'path' => dirname(__DIR__, 2) . '/tmp/browser-catalogue/',
+        'prefix' => 'plugins_catalogue_',
+    ]);
+    Cache::clear('browser_catalogue');
     foreach (['users' => new UsersFixture(), 'featured_plugins' => new FeaturedPluginsFixture()] as $table => $fixture) {
         $connection->exec('DELETE FROM ' . $table);
         foreach ($fixture->records as $record) {

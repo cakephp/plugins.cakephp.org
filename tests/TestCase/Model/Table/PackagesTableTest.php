@@ -21,7 +21,7 @@ class PackagesTableTest extends TestCase
      * @var list<string>
      */
     #[Override]
-    protected array $fixtures = ['app.Packages', 'app.Categories', 'app.CategoriesPackages', 'app.PublisherVersions', 'app.PublisherTagged'];
+    protected array $fixtures = ['app.FeaturedPlugins', 'app.Packages', 'app.Categories', 'app.CategoriesPackages', 'app.PublisherVersions', 'app.PublisherTagged'];
 
     /**
      * Version options must reflect this test's compatibility fixtures.

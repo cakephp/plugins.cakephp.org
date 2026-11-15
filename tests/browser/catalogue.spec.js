@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 
 const pageErrors = new WeakMap()
 const search = page => page.getByRole('searchbox', { name: 'Search plugins', exact: true })
-const featured = page => page.locator('[data-featured-plugins]')
+const featured = page => page.locator('[data-package-row][data-community-pick]')
 const rows = page => page.locator('[data-package-row]')
 const retained = page => expect.poll(() => page.evaluate(() => window.documentMarker)).toBe('retained')
 const chooseSort = async (page, label) => {
@@ -55,7 +55,7 @@ test('ecosystem snapshot fits both themes on narrow and wide screens', async ({ 
 })
 
 test('category and Awesome filters combine live and reset without losing sort', async ({ page }) => {
-    await expect(featured(page).locator('.awesome-badge')).toHaveCount(2)
+    await expect(featured(page).locator('.awesome-badge')).toHaveCount(1)
     await page.getByRole('button', { name: 'Awesome only', exact: true }).click()
     await expect(page).toHaveURL(/awesome=1/)
     await expect(rows(page)).toHaveCount(2)
@@ -129,11 +129,11 @@ for (const width of [390, 1280]) {
         await page.setViewportSize({ width, height: 844 })
         const toggle = page.locator('#catalogue-categories > summary')
         const grid = page.getByRole('group', { name: 'Plugin categories', exact: true })
-        const resultsTop = (await featured(page).boundingBox()).y
+        const resultsTop = (await page.locator('#packages-index-content').boundingBox()).y
         await expect(toggle).toContainText('Category')
         await toggle.click()
         await expect(grid).toBeVisible()
-        expect((await featured(page).boundingBox()).y).toBe(resultsTop)
+        expect((await page.locator('#packages-index-content').boundingBox()).y).toBe(resultsTop)
         const panel = await page.locator('.category-browser-panel').boundingBox()
         expect(panel.x).toBeGreaterThanOrEqual(0)
         expect(panel.x + panel.width).toBeLessThanOrEqual(width)
@@ -209,7 +209,7 @@ test('catalogue explains its JavaScript requirement', async ({ browser }) => {
 })
 
 test('sorting, pagination, and history update results in place', async ({ page }) => {
-    await expect(featured(page)).toBeVisible()
+    await expect(featured(page).first()).toBeVisible()
     await chooseSort(page, 'Downloads')
     await expect(page).toHaveURL(/sort=downloads/)
     await retained(page)
@@ -218,7 +218,7 @@ test('sorting, pagination, and history update results in place', async ({ page }
     await expect(featured(page)).toHaveCount(0)
     await page.goBack()
     await expect(page).not.toHaveURL(/page=2/)
-    await expect(featured(page)).toBeVisible()
+    await expect(featured(page).first()).toBeVisible()
     await page.getByRole('link', { name: 'Last', exact: true }).click()
     await expect(page).toHaveURL(/page=2/)
     await page.getByRole('link', { name: 'First', exact: true }).click()
@@ -227,19 +227,63 @@ test('sorting, pagination, and history update results in place', async ({ page }
     await expect(page.getByRole('group', { name: 'CakePHP version', exact: true })).toBeVisible()
 })
 
-test('static featured island survives sorting and all packages remain in results', async ({ page }) => {
-    await expect(featured(page).locator('.featured-item')).toHaveCount(3)
-    const islandId = await featured(page).evaluate(element => {
-        element.featuredMarker = 'retained'
-        return element.closest('[data-interact-id]').dataset.interactId
-    })
+test('community picks keep normal ordering and a stable results position when filters reset', async ({ page }) => {
+    await expect(page.locator('[data-featured-plugins]')).toHaveCount(0)
     await chooseSort(page, 'Downloads')
-    await expect(page).toHaveURL(/sort=downloads/)
-    expect(await featured(page).evaluate(element => element.closest('[data-interact-id]').dataset.interactId)).toBe(islandId)
-    expect(await featured(page).evaluate(element => element.featuredMarker)).toBe('retained')
-    await expect(rows(page).filter({ hasText: 'markstory/asset_compress' })).toHaveCount(1)
-    await expect(page.locator('.catalogue-toolbar')).toContainText('26 plugins')
-    await expect(page.locator('.swiper')).toHaveCount(0)
+    await expect(featured(page)).toHaveCount(3)
+    await expect(rows(page).first()).toContainText('dereuromark/cakephp-tools')
+    const resultsTop = await page.locator('#packages-index-content').evaluate(element => element.getBoundingClientRect().top + scrollY)
+    await search(page).fill('asset')
+    await expect(rows(page)).toHaveCount(1)
+    await expect(featured(page)).toHaveCount(1)
+    await page.getByRole('link', { name: 'Reset filters', exact: true }).click()
+    await expect(featured(page)).toHaveCount(3)
+    await expect(rows(page)).toHaveCount(21)
+    await expect(rows(page).first()).toContainText('dereuromark/cakephp-tools')
+    expect(await page.locator('#packages-index-content').evaluate(element => element.getBoundingClientRect().top + scrollY)).toBeCloseTo(resultsTop, 1)
+    await retained(page)
+})
+
+test('community-pick filter combines with search and category, survives reload and supports history', async ({ page }) => {
+    const toggle = page.getByRole('button', { name: 'Community picks', exact: true })
+    await toggle.click()
+    await expect(toggle).toHaveAttribute('aria-pressed', 'true')
+    await expect(page).toHaveURL(/featured=1/)
+    await expect(rows(page)).toHaveCount(3)
+    await chooseSort(page, 'Monthly downloads')
+    await expect(rows(page).first()).toContainText('dereuromark/cakephp-tools')
+    await chooseCategory(page, 'Asset Management')
+    await expect(rows(page)).toHaveCount(1)
+    await expect(rows(page)).toContainText('markstory/asset_compress')
+    await page.reload()
+    await expect(toggle).toHaveAttribute('aria-pressed', 'true')
+    await expect(rows(page)).toHaveCount(1)
+    await search(page).fill('users')
+    await expect(page.getByText('No plugins found', { exact: true })).toBeVisible()
+    await page.getByRole('link', { name: 'Reset filters', exact: true }).click()
+    await expect(toggle).toHaveAttribute('aria-pressed', 'false')
+    await expect(page).not.toHaveURL(/featured=|category=|search=/)
+    await page.goBack()
+    await expect(toggle).toHaveAttribute('aria-pressed', 'true')
+    await expect(page.getByText('No plugins found', { exact: true })).toBeVisible()
+})
+
+test('community picks fit both themes on mobile and desktop', async ({ page }) => {
+    await page.getByRole('button', { name: 'Community picks', exact: true }).click()
+    await expect(rows(page)).toHaveCount(3)
+    for (const width of [320, 390, 1280]) {
+        await page.setViewportSize({ width, height: 900 })
+        for (const theme of ['cakephp', 'cakephp-dark']) {
+            await page.evaluate(theme => document.documentElement.dataset.theme = theme, theme)
+            expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width)
+            const row = rows(page).first()
+            await expect(row.locator('.community-pick-badge')).toBeVisible()
+            const bounds = await row.boundingBox()
+            expect(bounds.x).toBeGreaterThanOrEqual(0)
+            expect(bounds.x + bounds.width).toBeLessThanOrEqual(width)
+            await page.screenshot({ path: `tmp/community-picks-${theme}-${width}.png`, fullPage: true, animations: 'disabled' })
+        }
+    }
 })
 
 test('live search updates results and replaces history while typing', async ({ page }) => {
@@ -248,7 +292,7 @@ test('live search updates results and replaces history while typing', async ({ p
     await expect(page).toHaveURL(/search=asset/)
     await expect(rows(page)).toHaveCount(1)
     await expect(rows(page)).toContainText('markstory/asset_compress')
-    await expect(featured(page)).toHaveCount(0)
+    await expect(featured(page)).toHaveCount(1)
     await expect(search(page)).toBeFocused()
     await search(page).fill('users')
     await expect(page).toHaveURL(/search=users/)
@@ -272,7 +316,7 @@ test('version filters are live and clearing retains the selected sort', async ({
     await expect(page).not.toHaveURL(/cakephp_slugs|search=|page=/)
     await expect(page).toHaveURL(/sort=downloads/)
     await expect(search(page)).toHaveValue('')
-    await expect(featured(page)).toBeVisible()
+    await expect(featured(page).first()).toBeVisible()
     await retained(page)
 })
 
@@ -373,8 +417,8 @@ test('one shared DaisyUI dialog loads details, copies installation and restores 
     await retained(page)
 })
 
-test('featured cards use the same dialog and backdrop dismissal works', async ({ page }) => {
-    const trigger = featured(page).locator('a').first()
+test('community picks use the same dialog and backdrop dismissal works', async ({ page }) => {
+    const trigger = featured(page).first().locator('.package-name a')
     const name = await trigger.getAttribute('data-plugin-name')
     await trigger.click()
     const dialog = page.getByRole('dialog', { name, exact: true })

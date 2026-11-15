@@ -32,6 +32,9 @@ class CatalogueIsland extends Island
     #[State(writable: true, url: 'awesome', history: true)]
     public bool $awesomeOnly = false;
 
+    #[State(writable: true, url: 'featured', history: true)]
+    public bool $featuredOnly = false;
+
     /**
      * @var list<string>
      */
@@ -71,7 +74,7 @@ class CatalogueIsland extends Island
      */
     public function updated(UpdatedPaths $paths): void
     {
-        if (($paths->has('search') || $paths->has('cakephpSlugs') || $paths->has('phpSlugs') || $paths->has('category') || $paths->has('awesomeOnly')) && !$paths->has('paging.page')) {
+        if ($paths->hasAny('search', 'cakephpSlugs', 'phpSlugs', 'category', 'awesomeOnly', 'featuredOnly') && !$paths->has('paging.page')) {
             $this->paging->page = 1;
         }
     }
@@ -129,6 +132,16 @@ class CatalogueIsland extends Island
     }
 
     /**
+     * Keep community picks within the current search, compatibility and sort.
+     */
+    #[Action]
+    public function toggleFeatured(): void
+    {
+        $this->featuredOnly = !$this->featuredOnly;
+        $this->paging->page = 1;
+    }
+
+    /**
      * Clear the search and version selections while retaining the current sort.
      */
     #[Action]
@@ -139,6 +152,7 @@ class CatalogueIsland extends Island
         $this->phpSlugs = [];
         $this->category = '';
         $this->awesomeOnly = false;
+        $this->featuredOnly = false;
         $this->paging->page = 1;
     }
 
@@ -165,16 +179,15 @@ class CatalogueIsland extends Island
             'php_slugs' => $this->phpSlugs,
             'category' => $this->category,
             'awesome' => $this->awesomeOnly,
+            'featured' => $this->featuredOnly,
             'sort' => $this->paging->sort,
             'direction' => $this->paging->direction,
         ];
-        $hasFilters = trim($this->search) !== '' || $this->cakephpSlugs !== [] || $this->phpSlugs !== [] || $this->category !== '' || $this->awesomeOnly;
-        $showFeatured = $this->namespace === null && !$hasFilters && $this->paging->page === 1;
+        $hasFilters = trim($this->search) !== '' || $this->cakephpSlugs !== [] || $this->phpSlugs !== [] || $this->category !== '' || $this->awesomeOnly || $this->featuredOnly;
         $packages = $this->paginate($this->packages->find('catalogue', filters: $query, namespace: $this->namespace));
 
         return [
             'packages' => $packages,
-            'showFeatured' => $showFeatured,
             'hasFilters' => $hasFilters,
             'cakephpTags' => $options['cakephp'],
             'phpTags' => $options['php'],

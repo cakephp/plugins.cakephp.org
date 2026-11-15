@@ -107,7 +107,7 @@ class CatalogueIslandTest extends TestCase
     }
 
     /**
-     * Keep featured selection and cached options deterministic.
+     * Keep cached compatibility options deterministic.
      */
     protected function setUp(): void
     {
@@ -116,17 +116,17 @@ class CatalogueIslandTest extends TestCase
     }
 
     /**
-     * Pagination hides and restores the featured region without a page reload.
+     * Pagination keeps the catalogue free of a separate featured region.
      */
-    public function testPagingUpdatesFeaturedRegion(): void
+    public function testPagingKeepsResultsInOneList(): void
     {
         $this->testIsland('Catalogue')
             ->assertSet('paging.sort', 'latest_stable_release_date')
-            ->assertSee('data-featured-plugins')
+            ->assertDontSee('data-featured-plugins')
             ->set('paging.page', 2)
             ->assertDontSee('data-featured-plugins')
             ->set('paging.page', 1)
-            ->assertSee('data-featured-plugins');
+            ->assertDontSee('data-featured-plugins');
     }
 
     /**

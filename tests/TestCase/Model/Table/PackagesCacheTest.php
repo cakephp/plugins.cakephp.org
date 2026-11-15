@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Model\Table;
 
 use App\Command\CleanCommand;
+use App\Model\Table\FeaturedPluginsTable;
 use App\Model\Table\PackagesTable;
 use App\Service\AwesomeListImporter;
 use App\Service\AwesomeListParser;
@@ -29,7 +30,7 @@ class PackagesCacheTest extends TestCase
      * @var list<string>
      */
     #[Override]
-    protected array $fixtures = ['app.Packages', 'app.Categories', 'app.CategoriesPackages', 'app.PublisherVersions', 'app.PublisherTagged'];
+    protected array $fixtures = ['app.FeaturedPlugins', 'app.Packages', 'app.Categories', 'app.CategoriesPackages', 'app.PublisherVersions', 'app.PublisherTagged'];
 
     /**
      * @var array<string, mixed>
@@ -62,6 +63,28 @@ class PackagesCacheTest extends TestCase
         Cache::drop('catalogue');
         Cache::setConfig('catalogue', $this->cacheConfig);
         parent::tearDown();
+    }
+
+    /**
+     * Editorial edits invalidate cached row metadata and filtered pagination totals.
+     */
+    public function testEditorialChangesInvalidateCommunityPicks(): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        $picks = $this->fetchTable(FeaturedPluginsTable::class);
+        $query = $packages->find('catalogue', filters: ['featured' => true])->orderByAsc('Packages.id');
+        $this->assertSame(3, $query->count());
+        $this->assertNull($query->all()->first()?->community_pick?->title);
+        $entry = $picks->get(1);
+        $entry->title = 'Updated community pick';
+        $picks->saveOrFail($entry);
+        $fresh = $packages->find('catalogue', filters: ['featured' => true])->orderByAsc('Packages.id');
+        $this->assertSame('Updated community pick', $fresh->all()->first()?->community_pick?->title);
+        $entry->enabled = false;
+        $picks->saveOrFail($entry);
+        $this->assertSame(2, $packages->find('catalogue', filters: ['featured' => true])->count());
+        $picks->deleteOrFail($picks->get(2));
+        $this->assertSame(1, $packages->find('catalogue', filters: ['featured' => true])->count());
     }
 
     /**

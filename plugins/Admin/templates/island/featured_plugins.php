@@ -16,7 +16,7 @@ $this->Form->templater()->load('Admin.form-templates');
 ?>
 <div>
     <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
-        <div><h1 class="mb-2 text-3xl font-bold"><?= __('Featured plugins') ?></h1><p class="opacity-70"><?= __('The homepage randomly shows up to three enabled, available plugins.') ?></p></div>
+        <div><h1 class="mb-2 text-3xl font-bold"><?= __('Featured plugins') ?></h1><p class="opacity-70"><?= __('Enabled plugins appear as community picks within catalogue results.') ?></p></div>
         <button type="button" class="btn btn-primary" @click="$server.call('create')" :disabled="$server.pending()"><?= __('Add featured plugin') ?></button>
     </div>
     <?= $this->element('Admin.feedback', compact('message', 'errors')) ?>

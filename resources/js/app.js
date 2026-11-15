@@ -75,7 +75,7 @@ const register = (Alpine) => {
             if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
             const sort = event.target.closest('.sort-option')
             if (sort) sort.closest('details')?.removeAttribute('open')
-            const control = event.target.closest('[data-version-group][data-version-slug], [data-clear-catalogue], [data-category-slug], [data-toggle-awesome]')
+            const control = event.target.closest('[data-version-group][data-version-slug], [data-clear-catalogue], [data-category-slug], [data-toggle-awesome], [data-toggle-featured]')
             if (!control || !this.$el.contains(control)) return
             event.preventDefault()
             if (control.hasAttribute('data-clear-catalogue')) return this.$server.call('clearFilters')
@@ -83,6 +83,7 @@ const register = (Alpine) => {
                 this.closeCategories(control.classList.contains('selected-category'))
                 return this.$server.call('selectCategory', control.dataset.categorySlug)
             }
+            if (control.hasAttribute('data-toggle-featured')) return this.$server.call('toggleFeatured')
             if (control.hasAttribute('data-toggle-awesome')) return this.$server.call('toggleAwesome')
             const { versionGroup, versionSlug } = control.dataset
             return this.$server.call('toggleVersion', versionGroup, versionSlug)

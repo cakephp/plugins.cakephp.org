@@ -15,7 +15,7 @@ use Cake\View\Helper;
 class SeoHelper extends Helper
 {
     public const array FILTER_QUERY_KEYS = [
-        'search', 'cakephp_slugs', 'php_slugs', 'category', 'awesome',
+        'search', 'cakephp_slugs', 'php_slugs', 'category', 'awesome', 'featured',
         'sort', 'direction', 'page', 'keyword', 'query', 'cakephp',
     ];
 
