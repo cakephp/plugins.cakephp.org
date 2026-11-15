@@ -1,0 +1,33 @@
+{
+	frankenphp
+	auto_https off
+}
+
+:80 {
+	root * /var/www/html/webroot
+	log
+
+	@retired path /p /p/*
+	@filteredBot {
+		header_regexp User-Agent (?i)meta-externalagent
+		expression `{http.request.uri.query}.matches('(?i)(^|&)(keyword|cakephp_slugs|php_slugs|sort|direction|page)(%5B|=)')`
+	}
+	@hidden path_regexp (^|/)\.
+	@proxyHttps {
+		remote_ip private_ranges
+		header X-Forwarded-Proto https
+	}
+
+	route {
+		respond @retired 410
+		respond @filteredBot 429
+		respond @hidden 404
+
+		# Dokku's Nginx overwrites this header before forwarding over the private network.
+		vars php_https ""
+		vars @proxyHttps php_https on
+		php_server {
+			env HTTPS {http.vars.php_https}
+		}
+	}
+}
