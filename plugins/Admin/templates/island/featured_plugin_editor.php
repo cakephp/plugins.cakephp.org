@@ -82,16 +82,29 @@ $this->Form->templater()->load('Admin.form-templates');
                         ]) ?>
                         <p class="text-sm opacity-60"><?= __('Leave overrides blank to use catalogue values. Missing logos use a name-based emblem.') ?></p>
                     </fieldset>
-                    <section class="community-pick-row mt-5 rounded-box border border-base-300 p-5" aria-label="<?= __('Card preview') ?>">
+                    <section class="mt-5" aria-label="<?= __('Card preview') ?>">
                         <p class="mb-3 text-xs font-semibold uppercase opacity-60"><?= __('Card preview') ?></p>
-                        <span class="community-pick-badge"><?= $this->element('Packages/community_pick_icon') ?> <?= __('Community pick') ?></span>
-                        <?= $this->element('Packages/plugin-avatar', [
-                            'packageName' => $package,
-                            'logo' => $entry->logo,
-                            'plugin' => false,
-                        ]) ?>
-                        <p class="mt-3 text-xl font-bold"><?= h($entry->title ?? substr($package, (int)strpos($package, '/') + 1)) ?></p>
-                        <p class="mt-2 text-sm opacity-70"><?= h($entry->description ?? $previewPackage->description ?? __('Plugin unavailable in the catalogue.')) ?></p>
+                        <div class="community-pick-row rounded-box border border-base-300 p-4 md:p-5">
+                            <div class="package-identity">
+                                <?= $this->element('Packages/plugin-avatar', [
+                                    'packageName' => $package,
+                                    'logo' => $entry->logo,
+                                    'plugin' => false,
+                                ]) ?>
+                                <div class="min-w-0">
+                                    <span class="community-pick-badge">
+                                        <?= $this->element('Packages/community_pick_icon') ?> <?= __('Community pick') ?>
+                                    </span>
+                                    <p class="package-name"><?= h($package) ?></p>
+                                    <?php if ($entry->title !== null) : ?>
+                                        <p class="community-pick-title"><?= h($entry->title) ?></p>
+                                    <?php endif; ?>
+                                    <p class="line-clamp-2 text-[0.9375rem] wrap-anywhere">
+                                        <?= h($entry->description ?? $previewPackage->description ?? __('Plugin unavailable in the catalogue.')) ?>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </section>
                     <div class="modal-action flex-wrap">
                         <button type="button" class="btn" @click="$server.call('cancel')" :disabled="$server.pending()"><?= __('Cancel') ?></button>

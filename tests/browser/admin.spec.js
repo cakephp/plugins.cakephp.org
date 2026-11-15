@@ -60,6 +60,20 @@ test('featured editorial changes, preview and removal reach public cards', async
     }
     page.on('response', trackPreview)
     const preview = dialog.getByRole('region', { name: 'Card preview' })
+    await expect(preview.locator('.package-name')).toHaveText('markstory/asset_compress')
+    for (const width of [390, 1280]) {
+        await page.setViewportSize({ width, height: 900 })
+        for (const theme of ['cakephp', 'cakephp-dark']) {
+            await page.evaluate(theme => { document.documentElement.dataset.theme = theme }, theme)
+            await preview.scrollIntoViewIfNeeded()
+            const avatar = await preview.locator('.plugin-avatar-tile').boundingBox()
+            const badge = await preview.locator('.community-pick-badge').boundingBox()
+            expect(avatar.x + avatar.width).toBeLessThan(badge.x)
+            expect(Math.abs(avatar.y - badge.y)).toBeLessThan(8)
+            expect(await preview.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true)
+            await preview.screenshot({ path: `tmp/admin-pick-preview-${theme}-${width}.png`, animations: 'disabled' })
+        }
+    }
     await dialog.getByLabel('Title override').fill('Community favourite')
     await expect(preview).toContainText('Community favourite')
     await dialog.getByLabel('Description override').fill('A curated description.')
