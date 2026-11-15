@@ -1,4 +1,6 @@
 User-agent: *
+Disallow: /admin
+Disallow: /auth
 Disallow: /*cakephp_slugs
 Disallow: /*php_slugs
 Disallow: /*keyword
@@ -8,3 +10,5 @@ Disallow: /*awesome=
 Disallow: /*sort=
 Disallow: /*direction=
 Disallow: /*page=
+
+Sitemap: https://plugins.cakephp.org/sitemap.xml

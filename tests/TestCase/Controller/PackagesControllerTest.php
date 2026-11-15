@@ -44,14 +44,16 @@ class PackagesControllerTest extends TestCase
     /**
      * @return void
      */
-    public function testIndexShowsFeaturedSectionOnFirstPageWithoutFilters(): void
+    public function testIndexDefersCatalogueWithCustomPlaceholder(): void
     {
         $this->get('/?sort=downloads&direction=desc');
 
         $this->assertResponseOk();
-        $this->assertResponseContains('Featured');
-        $this->assertResponseContains('data-featured-plugins');
-        $this->assertResponseContains('Latest release');
+        $this->assertResponseContains('data-catalogue-loading');
+        $this->assertResponseContains('skeleton');
+        $this->assertResponseContains('Enable JavaScript to search and browse plugins.');
+        $this->assertResponseNotContains('data-package-row');
+        $this->assertResponseNotContains('x-interact:model.live="search"');
     }
 
     /**
@@ -75,7 +77,8 @@ class PackagesControllerTest extends TestCase
 
         $this->assertResponseOk();
         $this->assertResponseNotContains('data-featured-plugins');
-        $this->assertResponseContains('vendor/package-02');
+        $this->assertResponseContains('data-catalogue-loading');
+        $this->assertResponseNotContains('data-package-row');
     }
 
     /**
@@ -96,6 +99,9 @@ class PackagesControllerTest extends TestCase
         $this->assertResponseOk();
         $this->assertResponseContains('composer require markstory/asset_compress');
         $this->assertResponseContains('https://packagist.org/packages/markstory/asset_compress');
+        $this->assertResponseContains('class="plugin-category-links"');
+        $this->assertResponseContains('category=code-analysis');
+        $this->assertResponseContains('Awesome CakePHP');
         $this->assertResponseContains('href="/plugins/markstory"');
         $this->assertResponseContains('rel="canonical" href="' . Router::url([
             '_name' => 'plugin:view',
@@ -158,7 +164,7 @@ class PackagesControllerTest extends TestCase
             $this->get('/plugins/' . $namespace);
             $this->assertResponseOk();
             $this->assertNoRedirect();
-            $this->assertResponseContains('href="/plugins/' . $namespace . '/cakephp-tools"');
+            $this->assertResponseContains('data-catalogue-loading');
             $this->get('/plugins/' . $namespace . '/cakephp-tools');
             $this->assertResponseOk();
             $this->assertNoRedirect();
@@ -201,9 +207,10 @@ class PackagesControllerTest extends TestCase
         $this->assertResponseContains('href="https://packagist.org/packages/dereuromark/"');
         $this->assertResponseContains('data-namespace-stat="downloads">20k');
         $this->assertResponseContains('data-namespace-stat="stars">300');
-        $this->assertResponseContains('No plugins found');
-        $this->assertResponseContains('action="/plugins/dereuromark"');
+        $this->assertResponseContains('data-catalogue-loading');
+        $this->assertResponseNotContains('data-package-row');
         $this->assertResponseContains('data-namespace-profile-loading');
+        $this->assertResponseContains('Enable JavaScript to search and browse plugins.');
         $this->assertResponseContains('skeleton');
         $this->assertResponseContains('rel="canonical" href="' . Router::url([
             '_name' => 'plugin:namespace',
@@ -278,7 +285,10 @@ class PackagesControllerTest extends TestCase
         $this->assertResponseOk();
         $this->assertResponseContains('/interact/js/runtime.js');
         $this->assertResponseContains('name="interact-navigation"');
-        $this->assertResponseContains('x-interact:model.live="search"');
+        $this->assertResponseRegExp('/<script[^>]+x-interact:asset="reload"/');
+        $this->assertResponseRegExp('/<link[^>]+x-interact:asset="reload"/');
+        $this->assertSame(1, substr_count((string)$this->_response->getBody(), '/interact/js/runtime.js'));
+        $this->assertResponseContains('data-catalogue-loading');
         $this->assertCookieIsSet('csrfToken');
         $this->assertResponseNotContains('hx-');
     }

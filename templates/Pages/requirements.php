@@ -3,6 +3,8 @@
  * @var \App\View\AppView $this
  */
 $this->assign('title', 'Listing Requirements');
+$this->assign('description', __('Learn how to list your CakePHP plugin: Packagist requirements, Composer package type, dependency rules and compatibility with CakePHP.'));
+$this->assign('canonicalUrl', $this->Url->build(['_name' => 'page:requirements'], ['fullBase' => true]));
 ?>
 <section class="docs-page site-width">
     <header class="page-intro">

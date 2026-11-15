@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#fff4f1"/><stop offset="1" stop-color="#edf0ff"/></linearGradient>
+    <radialGradient id="glow"><stop stop-color="#e04b57" stop-opacity=".16"/><stop offset="1" stop-color="#e04b57" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <ellipse cx="130" cy="200" rx="500" ry="450" fill="url(#glow)"/>
+  <g transform="translate(80 110) scale(2.2)" fill="#d83c48"><path d="M28.993,18.11l22.685,5.632c3.948-1.541,6.318-3.505,6.318-5.632V9.052C57.996,4.058,45.011,0,28.993,0
+            C12.979,0,0,4.058,0,9.052v9.058c0,4.995,12.979,9.05,28.993,9.05V18.11z" />
+<path d="M51.676,32.796L28.993,27.16v9.051l22.683,5.638c3.95-1.549,6.322-3.504,6.322-5.638V27.16
+            C57.999,29.292,55.626,31.25,51.676,32.796" />
+<path d="M0,27.16v9.052c0,4.996,12.979,9.047,28.993,9.047v-9.047C12.979,36.211,0,32.155,0,27.16" /></g>
+  <g fill="#25262c" font-family="Arial, Helvetica, sans-serif">
+    <text x="80" y="330" font-size="76" font-weight="700" letter-spacing="-3">CakePHP Plugins</text>
+    <text x="82" y="397" font-size="34" fill="#55545e">Discover plugins for your projects.</text>
+    <text x="82" y="531" font-size="24" fill="#686571">Compatibility · Community · Open source</text>
+    <text x="1118" y="531" text-anchor="end" font-size="22" fill="#b1303b">plugins.cakephp.org</text>
+  </g>
+</svg>

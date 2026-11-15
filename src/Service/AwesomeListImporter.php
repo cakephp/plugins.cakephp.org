@@ -45,6 +45,7 @@ class AwesomeListImporter
      * @param string $markdown Complete upstream README.
      * @param array<string, string> $aliases Repository URLs mapped to exact Composer package names.
      * @return array{matched: int, unmatched: list<string>}
+     * @phpstan-impure
      */
     public function import(string $markdown, array $aliases = []): array
     {

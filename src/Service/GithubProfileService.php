@@ -21,6 +21,7 @@ class GithubProfileService
 
     /**
      * @return array{avatarUrl: string|null, bio: string|null}|null
+     * @phpstan-impure
      */
     public function profile(string $owner): ?array
     {

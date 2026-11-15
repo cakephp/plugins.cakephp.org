@@ -95,6 +95,38 @@ class PackagesCacheTest extends TestCase
     }
 
     /**
+     * The ecosystem shares the same invalidation as imported catalogue data.
+     */
+    public function testEcosystemSnapshotUsesCatalogueInvalidation(): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        $before = $packages->ecosystemStats();
+        $packages->getConnection()->delete('packages', ['id' => 24]);
+        $this->assertSame($before, $packages->ecosystemStats());
+
+        Cache::clear('catalogue');
+        $after = $packages->ecosystemStats();
+        $this->assertSame(25, $after['plugins']);
+        $this->assertSame(5275, $after['monthly_downloads']);
+        $this->assertSame(['major' => '5', 'plugins' => 24], $after['current_support']);
+    }
+
+    /**
+     * Sitemap data is reused until the importer clears the catalogue cache.
+     */
+    public function testSitemapPackagesUseCatalogueInvalidation(): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        $before = $packages->sitemapPackages();
+        $packages->getConnection()->delete('packages', ['id' => 24]);
+        $this->assertSame($before, $packages->sitemapPackages());
+        Cache::clear('catalogue');
+        $after = $packages->sitemapPackages();
+        $this->assertCount(25, $after);
+        $this->assertNotContains('vendor/package-23', array_column($after, 'package'));
+    }
+
+    /**
      * Filters, bindings, namespace, direction, page and limit cannot collide.
      */
     public function testCatalogueCacheSeparatesSelections(): void

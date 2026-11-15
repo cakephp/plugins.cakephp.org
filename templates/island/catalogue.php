@@ -39,10 +39,6 @@ $clearCategoryUrl = $this->Url->build($catalogueRoute + [
 ?>
 <div class="directory pt-4 md:pt-5 site-width" x-data="catalogue" @click="activate($event)" @keydown.escape="closeMenu($event)"
      @catalogue-version.window="selectVersion($event)" @catalogue-category.window="selectCategory($event)">
-    <?php if ($namespace === null) : ?>
-        <h1 class="sr-only"><?= __('CakePHP plugins') ?></h1>
-    <?php endif; ?>
-
     <div class="catalogue-discovery">
         <div class="mb-4 flex items-center gap-3 md:gap-4">
             <?= $this->Form->create(null, [

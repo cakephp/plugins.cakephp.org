@@ -7,6 +7,11 @@
  * @var array|string $backUrl
  */
 $this->assign('title', __('Plugins by {0}', $namespace));
+$this->assign('description', __('Explore {0} CakePHP plugins by {1}, with download statistics, releases, installation instructions and PHP compatibility.', $stats['plugins'], $namespace));
+$this->assign('canonicalUrl', $this->Url->build([
+    '_name' => 'plugin:namespace',
+    'namespace' => $namespace,
+], ['fullBase' => true]));
 $statLabels = [
     'plugins' => __('Plugins'),
     'downloads' => __('Downloads'),
@@ -53,5 +58,11 @@ $statLabels = [
         </div>
     </div>
 </header>
-<?= $this->Interact->render('Catalogue', props: compact('namespace'), key: 'namespace-catalogue-' . $namespace) ?>
+<?= $this->Interact->render(
+    'Catalogue',
+    props: compact('namespace'),
+    key: 'namespace-catalogue-' . $namespace,
+    loading: 'lazy',
+    placeholder: 'Loading/catalogue',
+) ?>
 <?= $this->element('Packages/plugin-modal') ?>

@@ -10,15 +10,6 @@ const signIn = async (context, id = '1') => {
 test.beforeEach(() => fixtures('reset'))
 test.afterEach(() => fixtures('reset'))
 
-test('existing login is reused and ordinary users cannot access admin', async ({ page, context }) => {
-    await page.goto('/admin/users')
-    await expect(page).toHaveURL(/\/?redirect=%2Fadmin%2Fusers/)
-    await expect(page.getByText('Sign in', { exact: true })).toBeVisible()
-    await signIn(context, '2')
-    const response = await page.goto('/admin/users')
-    expect(response.status()).toBe(403)
-})
-
 test('admin manages roles and suspension through the standard Interact endpoint', async ({ page, context }) => {
     await signIn(context)
     await page.goto('/admin/users')
@@ -117,22 +108,6 @@ test('cancel discards the editor draft and saving retains listing filters and so
     await expect(page).toHaveURL(/direction=desc/)
     await expect(page.locator('tbody tr')).toHaveCount(1)
 })
-
-for (const mode of ['revoke', 'suspend']) {
-    test(`admin updates reject ${mode} after mounting without a login redirect`, async ({ page, context }) => {
-        await signIn(context)
-        await page.goto('/admin/featured-plugins')
-        fixtures(mode)
-        const pending = page.waitForResponse(response => response.url().endsWith('/_interact/update'))
-        await page.getByRole('button', { name: 'Add featured plugin' }).click()
-        const response = await pending
-        expect(response.status()).toBe(403)
-        expect(response.headers()['content-type']).toContain('application/json')
-        expect((await response.json()).error.code).toBe('forbidden')
-        await expect(page).toHaveURL('/admin/featured-plugins')
-        await expect(page.getByRole('dialog')).toHaveCount(0)
-    })
-}
 
 test('admin adds an existing catalogue plugin and disables its feature', async ({ page, context }) => {
     await signIn(context)

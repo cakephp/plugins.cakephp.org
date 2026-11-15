@@ -28,6 +28,7 @@ use Cake\View\View;
  * @property \App\View\Helper\UserHelper $User
  * @property \App\View\Helper\GithubHelper $Github
  * @property \App\View\Helper\NumberHelper $Number
+ * @property \App\View\Helper\SeoHelper $Seo
  * @property \Interact\View\Helper\InteractHelper $Interact
  * @property \CakeVite\View\Helper\ViteHelper $Vite
  */
@@ -51,6 +52,7 @@ class AppView extends View
         $this->loadHelper('Authentication.Identity');
         $this->loadHelper('User');
         $this->loadHelper('Github');
+        $this->loadHelper('Seo');
         $this->loadHelper('Interact.Interact');
         $this->loadHelper('CakeVite.Vite');
     }

@@ -4,7 +4,8 @@
  * @var \App\Model\Entity\Package $package
  */
 $this->assign('title', $package->package);
-[$namespace, $name] = explode('/', $package->package, 2);
+$this->assign('description', $package->description ?: __('Installation, releases and CakePHP compatibility for {0}.', $package->package));
+[$namespace, $name] = explode('/', strtolower($package->package), 2);
 $this->assign('canonicalUrl', $this->Url->build([
     '_name' => 'plugin:view',
     'namespace' => $namespace,

@@ -14,7 +14,6 @@ use Rector\Php55\Rector\String_\StringClassNameToClassConstantRector;
 use Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector;
 use Rector\Php80\Rector\Class_\ClassPropertyAssignToConstructorPromotionRector;
 use Rector\Set\ValueObject\SetList;
-use Rector\TypeDeclaration\Rector\ClassMethod\ParamTypeByMethodCallTypeRector;
 use Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictFluentReturnRector;
 use Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictTypedCallRector;
 
@@ -53,7 +52,6 @@ return RectorConfig::configure()
         NewlineAfterStatementRector::class,
         StringClassNameToClassConstantRector::class,
         ReturnTypeFromStrictTypedCallRector::class,
-        ParamTypeByMethodCallTypeRector::class,
         CompactToVariablesRector::class,
         SplitDoubleAssignRector::class,
         NewlineBeforeNewAssignSetRector::class,

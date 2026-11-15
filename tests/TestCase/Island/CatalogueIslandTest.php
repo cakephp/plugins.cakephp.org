@@ -7,6 +7,8 @@ use Cake\Cache\Cache;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use DOMDocument;
+use DOMXPath;
 use Interact\TestSuite\IslandTestTrait;
 use InvalidArgumentException;
 use Override;
@@ -156,6 +158,52 @@ class CatalogueIslandTest extends TestCase
     }
 
     /**
+     * Generated reset URLs retain the selected sort without double-escaping ampersands.
+     */
+    public function testResetLinkQueryEncoding(): void
+    {
+        $island = $this->testIsland('Catalogue')->fill([
+            'search' => 'asset', 'category' => 'asset-management',
+            'paging.sort' => 'downloads', 'paging.direction' => 'asc',
+        ]);
+        $links = $this->document($island->result()->html)->query('//a[@data-clear-catalogue or @data-category-slug=""]/@href');
+        $this->assertNotFalse($links);
+        $this->assertGreaterThan(0, $links->length);
+        foreach ($links as $link) {
+            parse_str((string)parse_url($link->nodeValue, PHP_URL_QUERY), $params);
+            $this->assertSame('downloads', $params['sort']);
+            $this->assertSame('asc', $params['direction']);
+            foreach (array_keys($params) as $key) {
+                $this->assertStringStartsNotWith('amp;', $key);
+            }
+        }
+    }
+
+    /**
+     * The teaser metric is server-rendered from the selected sort in both catalogues.
+     */
+    public function testTeaserMetricFollowsSort(): void
+    {
+        foreach ([null, 'vendor'] as $namespace) {
+            $island = $this->testIsland('Catalogue', ['namespace' => $namespace]);
+            $cases = [
+                ['monthly_downloads', 'desc', 'Monthly downloads', $namespace === null ? '2,000' : '98'],
+                ['monthly_downloads', 'asc', 'Monthly downloads', '76'],
+                ['stars', 'desc', 'Stars', $namespace === null ? '500' : '98'],
+                ['stars', 'asc', 'Stars', '76'],
+                ['downloads', 'desc', 'Downloads', $namespace === null ? '20,000' : '998'],
+            ];
+            foreach ($cases as [$sort, $direction, $label, $value]) {
+                $island->fill(['paging.sort' => $sort, 'paging.direction' => $direction]);
+                $document = $this->document($island->result()->html);
+                $metric = '(//*[@data-package-row])[1]//dl[@class="package-meta"]';
+                $this->assertSame($label, $document->evaluate('string(' . $metric . '//dt)'));
+                $this->assertSame($value, $document->evaluate('string(' . $metric . '//dd)'));
+            }
+        }
+    }
+
+    /**
      * New filters must not reset an explicitly restored history page.
      */
     public function testExplicitPageIsRespectedWhenRestoringSearch(): void
@@ -227,5 +275,16 @@ class CatalogueIslandTest extends TestCase
         $island = $this->testIsland('Catalogue');
         $this->expectException(BadRequestException::class);
         $island->set('search', str_repeat('a', 101));
+    }
+
+    /**
+     * Parse rendered island HTML without executing JavaScript.
+     */
+    private function document(string $html): DOMXPath
+    {
+        $document = new DOMDocument();
+        $document->loadHTML($html, LIBXML_NONET | LIBXML_NOERROR | LIBXML_NOWARNING);
+
+        return new DOMXPath($document);
     }
 }

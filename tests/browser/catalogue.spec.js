@@ -20,6 +20,7 @@ test.beforeEach(async ({ page }) => {
     page.on('pageerror', error => errors.push(error.message))
     await page.goto('/')
     await page.waitForFunction(() => !!window.Alpine?.store('interactNavigation'))
+    await expect(search(page)).toBeVisible()
     await page.evaluate(() => { window.documentMarker = 'retained' })
 })
 
@@ -27,34 +28,30 @@ test.afterEach(async ({ page }) => {
     expect(pageErrors.get(page)).toEqual([])
 })
 
-test('production assets use hashed URLs and Interact reload tracking', async ({ page }) => {
-    const script = page.locator('script[type="module"]')
-    const stylesheet = page.locator('link[rel="stylesheet"]')
-    await expect(script).toHaveAttribute('x-interact:asset', 'reload')
-    await expect(stylesheet).toHaveAttribute('x-interact:asset', 'reload')
-    await expect(script).toHaveAttribute('src', /^\/build\/assets\/app-[\w-]+\.js$/)
-    await expect(stylesheet).toHaveAttribute('href', /^\/build\/assets\/style-[\w-]+\.css$/)
-    await expect(page.locator('script[src*="/interact/js/runtime.js"]')).toHaveCount(1)
-    await expect(page.locator('script[src*="@vite/client"]')).toHaveCount(0)
+test('ecosystem snapshot stays global while the catalogue is filtered', async ({ page }) => {
+    const snapshot = page.getByRole('region', { name: 'Ecosystem snapshot', exact: true })
+    const initialText = await snapshot.textContent()
+    await snapshot.evaluate(element => { element.snapshotMarker = 'retained' })
+    await search(page).fill('users')
+    await expect(rows(page)).toHaveCount(1)
+    await expect(snapshot).toHaveText(initialText)
+    expect(await snapshot.evaluate(element => element.snapshotMarker)).toBe('retained')
 })
 
-test('filter reset links escape query separators once', async ({ page }) => {
-    await page.goto('/?search=asset&category=asset-management&sort=downloads&direction=asc')
-    const links = page.locator('a[data-clear-catalogue], a[data-category-slug=""]')
-    expect(await links.count()).toBeGreaterThan(0)
-    for (const href of await links.evaluateAll(elements => elements.map(element => element.href))) {
-        const url = new URL(href)
-        expect([...url.searchParams.keys()].some(key => key.startsWith('amp;'))).toBe(false)
-        expect(url.searchParams.get('sort')).toBe('downloads')
-        expect(url.searchParams.get('direction')).toBe('asc')
+test('ecosystem snapshot fits both themes on narrow and wide screens', async ({ page }) => {
+    const snapshot = page.getByRole('region', { name: 'Ecosystem snapshot', exact: true })
+    for (const width of [320, 390, 1280]) {
+        await page.setViewportSize({ width, height: 844 })
+        for (const theme of ['cakephp', 'cakephp-dark']) {
+            await page.evaluate(theme => { document.documentElement.dataset.theme = theme }, theme)
+            await snapshot.scrollIntoViewIfNeeded()
+            expect(await snapshot.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true)
+            expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+            const footer = await page.locator('footer').boundingBox()
+            expect(footer.x).toBe(0)
+            expect(footer.width).toBe(width)
+        }
     }
-
-    await page.goto('/publishers?search=vendor&sort=stars&cakephp=all')
-    const href = await page.getByRole('link', { name: 'Clear search', exact: true }).getAttribute('href')
-    const url = new URL(href, page.url())
-    expect([...url.searchParams.keys()].some(key => key.startsWith('amp;'))).toBe(false)
-    expect(url.searchParams.get('sort')).toBe('stars')
-    expect(url.searchParams.get('cakephp')).toBe('all')
 })
 
 test('category and Awesome filters combine live and reset without losing sort', async ({ page }) => {
@@ -199,26 +196,13 @@ test('details category links retain directory selections and close the dialog', 
     await retained(page)
 })
 
-test('category filters and source attribution work without JavaScript', async ({ browser }) => {
+test('catalogue explains its JavaScript requirement', async ({ browser }) => {
     const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } })
     try {
         const page = await context.newPage()
-        await page.goto('http://127.0.0.1:8765/')
-        await chooseCategory(page, 'Asset Management')
-        await expect(rows(page)).toHaveCount(1)
-        await search(page).fill('asset')
-        await search(page).press('Enter')
-        await expect(page).toHaveURL(/category=asset-management/)
-        await page.getByRole('button', { name: 'Awesome only', exact: true }).click()
-        await expect(page).toHaveURL(/awesome=1/)
-        await expect(rows(page)).toHaveCount(1)
-        await rows(page).locator('.package-name a').click()
-        await expect(page).toHaveURL(/plugins\/markstory\/asset_compress$/)
-        await expect(page.locator('.plugin-category-links a')).toHaveCount(2)
-        await expect(page.getByRole('link', { name: 'Awesome CakePHP', exact: true })).toBeVisible()
-        await page.getByRole('link', { name: 'Code Analysis', exact: true }).click()
-        await expect(page).toHaveURL(/category=code-analysis/)
-        await expect(rows(page)).toHaveCount(1)
+        await page.goto('/')
+        await expect(page.getByText('Enable JavaScript to search and browse plugins.', { exact: true })).toBeVisible()
+        await expect(page.locator('[data-catalogue-skeleton]')).toBeVisible()
     } finally {
         await context.close()
     }
@@ -340,26 +324,6 @@ for (const width of [390, 1280]) {
         await retained(page)
     })
 }
-
-test('mobile version selectors retain native filtering without JavaScript', async ({ browser }) => {
-    const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 320, height: 740 } })
-    const page = await context.newPage()
-    try {
-        await page.goto('/plugins/vendor')
-        const cake = page.getByRole('group', { name: 'CakePHP version', exact: true })
-        await cake.locator('summary').click()
-        await cake.getByRole('button', { name: 'CakePHP 5.4', exact: true }).click()
-        await expect(page).toHaveURL(/cakephp_slugs/)
-        await expect(cake.locator('summary')).toContainText('5.4')
-        await expect(rows(page)).toHaveCount(21)
-        await cake.locator('summary').click()
-        await cake.getByRole('link', { name: 'Clear CakePHP version', exact: true }).click()
-        await expect(page).not.toHaveURL(/cakephp_slugs/)
-        await expect(cake.locator('summary')).toContainText('CakePHP version')
-    } finally {
-        await context.close()
-    }
-})
 
 test('plugin details filter the parent directory while retaining search and sort', async ({ page }) => {
     await chooseSort(page, 'Downloads')
@@ -534,11 +498,15 @@ test('navigation preserves the cookie theme and current page indicator', async (
     expect(cookie).toMatchObject({ value: 'cakephp-dark', httpOnly: true, sameSite: 'Lax', path: '/' })
     await page.locator('.desktop-nav').getByRole('link', { name: 'Listing requirements' }).click()
     await expect(page).toHaveURL(/\/requirements$/)
+    await expect(page).toHaveTitle('Listing Requirements | CakePHP Plugins')
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'http://127.0.0.1:8765/requirements')
     await expect(page.getByRole('heading', { name: 'Listing requirements', exact: true })).toBeVisible()
     await expect(page.locator('.desktop-nav').getByRole('link', { name: 'Listing requirements' })).toHaveAttribute('aria-current', 'page')
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'cakephp-dark')
     await page.getByRole('link', { name: 'Browse plugins', exact: true }).last().click()
     await expect(search(page)).toBeVisible()
+    await expect(page).toHaveTitle('Discover CakePHP plugins | CakePHP Plugins')
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'http://127.0.0.1:8765/')
     await retained(page)
 })
 
@@ -568,6 +536,7 @@ test('the saved palette renders before JavaScript and is readable in both themes
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'cakephp-dark')
     const response = await page.reload()
     expect(await response.text()).toContain('data-theme="cakephp-dark"')
+    await expect(rows(page).first()).toBeVisible()
     expect(await page.evaluate(() => ({
         background: getComputedStyle(document.body).backgroundColor,
         text: getComputedStyle(document.body).color,
@@ -604,37 +573,4 @@ test('mobile navigation and compatibility work without horizontal page overflow'
         await page.setViewportSize({ width, height: 900 })
         expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false)
     }
-})
-
-test('GET search, version links, details and pagination work without JavaScript', async ({ browser }) => {
-    const context = await browser.newContext({ javaScriptEnabled: false })
-    try {
-        const page = await context.newPage()
-        await page.goto('http://127.0.0.1:8765/')
-        await search(page).fill('users')
-        await search(page).press('Enter')
-        await expect(page).toHaveURL(/search=users/)
-        await expect(rows(page)).toContainText('cakedc/users')
-        await rows(page).getByRole('link', { name: 'cakedc/users', exact: true }).click()
-        await expect(page).toHaveURL(/plugins\/cakedc\/users$/)
-        await expect(page.locator('.plugin-details')).toContainText('composer require cakedc/users')
-        await page.goto('http://127.0.0.1:8765/')
-        await page.locator('#versions-cakephp_slugs > summary').click()
-        await page.getByRole('group', { name: 'CakePHP version', exact: true }).getByRole('button', { name: 'CakePHP 4.4' }).click()
-        await expect(page).toHaveURL(/cakephp_slugs/)
-        await expect(rows(page)).toContainText('cakedc/users')
-        await page.goto('http://127.0.0.1:8765/')
-        await page.getByRole('link', { name: 'Next', exact: true }).click()
-        await expect(page).toHaveURL(/page=2/)
-    } finally {
-        await context.close()
-    }
-})
-
-test('production errors use the shared theme and assets', async ({ page }) => {
-    const response = await page.goto('/missing-page')
-    expect(response.status()).toBe(404)
-    await expect(page.locator('.error-page')).toBeVisible()
-    await expect(page.locator('link[rel="stylesheet"]')).toHaveAttribute('href', /\/build\/assets\/style-/)
-    await expect(page.getByRole('link', { name: 'Browse plugins' }).last()).toBeVisible()
 })

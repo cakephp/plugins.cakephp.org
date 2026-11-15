@@ -7,6 +7,8 @@ use App\Model\Table\PackagesTable;
 use App\Service\GithubApiService;
 use Cake\Cache\Cache;
 use Cake\TestSuite\TestCase;
+use DOMDocument;
+use DOMXPath;
 use Interact\TestSuite\IslandTestTrait;
 use Override;
 
@@ -56,6 +58,26 @@ class PublishersIslandTest extends TestCase
             ->assertSet('cakephp', 'all')
             ->set('sort', 'invalid')
             ->assertSet('sort', 'monthly_downloads');
+    }
+
+    /**
+     * The clear-search URL preserves ranking selections with singly escaped keys.
+     */
+    public function testClearSearchLinkQueryEncoding(): void
+    {
+        $island = $this->testIsland('Publishers')->fill([
+            'search' => 'vendor', 'sort' => 'stars', 'cakephp' => 'all',
+        ]);
+        $document = new DOMDocument();
+        $document->loadHTML($island->result()->html, LIBXML_NONET | LIBXML_NOERROR | LIBXML_NOWARNING);
+        $href = new DOMXPath($document)->evaluate('string(//a[@aria-label="Clear search"]/@href)');
+        $this->assertNotSame('', $href);
+        parse_str((string)parse_url($href, PHP_URL_QUERY), $params);
+        $this->assertSame('stars', $params['sort']);
+        $this->assertSame('all', $params['cakephp']);
+        foreach (array_keys($params) as $key) {
+            $this->assertStringStartsNotWith('amp;', $key);
+        }
     }
 
     /**

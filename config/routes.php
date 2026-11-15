@@ -66,6 +66,20 @@ return function (RouteBuilder $routes): void {
             'controller' => 'Publishers',
             'action' => 'index',
         ], 'publisher:index');
+        $builder->connect('/sitemap.xml', [
+            'controller' => 'Sitemaps',
+            'action' => 'index',
+        ], ['_name' => 'sitemap:index'])
+            ->setMethods(['GET', 'HEAD'])
+            ->setExtensions([]);
+        $builder->connect('/sitemap-{type}-{page}.xml', [
+            'controller' => 'Sitemaps',
+            'action' => 'view',
+        ], ['_name' => 'sitemap:view'])
+            ->setPatterns(['type' => 'pages|plugins|publishers', 'page' => '[1-9][0-9]{0,8}'])
+            ->setPass(['type', 'page'])
+            ->setMethods(['GET', 'HEAD'])
+            ->setExtensions([]);
         $packageSegment = '[A-Za-z0-9][A-Za-z0-9_.-]*';
         $builder->get('/plugins/{namespace}/{name}', [
             'controller' => 'Packages',
@@ -86,7 +100,7 @@ return function (RouteBuilder $routes): void {
             ])
             ->setPass(['namespace'])
             ->setExtensions([]);
-        $builder->connect('/requirements', ['controller' => 'Pages', 'action' => 'display', 'requirements']);
+        $builder->connect('/requirements', ['controller' => 'Pages', 'action' => 'display', 'requirements'], ['_name' => 'page:requirements']);
 
         /*
          * ...and connect the rest of 'Pages' controller's URLs.

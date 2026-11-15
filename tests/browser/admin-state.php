@@ -28,14 +28,6 @@ if ($mode === 'reset') {
     }
     exit;
 }
-if ($mode === 'revoke') {
-    $connection->exec("UPDATE users SET role = 'user' WHERE id = 1");
-    exit;
-}
-if ($mode === 'suspend') {
-    $connection->exec('UPDATE users SET is_active = 0 WHERE id = 1');
-    exit;
-}
 if (!in_array($mode, ['1', '2', '3'], true)) {
     throw new RuntimeException('Unknown browser fixture identity.');
 }

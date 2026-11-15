@@ -334,7 +334,59 @@ class PackagesTable extends Table
     }
 
     /**
+     * Sitemap rows share the catalogue's Redis cache and import invalidation.
+     *
+     * @return list<array{package: string, namespace: string}>
+     */
+    public function sitemapPackages(): array
+    {
+        $query = $this->unhydratedFind()->select(['package', 'namespace'])
+            ->orderByAsc('package');
+
+        return $this->cachePublicQuery($query, 'sitemap_packages')->all()->toList();
+    }
+
+    /**
+     * Global snapshot shares the catalogue cache and its import invalidation.
+     *
+     * @return array{plugins: int, publishers: int, monthly_downloads: int|null, current_support: array{major: string, plugins: int}|null}
+     */
+    public function ecosystemStats(): array
+    {
+        return Cache::remember('ecosystem_stats_v2', function (): array {
+            $query = $this->unhydratedFind();
+            $totals = $query->select([
+                'plugins' => $query->func()->count('*'),
+                'monthly_downloads' => $query->func()->sum('Packages.monthly_downloads'),
+                'monthly_known' => $query->func()->count('Packages.monthly_downloads'),
+            ])->first();
+            $plugins = (int)($totals['plugins'] ?? 0);
+            $publishers = $this->find()->select(['namespace'])->where(['namespace !=' => ''])->distinct()->count();
+            $major = $this->publisherMajors()[0] ?? null;
+            $currentSupport = null;
+            if ($major !== null) {
+                $compatible = $this->find();
+                $currentSupport = [
+                    'major' => $major,
+                    'plugins' => $compatible->where($compatible->expr()->exists($this->publisherCompatibility($major)))->count(),
+                ];
+            }
+
+            return [
+                'plugins' => $plugins,
+                'publishers' => $publishers,
+                'monthly_downloads' => (int)($totals['monthly_known'] ?? 0) === $plugins
+                    ? (int)($totals['monthly_downloads'] ?? 0)
+                    : null,
+                'current_support' => $currentSupport,
+            ];
+        }, 'catalogue');
+    }
+
+    /**
      * Link only an unambiguous GitHub repository owner, never guess from the Composer prefix.
+     *
+     * @phpstan-impure
      */
     public function namespaceGithubUrl(string $namespace): ?string
     {

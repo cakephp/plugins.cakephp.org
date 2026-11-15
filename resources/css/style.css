@@ -163,8 +163,14 @@ body::before {
     & span { @apply block text-muted; }
 }
 .site-footer {
-    @apply mt-8 flex items-center justify-between gap-4 border-t border-base-300 py-6 text-sm leading-[1.6] text-muted;
+    @apply mt-10 border-t border-base-300 bg-base-100/90;
     & nav { @apply flex gap-6; }
+}
+.footer-overview {
+    @apply grid gap-7 py-8 md:py-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-12;
+}
+.footer-bottom {
+    @apply flex flex-wrap items-center justify-between gap-4 py-5 text-sm leading-[1.6] text-muted;
 }
 .skip-link {
     @apply fixed top-2 left-2 z-[110] -translate-y-[200%] bg-base-100 px-4 py-2 focus:translate-y-0;

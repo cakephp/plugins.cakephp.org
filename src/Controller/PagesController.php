@@ -58,7 +58,7 @@ class PagesController extends AppController
      */
     public function display(string ...$path): ?Response
     {
-        if (!$path) {
+        if ($path === []) {
             return $this->redirect('/');
         }
         if (in_array('..', $path, true) || in_array('.', $path, true)) {

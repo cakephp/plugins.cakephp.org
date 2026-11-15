@@ -19,10 +19,11 @@ $request = $this->getRequest();
 $theme = $request->getCookie('theme') === 'cakephp-dark' ? 'cakephp-dark' : 'cakephp';
 ?>
 <!DOCTYPE html>
-<html data-theme="<?= h($theme) ?>">
+<html lang="en" data-theme="<?= h($theme) ?>">
 <head>
     <?= $this->Html->charset() ?>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">
     <title>
         <?= $cakeDescription ?>:
         <?= $this->fetch('title') ?>
@@ -50,6 +51,6 @@ $theme = $request->getCookie('theme') === 'cakephp-dark' ? 'cakephp-dark' : 'cak
         <?= $this->Flash->render() ?>
         <?= $this->fetch('content') ?>
     </main>
-    <?= $this->element('footer') ?>
+    <?= $this->element('footer', ['minimal' => true]) ?>
 </body>
 </html>

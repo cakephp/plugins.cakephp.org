@@ -15,6 +15,7 @@ use Authorization\Identity as AuthorizedIdentity;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Interact\TestSuite\IslandTestTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class AdminIslandsTest extends TestCase
 {
@@ -72,27 +73,44 @@ class AdminIslandsTest extends TestCase
     }
 
     /**
-     * The standard update endpoint still rechecks current admin access.
+     * Signed island updates recheck current admin access.
+     *
+     * @param array<string, mixed> $access Updated access fields.
      */
-    public function testRevokedSnapshotDenied(): void
+    #[DataProvider('revokedAccess')]
+    public function testRevokedSnapshotDenied(array $access): void
     {
         $request = $this->adminRequest();
         $island = $this->testIsland('Admin.FeaturedPlugins', request: $request);
-        $this->fetchTable(UsersTable::class)->updateAll(['role' => 'user'], ['id' => 1]);
+        $this->fetchTable(UsersTable::class)->updateAll($access, ['id' => 1]);
         $this->expectException(ForbiddenException::class);
         $island->withRequest($this->adminRequest(request: $request))->call('create');
     }
 
     /**
      * The independently mounted editor checks access on its own updates too.
+     *
+     * @param array<string, mixed> $access Updated access fields.
      */
-    public function testRevokedEditorSnapshotDenied(): void
+    #[DataProvider('revokedAccess')]
+    public function testRevokedEditorSnapshotDenied(array $access): void
     {
         $request = $this->adminRequest();
         $island = $this->testIsland('Admin.FeaturedPluginEditor', ['entryId' => 1], request: $request);
-        $this->fetchTable(UsersTable::class)->updateAll(['role' => 'user'], ['id' => 1]);
+        $this->fetchTable(UsersTable::class)->updateAll($access, ['id' => 1]);
         $this->expectException(ForbiddenException::class);
         $island->withRequest($this->adminRequest(request: $request))->set('draft.title', 'Unauthorized change')->call('save');
+    }
+
+    /**
+     * @return array<string, array{array<string, mixed>}>
+     */
+    public static function revokedAccess(): array
+    {
+        return [
+            'role revoked' => [['role' => UserRole::User]],
+            'account suspended' => [['is_active' => false]],
+        ];
     }
 
     /**

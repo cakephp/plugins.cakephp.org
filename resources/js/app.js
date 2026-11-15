@@ -206,14 +206,18 @@ if (window.Alpine) register(window.Alpine)
 else document.addEventListener('alpine:init', () => register(window.Alpine), { once: true })
 
 const refreshDocument = () => {
-    const hasQuery = new URL(window.location.href).search !== ''
+    const canonical = document.head.querySelector('link[rel="canonical"][data-filter-query-keys]')
     let robots = document.head.querySelector('meta[name="robots"]')
-    if (hasQuery && !robots) {
+    // Error and private-page restrictions belong to the server and remain intact.
+    if (!canonical || robots?.content === 'noindex,nofollow') return
+    const params = new URL(window.location.href).searchParams
+    const filtered = JSON.parse(canonical.dataset.filterQueryKeys).some(key => params.has(key))
+    if (filtered && !robots) {
         robots = document.createElement('meta')
         robots.name = 'robots'
         document.head.append(robots)
     }
-    if (hasQuery) robots.content = 'noindex,nofollow'
+    if (filtered) robots.content = 'noindex,follow'
     else robots?.remove()
 }
 

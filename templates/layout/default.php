@@ -14,25 +14,16 @@
  * @var \App\View\AppView $this
  */
 
-$cakeDescription = 'CakePHP Plugins';
 $request = $this->getRequest();
 $theme = $request->getCookie('theme') === 'cakephp-dark' ? 'cakephp-dark' : 'cakephp';
-$canonicalUrl = $this->fetch('canonicalUrl') ?: $this->Url->build($request->getPath() ?: '/', ['fullBase' => true]);
 ?>
 <!DOCTYPE html>
-<html data-theme="<?= h($theme) ?>">
+<html lang="en" data-theme="<?= h($theme) ?>">
 <head>
     <?= $this->Html->charset() ?>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>
-        <?= $cakeDescription ?>:
-        <?= $this->fetch('title') ?>
-    </title>
     <?= $this->Html->meta('icon') ?>
-    <link rel="canonical" href="<?= h($canonicalUrl) ?>">
-    <?php if ($request->getQueryParams() !== []) : ?>
-        <meta name="robots" content="noindex,nofollow">
-    <?php endif; ?>
+    <?= $this->element('seo') ?>
 
     <?= $this->Vite->css([
         'files' => ['resources/css/style.css'],

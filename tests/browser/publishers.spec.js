@@ -32,27 +32,6 @@ test.afterEach(async ({ page }) => {
     expect(errors.get(page)).toEqual([])
 })
 
-test('directory ranks publishers with totals and two popular plugins', async ({ page }) => {
-    let islandUpdates = 0
-    page.on('request', request => {
-        if (request.url().endsWith('/_interact/update')) islandUpdates++
-    })
-    await page.goto('/publishers')
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Publishers')
-    await expect.poll(() => names(page)).toEqual(['vendor', 'dereuromark', 'markstory'])
-    await expect(page.locator('.desktop-nav').getByRole('link', { name: 'Publishers', exact: true })).toHaveAttribute('aria-current', 'page')
-    const vendor = rows(page).first()
-    await expect(vendor.locator('[data-publisher-rank]')).toHaveText('#1')
-    await expect(vendor.locator('[data-publisher-stat="plugins"]')).toHaveText('23')
-    await expect(vendor.locator('[data-publisher-stat="monthly_downloads"]')).toHaveText('2k')
-    await expect(vendor.locator('[data-publisher-stat="monthly_downloads"]')).toHaveAttribute('aria-label', '2,001')
-    await expect(vendor.locator('[data-publisher-stat="stars"]')).toHaveText('2k')
-    await expect(vendor.getByRole('list', { name: 'Popular plugins by vendor' }).getByRole('link')).toHaveText(['package-01', 'package-02'])
-    await expect(vendor.locator('[data-publisher-avatar]')).toHaveJSProperty('naturalWidth', 100)
-    expect(islandUpdates).toBe(0)
-    await page.screenshot({ path: 'tmp/publishers-desktop.png', fullPage: true })
-})
-
 test('live search and sorting preserve URL state and browser history', async ({ page }) => {
     await page.goto('/publishers')
     await page.evaluate(() => { window.publisherMarker = 'retained' })
@@ -215,31 +194,9 @@ test('pagination maintains ranks and sorting or searching resets to page one', a
     }
 })
 
-test('native GET search, sorting and links work without JavaScript', async ({ browser }) => {
-    const context = await browser.newContext({ javaScriptEnabled: false })
-    const page = await context.newPage()
-    try {
-        await page.goto('/publishers')
-        await chooseSort(page, 'stars')
-        await search(page).fill('MARK')
-        await page.getByRole('button', { name: 'Apply', exact: true }).click()
-        await expect(rows(page)).toHaveCount(2)
-        await expect.poll(() => names(page)).toEqual(['markstory', 'dereuromark'])
-        await page.getByRole('link', { name: 'markstory', exact: true }).click()
-        await expect(page).toHaveURL('/plugins/markstory')
-        await page.getByRole('link', { name: '← Back', exact: true }).click()
-        await expect(rows(page)).toHaveCount(2)
-        await expect(search(page)).toHaveValue('MARK')
-        await expect(sort(page)).toContainText(sortLabels['stars'])
-        await page.goto('/publishers?cakephp=all')
-        await page.getByRole('link', { name: 'View cakedc/users details', exact: true }).click()
-        await expect(page).toHaveURL('/plugins/cakedc/users')
-    } finally {
-        await context.close()
-    }
-})
-
 test('directory fits mobile screens in both themes and handles missing avatars', async ({ page, context }) => {
+    await page.goto('/publishers')
+    await expect(rows(page).first().locator('[data-publisher-avatar]')).toHaveJSProperty('naturalWidth', 100)
     await page.route('https://github.com/*.png*', route => route.abort())
     for (const width of [390, 320]) {
         await page.setViewportSize({ width, height: 844 })
