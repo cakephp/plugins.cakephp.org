@@ -10,33 +10,27 @@ use App\Service\AwesomeListImporter;
  * @var array<string, mixed> $catalogueRoute
  */
 $allCategoriesSelected = $category === '';
+$categoryLabel = $allCategoriesSelected ? __('Category') : $categoryOptions[$category]['name'];
 ?>
-<details class="category-browser group" id="catalogue-categories" x-ref="categoryBrowser" @toggle="categoriesToggled($event)">
-    <summary>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-            <rect x="3" y="3" width="5" height="5" rx="1"></rect>
-            <rect x="12" y="3" width="5" height="5" rx="1"></rect>
-            <rect x="3" y="12" width="5" height="5" rx="1"></rect>
-            <rect x="12" y="12" width="5" height="5" rx="1"></rect>
-        </svg>
-        <?= __('Browse categories') ?>
-        <svg class="category-browser-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+<details class="category-browser dropdown" id="catalogue-categories" name="catalogue-filters" x-ref="categoryBrowser"
+         @toggle="categoriesToggled($event)" @click.outside="dismissCategories">
+    <summary class="catalogue-filter-toggle btn btn-outline" data-filter-active="<?= !$allCategoriesSelected ? 'true' : 'false' ?>"
+             aria-label="<?= h(__('Browse categories: {0}', $categoryLabel)) ?>" title="<?= h($categoryLabel) ?>">
+        <span class="min-w-0 flex-1 truncate text-left"><?= h($categoryLabel) ?></span>
+        <svg class="size-4 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
             <path d="m4 6 4 4 4-4" stroke-linecap="round" stroke-linejoin="round"></path>
         </svg>
     </summary>
-    <div class="pt-3">
-        <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
-            <p class="text-xs leading-[1.6] text-muted">
-                <?= __('Categories from') ?>
-                <a href="<?= AwesomeListImporter::SOURCE_URL ?>" target="_blank" rel="noopener noreferrer">Awesome CakePHP</a>.
-            </p>
+    <div class="category-browser-panel catalogue-filter-panel dropdown-content">
+        <div class="mb-3 flex shrink-0 flex-wrap items-center justify-between gap-3">
+            <span class="text-sm font-semibold"><?= __('Categories') ?></span>
             <label class="category-search" x-cloak>
                 <span class="sr-only"><?= __('Find a category') ?></span>
                 <input class="input input-sm" type="search" x-model="categorySearch" placeholder="<?= __('Find a category') ?>"
                        autocomplete="off" aria-controls="category-grid">
             </label>
         </div>
-        <div class="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4" id="category-grid" x-ref="categoryGrid" role="group" aria-label="<?= __('Plugin categories') ?>">
+        <div class="category-choices grid grid-cols-2 gap-2 md:grid-cols-3" id="category-grid" x-ref="categoryGrid" role="group" aria-label="<?= __('Plugin categories') ?>">
             <a class="category-choice" href="<?= h($clearCategoryUrl) ?>" data-category-slug="" data-category-name="<?= __('All categories') ?>"
                x-show="matchesCategory($el.dataset.categoryName)" <?= $allCategoriesSelected ? 'aria-current="true"' : '' ?>>
                 <span class="wrap-anywhere"><?= __('All categories') ?></span>
@@ -57,5 +51,9 @@ $allCategoriesSelected = $category === '';
             <?php endforeach; ?>
         </div>
         <p class="mt-4 text-sm leading-[1.6] text-muted" role="status" x-show="categorySearch && !hasCategoryMatches()" x-cloak><?= __('No matching categories. Try another name.') ?></p>
+        <p class="mt-3 shrink-0 text-xs leading-[1.6] text-muted">
+            <?= __('Categories from') ?>
+            <a href="<?= AwesomeListImporter::SOURCE_URL ?>" target="_blank" rel="noopener noreferrer">Awesome CakePHP</a>.
+        </p>
     </div>
 </details>

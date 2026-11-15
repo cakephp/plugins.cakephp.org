@@ -36,53 +36,60 @@ $statLabels = [
     'stars' => __('Stars'),
 ];
 ?>
-<div class="publishers-directory site-width" x-data>
+<div class="publishers-directory pt-4 md:pt-5 site-width" x-data>
+    <h1 class="sr-only"><?= __('Publishers') ?></h1>
     <?= $this->Form->create(null, [
         'type' => 'get',
         'url' => ['_name' => 'publisher:index'],
         'class' => 'publisher-controls',
+        'id' => 'publisher-search-form',
         'role' => 'search',
         'aria-label' => __('Find publishers'),
         'x-interact:submit' => '$server.sync()',
     ]) ?>
-        <label class="search-control input min-w-0 flex-1">
-            <span class="sr-only"><?= __('Search publishers') ?></span>
-            <?= $this->Form->search('search', [
-                'value' => $search,
-                'placeholder' => __('Search by namespace'),
-                'maxlength' => 100,
-                'autocomplete' => 'off',
-                'class' => 'w-full',
-                'aria-controls' => 'publisher-results',
-                'x-interact:model.live' => 'search',
-            ]) ?>
-            <span class="loading loading-spinner loading-sm shrink-0" role="status" aria-label="<?= __('Updating publishers') ?>"
-                  x-show="!$server.error && ($server.dirty || $server.pending())" x-cloak></span>
-        </label>
-        <label class="flex shrink-0 items-center gap-2 text-sm">
-            <span class="text-muted"><?= __('Version') ?></span>
+        <div class="flex min-w-0 items-center gap-3 md:gap-4">
+            <label class="search-control input min-w-0 flex-1">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7"></circle>
+                    <path d="m16 16 4.5 4.5" stroke-linecap="round"></path>
+                </svg>
+                <span class="sr-only"><?= __('Search publishers') ?></span>
+                <?= $this->Form->search('search', [
+                    'value' => $search,
+                    'placeholder' => __('Search by namespace'),
+                    'maxlength' => 100,
+                    'autocomplete' => 'off',
+                    'class' => 'w-full',
+                    'aria-controls' => 'publisher-results',
+                    'x-interact:model.live' => 'search',
+                ]) ?>
+                <span class="loading loading-spinner loading-sm shrink-0" role="status" aria-label="<?= __('Updating publishers') ?>"
+                      x-show="!$server.error && ($server.dirty || $server.pending())" x-cloak></span>
+            </label>
+            <?php if (trim($search) !== '') : ?>
+                <a class="reset-filters" href="<?= h($clearUrl) ?>" @click.prevent="$server.call('clearSearch')"
+                   aria-label="<?= __('Clear search') ?>" title="<?= __('Clear search') ?>">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+                        <path d="M3 10a9 9 0 1 1 2.6 8.4M3 4v6h6" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                    <span><?= __('Clear search') ?></span>
+                </a>
+            <?php endif; ?>
+        </div>
+        <label class="min-w-0">
+            <span class="sr-only"><?= __('CakePHP version') ?></span>
             <?= $this->Form->select('cakephp', $versionOptions, [
                 'value' => $cakephp,
-                'class' => 'select w-auto min-w-0 flex-1',
+                'class' => 'catalogue-filter-select select min-w-0',
+                'data-filter-active' => 'true',
                 'aria-label' => __('CakePHP version'),
                 'x-interact:model.live' => 'cakephp',
             ]) ?>
         </label>
-        <label class="flex shrink-0 items-center gap-2 text-sm">
-            <span class="text-muted"><?= __('Rank by') ?></span>
-            <?= $this->Form->select('sort', $sortOptions, [
-                'value' => $sort,
-                'class' => 'select w-auto min-w-0 flex-1',
-                'aria-label' => __('Rank publishers by'),
-                'x-interact:model.live' => 'sort',
-            ]) ?>
-        </label>
-        <noscript><?= $this->Form->button(__('Apply'), [
+        <?= $this->Form->hidden('sort', ['value' => $sort]) ?>
+        <noscript class="md:col-span-2"><?= $this->Form->button(__('Apply'), [
             'class' => 'btn btn-primary',
         ]) ?></noscript>
-        <?php if (trim($search) !== '') : ?>
-            <a class="text-sm text-muted" href="<?= h($clearUrl) ?>" @click.prevent="$server.call('clearSearch')"><?= __('Clear search') ?></a>
-        <?php endif; ?>
     <?= $this->Form->end() ?>
 
     <p class="mb-4 text-sm text-muted" data-publisher-scope>
@@ -91,7 +98,41 @@ $statLabels = [
             : __('Counts and rankings include plugins for all CakePHP versions.') ?>
         <?= __('Monthly downloads cover all releases of those packages. Missing figures appear after the next package sync.') ?>
     </p>
-    <section class="overflow-hidden rounded-2xl border border-base-300 bg-base-100" aria-label="<?= __('Publisher rankings') ?>">
+    <section class="catalogue-panel" aria-label="<?= __('Publisher rankings') ?>">
+        <header class="catalogue-toolbar">
+            <div class="catalogue-summary">
+                <h2><span class="result-count badge badge-soft badge-primary"><?= $this->Paginator->counter('{{count}}') ?></span> <?= __('publishers') ?></h2>
+            </div>
+            <div class="sort-control text-sm">
+                <span class="text-muted"><?= __('Rank by') ?></span>
+                <details class="sort-menu dropdown dropdown-end" x-data="publisherSort" @click="select($event)" @keydown.escape="close">
+                    <summary aria-label="<?= __('Rank publishers by') ?>">
+                        <?= h($sortOptions[$sort]) ?>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                            <path d="m4 6 4 4 4-4" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                    </summary>
+                    <div class="sort-options dropdown-content">
+                        <?php foreach ($sortOptions as $value => $label) : ?>
+                            <?php
+                            $sortSelected = $value === $sort;
+                            $sortQuery = $clearQuery;
+                            $sortQuery['sort'] = $value;
+                            if ($search !== '') {
+                                $sortQuery['search'] = $search;
+                            }
+                            $sortUrl = $this->Url->build([
+                                '_name' => 'publisher:index',
+                                '?' => $sortQuery,
+                            ]);
+                            ?>
+                            <a class="sort-option<?= $sortSelected ? ' sort-option-active' : '' ?>" data-publisher-sort="<?= h($value) ?>"
+                               href="<?= $sortUrl ?>" <?= $sortSelected ? 'aria-current="true"' : '' ?>><?= h($label) ?></a>
+                        <?php endforeach; ?>
+                    </div>
+                </details>
+            </div>
+        </header>
         <div class="catalogue-error" role="alert" x-show="$server.error" x-cloak>
             <p><?= __('We couldn’t update the publishers. Please try again.') ?></p>
             <?= $this->Form->button(__('Retry'), [

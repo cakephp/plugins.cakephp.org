@@ -68,6 +68,9 @@ const register = (Alpine) => {
             this.$refs.categoryBrowser.querySelector('summary').focus({ preventScroll: true })
             this.categorySearch = ''
         },
+        dismissCategories() {
+            this.$refs.categoryBrowser.open = false
+        },
         activate(event) {
             if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
             const sort = event.target.closest('.sort-option')
@@ -87,6 +90,11 @@ const register = (Alpine) => {
         selectVersion(event) {
             return this.$server.call('selectVersion', event.detail.group, event.detail.slug)
         },
+        clearVersions(property, event) {
+            event.target.closest('details').querySelector('summary').focus({ preventScroll: true })
+            this.$server.state[property] = []
+            return this.$server.sync()
+        },
         selectCategory(event) {
             this.closeCategories()
             return this.$server.call('selectCategory', event.detail.slug)
@@ -96,6 +104,22 @@ const register = (Alpine) => {
             if (!menu) return
             menu.open = false
             menu.querySelector('summary')?.focus()
+        },
+    }))
+
+    Alpine.data('publisherSort', () => ({
+        select(event) {
+            if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+            const option = event.target.closest('[data-publisher-sort]')
+            if (!option) return
+            event.preventDefault()
+            this.close()
+            this.$server.state.sort = option.dataset.publisherSort
+            return this.$server.sync()
+        },
+        close() {
+            this.$el.open = false
+            this.$el.querySelector('summary').focus({ preventScroll: true })
         },
     }))
 

@@ -95,40 +95,68 @@ $clearCategoryUrl = $this->Url->build($catalogueRoute + [
             <?php endif; ?>
         </div>
 
-        <div class="grid gap-1">
+        <div class="catalogue-filters">
             <?php
             $filters = [
-                ['name' => 'cakephp_slugs', 'label' => __('CakePHP version'), 'prefix' => 'CakePHP', 'options' => $cakephpTags, 'selected' => $cakephpSlugs],
-                ['name' => 'php_slugs', 'label' => __('PHP version'), 'prefix' => 'PHP', 'options' => $phpTags, 'selected' => $phpSlugs],
+                [
+                    'name' => 'cakephp_slugs',
+                    'property' => 'cakephpSlugs',
+                    'label' => __('CakePHP version'),
+                    'prefix' => 'CakePHP',
+                    'options' => $cakephpTags,
+                    'selected' => $cakephpSlugs,
+                ],
+                [
+                    'name' => 'php_slugs',
+                    'property' => 'phpSlugs',
+                    'label' => __('PHP version'),
+                    'prefix' => 'PHP',
+                    'options' => $phpTags,
+                    'selected' => $phpSlugs,
+                ],
             ];
             ?>
             <?php foreach ($filters as $filter) : ?>
+                <?php
+                $selectedLabels = array_values(array_intersect_key($filter['options'], array_flip($filter['selected'])));
+                $selectionLabel = $filter['label'];
+                if (count($selectedLabels) === 1) {
+                    $selectionLabel = str_replace(': ', ' ', $selectedLabels[0]);
+                } elseif (count($selectedLabels) > 1) {
+                    $selectionLabel = __('{0} ({1})', $filter['prefix'], count($selectedLabels));
+                }
+                $clearVersionQuery = $catalogueQuery;
+                $clearVersionQuery[$filter['name']] = [];
+                ?>
                 <div class="version-filter" role="group" aria-label="<?= h($filter['label']) ?>">
-                    <span class="text-[0.8125rem] font-semibold whitespace-nowrap"><?= h($filter['label']) ?></span>
-                    <div class="version-options" tabindex="0" aria-label="<?= __('{0} choices; scroll for older versions', $filter['label']) ?>">
-                        <?php foreach ($filter['options'] as $slug => $label) : ?>
-                            <?php
-                            $version = str_replace($filter['prefix'] . ': ', '', $label);
-                            $selected = in_array($slug, $filter['selected'], true);
-                            $filterQuery = $catalogueQuery;
-                            $filterQuery[$filter['name']] = $selected
-                                ? array_values(array_diff($filter['selected'], [$slug]))
-                                : [...$filter['selected'], $slug];
-                            ?>
-                            <a class="version-pill badge badge-outline" role="button" aria-pressed="<?= $selected ? 'true' : 'false' ?>"
-                               aria-label="<?= h($filter['prefix'] . ' ' . $version) ?>"
-                               href="<?= $this->Url->build($catalogueRoute + ['?' => $filterQuery]) ?>"
-                               @keydown.space.prevent="$el.click()"
-                               data-version-group="<?= h($filter['name']) ?>" data-version-slug="<?= h($slug) ?>">
-                                <?= h($version) ?>
-                            </a>
-                        <?php endforeach; ?>
-                    </div>
+                    <details class="version-dropdown dropdown" id="versions-<?= h($filter['name']) ?>" name="catalogue-filters"
+                             x-data="{ expanded: false }" :open="expanded" @toggle="expanded = $el.open" @click.outside="expanded = false">
+                        <summary class="catalogue-filter-toggle btn btn-outline" data-filter-active="<?= $selectedLabels !== [] ? 'true' : 'false' ?>"
+                                 aria-label="<?= h(__('{0}: {1}', $filter['label'], $selectionLabel)) ?>" title="<?= h($selectionLabel) ?>">
+                            <span class="min-w-0 flex-1 truncate text-left" data-version-selection><?= h($selectionLabel) ?></span>
+                            <svg class="size-4 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                                <path d="m4 6 4 4 4-4" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                        </summary>
+                        <div class="version-dropdown-panel catalogue-filter-panel dropdown-content">
+                            <div class="mb-3 flex min-h-6 items-center justify-between gap-3">
+                                <span class="text-sm font-semibold"><?= h($filter['label']) ?></span>
+                                <?php if ($selectedLabels !== []) : ?>
+                                    <a class="btn btn-ghost btn-xs" aria-label="<?= h(__('Clear {0}', $filter['label'])) ?>"
+                                       href="<?= $this->Url->build($catalogueRoute + ['?' => $clearVersionQuery]) ?>"
+                                       @click.prevent="clearVersions('<?= h($filter['property']) ?>', $event)"><?= __('Clear') ?></a>
+                                <?php endif; ?>
+                            </div>
+                            <div class="version-options">
+                                <?= $this->element('Packages/version_pills', compact('filter', 'catalogueQuery', 'catalogueRoute')) ?>
+                            </div>
+                        </div>
+                    </details>
                 </div>
             <?php endforeach; ?>
-        </div>
 
-        <?= $this->element('Packages/category_browser', compact('categoryOptions', 'category', 'catalogueQuery', 'clearCategoryUrl', 'catalogueRoute')) ?>
+            <?= $this->element('Packages/category_browser', compact('categoryOptions', 'category', 'catalogueQuery', 'clearCategoryUrl', 'catalogueRoute')) ?>
+        </div>
     </div>
 
     <?php if ($showFeatured) : ?>

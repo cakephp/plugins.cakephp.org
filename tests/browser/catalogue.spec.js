@@ -10,7 +10,7 @@ const chooseSort = async (page, label) => {
     await page.locator('.sort-options').getByRole('link', { name: label, exact: true }).click()
 }
 const chooseCategory = async (page, label) => {
-    await page.getByText('Browse categories', { exact: true }).click()
+    await page.locator('#catalogue-categories > summary').click()
     await page.getByRole('group', { name: 'Plugin categories', exact: true }).getByRole('link', { name: label }).click()
 }
 
@@ -70,6 +70,7 @@ test('category and Awesome filters combine live and reset without losing sort', 
     await chooseSort(page, 'Downloads')
     await expect(page).toHaveURL(/sort=downloads/)
     await expect(page).toHaveURL(/category=asset-management/)
+    await page.locator('#versions-cakephp_slugs > summary').click()
     await page.getByRole('group', { name: 'CakePHP version', exact: true }).getByRole('button', { name: 'CakePHP 4.4' }).click()
     await expect(rows(page)).toHaveCount(0)
     await expect(page.getByText('No plugins found', { exact: true })).toBeVisible()
@@ -101,7 +102,7 @@ test('category selection supports history, reloads and search fallback fields', 
 test('category grid searches locally, supports keyboard dismissal and collapses on selection', async ({ page }) => {
     let updates = 0
     page.on('request', request => { if (request.url().includes('/_interact/update')) updates++ })
-    const toggle = page.getByText('Browse categories', { exact: true })
+    const toggle = page.locator('#catalogue-categories > summary')
     await toggle.focus()
     await page.keyboard.press('Enter')
     const grid = page.getByRole('group', { name: 'Plugin categories', exact: true })
@@ -126,6 +127,33 @@ test('category grid searches locally, supports keyboard dismissal and collapses 
     await expect(toggle).toBeFocused()
 })
 
+for (const width of [390, 1280]) {
+    test(`category dropdown overlays results and summarizes its selection at ${width}px`, async ({ page }) => {
+        await page.setViewportSize({ width, height: 844 })
+        const toggle = page.locator('#catalogue-categories > summary')
+        const grid = page.getByRole('group', { name: 'Plugin categories', exact: true })
+        const resultsTop = (await featured(page).boundingBox()).y
+        await expect(toggle).toContainText('Category')
+        await toggle.click()
+        await expect(grid).toBeVisible()
+        expect((await featured(page).boundingBox()).y).toBe(resultsTop)
+        const panel = await page.locator('.category-browser-panel').boundingBox()
+        expect(panel.x).toBeGreaterThanOrEqual(0)
+        expect(panel.x + panel.width).toBeLessThanOrEqual(width)
+        await search(page).click()
+        await expect(grid).toBeHidden()
+        await expect(search(page)).toBeFocused()
+        await chooseCategory(page, 'Asset Management')
+        await expect(toggle).toContainText('Asset Management')
+        await expect(grid).toBeHidden()
+        await toggle.click()
+        await expect(grid.getByRole('link', { name: 'Asset Management' })).toHaveAttribute('aria-current', 'true')
+        await page.locator('#versions-cakephp_slugs > summary').click()
+        await expect(grid).toBeHidden()
+        await retained(page)
+    })
+}
+
 test('removing a category chip retains the Awesome filter and sort', async ({ page }) => {
     await chooseSort(page, 'Downloads')
     await page.getByRole('button', { name: 'Awesome only', exact: true }).click()
@@ -138,7 +166,7 @@ test('removing a category chip retains the Awesome filter and sort', async ({ pa
     await expect(page).toHaveURL(/sort=downloads/)
     await expect(rows(page)).toHaveCount(2)
     await expect(page.locator('.selected-category')).toHaveCount(0)
-    await expect(page.getByText('Browse categories', { exact: true })).toBeFocused()
+    await expect(page.locator('#catalogue-categories > summary')).toBeFocused()
     await retained(page)
 })
 
@@ -248,6 +276,7 @@ test('live search updates results and replaces history while typing', async ({ p
 test('version filters are live and clearing retains the selected sort', async ({ page }) => {
     await chooseSort(page, 'Downloads')
     const cake = page.getByRole('group', { name: 'CakePHP version', exact: true })
+    await cake.locator('summary').click()
     await cake.getByRole('button', { name: 'CakePHP 4.4', exact: true }).click()
     await expect(page).toHaveURL(/cakephp_slugs/)
     await expect(rows(page)).toHaveCount(1)
@@ -261,6 +290,75 @@ test('version filters are live and clearing retains the selected sort', async ({
     await expect(search(page)).toHaveValue('')
     await expect(featured(page)).toBeVisible()
     await retained(page)
+})
+
+for (const width of [390, 1280]) {
+    test(`version dropdowns summarize multiple choices and clear each group independently at ${width}px`, async ({ page }) => {
+        await page.setViewportSize({ width, height: 844 })
+        const cake = page.getByRole('group', { name: 'CakePHP version', exact: true })
+        const php = page.getByRole('group', { name: 'PHP version', exact: true })
+        await expect(cake.locator('summary')).toContainText('CakePHP version')
+        await expect(php.locator('summary')).toContainText('PHP version')
+        await expect(cake.getByRole('button', { name: 'CakePHP 4.4', exact: true })).toBeHidden()
+
+        await cake.locator('summary').click()
+        const optionsTop = await cake.locator('.version-options').evaluate(element => element.offsetTop)
+        const panelHeight = await cake.locator('.version-dropdown-panel').evaluate(element => element.offsetHeight)
+        await cake.getByRole('button', { name: 'CakePHP 4.4', exact: true }).click()
+        await expect(rows(page)).toHaveCount(1)
+        await expect(cake.locator('summary')).toContainText('4.4')
+        expect(await cake.locator('.version-options').evaluate(element => element.offsetTop)).toBe(optionsTop)
+        expect(await cake.locator('.version-dropdown-panel').evaluate(element => element.offsetHeight)).toBe(panelHeight)
+        await expect(cake.locator('details')).toHaveAttribute('open', /^(open)?$/)
+        await cake.getByRole('button', { name: 'CakePHP 5.4', exact: true }).click()
+        await expect(cake.locator('summary')).toContainText('CakePHP (2)')
+        await expect(rows(page)).toHaveCount(21)
+        await expect(cake.getByRole('button', { name: 'CakePHP 4.4', exact: true })).toHaveAttribute('aria-pressed', 'true')
+
+        await php.locator('summary').click()
+        await expect(cake.locator('details')).not.toHaveAttribute('open')
+        await php.getByRole('button', { name: 'PHP 8.5', exact: true }).click()
+        await expect(php.locator('summary')).toContainText('8.5')
+        await cake.locator('summary').click()
+        await cake.getByRole('link', { name: 'Clear CakePHP version', exact: true }).click()
+        await expect(cake.locator('summary')).toContainText('CakePHP version')
+        expect(await cake.locator('.version-options').evaluate(element => element.offsetTop)).toBe(optionsTop)
+        expect(await cake.locator('.version-dropdown-panel').evaluate(element => element.offsetHeight)).toBe(panelHeight)
+        await expect(php.locator('summary')).toContainText('8.5')
+        await expect(page).not.toHaveURL(/cakephp_slugs/)
+        await expect(page).toHaveURL(/php_slugs/)
+        await expect(cake.getByRole('button', { name: 'CakePHP 4.4', exact: true })).toHaveAttribute('aria-pressed', 'false')
+        expect(await cake.locator('.version-dropdown-panel').evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true)
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+        await page.screenshot({ path: 'tmp/mobile-version-selectors.png', animations: 'disabled' })
+        await page.keyboard.press('Escape')
+        await expect(cake.locator('details')).not.toHaveAttribute('open')
+        await expect(cake.locator('summary')).toBeFocused()
+        await php.locator('summary').click()
+        await search(page).click()
+        await expect(php.locator('details')).not.toHaveAttribute('open')
+        await retained(page)
+    })
+}
+
+test('mobile version selectors retain native filtering without JavaScript', async ({ browser }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 320, height: 740 } })
+    const page = await context.newPage()
+    try {
+        await page.goto('/plugins/vendor')
+        const cake = page.getByRole('group', { name: 'CakePHP version', exact: true })
+        await cake.locator('summary').click()
+        await cake.getByRole('button', { name: 'CakePHP 5.4', exact: true }).click()
+        await expect(page).toHaveURL(/cakephp_slugs/)
+        await expect(cake.locator('summary')).toContainText('5.4')
+        await expect(rows(page)).toHaveCount(21)
+        await cake.locator('summary').click()
+        await cake.getByRole('link', { name: 'Clear CakePHP version', exact: true }).click()
+        await expect(page).not.toHaveURL(/cakephp_slugs/)
+        await expect(cake.locator('summary')).toContainText('CakePHP version')
+    } finally {
+        await context.close()
+    }
 })
 
 test('plugin details filter the parent directory while retaining search and sort', async ({ page }) => {
@@ -521,6 +619,7 @@ test('GET search, version links, details and pagination work without JavaScript'
         await expect(page).toHaveURL(/plugins\/cakedc\/users$/)
         await expect(page.locator('.plugin-details')).toContainText('composer require cakedc/users')
         await page.goto('http://127.0.0.1:8765/')
+        await page.locator('#versions-cakephp_slugs > summary').click()
         await page.getByRole('group', { name: 'CakePHP version', exact: true }).getByRole('button', { name: 'CakePHP 4.4' }).click()
         await expect(page).toHaveURL(/cakephp_slugs/)
         await expect(rows(page)).toContainText('cakedc/users')

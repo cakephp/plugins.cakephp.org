@@ -101,6 +101,7 @@ test('search, version filters, sorting and reset retain the namespace and hero',
     await page.getByRole('searchbox', { name: 'Search plugins', exact: true }).fill('package-01')
     await expect(rows(page)).toHaveCount(1)
     await expect(rows(page)).toContainText('vendor/package-01')
+    await page.locator('#versions-cakephp_slugs > summary').click()
     await page.getByRole('button', { name: 'CakePHP 4.4', exact: true }).click()
     await expect(rows(page)).toHaveCount(0)
     await expect(page.getByText('No plugins found', { exact: true })).toBeVisible()
@@ -134,7 +135,7 @@ test('pagination and history stay on the namespace page', async ({ page }) => {
 
 test('category choices and detail filters stay within the namespace', async ({ page }) => {
     await page.goto('/plugins/markstory')
-    await page.getByText('Browse categories', { exact: true }).click()
+    await page.locator('#catalogue-categories > summary').click()
     const categories = page.getByRole('group', { name: 'Plugin categories', exact: true })
     await expect(categories.getByRole('link', { name: 'Asset Management, 1 plugin', exact: true })).toBeVisible()
     await expect(categories.getByRole('link', { name: /Authentication/ })).toHaveCount(0)
@@ -190,7 +191,7 @@ test('namespace pages support native links and search without JavaScript', async
     const page = await context.newPage()
     try {
         await page.goto('/plugins/markstory')
-        await page.getByText('Browse categories', { exact: true }).click()
+        await page.locator('#catalogue-categories > summary').click()
         await page.getByRole('link', { name: 'Asset Management, 1 plugin', exact: true }).click()
         await expect(page).toHaveURL(/\/plugins\/markstory\?.*category=asset-management/)
         await page.getByRole('searchbox', { name: 'Search plugins', exact: true }).fill('no-match')

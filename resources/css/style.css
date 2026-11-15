@@ -253,7 +253,8 @@ body::before {
     @apply mb-6 rounded-2xl border border-base-300 bg-base-100 p-4 md:p-5;
 }
 .publisher-controls {
-    @apply mb-5 flex flex-col gap-3 rounded-2xl border border-base-300 bg-base-100 p-4 md:flex-row md:items-center md:p-5;
+    @apply mb-5 grid grid-cols-1 items-center gap-3 rounded-2xl border border-base-300 bg-base-100 p-4
+        md:grid-cols-[minmax(0,1fr)_12rem] md:gap-4 md:p-5;
 }
 .publisher-row {
     @apply grid grid-cols-1 items-center gap-4 border-b border-base-300 p-4
@@ -280,17 +281,46 @@ body::before {
     & span { @apply max-md:hidden; }
 }
 .search-control {
-    @apply relative flex h-auto min-h-12 w-full items-center gap-3 rounded-lg border-control bg-base-200 px-4 py-2
-        shadow-none focus-within:border-control focus-within:outline-3 focus-within:outline-offset-2
+    @apply relative flex h-auto min-h-14 w-full items-center gap-3 rounded-lg border-control bg-base-200 px-4 py-3
+        shadow-sm focus-within:border-primary focus-within:outline-3 focus-within:outline-offset-2
         focus-within:outline-primary text-base;
-    & > svg { @apply size-5 shrink-0 text-muted; }
-    & input { @apply min-w-0 bg-transparent text-base-content outline-none placeholder:text-muted placeholder:opacity-100; }
+    & > svg { @apply size-5 shrink-0 text-primary md:size-6; }
+    & input { @apply min-w-0 bg-transparent text-base-content outline-none placeholder:text-muted placeholder:opacity-100 md:text-lg; }
+}
+.catalogue-filters {
+    @apply relative grid grid-cols-1 gap-2 min-[360px]:grid-cols-2 md:grid-cols-3 md:gap-3;
 }
 .version-filter {
-    @apply grid grid-cols-[7rem_minmax(0,1fr)] items-center gap-2;
+    @apply min-w-0;
+}
+.version-dropdown {
+    @apply static block md:relative;
+}
+.catalogue-filter-toggle, .catalogue-filter-select {
+    @apply min-h-11 w-full rounded-lg border-base-300 bg-transparent
+        text-sm font-normal text-muted shadow-none hover:border-control hover:bg-base-200/50 hover:text-base-content
+        data-[filter-active=true]:text-base-content md:min-h-10;
+}
+.catalogue-filter-toggle {
+    @apply flex justify-between gap-1.5 px-2.5 py-2;
+    list-style: none;
+    &::-webkit-details-marker { display: none; }
+    & > svg { @apply transition-transform; }
+}
+.version-dropdown[open] > summary > svg, .category-browser[open] > summary > svg { @apply rotate-180; }
+.catalogue-filter-panel {
+    @apply absolute inset-x-0 top-full z-30 mt-2 rounded-xl border border-base-300 bg-base-100 p-3 shadow-xl;
+}
+.version-dropdown-panel {
+    @apply w-auto;
+    & .version-options {
+        @apply flex-wrap gap-2 overflow-x-hidden overflow-y-auto p-1;
+        max-height: min(18rem, 50dvh);
+    }
+    & .version-pill { @apply min-h-11 min-w-11 px-3 text-sm; }
 }
 .version-options {
-    @apply flex min-w-0 items-center gap-1 overflow-x-auto p-1 [scrollbar-width:thin]
+    @apply flex min-w-0 items-center p-1 [scrollbar-width:thin]
         [scrollbar-color:var(--color-control)_transparent];
 }
 .version-pill {
@@ -361,14 +391,13 @@ body::before {
     @apply h-auto rounded-md border-base-300 px-1.75 py-0.5 text-xs leading-normal whitespace-normal text-muted;
 }
 .category-browser {
-    @apply mt-4 border-t border-base-300 pt-3;
-    & > summary { @apply flex min-h-8 w-fit list-none items-center gap-2 text-[0.8125rem] font-semibold text-base-content; }
-    & > summary::-webkit-details-marker { @apply hidden; }
-    & > summary svg { @apply size-4 shrink-0; }
+    @apply static block min-w-0 min-[360px]:col-span-2 md:col-span-1;
 }
-.category-browser-chevron {
-    @apply group-open:rotate-180;
+.category-browser-panel {
+    @apply left-auto right-0 flex w-full max-w-3xl flex-col;
+    max-height: min(32rem, 60dvh);
 }
+.category-choices { @apply min-h-0 overflow-y-auto p-1; }
 .category-search {
     @apply w-full max-w-full md:w-68;
     & input { @apply w-full min-h-10 rounded-lg border-control bg-base-100 px-3 py-2 text-[0.8125rem]; }
