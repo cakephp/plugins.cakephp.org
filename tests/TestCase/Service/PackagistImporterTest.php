@@ -89,6 +89,25 @@ class PackagistImporterTest extends TestCase
     }
 
     /**
+     * Missing API download metadata must abort before stale-package cleanup.
+     */
+    public function testMissingDownloadsRetainExistingPackages(): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        $client = $this->createStub(PackagistClient::class);
+        $client->method('all')->willReturn(['markstory/asset_compress']);
+        $client->method('get')->willReturn(new Package());
+        try {
+            new PackagistImporter($packages, $client)->sync();
+            $this->fail('Missing download metadata should have been rejected.');
+        } catch (UnexpectedValueException $exception) {
+            $this->assertStringContainsString('no download metadata', $exception->getMessage());
+            $this->assertSame(26, $packages->find()->count());
+            $this->assertSame(5000, $packages->get(1)->downloads);
+        }
+    }
+
+    /**
      * @return void
      */
     public function testHasExplicitCakePhpDependency(): void

@@ -12,6 +12,9 @@ use Cake\View\View;
 
 class UserHelperTest extends TestCase
 {
+    /**
+     * @param array<string, mixed>|null $identityData Identity fields for the helper request.
+     */
     protected function createHelper(?array $identityData = null): UserHelper
     {
         $request = new ServerRequest();

@@ -287,6 +287,7 @@ class PackagesControllerTest extends TestCase
         $this->assertResponseContains('name="interact-navigation"');
         $this->assertResponseRegExp('/<script[^>]+x-interact:asset="reload"/');
         $this->assertResponseRegExp('/<link[^>]+x-interact:asset="reload"/');
+        $this->assertNotNull($this->_response);
         $this->assertSame(1, substr_count((string)$this->_response->getBody(), '/interact/js/runtime.js'));
         $this->assertResponseContains('data-catalogue-loading');
         $this->assertCookieIsSet('csrfToken');

@@ -4,7 +4,7 @@
  * @var string $namespace
  * @var array{plugins: int, downloads: int, stars: int} $stats
  * @var string|null $githubUrl
- * @var array|string $backUrl
+ * @var array<string, mixed>|string $backUrl
  */
 $this->assign('title', __('Plugins by {0}', $namespace));
 $this->assign('description', __('Explore {0} CakePHP plugins by {1}, with download statistics, releases, installation instructions and PHP compatibility.', $stats['plugins'], $namespace));

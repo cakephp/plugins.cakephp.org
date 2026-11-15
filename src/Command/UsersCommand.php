@@ -48,6 +48,11 @@ class UsersCommand extends Command
             $role = $io->askChoice('Role', array_column(UserRole::cases(), 'value'), $user->role->value);
             $active = $io->askChoice('Active', ['yes', 'no'], $user->is_active ? 'yes' : 'no');
         }
+        if ($role !== null && !is_string($role)) {
+            $io->err('Role must be a named role.');
+
+            return self::CODE_ERROR;
+        }
         try {
             $user = new UserAccessService($users)->update((int)$user->id, $role !== null ? UserRole::from($role) : $user->role, $active === null ? $user->is_active : $active === 'yes');
         } catch (DomainException $exception) {

@@ -9,6 +9,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use DOMDocument;
+use DOMNodeList;
 use DOMXPath;
 use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -43,9 +44,9 @@ class SeoTest extends TestCase
         $this->assertSame($title . ' | CakePHP Plugins', $head->evaluate('string(//meta[@property="og:title"]/@content)'));
         $this->assertSame('summary_large_image', $head->evaluate('string(//meta[@name="twitter:card"]/@content)'));
         $this->assertSame(Router::url('/img/social-card.png', true), $head->evaluate('string(//meta[@property="og:image"]/@content)'));
-        $this->assertSame(0, $head->query('//meta[@name="robots"]')->length);
+        $this->assertSame(0, $this->nodes($head, '//meta[@name="robots"]')->length);
         $this->assertSame('en', $head->evaluate('string(/html/@lang)'));
-        $this->assertSame(1, $head->query('//h1')->length);
+        $this->assertSame(1, $this->nodes($head, '//h1')->length);
         $schema = json_decode($head->evaluate('string(//script[@type="application/ld+json"])'), true, flags: JSON_THROW_ON_ERROR);
         $this->assertSame('WebSite', $schema['@graph'][0]['@type']);
         $this->assertSame($url, $schema['@graph'][1]['url']);
@@ -82,7 +83,7 @@ class SeoTest extends TestCase
         }
         $this->get('/?utm_source=newsletter');
         $head = $this->document();
-        $this->assertSame(0, $head->query('//meta[@name="robots"]')->length);
+        $this->assertSame(0, $this->nodes($head, '//meta[@name="robots"]')->length);
         $this->assertSame(Router::url('/', true), $head->evaluate('string(//link[@rel="canonical"]/@href)'));
     }
 
@@ -100,8 +101,8 @@ class SeoTest extends TestCase
         $description = $head->evaluate('string(//meta[@name="description"]/@content)');
         $this->assertStringStartsWith('A "quoted" plugin & tools CakePHP', $description);
         $this->assertLessThanOrEqual(160, mb_strlen($description));
-        $this->assertSame(1, $head->query('//meta[@name="description"]')->length);
-        $this->assertSame(1, $head->query('//script[@type="application/ld+json"]')->length);
+        $this->assertSame(1, $this->nodes($head, '//meta[@name="description"]')->length);
+        $this->assertSame(1, $this->nodes($head, '//script[@type="application/ld+json"]')->length);
         $schema = json_decode($head->evaluate('string(//script[@type="application/ld+json"])'), true, flags: JSON_THROW_ON_ERROR);
         $this->assertSame($description, $schema['@graph'][1]['description']);
     }
@@ -126,10 +127,24 @@ class SeoTest extends TestCase
     }
 
     /**
+     * Invalid XPath must fail the test rather than masquerade as an empty result.
+     *
+     * @return \DOMNodeList<\DOMNode|\DOMNameSpaceNode>
+     */
+    private function nodes(DOMXPath $document, string $expression): DOMNodeList
+    {
+        $nodes = $document->query($expression);
+        $this->assertNotFalse($nodes);
+
+        return $nodes;
+    }
+
+    /**
      * Parse the actual server-rendered document without executing JavaScript.
      */
     private function document(): DOMXPath
     {
+        $this->assertNotNull($this->_response);
         $document = new DOMDocument();
         $previous = libxml_use_internal_errors(true);
         try {

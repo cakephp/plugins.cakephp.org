@@ -29,21 +29,21 @@ class AwesomeListParser
         $environment->addExtension(new CommonMarkCoreExtension());
         $document = new MarkdownParser($environment)->parse($markdown);
         $inPlugins = false;
-        $slug = null;
+        $category = null;
         $categories = [];
         foreach ($document->children() as $node) {
             if ($node instanceof Heading) {
                 $name = $this->text($node);
                 if ($node->getLevel() === 2) {
                     $inPlugins = $name === 'Plugins';
-                    $slug = null;
+                    $category = null;
                 } elseif ($inPlugins && $node->getLevel() === 3) {
-                    $slug = mb_strtolower(Text::slug($name));
-                    $categories[$slug] = ['name' => $name, 'repositories' => []];
+                    $category = new ParsedCategory($name);
+                    $categories[mb_strtolower(Text::slug($name))] = $category;
                 }
                 continue;
             }
-            if (!$inPlugins || $slug === null || !$node instanceof ListBlock) {
+            if (!$inPlugins || !$category instanceof ParsedCategory || !$node instanceof ListBlock) {
                 continue;
             }
             foreach ($node->children() as $item) {
@@ -53,16 +53,16 @@ class AwesomeListParser
                 }
                 $repository = $this->repository($link->getUrl());
                 if ($repository !== null) {
-                    $categories[$slug]['repositories'][] = $repository;
+                    $category->repositories[] = $repository;
                 }
             }
         }
-        $categories = array_filter($categories, static fn(array $category): bool => $category['repositories'] !== []);
+        $categories = array_filter($categories, static fn(ParsedCategory $category): bool => $category->repositories !== []);
         if ($categories === []) {
             throw new UnexpectedValueException('Awesome CakePHP contained no linked plugin entries; keeping existing curation.');
         }
 
-        return $categories;
+        return array_map(static fn(ParsedCategory $category): array => $category->toArray(), $categories);
     }
 
     /**

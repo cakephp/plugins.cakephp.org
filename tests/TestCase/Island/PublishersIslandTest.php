@@ -76,7 +76,7 @@ class PublishersIslandTest extends TestCase
         $this->assertSame('stars', $params['sort']);
         $this->assertSame('all', $params['cakephp']);
         foreach (array_keys($params) as $key) {
-            $this->assertStringStartsNotWith('amp;', $key);
+            $this->assertStringStartsNotWith('amp;', (string)$key);
         }
     }
 

@@ -15,6 +15,7 @@ use Override;
  * @property \Cake\View\Helper\HtmlHelper $Html
  * @property \Authentication\View\Helper\IdentityHelper $Identity
  * @property \App\View\Helper\GithubHelper $Github
+ * @extends \Cake\View\Helper<\Cake\View\View>
  */
 class UserHelper extends Helper
 {

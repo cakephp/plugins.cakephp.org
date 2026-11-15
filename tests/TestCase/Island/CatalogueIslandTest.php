@@ -170,11 +170,12 @@ class CatalogueIslandTest extends TestCase
         $this->assertNotFalse($links);
         $this->assertGreaterThan(0, $links->length);
         foreach ($links as $link) {
+            $this->assertNotNull($link->nodeValue);
             parse_str((string)parse_url($link->nodeValue, PHP_URL_QUERY), $params);
             $this->assertSame('downloads', $params['sort']);
             $this->assertSame('asc', $params['direction']);
             foreach (array_keys($params) as $key) {
-                $this->assertStringStartsNotWith('amp;', $key);
+                $this->assertStringStartsNotWith('amp;', (string)$key);
             }
         }
     }

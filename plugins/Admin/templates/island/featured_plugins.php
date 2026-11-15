@@ -1,7 +1,7 @@
 <?php
 /**
  * @var \App\View\IslandTemplateView $this
- * @var \Cake\Datasource\Paging\PaginatedInterface $entries
+ * @var \Cake\Datasource\Paging\PaginatedInterface<int, \App\Model\Entity\FeaturedPlugin> $entries
  * @var \App\Model\Entity\FeaturedPlugin|null $removingEntry
  * @var string $search
  * @var string $status
@@ -30,7 +30,11 @@ $this->Form->templater()->load('Admin.form-templates');
                 'x-interact:model.live' => 'search',
             ]) ?>
         </label>
-        <?= $this->Form->select('status', $this->Form->enumOptions(FeaturedPluginStatus::class), [
+        <?= $this->Form->control('status', [
+            'type' => 'select',
+            'options' => $this->Form->enumOptions(FeaturedPluginStatus::class),
+            'label' => false,
+            'templates' => ['inputContainer' => '{{content}}'],
             'class' => 'select w-auto',
             'aria-label' => __('Filter by status'),
             'empty' => __('All statuses'),

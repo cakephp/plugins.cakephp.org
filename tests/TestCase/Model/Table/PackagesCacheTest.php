@@ -170,12 +170,16 @@ class PackagesCacheTest extends TestCase
 
         $filters = ['cakephp_slugs' => ['cakephp-4-4', 'cakephp-5-4', 'cakephp-4-4']];
         $cached = $packages->find('catalogue', filters: $filters)->orderByAsc('Packages.id')->limit(2);
-        $this->assertSame($before[0]->description, $cached->all()->first()->description);
+        $cachedFirst = $cached->all()->first();
+        $this->assertNotNull($cachedFirst);
+        $this->assertSame($before[0]->description, $cachedFirst->description);
         $this->assertSame(26, $cached->count());
 
         Cache::clear('catalogue');
         $fresh = $packages->find('catalogue', filters: $filters)->orderByAsc('Packages.id')->limit(2);
-        $this->assertSame('Changed after cache warmup', $fresh->all()->first()->description);
+        $freshFirst = $fresh->all()->first();
+        $this->assertNotNull($freshFirst);
+        $this->assertSame('Changed after cache warmup', $freshFirst->description);
         $this->assertSame(25, $fresh->count());
     }
 
@@ -212,7 +216,7 @@ class PackagesCacheTest extends TestCase
         $packages = $this->fetchTable(PackagesTable::class);
         $before = $packages->get(1, finder: 'publicDetails');
         $stats = $packages->unhydratedFind('namespaceStats', namespace: 'markstory')->firstOrFail();
-        $owner = $packages->unhydratedFind('namespaceGithubUrl', namespace: 'markstory')->all()->first()['url'];
+        $owner = $packages->unhydratedFind('namespaceGithubUrl', namespace: 'markstory')->all()->toList()[0]['url'];
         $categories = $packages->Categories->getTarget()->unhydratedFind('catalogueOptions', namespace: 'markstory')->all()->toArray();
         $versions = $packages->filterOptions();
         $packages->updateAll([
@@ -227,14 +231,14 @@ class PackagesCacheTest extends TestCase
         $this->assertSame($before->description, $packages->get(1, finder: 'publicDetails')->description);
         $this->assertSame('cakedc/users', $packages->get(25, finder: 'publicDetails')->package);
         $this->assertSame($stats, $packages->unhydratedFind('namespaceStats', namespace: 'markstory')->firstOrFail());
-        $this->assertSame($owner, $packages->unhydratedFind('namespaceGithubUrl', namespace: 'markstory')->all()->first()['url']);
+        $this->assertSame($owner, $packages->unhydratedFind('namespaceGithubUrl', namespace: 'markstory')->all()->toList()[0]['url']);
         $this->assertSame($categories, $packages->Categories->getTarget()->unhydratedFind('catalogueOptions', namespace: 'markstory')->all()->toArray());
         $this->assertSame($versions, $packages->filterOptions());
 
         Cache::clear('catalogue');
         $this->assertSame('Fresh editor data', $packages->get(1, finder: 'publicDetails')->description);
         $this->assertSame(123456, $packages->unhydratedFind('namespaceStats', namespace: 'markstory')->firstOrFail()['downloads']);
-        $this->assertSame('https://github.com/newowner', $packages->unhydratedFind('namespaceGithubUrl', namespace: 'markstory')->all()->first()['url']);
+        $this->assertSame('https://github.com/newowner', $packages->unhydratedFind('namespaceGithubUrl', namespace: 'markstory')->all()->toList()[0]['url']);
         $this->assertSame([], $packages->Categories->getTarget()->unhydratedFind('catalogueOptions', namespace: 'markstory')->all()->toArray());
         $this->assertSame('CakePHP: 5.5', $packages->filterOptions()['cakephp']['cakephp-5-4']);
     }

@@ -13,6 +13,14 @@ use Cake\ORM\Table;
  *
  * @extends \Cake\ORM\Table<array{}, \App\Model\Entity\Category>
  * @property \Cake\ORM\Association\BelongsToMany<\App\Model\Table\PackagesTable> $Packages
+ * @method \App\Model\Entity\Category patchEntity(\App\Model\Entity\Category $entity, array<mixed> $data, array<string, mixed> $options = [])
+ * @method array<\App\Model\Entity\Category> patchEntities(iterable<\App\Model\Entity\Category> $entities, array<mixed> $data, array<string, mixed> $options = [])
+ * @method \App\Model\Entity\Category|false save(\App\Model\Entity\Category $entity, array<string, mixed> $options = [])
+ * @method \App\Model\Entity\Category saveOrFail(\App\Model\Entity\Category $entity, array<string, mixed> $options = [])
+ * @method \Cake\Datasource\ResultSetInterface<int, \App\Model\Entity\Category>|false saveMany(iterable<\App\Model\Entity\Category> $entities, array<string, mixed> $options = [])
+ * @method \Cake\Datasource\ResultSetInterface<int, \App\Model\Entity\Category> saveManyOrFail(iterable<\App\Model\Entity\Category> $entities, array<string, mixed> $options = [])
+ * @method \Cake\Datasource\ResultSetInterface<int, \App\Model\Entity\Category>|false deleteMany(iterable<\App\Model\Entity\Category> $entities, array<string, mixed> $options = [])
+ * @method \Cake\Datasource\ResultSetInterface<int, \App\Model\Entity\Category> deleteManyOrFail(iterable<\App\Model\Entity\Category> $entities, array<string, mixed> $options = [])
  */
 class CategoriesTable extends Table
 {
@@ -32,7 +40,7 @@ class CategoriesTable extends Table
      * Category names and unique package counts, keyed by slug for catalogue controls.
      *
      * @param \Cake\ORM\Query\SelectQuery<array<string, mixed>> $query Category query.
-     * @return \Cake\ORM\Query\SelectQuery
+     * @return \Cake\ORM\Query\SelectQuery<array<string, mixed>>
      */
     public function findCatalogueOptions(SelectQuery $query, ?string $namespace = null): SelectQuery
     {

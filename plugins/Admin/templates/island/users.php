@@ -1,7 +1,7 @@
 <?php
 /**
  * @var \App\View\IslandTemplateView $this
- * @var \Cake\Datasource\Paging\PaginatedInterface $users
+ * @var \Cake\Datasource\Paging\PaginatedInterface<int, \App\Model\Entity\User> $users
  * @var \App\Model\Entity\User|null $editingUser
  * @var int $actorId
  * @var string $search
@@ -32,14 +32,22 @@ $this->Form->templater()->load('Admin.form-templates');
                 'x-interact:model.live' => 'search',
             ]) ?>
         </label>
-        <?= $this->Form->select('roleFilter', $this->Form->enumOptions(UserRole::class), [
+        <?= $this->Form->control('roleFilter', [
+            'type' => 'select',
+            'options' => $this->Form->enumOptions(UserRole::class),
+            'label' => false,
+            'templates' => ['inputContainer' => '{{content}}'],
             'class' => 'select w-auto',
             'aria-label' => __('Filter by role'),
             'empty' => __('All roles'),
             'value' => $roleFilter,
             'x-interact:model.live' => 'roleFilter',
         ]) ?>
-        <?= $this->Form->select('status', $this->Form->enumOptions(UserStatus::class), [
+        <?= $this->Form->control('status', [
+            'type' => 'select',
+            'options' => $this->Form->enumOptions(UserStatus::class),
+            'label' => false,
+            'templates' => ['inputContainer' => '{{content}}'],
             'class' => 'select w-auto',
             'aria-label' => __('Filter by status'),
             'empty' => __('All statuses'),

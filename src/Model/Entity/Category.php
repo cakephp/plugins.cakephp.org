@@ -10,6 +10,8 @@ use Override;
  * @property int $id
  * @property string $name
  * @property string $slug
+ * @property array<\App\Model\Entity\Package> $packages
+ * @property \Cake\ORM\Entity $_joinData
  */
 class Category extends Entity
 {

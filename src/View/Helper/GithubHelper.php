@@ -11,6 +11,7 @@ use Override;
  * Renders public GitHub avatars without performing profile lookups.
  *
  * @property \Cake\View\Helper\HtmlHelper $Html
+ * @extends \Cake\View\Helper<\Cake\View\View>
  */
 class GithubHelper extends Helper
 {

@@ -21,14 +21,13 @@ use Tags\Model\Entity\Tag;
  * @property string|null $latest_stable_version
  * @property \Cake\I18n\Date|null $latest_stable_release_date
  * @property array<\App\Model\Entity\Category> $categories
- *
- * @property array<\Tags\Model\Entity\Tag> $cake_php_tags
- * @property array<int, array<\Tags\Model\Entity\Tag>> $cake_php_tag_groups
- * @property array<\Tags\Model\Entity\Tag> $php_tags
- * @property array<int, array<\Tags\Model\Entity\Tag>> $php_tag_groups
+ * @property-read array<\Tags\Model\Entity\Tag> $cake_php_tags
+ * @property-read array<int, array<\Tags\Model\Entity\Tag>> $cake_php_tag_groups
+ * @property-read array<\Tags\Model\Entity\Tag> $php_tags
+ * @property-read array<int, array<\Tags\Model\Entity\Tag>> $php_tag_groups
  * @property array<\Tags\Model\Entity\Tagged> $tagged
  * @property array<\Tags\Model\Entity\Tag> $tags
- * @property \Tags\Model\Entity\Tagged $_joinData
+ * @property \Cake\ORM\Entity $_joinData
  */
 class Package extends Entity
 {

@@ -14,12 +14,17 @@ use Cake\Validation\Validator;
 /**
  * Editorial configuration stays independent of imported catalogue records.
  *
- * @extends \Cake\ORM\Table<array{Timestamp: \Cake\ORM\Behavior\TimestampBehavior}>
- * @method \App\Model\Entity\FeaturedPlugin get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
- * @method \App\Model\Entity\FeaturedPlugin newEmptyEntity()
- * @method \App\Model\Entity\FeaturedPlugin newEntity(array $data, array $options = [])
- * @method \App\Model\Entity\FeaturedPlugin patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \Cake\ORM\Query\SelectQuery<\App\Model\Entity\FeaturedPlugin> find(string $type = 'all', mixed ...$args)
+ * @extends \Cake\ORM\Table<array{Timestamp: \Cake\ORM\Behavior\TimestampBehavior}, \App\Model\Entity\FeaturedPlugin>
+ * @property \Cake\ORM\Association\BelongsTo<\App\Model\Table\PackagesTable> $CataloguePackages
+ * @method \App\Model\Entity\FeaturedPlugin patchEntity(\App\Model\Entity\FeaturedPlugin $entity, array<mixed> $data, array<string, mixed> $options = [])
+ * @method array<\App\Model\Entity\FeaturedPlugin> patchEntities(iterable<\App\Model\Entity\FeaturedPlugin> $entities, array<mixed> $data, array<string, mixed> $options = [])
+ * @method \App\Model\Entity\FeaturedPlugin|false save(\App\Model\Entity\FeaturedPlugin $entity, array<string, mixed> $options = [])
+ * @method \App\Model\Entity\FeaturedPlugin saveOrFail(\App\Model\Entity\FeaturedPlugin $entity, array<string, mixed> $options = [])
+ * @method \Cake\Datasource\ResultSetInterface<int, \App\Model\Entity\FeaturedPlugin>|false saveMany(iterable<\App\Model\Entity\FeaturedPlugin> $entities, array<string, mixed> $options = [])
+ * @method \Cake\Datasource\ResultSetInterface<int, \App\Model\Entity\FeaturedPlugin> saveManyOrFail(iterable<\App\Model\Entity\FeaturedPlugin> $entities, array<string, mixed> $options = [])
+ * @method \Cake\Datasource\ResultSetInterface<int, \App\Model\Entity\FeaturedPlugin>|false deleteMany(iterable<\App\Model\Entity\FeaturedPlugin> $entities, array<string, mixed> $options = [])
+ * @method \Cake\Datasource\ResultSetInterface<int, \App\Model\Entity\FeaturedPlugin> deleteManyOrFail(iterable<\App\Model\Entity\FeaturedPlugin> $entities, array<string, mixed> $options = [])
+ * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class FeaturedPluginsTable extends Table
 {
@@ -64,7 +69,7 @@ class FeaturedPluginsTable extends Table
     /**
      * Validate the same trimmed override values that entity setters persist.
      *
-     * @param \Cake\Event\EventInterface $event Marshal event.
+     * @param \Cake\Event\EventInterface<self> $event Marshal event.
      * @param \ArrayObject<string, mixed> $data Input fields.
      * @param \ArrayObject<string, mixed> $options Marshal options.
      */

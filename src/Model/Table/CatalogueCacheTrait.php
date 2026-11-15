@@ -33,7 +33,8 @@ trait CatalogueCacheTrait
     /**
      * Resolve after pagination so SQL includes its limit, offset, order and bindings.
      *
-     * @param \Cake\ORM\Query\SelectQuery $query Final public read query.
+     * @template TSubject of \Cake\Datasource\EntityInterface|array
+     * @param \Cake\ORM\Query\SelectQuery<TSubject> $query Final public read query.
      */
     private static function publicCacheKey(SelectQuery $query, string $scope): string
     {

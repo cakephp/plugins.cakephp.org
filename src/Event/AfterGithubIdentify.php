@@ -26,7 +26,7 @@ class AfterGithubIdentify implements EventListenerInterface
     /**
      * Returns a list of events this object is interested in.
      *
-     * @return array
+     * @return array<string, string>
      */
     public function implementedEvents(): array
     {
@@ -38,7 +38,7 @@ class AfterGithubIdentify implements EventListenerInterface
     /**
      * After identify callback.
      *
-     * @param \Cake\Event\Event $event The event instance.
+     * @param \Cake\Event\EventInterface<object> $event The event instance.
      * @param \App\Model\Entity\User $user The user entity.
      * @return void
      */

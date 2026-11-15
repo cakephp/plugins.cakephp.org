@@ -9,6 +9,8 @@ use Cake\View\Helper;
 
 /**
  * Shared metadata is built from view blocks without waiting for lazy islands.
+ *
+ * @extends \Cake\View\Helper<\Cake\View\View>
  */
 class SeoHelper extends Helper
 {

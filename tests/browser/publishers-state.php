@@ -25,7 +25,11 @@ $connection->exec('DELETE FROM packages WHERE id BETWEEN 1001 AND 1021');
 if (($argv[1] ?? '') !== 'seed') {
     exit;
 }
-$record = $connection->query('SELECT * FROM packages WHERE id = 1')->fetch(PDO::FETCH_ASSOC);
+$query = $connection->query('SELECT * FROM packages WHERE id = 1');
+if ($query === false) {
+    throw new RuntimeException('Unable to read the browser package fixture.');
+}
+$record = $query->fetch(PDO::FETCH_ASSOC);
 if (!$record) {
     throw new RuntimeException('Browser package fixture is missing.');
 }

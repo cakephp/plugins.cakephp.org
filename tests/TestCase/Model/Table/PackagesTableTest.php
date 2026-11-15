@@ -232,10 +232,10 @@ class PackagesTableTest extends TestCase
     public function testNamespaceGithubProfile(): void
     {
         $packages = $this->fetchTable(PackagesTable::class);
-        $this->assertSame('https://github.com/vendor', $packages->unhydratedFind('namespaceGithubUrl', namespace: 'vendor')->all()->first()['url']);
+        $this->assertSame('https://github.com/vendor', $packages->unhydratedFind('namespaceGithubUrl', namespace: 'vendor')->all()->toList()[0]['url']);
         $packages->updateAll(['repo_url' => 'https://github.com/another-owner/plugin'], ['id' => 2]);
-        $this->assertNull($packages->unhydratedFind('namespaceGithubUrl', namespace: 'vendor')->all()->first()['url']);
-        $this->assertNull($packages->unhydratedFind('namespaceGithubUrl', namespace: 'missing')->all()->first()['url']);
+        $this->assertNull($packages->unhydratedFind('namespaceGithubUrl', namespace: 'vendor')->all()->toList()[0]['url']);
+        $this->assertNull($packages->unhydratedFind('namespaceGithubUrl', namespace: 'missing')->all()->toList()[0]['url']);
     }
 
     /**
@@ -246,7 +246,7 @@ class PackagesTableTest extends TestCase
     {
         $packages = $this->fetchTable(PackagesTable::class);
         $packages->updateAll(['repo_url' => $url], ['id' => 1]);
-        $this->assertSame($expected, $packages->unhydratedFind('namespaceGithubUrl', namespace: 'markstory')->all()->first()['url']);
+        $this->assertSame($expected, $packages->unhydratedFind('namespaceGithubUrl', namespace: 'markstory')->all()->toList()[0]['url']);
     }
 
     /**
@@ -351,7 +351,7 @@ class PackagesTableTest extends TestCase
             'downloads' => 99999999,
             'stars' => 99999,
         ], ['id' => 25]);
-        $this->assertSame('cakedc', $packages->unhydratedFind('publishers')->first()['namespace']);
+        $this->assertSame('cakedc', $packages->unhydratedFind('publishers')->firstOrFail()['namespace']);
         $current = $packages->unhydratedFind('publishers', major: '5')->all()->toList();
         $this->assertSame(['vendor', 'dereuromark', 'markstory'], array_column($current, 'namespace'));
         $this->assertEquals(1, $current[2]['plugins']);
@@ -363,13 +363,13 @@ class PackagesTableTest extends TestCase
             'monthly_downloads' => 999999,
             'repo_url' => 'https://github.com/another-owner/plugin',
         ], ['id' => 24]);
-        $vendor = $packages->unhydratedFind('publishers', major: '5', search: 'vendor')->first();
+        $vendor = $packages->unhydratedFind('publishers', major: '5', search: 'vendor')->firstOrFail();
         $this->assertEquals(22, $vendor['plugins']);
         $this->assertEquals(1925, $vendor['monthly_downloads']);
         $details = $packages->unhydratedFind('publisherDetails', namespaces: ['vendor'], major: '5')->all()->toArray();
         $this->assertSame(['package-01', 'package-02'], array_column($details['vendor']['plugins'], 'name'));
         $this->assertNull($details['vendor']['githubUrl']);
-        $this->assertSame('cakedc', $packages->unhydratedFind('publishers', major: '4')->first()['namespace']);
+        $this->assertSame('cakedc', $packages->unhydratedFind('publishers', major: '4')->firstOrFail()['namespace']);
     }
 
     /**
@@ -379,13 +379,13 @@ class PackagesTableTest extends TestCase
     {
         $packages = $this->fetchTable(PackagesTable::class);
         $packages->updateAll(['monthly_downloads' => 3000], ['id' => 1]);
-        $this->assertSame('markstory', $packages->unhydratedFind('publishers', major: '5')->first()['namespace']);
-        $this->assertSame('vendor', $packages->unhydratedFind('publishers', major: '5', sort: 'downloads')->first()['namespace']);
+        $this->assertSame('markstory', $packages->unhydratedFind('publishers', major: '5')->firstOrFail()['namespace']);
+        $this->assertSame('vendor', $packages->unhydratedFind('publishers', major: '5', sort: 'downloads')->firstOrFail()['namespace']);
         $packages->updateAll(['monthly_downloads' => null], ['id' => 2]);
-        $vendor = $packages->unhydratedFind('publishers', search: 'vendor')->first();
+        $vendor = $packages->unhydratedFind('publishers', search: 'vendor')->firstOrFail();
         $this->assertNull($vendor['monthly_downloads']);
         $packages->updateAll(['monthly_downloads' => 0], ['id' => 1]);
         $this->assertSame(['dereuromark', 'markstory', 'vendor'], $packages->unhydratedFind('publishers', major: '5')->all()->extract('namespace')->toList());
-        $this->assertEquals(0, $packages->unhydratedFind('publishers', search: 'markstory')->first()['monthly_downloads']);
+        $this->assertEquals(0, $packages->unhydratedFind('publishers', search: 'markstory')->firstOrFail()['monthly_downloads']);
     }
 }

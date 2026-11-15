@@ -106,20 +106,24 @@ class PackagistImporter
     }
 
     /**
-     * @return array{package: string, description: string, repo_url: string, downloads: int, monthly_downloads: int, stars: int, tag_list: array, latest_stable_version: ?string, latest_stable_release_date: ?\Cake\I18n\Date, is_abandoned: bool}
+     * @return array{package: string, description: string, repo_url: string, downloads: int, monthly_downloads: int, stars: int, tag_list: list<string>, latest_stable_version: ?string, latest_stable_release_date: ?\Cake\I18n\Date, is_abandoned: bool}
      */
     private function getDataForPackage(string $packageName): array
     {
         /** @var \Packagist\Api\Result\Package $metaDetails */
         $metaDetails = $this->client->get($packageName);
+        $downloads = $metaDetails->getDownloads();
+        if ($downloads === null) {
+            throw new UnexpectedValueException(sprintf('Packagist returned no download metadata for %s; existing packages were retained.', $packageName));
+        }
 
         if ($metaDetails->isAbandoned()) {
             return [
                 'package' => $packageName,
                 'description' => $metaDetails->getDescription(),
                 'repo_url' => $metaDetails->getRepository(),
-                'downloads' => $metaDetails->getDownloads()->getTotal(),
-                'monthly_downloads' => $metaDetails->getDownloads()->getMonthly(),
+                'downloads' => $downloads->getTotal(),
+                'monthly_downloads' => $downloads->getMonthly(),
                 'stars' => $metaDetails->getGithubStars(),
                 'tag_list' => [],
                 'latest_stable_version' => null,
@@ -154,7 +158,7 @@ class PackagistImporter
 
         $stableVersions = array_filter(
             $versions,
-            fn(Version $version): int|false => preg_match('/^v?\d+\.\d+(\.\d+)?$/', $version->getVersion()),
+            static fn(Version $version): bool => preg_match('/^v?\d+\.\d+(\.\d+)?$/', $version->getVersion()) === 1,
         );
         usort($stableVersions, function ($a, $b): int {
             return version_compare($a->getVersion(), $b->getVersion());
@@ -166,8 +170,8 @@ class PackagistImporter
             'package' => $packageName,
             'description' => $metaDetails->getDescription(),
             'repo_url' => $metaDetails->getRepository(),
-            'downloads' => $metaDetails->getDownloads()->getTotal(),
-            'monthly_downloads' => $metaDetails->getDownloads()->getMonthly(),
+            'downloads' => $downloads->getTotal(),
+            'monthly_downloads' => $downloads->getMonthly(),
             'stars' => $metaDetails->getGithubStars(),
             'tag_list' => $meta,
             'latest_stable_version' => $latestStable ? $latestStable->getVersion() : null,
@@ -198,11 +202,11 @@ class PackagistImporter
     }
 
     /**
-     * @param array $meta The meta array to adjust
+     * @param list<string> $meta The meta array to adjust
      * @param string $packageConstraint The meta array which contains the current version strings
      * @param string $tagPrefix The prefix which should be used for the tag
      * @param array<array-key, array<int>> $versions The versions to check
-     * @return array
+     * @return list<string>
      */
     private function appendVersionTags(
         array $meta,

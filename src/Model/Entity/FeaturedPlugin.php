@@ -14,6 +14,8 @@ use Override;
  * @property string|null $title
  * @property string|null $description
  * @property \App\Model\Entity\Package|null $catalogue_package
+ * @property \Cake\I18n\DateTime $created
+ * @property \Cake\I18n\DateTime|null $modified
  */
 class FeaturedPlugin extends Entity
 {

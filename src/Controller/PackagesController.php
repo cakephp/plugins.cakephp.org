@@ -46,7 +46,7 @@ class PackagesController extends AppController
                 '?' => $this->getRequest()->getQueryParams(),
             ], 301);
         }
-        $githubUrl = $packages->unhydratedFind('namespaceGithubUrl', namespace: $namespace)->all()->first()['url'];
+        $githubUrl = $packages->unhydratedFind('namespaceGithubUrl', namespace: $namespace)->all()->first()['url'] ?? null;
         $backUrl = $this->getRequest()->referer();
         if ($backUrl === null || parse_url($backUrl, PHP_URL_PATH) === $this->getRequest()->getPath()) {
             $backUrl = ['_name' => 'plugin:index'];

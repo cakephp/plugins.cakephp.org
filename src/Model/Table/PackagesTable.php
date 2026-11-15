@@ -19,26 +19,20 @@ use Cake\Validation\Validator;
 /**
  * Packages Model
  *
- * @method \App\Model\Entity\Package newEmptyEntity()
- * @method \App\Model\Entity\Package newEntity(array<mixed> $data, array<string, mixed> $options = [])
- * @method array<\App\Model\Entity\Package> newEntities(array<mixed> $data, array<string, mixed> $options = [])
- * @method \App\Model\Entity\Package get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
- * @method \App\Model\Entity\Package findOrCreate(\Cake\ORM\Query\SelectQuery|callable|array $search, ?callable $callback = null, array<string, mixed> $options = [])
- * @method \App\Model\Entity\Package patchEntity(\App\Model\Entity\Package $entity, array<mixed> $data, array<string, mixed> $options = [])
- * @method array<\App\Model\Entity\Package> patchEntities(iterable<\App\Model\Entity\Package> $entities, array<mixed> $data, array<string, mixed> $options = [])
- * @method \App\Model\Entity\Package|false save(\App\Model\Entity\Package $entity, array<string, mixed> $options = [])
- * @method \App\Model\Entity\Package saveOrFail(\App\Model\Entity\Package $entity, array<string, mixed> $options = [])
- * @method \Cake\Datasource\ResultSetInterface<\App\Model\Entity\Package>|false saveMany(iterable<\App\Model\Entity\Package> $entities, array<string, mixed> $options = [])
- * @method \Cake\Datasource\ResultSetInterface<\App\Model\Entity\Package> saveManyOrFail(iterable<\App\Model\Entity\Package> $entities, array<string, mixed> $options = [])
- * @method \Cake\Datasource\ResultSetInterface<\App\Model\Entity\Package>|false deleteMany(iterable<\App\Model\Entity\Package> $entities, array<string, mixed> $options = [])
- * @method \Cake\Datasource\ResultSetInterface<\App\Model\Entity\Package> deleteManyOrFail(iterable<\App\Model\Entity\Package> $entities, array<string, mixed> $options = [])
  * @property \Cake\ORM\Association\HasMany<\Tags\Model\Table\TaggedTable> $Tagged
  * @property \Cake\ORM\Association\BelongsToMany<\Tags\Model\Table\TagsTable> $Tags
  * @property \Cake\ORM\Association\BelongsToMany<\App\Model\Table\CategoriesTable> $Categories
  * @mixin \Search\Model\Behavior\SearchBehavior
  * @mixin \Tags\Model\Behavior\TagBehavior
  * @extends \Cake\ORM\Table<array{Search: \Search\Model\Behavior\SearchBehavior, Tag: \Tags\Model\Behavior\TagBehavior}, \App\Model\Entity\Package>
- * @method \Cake\ORM\Query\SelectQuery<\App\Model\Entity\Package> find(string $type = 'all', mixed ...$args)
+ * @method \App\Model\Entity\Package patchEntity(\App\Model\Entity\Package $entity, array<mixed> $data, array<string, mixed> $options = [])
+ * @method array<\App\Model\Entity\Package> patchEntities(iterable<\App\Model\Entity\Package> $entities, array<mixed> $data, array<string, mixed> $options = [])
+ * @method \App\Model\Entity\Package|false save(\App\Model\Entity\Package $entity, array<string, mixed> $options = [])
+ * @method \App\Model\Entity\Package saveOrFail(\App\Model\Entity\Package $entity, array<string, mixed> $options = [])
+ * @method \Cake\Datasource\ResultSetInterface<int, \App\Model\Entity\Package>|false saveMany(iterable<\App\Model\Entity\Package> $entities, array<string, mixed> $options = [])
+ * @method \Cake\Datasource\ResultSetInterface<int, \App\Model\Entity\Package> saveManyOrFail(iterable<\App\Model\Entity\Package> $entities, array<string, mixed> $options = [])
+ * @method \Cake\Datasource\ResultSetInterface<int, \App\Model\Entity\Package>|false deleteMany(iterable<\App\Model\Entity\Package> $entities, array<string, mixed> $options = [])
+ * @method \Cake\Datasource\ResultSetInterface<int, \App\Model\Entity\Package> deleteManyOrFail(iterable<\App\Model\Entity\Package> $entities, array<string, mixed> $options = [])
  */
 class PackagesTable extends Table
 {
@@ -124,7 +118,7 @@ class PackagesTable extends Table
     /**
      * Derive the indexed vendor whenever an import creates or renames a package.
      *
-     * @param \Cake\Event\EventInterface $event Save event.
+     * @param \Cake\Event\EventInterface<self> $event Save event.
      * @param \Cake\Datasource\EntityInterface $entity Package being saved.
      * @param \ArrayObject<string, mixed> $options Save options.
      */
@@ -180,11 +174,12 @@ class PackagesTable extends Table
     /**
      * Rank Composer namespaces from packages supporting the selected CakePHP major.
      *
-     * @param \Cake\ORM\Query\SelectQuery $query Package query.
+     * @template TSubject of \Cake\Datasource\EntityInterface|array
+     * @param \Cake\ORM\Query\SelectQuery<TSubject> $query Package query.
      * @param string $search Case-insensitive namespace substring.
      * @param string $sort Popularity metric.
      * @param string|null $major CakePHP major; null includes all versions.
-     * @return \Cake\ORM\Query\SelectQuery
+     * @return \Cake\ORM\Query\SelectQuery<TSubject>
      */
     public function findPublishers(SelectQuery $query, string $search = '', string $sort = 'monthly_downloads', ?string $major = null): SelectQuery
     {
@@ -232,7 +227,7 @@ class PackagesTable extends Table
      * @param list<string> $namespaces Visible namespace names.
      * @param string $sort Popularity metric; plugin-count rankings preview monthly downloads.
      * @param string|null $major CakePHP major; null includes all versions.
-     * @return \Cake\ORM\Query\SelectQuery
+     * @return \Cake\ORM\Query\SelectQuery<array<string, mixed>>
      */
     public function findPublisherDetails(SelectQuery $query, array $namespaces, string $sort = 'monthly_downloads', ?string $major = null): SelectQuery
     {
@@ -276,8 +271,9 @@ class PackagesTable extends Table
     /**
      * Select packages compatible with a CakePHP major without multiplying minor tags.
      *
-     * @param \Cake\ORM\Query\SelectQuery $query Package query.
-     * @return \Cake\ORM\Query\SelectQuery
+     * @template TSubject of \Cake\Datasource\EntityInterface|array
+     * @param \Cake\ORM\Query\SelectQuery<TSubject> $query Package query.
+     * @return \Cake\ORM\Query\SelectQuery<TSubject>
      */
     public function findCakephpCompatible(SelectQuery $query, string $major): SelectQuery
     {
@@ -287,7 +283,7 @@ class PackagesTable extends Table
     /**
      * EXISTS counts a compatible package once even when several minor-version tags match.
      *
-     * @return \Cake\ORM\Query\SelectQuery
+     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface>
      */
     private function publisherCompatibility(string $major): SelectQuery
     {
@@ -327,7 +323,7 @@ class PackagesTable extends Table
      * Hero totals cover the namespace before any interactive filters are applied.
      *
      * @param \Cake\ORM\Query\SelectQuery<array<string, mixed>> $query Package query.
-     * @return \Cake\ORM\Query\SelectQuery
+     * @return \Cake\ORM\Query\SelectQuery<array<string, mixed>>
      */
     public function findNamespaceStats(SelectQuery $query, string $namespace): SelectQuery
     {
@@ -347,8 +343,9 @@ class PackagesTable extends Table
     /**
      * Minimal ordered sitemap rows share catalogue import invalidation.
      *
-     * @param \Cake\ORM\Query\SelectQuery $query Package query.
-     * @return \Cake\ORM\Query\SelectQuery
+     * @template TSubject of \Cake\Datasource\EntityInterface|array
+     * @param \Cake\ORM\Query\SelectQuery<TSubject> $query Package query.
+     * @return \Cake\ORM\Query\SelectQuery<TSubject>
      */
     public function findSitemap(SelectQuery $query): SelectQuery
     {
@@ -359,7 +356,7 @@ class PackagesTable extends Table
      * Aggregate complete monthly download totals without treating unknown values as zero.
      *
      * @param \Cake\ORM\Query\SelectQuery<array<string, mixed>> $query Package query.
-     * @return \Cake\ORM\Query\SelectQuery
+     * @return \Cake\ORM\Query\SelectQuery<array<string, mixed>>
      */
     public function findEcosystemTotals(SelectQuery $query): SelectQuery
     {
@@ -376,8 +373,9 @@ class PackagesTable extends Table
     /**
      * Distinct nonempty Composer publishers can be counted or projected further.
      *
-     * @param \Cake\ORM\Query\SelectQuery $query Package query.
-     * @return \Cake\ORM\Query\SelectQuery
+     * @template TSubject of \Cake\Datasource\EntityInterface|array
+     * @param \Cake\ORM\Query\SelectQuery<TSubject> $query Package query.
+     * @return \Cake\ORM\Query\SelectQuery<TSubject>
      */
     public function findNamespaces(SelectQuery $query): SelectQuery
     {
@@ -417,7 +415,7 @@ class PackagesTable extends Table
      * Consume with all()->first() so SQL pagination cannot hide conflicting owners.
      *
      * @param \Cake\ORM\Query\SelectQuery<array<string, mixed>> $query Package query.
-     * @return \Cake\ORM\Query\SelectQuery
+     * @return \Cake\ORM\Query\SelectQuery<array<string, mixed>>
      */
     public function findNamespaceGithubUrl(SelectQuery $query, string $namespace): SelectQuery
     {
