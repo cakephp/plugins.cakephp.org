@@ -36,6 +36,7 @@ new Migrator()->runMany([
         'connection' => 'default',
     ],
 ]);
+Cache::clear('_cake_model_');
 $connection->delete('featured_plugins', []);
 foreach (new FeaturedPluginsFixture()->records as $record) {
     $connection->insert('featured_plugins', $record);
@@ -62,7 +63,7 @@ foreach ($fixture->records as $record) {
     }
 }
 Cache::clearAll();
-foreach (['vendor', 'markstory', 'dereuromark', 'cakedc'] as $owner) {
+foreach (['vendor', 'markstory', 'dereuromark', 'cakedc', 'future'] as $owner) {
     Cache::pool('github_profiles')->set('github_profile_v2_' . $owner, [
         'avatarUrl' => 'https://avatars.githubusercontent.com/u/123',
         'bio' => $owner === 'cakedc' ? null : 'CakePHP plugins by ' . $owner . '.',

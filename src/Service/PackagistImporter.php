@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Model\Table\PackagesTable;
+use App\Utility\CakephpVersion;
 use Cake\Cache\Cache;
 use Cake\I18n\Date;
 use Cake\Log\Log;
@@ -15,6 +16,8 @@ use UnexpectedValueException;
 
 /**
  * Imports eligible Packagist plugins and their compatibility metadata.
+ *
+ * @phpstan-import-type DevelopmentRelease from \App\Model\Entity\Package
  */
 class PackagistImporter
 {
@@ -22,6 +25,8 @@ class PackagistImporter
         'cakephp/cache',
         'cakephp/collection',
         'cakephp/console',
+        'cakephp/container',
+        'cakephp/core',
         'cakephp/database',
         'cakephp/datasource',
         'cakephp/event',
@@ -37,12 +42,6 @@ class PackagistImporter
     private const array PHP_VERSIONS = [
         '7' => [0, 1, 2, 3, 4],
         '8' => [0, 1, 2, 3, 4, 5],
-    ];
-
-    private const array CAKEPHP_VERSIONS = [
-        '3' => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-        '4' => [0, 1, 2, 3, 4, 5, 6],
-        '5' => [0, 1, 2, 3, 4],
     ];
 
     /**
@@ -69,7 +68,8 @@ class PackagistImporter
         $touchedIds = [];
         foreach ($names as $index => $name) {
             $data = $this->getDataForPackage($name);
-            if ($data['is_abandoned'] || !$data['latest_stable_version'] || $data['downloads'] < 10 || !$this->hasExplicitCakePhpDependency($data['tag_list'])) {
+            $eligibleRelease = $data['latest_stable_version'] !== null && $data['downloads'] >= 10;
+            if ($data['is_abandoned'] || (!$eligibleRelease && $data['development_compatibility'] === []) || !$this->hasExplicitCakePhpDependency($data['tag_list'])) {
                 $result['skipped']++;
             } else {
                 $entity = $this->packages->find()->where(['package' => $name])->first() ?? $this->packages->newEmptyEntity();
@@ -106,7 +106,7 @@ class PackagistImporter
     }
 
     /**
-     * @return array{package: string, description: string, repo_url: string, downloads: int, monthly_downloads: int, stars: int, tag_list: list<string>, latest_stable_version: ?string, latest_stable_release_date: ?\Cake\I18n\Date, is_abandoned: bool}
+     * @return array{package: string, description: string, repo_url: string, downloads: int, monthly_downloads: int, stars: int, tag_list: list<string>, latest_stable_version: ?string, latest_stable_release_date: ?\Cake\I18n\Date, is_abandoned: bool, development_compatibility: array<int, DevelopmentRelease>}
      */
     private function getDataForPackage(string $packageName): array
     {
@@ -129,10 +129,12 @@ class PackagistImporter
                 'latest_stable_version' => null,
                 'latest_stable_release_date' => null,
                 'is_abandoned' => true,
+                'development_compatibility' => [],
             ];
         }
 
         $versions = $metaDetails->getVersions();
+        $development = $this->developmentCompatibility($versions);
 
         $meta = [];
         // Check each version
@@ -144,16 +146,20 @@ class PackagistImporter
 
             $cakephpRequire = $versionMeta->getRequire()['cakephp/cakephp'] ?? null;
             if ($cakephpRequire) {
-                $meta = $this->appendVersionTags($meta, $cakephpRequire, 'CakePHP', self::CAKEPHP_VERSIONS);
+                $meta = $this->appendVersionTags($meta, $cakephpRequire, 'CakePHP', CakephpVersion::stableVersions());
             } else {
                 // Cake has standalone sub-packages
                 foreach (self::CAKEPHP_SUBPACKAGES as $subpackage) {
                     $cakephpRequire = $versionMeta->getRequire()[$subpackage] ?? null;
                     if ($cakephpRequire) {
-                        $meta = $this->appendVersionTags($meta, $cakephpRequire, 'CakePHP', self::CAKEPHP_VERSIONS);
+                        $meta = $this->appendVersionTags($meta, $cakephpRequire, 'CakePHP', CakephpVersion::stableVersions());
                     }
                 }
             }
+        }
+
+        foreach (array_keys($development) as $major) {
+            $meta[] = 'CakePHP: ' . CakephpVersion::developmentLabel($major);
         }
 
         $stableVersions = array_filter(
@@ -177,7 +183,63 @@ class PackagistImporter
             'latest_stable_version' => $latestStable ? $latestStable->getVersion() : null,
             'latest_stable_release_date' => $this->extractReleaseDate($latestStable ?: null),
             'is_abandoned' => $metaDetails->isAbandoned(),
+            'development_compatibility' => $development,
         ];
+    }
+
+    /**
+     * Keep an installable source release for each upcoming major, preferring stable tags.
+     *
+     * @param array<\Packagist\Api\Result\Package\Version> $versions Packagist releases and branches.
+     * @return array<int, DevelopmentRelease>
+     */
+    private function developmentCompatibility(array $versions): array
+    {
+        usort($versions, static function (Version $left, Version $right): int {
+            $leftStable = VersionParser::parseStability($left->getVersion()) === 'stable';
+            $rightStable = VersionParser::parseStability($right->getVersion()) === 'stable';
+            if ($leftStable !== $rightStable) {
+                return $rightStable <=> $leftStable;
+            }
+
+            return $leftStable
+                ? version_compare($right->getVersion(), $left->getVersion())
+                : [$right->getTime(), $right->getVersion()] <=> [$left->getTime(), $left->getVersion()];
+        });
+        $matches = [];
+        foreach ($versions as $version) {
+            $requirements = $version->getRequire();
+            $constraints = array_intersect_key($requirements, array_flip(['cakephp/cakephp', ...self::CAKEPHP_SUBPACKAGES]));
+            foreach (CakephpVersion::developmentMajors() as $major) {
+                if (isset($matches[$major]) || $constraints === []) {
+                    continue;
+                }
+                // Unbounded dependencies such as * and >=4 do not explicitly target an upcoming major.
+                $supported = true;
+                foreach ($constraints as $constraint) {
+                    try {
+                        $parsed = new VersionParser()->parseConstraints($this->dependencyConstraint($constraint));
+                        if ($parsed->getUpperBound()->isPositiveInfinity() || !$this->constraintsIntersect($constraint, '^' . $major . '.0')) {
+                            $supported = false;
+                            break;
+                        }
+                    } catch (UnexpectedValueException) {
+                        $supported = false;
+                        break;
+                    }
+                }
+                if ($supported) {
+                    $matches[$major] = [
+                        'version' => $version->getVersion(),
+                        'stability' => VersionParser::parseStability($version->getVersion()),
+                        'cakephp_constraint' => implode(' & ', array_unique(array_values($constraints))),
+                        'php_constraint' => $requirements['php'] ?? null,
+                    ];
+                }
+            }
+        }
+
+        return $matches;
     }
 
     /**
@@ -239,13 +301,21 @@ class PackagistImporter
 
         try {
             return Intervals::haveIntersections(
-                $versionParser->parseConstraints($leftConstraint),
-                $versionParser->parseConstraints($rightConstraint),
+                $versionParser->parseConstraints($this->dependencyConstraint($leftConstraint)),
+                $versionParser->parseConstraints($this->dependencyConstraint($rightConstraint)),
             );
         } catch (UnexpectedValueException) {
             return false;
         } finally {
             Intervals::clear();
         }
+    }
+
+    /**
+     * Consumers of a published package resolve the target of an inline alias.
+     */
+    private function dependencyConstraint(string $constraint): string
+    {
+        return preg_replace('/([^,\s]+)\s+as\s+([^,\s]+)/', '$2', $constraint) ?? $constraint;
     }
 }

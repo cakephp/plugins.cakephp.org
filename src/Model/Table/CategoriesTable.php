@@ -42,15 +42,20 @@ class CategoriesTable extends Table
      * @param \Cake\ORM\Query\SelectQuery<array<string, mixed>> $query Category query.
      * @return \Cake\ORM\Query\SelectQuery<array<string, mixed>>
      */
-    public function findCatalogueOptions(SelectQuery $query, ?string $namespace = null): SelectQuery
+    public function findCatalogueOptions(SelectQuery $query, ?string $namespace = null, bool $includeDevelopment = false): SelectQuery
     {
-        $query->select(['Categories.slug', 'Categories.name', 'package_count' => $query->func()->count('CategoryMemberships.package_id')])
+        $packageJoin = ['CataloguePackages.id = CategoryMemberships.package_id'];
+        if (!$includeDevelopment) {
+            $packageJoin['CataloguePackages.latest_stable_version IS NOT'] = null;
+            $packageJoin['CataloguePackages.downloads >='] = 10;
+        }
+        $query->select(['Categories.slug', 'Categories.name', 'package_count' => $query->func()->count('CataloguePackages.id')])
             ->leftJoin(['CategoryMemberships' => 'categories_packages'], ['CategoryMemberships.category_id = Categories.id'])
+            ->leftJoin(['CataloguePackages' => 'packages'], $packageJoin)
             ->groupBy(['Categories.id', 'Categories.slug', 'Categories.name'])
             ->orderByAsc('Categories.name');
         if ($namespace !== null) {
-            $query->innerJoin(['CataloguePackages' => 'packages'], ['CataloguePackages.id = CategoryMemberships.package_id'])
-                ->where(['CataloguePackages.namespace' => $namespace]);
+            $query->where(['CataloguePackages.namespace' => $namespace]);
         }
         $query->formatResults(static fn(CollectionInterface $results): CollectionInterface => $results->combine(
             'slug',

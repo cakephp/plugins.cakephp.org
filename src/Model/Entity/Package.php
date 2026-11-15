@@ -10,6 +10,8 @@ use Tags\Model\Entity\Tag;
 /**
  * Package Entity
  *
+ * @phpstan-type DevelopmentRelease array{version: string, stability: string, cakephp_constraint: string, php_constraint: string|null}
+ * @property array<int, array{version: string, stability: string, cakephp_constraint: string, php_constraint: string|null}>|null $development_compatibility
  * @property int $id
  * @property string $package
  * @property string $namespace

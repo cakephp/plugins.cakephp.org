@@ -329,6 +329,9 @@ body::before {
     @apply flex min-w-0 items-center p-1 [scrollbar-width:thin]
         [scrollbar-color:var(--color-control)_transparent];
 }
+.version-development {
+    @apply border-dashed;
+}
 .version-pill {
     @apply h-auto min-h-6 shrink-0 rounded-full border-base-300 bg-transparent px-1.75 py-0.5 text-xs leading-tight
         font-medium whitespace-nowrap text-muted no-underline hover:border-primary hover:text-primary

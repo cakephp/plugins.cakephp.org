@@ -11,7 +11,7 @@ $statLabels = [
 ?>
 <section class="min-w-0" aria-label="<?= __('Ecosystem snapshot') ?>" data-ecosystem-snapshot>
     <h2 class="sr-only"><?= __('Ecosystem snapshot') ?></h2>
-    <p class="sr-only"><?= __('Across all listed CakePHP plugins.') ?></p>
+    <p class="sr-only"><?= __('Across published CakePHP plugins.') ?></p>
     <dl class="grid grid-cols-2 gap-x-6 gap-y-5 <?= $stats['current_support'] !== null ? 'md:grid-cols-4' : 'md:grid-cols-3' ?>">
         <?php foreach ($statLabels as $key => $label) : ?>
             <?php $value = $stats[$key]; ?>

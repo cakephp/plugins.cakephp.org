@@ -18,8 +18,8 @@ export default defineConfig({
             CACHE_DEFAULT_URL: 'array://',
             CACHE_CATALOGUE_URL: `file://${fileURLToPath(new URL('./tmp/browser-catalogue/', import.meta.url))}`,
             CACHE_GITHUB_PROFILES_URL: `file://${fileURLToPath(new URL('./tmp/browser-github-profiles/', import.meta.url))}`,
-            CACHE_MODEL_URL: 'array://',
-            CACHE_PERSISTENT_URL: 'array://',
+            CACHE_CAKEMODEL_URL: 'array://',
+            CACHE_CAKECORE_URL: 'array://',
         },
     },
 })

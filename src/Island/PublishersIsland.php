@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Island;
 
 use App\Model\Table\PackagesTable;
+use App\Utility\CakephpVersion;
 use Cake\Http\Exception\BadRequestException;
 use Interact\Attribute\Action;
 use Interact\Attribute\Pagination;
@@ -89,6 +90,12 @@ class PublishersIsland extends Island
             }
         }
         $versionOptions['all'] = __('All versions');
+        foreach (CakephpVersion::developmentMajors() as $developmentMajor) {
+            if (isset($packages->filterOptions()['cakephp'][CakephpVersion::developmentSlug($developmentMajor)])) {
+                $label = CakephpVersion::developmentLabel($developmentMajor);
+                $versionOptions[$label] = $label;
+            }
+        }
         if (!isset($versionOptions[$this->cakephp])) {
             $this->cakephp = $current !== null ? 'current' : 'all';
         }

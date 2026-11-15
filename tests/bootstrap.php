@@ -45,6 +45,9 @@ Cache::setConfig('github_profiles', ['className' => ArrayEngine::class]);
 // Cache-specific tests enable an isolated cache; other tests always read their own fixtures.
 Cache::drop('catalogue');
 Cache::setConfig('catalogue', ['className' => NullEngine::class]);
+// Migrations rebuild fixture schemas; never reuse metadata from the development database.
+Cache::drop('_cake_model_');
+Cache::setConfig('_cake_model_', ['className' => NullEngine::class]);
 
 if (empty($_SERVER['HTTP_HOST']) && !Configure::read('App.fullBaseUrl')) {
     Configure::write('App.fullBaseUrl', 'http://localhost');

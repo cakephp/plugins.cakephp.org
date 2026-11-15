@@ -12,6 +12,8 @@
  * @var bool $showRanks
  * @var int $rankStart
  */
+use App\Utility\CakephpVersion;
+
 $this->Form->setTemplates([
     'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
     'select' => '<select name="{{name}}"{{attrs}}>{{content}}</select>',
@@ -35,6 +37,9 @@ $statLabels = [
     ($sort === 'downloads' ? 'downloads' : 'monthly_downloads') => $sort === 'downloads' ? __('Lifetime downloads') : __('Monthly downloads'),
     'stars' => __('Stars'),
 ];
+$developmentQuery = CakephpVersion::isDevelopmentLabel($selectedMajor ?? '')
+    ? ['cakephp_slugs' => [CakephpVersion::developmentSlug((int)$selectedMajor)]]
+    : [];
 ?>
 <div class="publishers-directory pt-4 md:pt-5 site-width" x-data>
     <h1 class="sr-only"><?= __('Publishers') ?></h1>
@@ -177,6 +182,7 @@ $statLabels = [
                                         <?= $this->Html->link($namespace, [
                                             '_name' => 'plugin:namespace',
                                             'namespace' => $namespace,
+                                            '?' => $developmentQuery,
                                         ], ['x-interact:navigate' => '']) ?>
                                     </h2>
                                     <p class="mt-2 text-xs text-muted"><?= __('Popular plugins') ?></p>

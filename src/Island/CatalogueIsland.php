@@ -5,6 +5,7 @@ namespace App\Island;
 
 use App\Model\Table\CategoriesTable;
 use App\Model\Table\PackagesTable;
+use App\Utility\CakephpVersion;
 use Cake\Http\Exception\BadRequestException;
 use Interact\Attribute\Action;
 use Interact\Attribute\Pagination;
@@ -167,7 +168,8 @@ class CatalogueIsland extends Island
             throw new BadRequestException('Search query is too long.');
         }
         $options = $this->packages->filterOptions();
-        $categoryOptions = $this->fetchTable(CategoriesTable::class)->unhydratedFind('catalogueOptions', namespace: $this->namespace)->all()->toArray();
+        $includeDevelopment = array_any($this->cakephpSlugs, static fn(mixed $slug): bool => is_string($slug) && CakephpVersion::isDevelopmentSlug($slug));
+        $categoryOptions = $this->fetchTable(CategoriesTable::class)->unhydratedFind('catalogueOptions', namespace: $this->namespace, includeDevelopment: $includeDevelopment)->all()->toArray();
         if (!array_key_exists($this->category, $categoryOptions)) {
             $this->category = '';
         }

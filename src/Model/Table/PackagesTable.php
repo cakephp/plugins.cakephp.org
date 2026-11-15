@@ -4,17 +4,20 @@ declare(strict_types=1);
 namespace App\Model\Table;
 
 use App\Model\Filter\PackagesCollection;
+use App\Utility\CakephpVersion;
 use ArrayObject;
 use Cake\Cache\Cache;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Override;
 
 /**
  * Packages Model
@@ -70,6 +73,20 @@ class PackagesTable extends Table
             'propertyName' => 'community_pick',
             'conditions' => ['CommunityPicks.enabled' => true],
         ]);
+    }
+
+    /**
+     * MariaDB reflects JSON as LONGTEXT; keep Cake's JSON conversion on every driver.
+     */
+    #[Override]
+    public function getSchema(): TableSchemaInterface
+    {
+        $schema = parent::getSchema();
+        if ($schema->hasColumn('development_compatibility')) {
+            $schema->setColumnType('development_compatibility', 'json');
+        }
+
+        return $schema;
     }
 
     /**
@@ -150,6 +167,11 @@ class PackagesTable extends Table
         if ($namespace !== null) {
             $query->find('namespace', namespace: $namespace);
         }
+        $versions = $filters['cakephp_slugs'] ?? [];
+        $development = is_array($versions) && array_any($versions, static fn(mixed $slug): bool => is_string($slug) && CakephpVersion::isDevelopmentSlug($slug));
+        if (!$development) {
+            $query->find('released');
+        }
         $query->find('search', search: $filters)
             ->contain(['CommunityPicks', 'Categories', 'Tags' => static fn(SelectQuery $tags) => $tags->orderByDesc('Tags.label')]);
         if (!empty($filters['featured'])) {
@@ -168,6 +190,21 @@ class PackagesTable extends Table
         }
 
         return $this->cachePublicQuery($query, 'catalogue', count: true);
+    }
+
+    /**
+     * Preserve the normal directory's published-release and download eligibility.
+     *
+     * @template TSubject of \Cake\Datasource\EntityInterface|array
+     * @param \Cake\ORM\Query\SelectQuery<TSubject> $query Package query.
+     * @return \Cake\ORM\Query\SelectQuery<TSubject>
+     */
+    public function findReleased(SelectQuery $query): SelectQuery
+    {
+        return $query->where([
+            $this->aliasField('latest_stable_version') . ' IS NOT' => null,
+            $this->aliasField('downloads') . ' >=' => 10,
+        ]);
     }
 
     /**
@@ -210,6 +247,8 @@ class PackagesTable extends Table
 
         if ($major !== null) {
             $query->find('cakephpCompatible', major: $major);
+        } else {
+            $query->find('released');
         }
 
         $search = mb_strtolower(trim($search));
@@ -247,7 +286,7 @@ class PackagesTable extends Table
             'stars', 'downloads' => $sort,
             default => 'monthly_downloads',
         };
-        $query->select(['id', 'namespace', 'package', 'repo_url'])
+        $query->select(['id', 'namespace', 'package', 'repo_url', 'latest_stable_version', 'downloads'])
             ->where($namespaces === [] ? ['1 = 0'] : ['namespace IN' => $namespaces])
             ->orderBy([
                 $this->aliasField($metric) => 'DESC',
@@ -264,7 +303,9 @@ class PackagesTable extends Table
 
                 return [
                     'githubUrl' => count($owners) === 1 ? 'https://github.com/' . $owners[0] : null,
-                    'plugins' => $packages->filter(static fn(array|EntityInterface $row): bool => $major === null || (bool)$row['publisher_compatible'])
+                    'plugins' => $packages->filter(static fn(array|EntityInterface $row): bool => (CakephpVersion::isDevelopmentLabel($major ?? '')
+                            || ($row['latest_stable_version'] !== null && $row['downloads'] >= 10))
+                        && ($major === null || (bool)$row['publisher_compatible']))
                         ->take(2)->map(static fn(array|EntityInterface $row): array => [
                             'id' => $row['id'],
                             'package' => $row['package'],
@@ -289,6 +330,10 @@ class PackagesTable extends Table
      */
     public function findCakephpCompatible(SelectQuery $query, string $major): SelectQuery
     {
+        if (!CakephpVersion::isDevelopmentLabel($major)) {
+            $query->find('released');
+        }
+
         return $query->where($query->expr()->exists($this->publisherCompatibility($major)));
     }
 
@@ -306,7 +351,9 @@ class PackagesTable extends Table
             ->innerJoin(['PublisherVersion' => $this->Tags->getTarget()->getTable()], ['PublisherVersion.id = ' . $alias . '.tag_id'])
             ->where([
                 $alias . '.fk_model' => $this->getAlias(),
-                'PublisherVersion.slug LIKE' => 'cakephp-' . $major . '-%',
+                'PublisherVersion.slug LIKE' => CakephpVersion::isDevelopmentLabel($major)
+                    ? CakephpVersion::developmentSlug((int)$major)
+                    : 'cakephp-' . $major . '-%',
             ])
             ->where(static fn(QueryExpression $exp) => $exp->equalFields($alias . '.fk_id', 'Packages.id'));
     }
@@ -372,6 +419,8 @@ class PackagesTable extends Table
      */
     public function findEcosystemTotals(SelectQuery $query): SelectQuery
     {
+        $query->find('released');
+
         return $query->select([
             'plugins' => $query->func()->count('*'),
             'monthly_downloads' => $query->func()->sum('Packages.monthly_downloads'),
@@ -401,9 +450,9 @@ class PackagesTable extends Table
      */
     public function ecosystemStats(): array
     {
-        return Cache::remember('ecosystem_stats_v2', function (): array {
+        return Cache::remember('ecosystem_stats_v3', function (): array {
             $totals = $this->unhydratedFind('ecosystemTotals')->firstOrFail();
-            $publishers = $this->find('namespaces')->count();
+            $publishers = $this->find('released')->find('namespaces')->count();
             $major = $this->publisherMajors()[0] ?? null;
             $currentSupport = null;
             if ($major !== null) {
@@ -495,9 +544,13 @@ class PackagesTable extends Table
         return Cache::remember('package_filter_tags_v1', function (): array {
             $options = [];
             foreach (['cakephp' => 'CakePHP', 'php' => 'PHP'] as $key => $label) {
+                $query = $this->Tags->find('list', keyField: 'slug', valueField: 'label')
+                    ->where(['slug LIKE' => $key . '-%']);
+                if ($key === 'cakephp') {
+                    $query->where(['slug IN' => CakephpVersion::slugs()]);
+                }
                 /** @var array<string, string> $tags Scalar list results, keyed by version slug. */
-                $tags = $this->Tags->find('list', keyField: 'slug', valueField: 'label')
-                    ->where(['slug LIKE' => $key . '-%'])->toArray();
+                $tags = $query->toArray();
                 $pattern = '/^' . preg_quote($label, '/') . ':\\s*/';
                 uasort($tags, static fn(string $a, string $b): int => version_compare(
                     preg_replace($pattern, '', $b) ?? $b,

@@ -1,5 +1,7 @@
 <?php
 use App\Service\AwesomeListImporter;
+use App\Utility\CakephpVersion;
+use Tags\Model\Entity\Tag;
 
 /**
  * @var \App\View\AppView|\App\View\IslandTemplateView $this
@@ -7,8 +9,16 @@ use App\Service\AwesomeListImporter;
  */
 [$vendor, $name] = array_pad(explode('/', $package->package, 2), 2, '');
 $packagistUrl = 'https://packagist.org/packages/' . implode('/', array_map(rawurlencode(...), explode('/', $package->package)));
+$developmentTags = array_filter($package->cake_php_tags, static fn(Tag $tag): bool => CakephpVersion::isDevelopmentLabel(str_replace('CakePHP: ', '', $tag->label)));
+$development = $package->development_compatibility ?? [];
+$developmentMajor = array_key_first($development);
+$installCommand = 'composer require ' . $package->package;
+if ($package->latest_stable_version === null && $developmentMajor !== null) {
+    $installCommand = 'composer require ' . escapeshellarg($package->package . ':' . $development[$developmentMajor]['version'])
+        . ' ' . escapeshellarg('cakephp/cakephp:' . $developmentMajor . '.x-dev');
+}
 $groups = [
-    ['label' => 'CakePHP', 'query' => 'cakephp_slugs', 'tags' => $package->cake_php_tag_groups],
+    ['label' => 'CakePHP', 'query' => 'cakephp_slugs', 'tags' => [...$package->cake_php_tag_groups, ...($developmentTags !== [] ? [$developmentTags] : [])]],
     ['label' => 'PHP', 'query' => 'php_slugs', 'tags' => $package->php_tag_groups],
 ];
 ?>
@@ -83,20 +93,15 @@ $groups = [
             </p>
         </section>
     <?php endif; ?>
-    <section class="plugin-details-section" aria-label="<?= __('Installation') ?>">
-        <h3><?= __('Install with Composer') ?></h3>
-        <div class="plugin-install" x-data="packageInstall" id="package-install-<?= (int)$package->id ?>">
-            <div class="plugin-install-command">
-                <code x-ref="command">composer require <?= h($package->package) ?></code>
-                <button type="button" class="btn btn-sm btn-ghost" @click="copy" :aria-label="copied ? '<?= __('Command copied') ?>' : '<?= __('Copy install command') ?>'">
-                    <span x-show="!copied"><?= __('Copy') ?></span>
-                    <span x-show="copied" x-cloak><?= __('Copied') ?></span>
-                </button>
-            </div>
-            <p :class="failed ? 'plugin-copy-feedback' : 'sr-only'" role="status" x-show="copied || failed" x-cloak
-               x-text="failed ? '<?= __('Select the command above to copy it.') ?>' : '<?= __('Install command copied to clipboard.') ?>'"></p>
-        </div>
-    </section>
+    <?php if ($package->latest_stable_version !== null || $developmentMajor !== null) : ?>
+        <section class="plugin-details-section" aria-label="<?= __('Installation') ?>">
+            <h3><?= __('Install with Composer') ?></h3>
+            <?= $this->element('Packages/install_command', [
+                'command' => $installCommand,
+                'id' => 'package-install-' . $package->id,
+            ]) ?>
+        </section>
+    <?php endif; ?>
     <section class="plugin-details-section plugin-version-section" aria-label="<?= __('Compatibility') ?>">
         <h3><?= __('Compatibility') ?></h3>
         <?php if ($package->cake_php_tags || $package->php_tags) : ?>
@@ -112,7 +117,8 @@ $groups = [
                     <?php foreach ($group['tags'] as $tags) : ?>
                         <?php foreach ($tags as $tag) : ?>
                             <?php $version = str_replace($group['label'] . ': ', '', $tag->label); ?>
-                            <a class="version-pill badge badge-outline"
+                            <a class="version-pill badge badge-outline<?= CakephpVersion::isDevelopmentLabel($version) ? ' version-development' : '' ?>"
+                               title="<?= h(CakephpVersion::isDevelopmentLabel($version) ? __('CakePHP {0} development builds', (int)$version) : $version) ?>"
                                aria-label="<?= h($group['label'] . ' ' . $version) ?>"
                                href="<?= $this->Url->build([
                                    '_name' => 'plugin:index',

@@ -103,6 +103,14 @@ return [
     ],
 
     'Packages' => [
+        // Minor releases per stable major; null marks an upcoming development major.
+        // Promote a major by replacing null with its released minors, e.g. 6 => [0].
+        'cakephpVersions' => [
+            3 => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            4 => [0, 1, 2, 3, 4, 5, 6],
+            5 => [0, 1, 2, 3, 4],
+            6 => null,
+        ],
         // Resolve moved or ambiguous Awesome-list repositories to an exact Composer package name.
         'awesomeAliases' => [],
     ],

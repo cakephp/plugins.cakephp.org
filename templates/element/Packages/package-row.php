@@ -5,6 +5,8 @@
  * @var string|null $namespace
  * @var string $sort
  */
+use App\Utility\CakephpVersion;
+
 [$statLabel, $statValue] = match ($sort) {
     'monthly_downloads' => [__('Monthly downloads'), $package->monthly_downloads],
     'stars' => [__('Stars'), $package->stars],
@@ -13,12 +15,28 @@
 $pick = $package->community_pick;
 $summaries = [];
 foreach (['CakePHP' => $package->cake_php_tag_groups, 'PHP' => $package->php_tag_groups] as $label => $groups) {
-    if ($groups) {
-        $majors = array_map(static fn(int $major): string => $major . '.x', array_keys($groups));
-        $summaries[] = $label . ' ' . implode(', ', $majors);
+    $versions = [];
+    foreach (array_keys($groups) as $major) {
+        $versions[$major] = $major . '.x';
+    }
+    if ($label === 'CakePHP') {
+        foreach (array_keys($package->development_compatibility ?? []) as $major) {
+            $versions[$major] = CakephpVersion::developmentLabel($major);
+        }
+    }
+    if ($versions !== []) {
+        krsort($versions);
+        $summaries[] = $label . ' ' . implode(', ', $versions);
     }
 }
 [$packageNamespace, $packageName] = explode('/', $package->package, 2);
+$namespaceQuery = [];
+if ($package->latest_stable_version === null || $package->downloads < 10) {
+    $developmentMajor = array_key_first($package->development_compatibility ?? []);
+    if ($developmentMajor !== null) {
+        $namespaceQuery['cakephp_slugs'] = [CakephpVersion::developmentSlug($developmentMajor)];
+    }
+}
 $detailsUrl = $this->Url->build([
     '_name' => 'plugin:view',
     'namespace' => $packageNamespace,
@@ -50,6 +68,7 @@ $detailsUrl = $this->Url->build([
                 <?= $this->Html->link(__('More by {0}', $packageNamespace), [
                     '_name' => 'plugin:namespace',
                     'namespace' => $packageNamespace,
+                    '?' => $namespaceQuery,
                 ], [
                     'class' => 'mt-1 inline-flex min-h-6 items-center text-xs text-muted hover:text-primary',
                     'x-interact:navigate' => '',
