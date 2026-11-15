@@ -188,8 +188,59 @@ class PackagesTable extends Table
             }
             $query->where(static fn(QueryExpression $exp) => $exp->exists($membership));
         }
+        if (!empty($filters['exclude_categories'])) {
+            $query->find('withoutCategories', slugs: $filters['exclude_categories']);
+        }
 
         return $this->cachePublicQuery($query, 'catalogue', count: true);
+    }
+
+    /**
+     * Exclude any matching compatibility tag, including on packages with other supported versions.
+     *
+     * @template TSubject of \Cake\Datasource\EntityInterface|array
+     * @param \Cake\ORM\Query\SelectQuery<TSubject> $query Package query.
+     * @param list<string> $slugs Excluded tag slugs.
+     * @return \Cake\ORM\Query\SelectQuery<TSubject>
+     */
+    public function findWithoutTags(SelectQuery $query, array $slugs): SelectQuery
+    {
+        if ($slugs === []) {
+            return $query;
+        }
+        $junction = $this->Tagged->getTarget();
+        $alias = $junction->getAlias();
+        $membership = $junction->find()->select([$alias . '.fk_id'])
+            ->innerJoin(['ExcludedTag' => $this->Tags->getTarget()->getTable()], ['ExcludedTag.id = ' . $alias . '.tag_id'])
+            ->where([$alias . '.fk_model' => $this->getAlias(), 'ExcludedTag.slug IN' => $slugs])
+            ->where(static fn(QueryExpression $exp) => $exp->equalFields($alias . '.fk_id', 'Packages.id'));
+
+        return $query->where(static fn(QueryExpression $exp) => $exp->notExists($membership));
+    }
+
+    /**
+     * Exclude category membership while retaining uncategorized plugins.
+     *
+     * @template TSubject of \Cake\Datasource\EntityInterface|array
+     * @param \Cake\ORM\Query\SelectQuery<TSubject> $query Package query.
+     * @param list<string> $slugs Excluded category slugs.
+     * @return \Cake\ORM\Query\SelectQuery<TSubject>
+     */
+    public function findWithoutCategories(SelectQuery $query, array $slugs): SelectQuery
+    {
+        if ($slugs === []) {
+            return $query;
+        }
+        $slugs = array_values(array_unique($slugs));
+        sort($slugs, SORT_STRING);
+        $junction = $this->Categories->junction();
+        $alias = $junction->getAlias();
+        $membership = $junction->find()->select([$alias . '.package_id'])
+            ->innerJoin(['ExcludedCategory' => $this->Categories->getTarget()->getTable()], ['ExcludedCategory.id = ' . $alias . '.category_id'])
+            ->where(['ExcludedCategory.slug IN' => $slugs])
+            ->where(static fn(QueryExpression $exp) => $exp->equalFields($alias . '.package_id', 'Packages.id'));
+
+        return $query->where(static fn(QueryExpression $exp) => $exp->notExists($membership));
     }
 
     /**

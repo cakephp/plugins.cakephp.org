@@ -16,6 +16,7 @@ class SeoHelper extends Helper
 {
     public const array FILTER_QUERY_KEYS = [
         'search', 'cakephp_slugs', 'php_slugs', 'category', 'awesome', 'featured',
+        'exclude_cakephp_slugs', 'exclude_php_slugs', 'exclude_categories',
         'sort', 'direction', 'page', 'keyword', 'query', 'cakephp',
     ];
 

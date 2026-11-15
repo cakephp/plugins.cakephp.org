@@ -61,6 +61,65 @@ class CatalogueIslandTest extends TestCase
     }
 
     /**
+     * Version actions cycle all three states, reset paging and allow explicit detail selection.
+     */
+    public function testVersionExclusionCycle(): void
+    {
+        $tags = $this->fetchTable(TagsTable::class);
+        $tag = $tags->saveOrFail($tags->newEntity(['slug' => 'cakephp-4-4', 'label' => 'CakePHP: 4.4']));
+        $tagged = $this->fetchTable(TaggedTable::class);
+        $tagged->saveOrFail($tagged->newEntity(['tag_id' => $tag->id, 'fk_id' => 25, 'fk_model' => 'Packages']));
+        $this->testIsland('Catalogue')->set('paging.page', 2)
+            ->call('toggleVersion', 'cakephp_slugs', 'cakephp-4-4')
+            ->assertSet('cakephpSlugs', ['cakephp-4-4'])->assertSet('excludedCakephpSlugs', [])->assertSet('paging.page', 1)
+            ->assertSee('cakedc/users')
+            ->call('toggleVersion', 'cakephp_slugs', 'cakephp-4-4')
+            ->assertSet('cakephpSlugs', [])->assertSet('excludedCakephpSlugs', ['cakephp-4-4'])
+            ->assertSee('Not CakePHP 4.4')->assertDontSee('cakedc/users')
+            ->call('toggleVersion', 'cakephp_slugs', 'cakephp-4-4')
+            ->assertSet('cakephpSlugs', [])->assertSet('excludedCakephpSlugs', [])
+            ->set('excludedCakephpSlugs', ['cakephp-4-4'])
+            ->call('selectVersion', 'cakephp_slugs', 'cakephp-4-4')
+            ->assertSet('cakephpSlugs', ['cakephp-4-4'])->assertSet('excludedCakephpSlugs', [])
+            ->call('clearVersions', 'cakephp_slugs')->assertSet('cakephpSlugs', []);
+    }
+
+    /**
+     * Category exclusions combine with a single included category and reset together.
+     */
+    public function testCategoryExclusionCycle(): void
+    {
+        $this->testIsland('Catalogue')
+            ->call('toggleCategory', 'asset-management')->assertSet('category', 'asset-management')
+            ->call('toggleCategory', 'asset-management')->assertSet('category', '')->assertSet('excludedCategories', ['asset-management'])
+            ->assertDontSee('markstory/asset_compress')->assertSee('Not Asset Management')
+            ->call('toggleCategory', 'authentication-authorization')->assertSet('category', 'authentication-authorization')
+            ->call('toggleCategory', 'authentication-authorization')->assertSet('category', '')
+            ->assertSet('excludedCategories', ['asset-management', 'authentication-authorization'])
+            ->call('toggleCategory', 'asset-management')->assertSet('excludedCategories', ['authentication-authorization'])
+            ->call('selectCategory', 'authentication-authorization')->assertSet('category', 'authentication-authorization')->assertSet('excludedCategories', [])
+            ->set('excludedCategories', ['asset-management'])->call('clearFilters')->assertSet('category', '')->assertSet('excludedCategories', []);
+    }
+
+    /**
+     * URL exclusions are whitelisted, deduplicated and take precedence over conflicting inclusions.
+     */
+    public function testInitialExclusionsAreNormalizedAndReloadable(): void
+    {
+        $request = new ServerRequest(['url' => '/?' . http_build_query([
+            'category' => 'asset-management',
+            'exclude_categories' => ['asset-management', 'asset-management', 'not-a-category'],
+            'exclude_php_slugs' => ['unknown'],
+            'sort' => 'stars',
+        ])]);
+        $this->testIsland('Catalogue', request: $request)
+            ->assertSet('category', '')->assertSet('excludedCategories', ['asset-management'])->assertSet('excludedPhpSlugs', [])
+            ->assertSet('paging.sort', 'stars')->assertSee('exclude_categories')->assertSee('Reset filters')
+            ->call('clearFilters')->assertSet('excludedCategories', [])->assertSet('excludedCakephpSlugs', [])->assertSet('excludedPhpSlugs', [])
+            ->assertSet('paging.sort', 'stars');
+    }
+
+    /**
      * Paging, filtering and resetting retain the server-owned namespace scope.
      */
     public function testNamespaceScopeSurvivesUpdates(): void

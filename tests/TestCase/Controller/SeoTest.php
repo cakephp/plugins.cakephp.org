@@ -74,7 +74,11 @@ class SeoTest extends TestCase
      */
     public function testQueryVariants(): void
     {
-        foreach (['/?search=users', '/?featured=1', '/plugins/vendor?sort=stars', '/publishers?cakephp=5'] as $path) {
+        $paths = [
+            '/?search=users', '/?featured=1', '/plugins/vendor?sort=stars', '/publishers?cakephp=5',
+            '/?exclude_cakephp_slugs[]=cakephp-5-4', '/?exclude_php_slugs[]=php-8-5', '/?exclude_categories[]=asset-management',
+        ];
+        foreach ($paths as $path) {
             $this->get($path);
             $this->assertResponseOk();
             $head = $this->document();

@@ -9,6 +9,9 @@
  * @var array<string, mixed> $catalogueQuery
  * @var list<string> $cakephpSlugs
  * @var list<string> $phpSlugs
+ * @var list<string> $excludedCakephpSlugs
+ * @var list<string> $excludedPhpSlugs
+ * @var list<string> $excludedCategories
  * @var array<string, array{name: string, count: int}> $categoryOptions
  * @var string $category
  * @var bool $featuredOnly
@@ -23,6 +26,13 @@ $sortLabels = [
     'stars' => __('Stars'),
 ];
 $sortLabel = $sortLabels[$catalogueQuery['sort']] ?? __('Latest release');
+$selectionFields = [
+    'cakephp_slugs' => $cakephpSlugs,
+    'php_slugs' => $phpSlugs,
+    'exclude_cakephp_slugs' => $excludedCakephpSlugs,
+    'exclude_php_slugs' => $excludedPhpSlugs,
+    'exclude_categories' => $excludedCategories,
+];
 $clearUrl = $this->Url->build($catalogueRoute + [
     '?' => [
         'sort' => $catalogueQuery['sort'],
@@ -32,7 +42,7 @@ $clearUrl = $this->Url->build($catalogueRoute + [
     'escape' => false,
 ]);
 $clearCategoryUrl = $this->Url->build($catalogueRoute + [
-    '?' => array_replace($catalogueQuery, ['category' => '']),
+    '?' => array_replace($catalogueQuery, ['category' => '', 'exclude_categories' => []]),
 ], [
     'escape' => false,
 ]);
@@ -66,7 +76,7 @@ $clearCategoryUrl = $this->Url->build($catalogueRoute + [
                         <span class="hidden md:inline"><?= __('Updating results…') ?></span>
                     </span>
                 </div>
-                <?php foreach (['cakephp_slugs' => $cakephpSlugs, 'php_slugs' => $phpSlugs] as $key => $slugs) : ?>
+                <?php foreach ($selectionFields as $key => $slugs) : ?>
                     <?php foreach ($slugs as $slug) : ?>
                         <?= $this->Form->hidden($key . '[]', ['value' => $slug]) ?>
                     <?php endforeach; ?>
@@ -99,38 +109,46 @@ $clearCategoryUrl = $this->Url->build($catalogueRoute + [
             $filters = [
                 [
                     'name' => 'cakephp_slugs',
-                    'property' => 'cakephpSlugs',
                     'label' => __('CakePHP version'),
                     'prefix' => 'CakePHP',
                     'options' => $cakephpTags,
                     'selected' => $cakephpSlugs,
+                    'excluded' => $excludedCakephpSlugs,
                 ],
                 [
                     'name' => 'php_slugs',
-                    'property' => 'phpSlugs',
                     'label' => __('PHP version'),
                     'prefix' => 'PHP',
                     'options' => $phpTags,
                     'selected' => $phpSlugs,
+                    'excluded' => $excludedPhpSlugs,
                 ],
             ];
             ?>
             <?php foreach ($filters as $filter) : ?>
                 <?php
                 $selectedLabels = array_values(array_intersect_key($filter['options'], array_flip($filter['selected'])));
+                $excludedLabels = array_values(array_intersect_key($filter['options'], array_flip($filter['excluded'])));
                 $selectionLabel = $filter['label'];
                 if (count($selectedLabels) === 1) {
                     $selectionLabel = str_replace(': ', ' ', $selectedLabels[0]);
                 } elseif (count($selectedLabels) > 1) {
                     $selectionLabel = __('{0} ({1})', $filter['prefix'], count($selectedLabels));
                 }
+                if ($excludedLabels !== []) {
+                    $selectionLabel = count($excludedLabels) === 1 && $selectedLabels === []
+                        ? __('Not {0}', str_replace(': ', ' ', $excludedLabels[0]))
+                        : __('{0} ({1} included, {2} excluded)', $filter['prefix'], count($selectedLabels), count($excludedLabels));
+                }
+                $active = $selectedLabels !== [] || $excludedLabels !== [];
                 $clearVersionQuery = $catalogueQuery;
                 $clearVersionQuery[$filter['name']] = [];
+                $clearVersionQuery['exclude_' . $filter['name']] = [];
                 ?>
                 <div class="version-filter" role="group" aria-label="<?= h($filter['label']) ?>">
                     <details class="version-dropdown dropdown" id="versions-<?= h($filter['name']) ?>" name="catalogue-filters"
                              x-data="{ expanded: false }" :open="expanded" @toggle="expanded = $el.open" @click.outside="expanded = false">
-                        <summary class="catalogue-filter-toggle btn btn-outline" data-filter-active="<?= $selectedLabels !== [] ? 'true' : 'false' ?>"
+                        <summary class="catalogue-filter-toggle btn btn-outline" data-filter-active="<?= $active ? 'true' : 'false' ?>"
                                  aria-label="<?= h(__('{0}: {1}', $filter['label'], $selectionLabel)) ?>" title="<?= h($selectionLabel) ?>">
                             <span class="min-w-0 flex-1 truncate text-left" data-version-selection><?= h($selectionLabel) ?></span>
                             <svg class="size-4 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
@@ -140,21 +158,22 @@ $clearCategoryUrl = $this->Url->build($catalogueRoute + [
                         <div class="version-dropdown-panel catalogue-filter-panel dropdown-content">
                             <div class="mb-3 flex min-h-6 items-center justify-between gap-3">
                                 <span class="text-sm font-semibold"><?= h($filter['label']) ?></span>
-                                <?php if ($selectedLabels !== []) : ?>
+                                <?php if ($active) : ?>
                                     <a class="btn btn-ghost btn-xs" aria-label="<?= h(__('Clear {0}', $filter['label'])) ?>"
                                        href="<?= $this->Url->build($catalogueRoute + ['?' => $clearVersionQuery]) ?>"
-                                       @click.prevent="clearVersions('<?= h($filter['property']) ?>', $event)"><?= __('Clear') ?></a>
+                                       @click.prevent="clearVersions('<?= h($filter['name']) ?>', $event)"><?= __('Clear') ?></a>
                                 <?php endif; ?>
                             </div>
                             <div class="version-options">
                                 <?= $this->element('Packages/version_pills', compact('filter', 'catalogueQuery', 'catalogueRoute')) ?>
                             </div>
+                            <p class="mt-3 text-xs leading-[1.6] text-muted"><?= __('Click to include, again to exclude, again to clear.') ?></p>
                         </div>
                     </details>
                 </div>
             <?php endforeach; ?>
 
-            <?= $this->element('Packages/category_browser', compact('categoryOptions', 'category', 'catalogueQuery', 'clearCategoryUrl', 'catalogueRoute')) ?>
+            <?= $this->element('Packages/category_browser', compact('categoryOptions', 'category', 'excludedCategories', 'catalogueQuery', 'clearCategoryUrl', 'catalogueRoute')) ?>
         </div>
     </div>
 

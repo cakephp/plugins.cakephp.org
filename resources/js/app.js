@@ -81,7 +81,7 @@ const register = (Alpine) => {
             if (control.hasAttribute('data-clear-catalogue')) return this.$server.call('clearFilters')
             if (control.hasAttribute('data-category-slug')) {
                 this.closeCategories(control.classList.contains('selected-category'))
-                return this.$server.call('selectCategory', control.dataset.categorySlug)
+                return this.$server.call(control.hasAttribute('data-category-cycle') ? 'toggleCategory' : 'selectCategory', control.dataset.categorySlug)
             }
             if (control.hasAttribute('data-toggle-featured')) return this.$server.call('toggleFeatured')
             if (control.hasAttribute('data-toggle-awesome')) return this.$server.call('toggleAwesome')
@@ -91,10 +91,9 @@ const register = (Alpine) => {
         selectVersion(event) {
             return this.$server.call('selectVersion', event.detail.group, event.detail.slug)
         },
-        clearVersions(property, event) {
+        clearVersions(group, event) {
             event.target.closest('details').querySelector('summary').focus({ preventScroll: true })
-            this.$server.state[property] = []
-            return this.$server.sync()
+            return this.$server.call('clearVersions', group)
         },
         selectCategory(event) {
             this.closeCategories()
@@ -212,7 +211,8 @@ const refreshDocument = () => {
     // Error and private-page restrictions belong to the server and remain intact.
     if (!canonical || robots?.content === 'noindex,nofollow') return
     const params = new URL(window.location.href).searchParams
-    const filtered = JSON.parse(canonical.dataset.filterQueryKeys).some(key => params.has(key))
+    const filterKeys = new Set(JSON.parse(canonical.dataset.filterQueryKeys))
+    const filtered = Array.from(params.keys()).some(key => filterKeys.has(key.replace(/\[.*$/, '')))
     if (filtered && !robots) {
         robots = document.createElement('meta')
         robots.name = 'robots'

@@ -20,6 +20,7 @@ use Packagist\Api\Client as PackagistClient;
 use Packagist\Api\Result\Package;
 use Packagist\Api\Result\Package\Downloads;
 use Packagist\Api\Result\Package\Version;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Exercise serialized query results independently of any development Redis data.
@@ -165,6 +166,11 @@ class PackagesCacheTest extends TestCase
             [['category' => 'asset-management'], null, 'ASC', 1, 1, [1], 1],
             [['awesome' => true], null, 'ASC', 1, 2, [1, 25], 2],
             [['cakephp_slugs' => ['cakephp-4-4']], null, 'ASC', 1, 1, [25], 1],
+            [['exclude_cakephp_slugs' => ['cakephp-4-4']], null, 'ASC', 1, 1, [1], 25],
+            [['exclude_cakephp_slugs' => ['cakephp-5-4']], null, 'ASC', 1, 1, [25], 1],
+            [['exclude_categories' => ['asset-management']], null, 'ASC', 1, 1, [2], 25],
+            [['exclude_categories' => ['code-analysis', 'authentication-authorization']], null, 'ASC', 1, 1, [2], 24],
+            [['awesome' => true, 'exclude_categories' => ['asset-management']], null, 'ASC', 1, 1, [25], 1],
         ];
         // Run twice: the second pass reads every variant from persistent cache.
         for ($pass = 0; $pass < 2; $pass++) {
@@ -178,32 +184,47 @@ class PackagesCacheTest extends TestCase
     }
 
     /**
-     * Equivalent version selections reuse cached rows and counts despite URL order.
+     * Equivalent included or excluded selections reuse cached rows and counts despite URL order.
+     *
+     * @param list<string> $values Selected options.
      */
-    public function testVersionSelectionOrderAndDuplicatesShareCache(): void
+    #[DataProvider('equivalentSelections')]
+    public function testSelectionOrderAndDuplicatesShareCache(string $key, array $values, int $count): void
     {
         $packages = $this->fetchTable(PackagesTable::class);
         $query = $packages->find('catalogue', filters: [
-            'cakephp_slugs' => ['cakephp-5-4', 'cakephp-4-4'],
+            $key => $values,
         ])->orderByAsc('Packages.id')->limit(2);
         $before = $query->all()->toArray();
-        $this->assertSame(26, $query->count());
-        $packages->updateAll(['description' => 'Changed after cache warmup'], ['id' => 1]);
+        $this->assertSame($count, $query->count());
+        $packages->updateAll(['description' => 'Changed after cache warmup'], ['id' => $before[0]->id]);
         $packages->getConnection()->delete('packages', ['id' => 26]);
 
-        $filters = ['cakephp_slugs' => ['cakephp-4-4', 'cakephp-5-4', 'cakephp-4-4']];
+        $filters = [$key => [...array_reverse($values), $values[0]]];
         $cached = $packages->find('catalogue', filters: $filters)->orderByAsc('Packages.id')->limit(2);
         $cachedFirst = $cached->all()->first();
         $this->assertNotNull($cachedFirst);
         $this->assertSame($before[0]->description, $cachedFirst->description);
-        $this->assertSame(26, $cached->count());
+        $this->assertSame($count, $cached->count());
 
         Cache::clear('catalogue');
         $fresh = $packages->find('catalogue', filters: $filters)->orderByAsc('Packages.id')->limit(2);
         $freshFirst = $fresh->all()->first();
         $this->assertNotNull($freshFirst);
         $this->assertSame('Changed after cache warmup', $freshFirst->description);
-        $this->assertSame(25, $fresh->count());
+        $this->assertSame($count - 1, $fresh->count());
+    }
+
+    /**
+     * @return array<string, array{string, list<string>, int}>
+     */
+    public static function equivalentSelections(): array
+    {
+        return [
+            'included versions' => ['cakephp_slugs', ['cakephp-5-4', 'cakephp-4-4'], 26],
+            'excluded versions' => ['exclude_cakephp_slugs', ['cakephp-5-3', 'cakephp-4-4'], 24],
+            'excluded categories' => ['exclude_categories', ['asset-management', 'authentication-authorization'], 24],
+        ];
     }
 
     /**

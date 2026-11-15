@@ -333,7 +333,7 @@ body::before {
     @apply border-dashed;
 }
 .version-pill {
-    @apply h-auto min-h-6 shrink-0 rounded-full border-base-300 bg-transparent px-1.75 py-0.5 text-xs leading-tight
+    @apply relative h-auto min-h-6 shrink-0 rounded-full border-base-300 bg-transparent px-1.75 py-0.5 text-xs leading-tight
         font-medium whitespace-nowrap text-muted no-underline hover:border-primary hover:text-primary
         focus-visible:outline-2 focus-visible:outline-offset-2 aria-pressed:border-primary aria-pressed:bg-primary
         aria-pressed:text-primary-content forced-colors:aria-pressed:outline-2
@@ -371,10 +371,16 @@ body::before {
     & input { @apply w-full min-h-10 rounded-lg border-control bg-base-100 px-3 py-2 text-[0.8125rem]; }
 }
 .category-choice {
-    @apply flex min-h-12 min-w-0 items-center justify-between gap-2 rounded-lg border border-base-300 p-2 text-left
+    @apply relative flex min-h-12 min-w-0 items-center justify-between gap-2 rounded-lg border border-base-300 p-2 text-left
         text-[0.8125rem] text-base-content no-underline hover:border-primary hover:bg-row-hover
         aria-[current=true]:border-primary aria-[current=true]:bg-primary/8 aria-[current=true]:text-primary md:px-3
         md:py-2.5;
+}
+.version-pill[data-filter-state="exclude"], .category-choice[data-filter-state="exclude"] {
+    @apply border-dashed border-warning bg-warning/10 text-warning hover:border-warning hover:bg-warning/15 hover:text-warning;
+}
+.filter-excluded-marker {
+    @apply absolute -top-1 -right-1 grid size-3.5 place-items-center rounded-full bg-warning text-xs leading-none font-bold text-warning-content;
 }
 .catalogue-summary {
     @apply flex min-w-0 flex-wrap items-center gap-2.5;

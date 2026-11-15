@@ -6,6 +6,7 @@ namespace App\Island;
 use App\Model\Table\CategoriesTable;
 use App\Model\Table\PackagesTable;
 use App\Utility\CakephpVersion;
+use App\Utility\FilterSelection;
 use Cake\Http\Exception\BadRequestException;
 use Interact\Attribute\Action;
 use Interact\Attribute\Pagination;
@@ -48,6 +49,24 @@ class CatalogueIsland extends Island
     #[State(writable: true, url: 'php_slugs', history: true)]
     public array $phpSlugs = [];
 
+    /**
+     * @var list<string>
+     */
+    #[State(writable: true, url: 'exclude_cakephp_slugs', history: true)]
+    public array $excludedCakephpSlugs = [];
+
+    /**
+     * @var list<string>
+     */
+    #[State(writable: true, url: 'exclude_php_slugs', history: true)]
+    public array $excludedPhpSlugs = [];
+
+    /**
+     * @var list<string>
+     */
+    #[State(writable: true, url: 'exclude_categories', history: true)]
+    public array $excludedCategories = [];
+
     #[Pagination(
         settings: [
             'limit' => 21,
@@ -75,27 +94,57 @@ class CatalogueIsland extends Island
      */
     public function updated(UpdatedPaths $paths): void
     {
-        if ($paths->hasAny('search', 'cakephpSlugs', 'phpSlugs', 'category', 'awesomeOnly', 'featuredOnly') && !$paths->has('paging.page')) {
+        $filtersChanged = $paths->hasAny(
+            'search',
+            'cakephpSlugs',
+            'phpSlugs',
+            'excludedCakephpSlugs',
+            'excludedPhpSlugs',
+            'excludedCategories',
+            'category',
+            'awesomeOnly',
+            'featuredOnly',
+        );
+        if ($filtersChanged && !$paths->has('paging.page')) {
             $this->paging->page = 1;
         }
     }
 
     /**
-     * Toggle a version selected from the directory filters.
+     * Cycle a version through neutral, included and excluded.
      */
     #[Action]
     public function toggleVersion(string $group, string $slug): void
     {
-        if (!in_array($group, ['cakephp_slugs', 'php_slugs'], true)) {
-            throw new BadRequestException('Unsupported version group.');
-        }
-        $property = $group === 'cakephp_slugs' ? 'cakephpSlugs' : 'phpSlugs';
-        $values = $this->{$property};
-        $values = in_array($slug, $values, true)
-            ? array_values(array_diff($values, [$slug]))
-            : [...$values, $slug];
-        $this->{$property} = $values;
+        [$property, $excludedProperty] = $this->versionProperties($group);
+        $selection = FilterSelection::cycle($this->{$property}, $this->{$excludedProperty}, $slug);
+        $this->{$property} = $selection['included'];
+        $this->{$excludedProperty} = $selection['excluded'];
         $this->paging->page = 1;
+    }
+
+    /**
+     * Clear both inclusion and exclusion for one version family.
+     */
+    #[Action]
+    public function clearVersions(string $group): void
+    {
+        [$property, $excludedProperty] = $this->versionProperties($group);
+        $this->{$property} = [];
+        $this->{$excludedProperty} = [];
+        $this->paging->page = 1;
+    }
+
+    /**
+     * @return array{string, string}
+     */
+    private function versionProperties(string $group): array
+    {
+        return match ($group) {
+            'cakephp_slugs' => ['cakephpSlugs', 'excludedCakephpSlugs'],
+            'php_slugs' => ['phpSlugs', 'excludedPhpSlugs'],
+            default => throw new BadRequestException('Unsupported version group.'),
+        };
     }
 
     /**
@@ -104,11 +153,9 @@ class CatalogueIsland extends Island
     #[Action]
     public function selectVersion(string $group, string $slug): void
     {
-        if (!in_array($group, ['cakephp_slugs', 'php_slugs'], true)) {
-            throw new BadRequestException('Unsupported version group.');
-        }
-        $property = $group === 'cakephp_slugs' ? 'cakephpSlugs' : 'phpSlugs';
+        [$property, $excludedProperty] = $this->versionProperties($group);
         $this->{$property} = [$slug];
+        $this->{$excludedProperty} = array_values(array_diff($this->{$excludedProperty}, [$slug]));
         $this->paging->page = 1;
     }
 
@@ -119,6 +166,19 @@ class CatalogueIsland extends Island
     public function selectCategory(string $slug): void
     {
         $this->category = $slug;
+        $this->excludedCategories = $slug === '' ? [] : array_values(array_diff($this->excludedCategories, [$slug]));
+        $this->paging->page = 1;
+    }
+
+    /**
+     * Keep one included category while allowing multiple exclusions.
+     */
+    #[Action]
+    public function toggleCategory(string $slug): void
+    {
+        $selection = FilterSelection::cycle($this->category !== '' ? [$this->category] : [], $this->excludedCategories, $slug, multiple: false);
+        $this->category = $selection['included'][0] ?? '';
+        $this->excludedCategories = $selection['excluded'];
         $this->paging->page = 1;
     }
 
@@ -151,6 +211,9 @@ class CatalogueIsland extends Island
         $this->search = '';
         $this->cakephpSlugs = [];
         $this->phpSlugs = [];
+        $this->excludedCakephpSlugs = [];
+        $this->excludedPhpSlugs = [];
+        $this->excludedCategories = [];
         $this->category = '';
         $this->awesomeOnly = false;
         $this->featuredOnly = false;
@@ -168,24 +231,32 @@ class CatalogueIsland extends Island
             throw new BadRequestException('Search query is too long.');
         }
         $options = $this->packages->filterOptions();
+        $this->excludedCakephpSlugs = $this->acceptedSlugs($this->excludedCakephpSlugs, $options['cakephp']);
+        $this->excludedPhpSlugs = $this->acceptedSlugs($this->excludedPhpSlugs, $options['php']);
+        $this->cakephpSlugs = array_values(array_diff($this->acceptedSlugs($this->cakephpSlugs, $options['cakephp']), $this->excludedCakephpSlugs));
+        $this->phpSlugs = array_values(array_diff($this->acceptedSlugs($this->phpSlugs, $options['php']), $this->excludedPhpSlugs));
         $includeDevelopment = array_any($this->cakephpSlugs, static fn(mixed $slug): bool => is_string($slug) && CakephpVersion::isDevelopmentSlug($slug));
         $categoryOptions = $this->fetchTable(CategoriesTable::class)->unhydratedFind('catalogueOptions', namespace: $this->namespace, includeDevelopment: $includeDevelopment)->all()->toArray();
-        if (!array_key_exists($this->category, $categoryOptions)) {
+        $this->excludedCategories = $this->acceptedSlugs($this->excludedCategories, $categoryOptions);
+        if (!array_key_exists($this->category, $categoryOptions) || in_array($this->category, $this->excludedCategories, true)) {
             $this->category = '';
         }
-        $this->cakephpSlugs = array_values(array_intersect(array_filter($this->cakephpSlugs, is_string(...)), array_keys($options['cakephp'])));
-        $this->phpSlugs = array_values(array_intersect(array_filter($this->phpSlugs, is_string(...)), array_keys($options['php'])));
         $query = [
             'search' => $this->search,
             'cakephp_slugs' => $this->cakephpSlugs,
             'php_slugs' => $this->phpSlugs,
+            'exclude_cakephp_slugs' => $this->excludedCakephpSlugs,
+            'exclude_php_slugs' => $this->excludedPhpSlugs,
+            'exclude_categories' => $this->excludedCategories,
             'category' => $this->category,
             'awesome' => $this->awesomeOnly,
             'featured' => $this->featuredOnly,
             'sort' => $this->paging->sort,
             'direction' => $this->paging->direction,
         ];
-        $hasFilters = trim($this->search) !== '' || $this->cakephpSlugs !== [] || $this->phpSlugs !== [] || $this->category !== '' || $this->awesomeOnly || $this->featuredOnly;
+        $hasFilters = trim($this->search) !== '' || $this->cakephpSlugs !== [] || $this->phpSlugs !== []
+            || $this->excludedCakephpSlugs !== [] || $this->excludedPhpSlugs !== [] || $this->excludedCategories !== []
+            || $this->category !== '' || $this->awesomeOnly || $this->featuredOnly;
         $packages = $this->paginate($this->packages->find('catalogue', filters: $query, namespace: $this->namespace));
 
         return [
@@ -202,5 +273,15 @@ class CatalogueIsland extends Island
                 '_name' => 'plugin:index',
             ],
         ];
+    }
+
+    /**
+     * @param array<mixed> $values Untrusted URL or client selections.
+     * @param array<array-key, mixed> $options Available choices.
+     * @return list<string>
+     */
+    private function acceptedSlugs(array $values, array $options): array
+    {
+        return array_values(array_unique(array_intersect(array_filter($values, is_string(...)), array_keys($options))));
     }
 }

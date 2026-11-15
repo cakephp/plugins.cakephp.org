@@ -11,6 +11,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Stringable;
+use Tags\Model\Table\TagsTable;
 
 /**
  * Covers the directory's search and its inclusion of configured featured packages.
@@ -58,6 +59,52 @@ class PackagesTableTest extends TestCase
         $this->assertSame(0, $packages->find('catalogue', filters: ['category' => 'asset-management', 'search' => 'users'])->count());
         $this->assertSame(1, $packages->find('catalogue', filters: ['awesome' => true, 'search' => 'users'])->count());
         $this->assertSame(26, $packages->find('catalogue', filters: [])->count());
+    }
+
+    /**
+     * Excluding any supported version overrides inclusion, without matching another model's tags.
+     */
+    public function testCompatibilityExclusions(): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        $packages->Tagged->getTarget()->getConnection()->insert('tags_tagged', [
+            'tag_id' => 2, 'fk_id' => 2, 'fk_model' => 'Articles',
+            'created' => '2026-01-01', 'modified' => '2026-01-01',
+        ]);
+        $query = $packages->find('catalogue', filters: [
+            'cakephp_slugs' => ['cakephp-5-4'], 'exclude_cakephp_slugs' => ['cakephp-5-3'],
+        ]);
+        $this->assertSame(24, $query->count());
+        $ids = $query->all()->extract('id')->toList();
+        $this->assertNotContains(1, $ids);
+        $this->assertContains(2, $ids);
+        $this->assertSame(23, $packages->find('catalogue', filters: ['exclude_cakephp_slugs' => ['cakephp-5-3']], namespace: 'vendor')->count());
+        $this->assertSame(0, $packages->find('catalogue', filters: ['cakephp_slugs' => ['cakephp-5-4'], 'exclude_cakephp_slugs' => ['cakephp-5-4']])->count());
+        $tags = $this->fetchTable(TagsTable::class);
+        $tag = $tags->saveOrFail($tags->newEntity(['slug' => 'php-8-0', 'label' => 'PHP: 8.0']));
+        $packages->Tagged->getTarget()->getConnection()->insert('tags_tagged', [
+            'tag_id' => $tag->id, 'fk_id' => 1, 'fk_model' => 'Packages',
+            'created' => '2026-01-01', 'modified' => '2026-01-01',
+        ]);
+        $this->assertSame(25, $packages->find('catalogue', filters: ['exclude_php_slugs' => ['php-8-0']])->count());
+        $this->assertSame(24, $packages->find('catalogue', filters: [
+            'cakephp_slugs' => ['cakephp-5-4'], 'exclude_php_slugs' => ['php-8-0'],
+        ])->count());
+    }
+
+    /**
+     * Category exclusions match membership, retain uncategorized plugins and combine with other filters.
+     */
+    public function testCategoryExclusions(): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        $this->assertSame(25, $packages->find('catalogue', filters: ['exclude_categories' => ['code-analysis']])->count());
+        $this->assertSame(24, $packages->find('catalogue', filters: ['exclude_categories' => ['code-analysis', 'authentication-authorization']])->count());
+        $this->assertSame(0, $packages->find('catalogue', filters: ['category' => 'asset-management', 'exclude_categories' => ['code-analysis']])->count());
+        $this->assertSame(1, $packages->find('catalogue', filters: ['awesome' => true, 'exclude_categories' => ['code-analysis']])->count());
+        $this->assertSame(24, $packages->find('catalogue', filters: [
+            'exclude_cakephp_slugs' => ['cakephp-4-4'], 'exclude_categories' => ['asset-management'],
+        ])->count());
     }
 
     /**
