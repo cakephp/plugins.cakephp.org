@@ -72,7 +72,7 @@ class SitemapsController extends AppController
         }
         $namespaces = [];
         $plugins = [];
-        foreach ($this->fetchTable(PackagesTable::class)->sitemapPackages() as $package) {
+        foreach ($this->fetchTable(PackagesTable::class)->unhydratedFind('sitemap')->all() as $package) {
             $parts = [];
             if (!preg_match('#^([a-z0-9][a-z0-9_.-]*)/([a-z0-9][a-z0-9_.-]*)$#D', strtolower($package['package']), $parts)) {
                 continue;

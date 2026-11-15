@@ -5,6 +5,7 @@ namespace App\Test\TestCase\Model\Table;
 
 use ADmad\SocialAuth\Model\Entity\SocialProfile;
 use App\Model\Enum\UserRole;
+use App\Model\Enum\UserStatus;
 use App\Model\Table\UsersTable;
 use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Session;
@@ -45,6 +46,18 @@ class UsersTableTest extends TestCase
     public function testActiveFinder(): void
     {
         $this->assertSame([1, 2], $this->fetchTable(UsersTable::class)->find('active')->orderByAsc('id')->all()->extract('id')->toList());
+    }
+
+    /**
+     * Management filters can combine name search, access fields and caller conditions.
+     */
+    public function testAdminListingFinder(): void
+    {
+        $users = $this->fetchTable(UsersTable::class);
+        $this->assertSame([2], $users->find('adminListing', search: ' Normal ', role: UserRole::User, status: UserStatus::Active)
+            ->where(['id' => 2])->all()->extract('id')->toList());
+        $this->assertSame([3], $users->find('adminListing', status: UserStatus::Suspended)->all()->extract('id')->toList());
+        $this->assertSame(0, $users->find('adminListing', role: UserRole::Admin, status: UserStatus::Suspended)->count());
     }
 
     /**

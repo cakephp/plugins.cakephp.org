@@ -117,11 +117,11 @@ class PackagesCacheTest extends TestCase
     public function testSitemapPackagesUseCatalogueInvalidation(): void
     {
         $packages = $this->fetchTable(PackagesTable::class);
-        $before = $packages->sitemapPackages();
+        $before = $packages->unhydratedFind('sitemap')->all()->toList();
         $packages->getConnection()->delete('packages', ['id' => 24]);
-        $this->assertSame($before, $packages->sitemapPackages());
+        $this->assertSame($before, $packages->unhydratedFind('sitemap')->all()->toList());
         Cache::clear('catalogue');
-        $after = $packages->sitemapPackages();
+        $after = $packages->unhydratedFind('sitemap')->all()->toList();
         $this->assertCount(25, $after);
         $this->assertNotContains('vendor/package-23', array_column($after, 'package'));
     }
@@ -197,11 +197,11 @@ class PackagesCacheTest extends TestCase
         }
         $this->assertIsArray($packages->unhydratedFind('publishers')->first());
         $this->assertIsObject($packages->find('publishers')->first());
-        $before = $packages->publisherDetails(['vendor']);
+        $before = $packages->unhydratedFind('publisherDetails', namespaces: ['vendor'])->all()->toArray();
         $packages->updateAll(['monthly_downloads' => 100000], ['id' => 24]);
-        $this->assertSame($before, $packages->publisherDetails(['vendor']));
+        $this->assertSame($before, $packages->unhydratedFind('publisherDetails', namespaces: ['vendor'])->all()->toArray());
         Cache::clear('catalogue');
-        $this->assertSame('vendor/package-23', $packages->publisherDetails(['vendor'])['vendor']['plugins'][0]['package']);
+        $this->assertSame('vendor/package-23', $packages->unhydratedFind('publisherDetails', namespaces: ['vendor'])->all()->toArray()['vendor']['plugins'][0]['package']);
     }
 
     /**
@@ -211,9 +211,9 @@ class PackagesCacheTest extends TestCase
     {
         $packages = $this->fetchTable(PackagesTable::class);
         $before = $packages->get(1, finder: 'publicDetails');
-        $stats = $packages->namespaceStats('markstory');
-        $owner = $packages->namespaceGithubUrl('markstory');
-        $categories = $packages->categoryOptions('markstory');
+        $stats = $packages->unhydratedFind('namespaceStats', namespace: 'markstory')->firstOrFail();
+        $owner = $packages->unhydratedFind('namespaceGithubUrl', namespace: 'markstory')->all()->first()['url'];
+        $categories = $packages->Categories->getTarget()->unhydratedFind('catalogueOptions', namespace: 'markstory')->all()->toArray();
         $versions = $packages->filterOptions();
         $packages->updateAll([
             'description' => 'Fresh editor data',
@@ -226,16 +226,16 @@ class PackagesCacheTest extends TestCase
         $this->assertSame('Fresh editor data', $packages->get(1)->description);
         $this->assertSame($before->description, $packages->get(1, finder: 'publicDetails')->description);
         $this->assertSame('cakedc/users', $packages->get(25, finder: 'publicDetails')->package);
-        $this->assertSame($stats, $packages->namespaceStats('markstory'));
-        $this->assertSame($owner, $packages->namespaceGithubUrl('markstory'));
-        $this->assertSame($categories, $packages->categoryOptions('markstory'));
+        $this->assertSame($stats, $packages->unhydratedFind('namespaceStats', namespace: 'markstory')->firstOrFail());
+        $this->assertSame($owner, $packages->unhydratedFind('namespaceGithubUrl', namespace: 'markstory')->all()->first()['url']);
+        $this->assertSame($categories, $packages->Categories->getTarget()->unhydratedFind('catalogueOptions', namespace: 'markstory')->all()->toArray());
         $this->assertSame($versions, $packages->filterOptions());
 
         Cache::clear('catalogue');
         $this->assertSame('Fresh editor data', $packages->get(1, finder: 'publicDetails')->description);
-        $this->assertSame(123456, $packages->namespaceStats('markstory')['downloads']);
-        $this->assertSame('https://github.com/newowner', $packages->namespaceGithubUrl('markstory'));
-        $this->assertSame([], $packages->categoryOptions('markstory'));
+        $this->assertSame(123456, $packages->unhydratedFind('namespaceStats', namespace: 'markstory')->firstOrFail()['downloads']);
+        $this->assertSame('https://github.com/newowner', $packages->unhydratedFind('namespaceGithubUrl', namespace: 'markstory')->all()->first()['url']);
+        $this->assertSame([], $packages->Categories->getTarget()->unhydratedFind('catalogueOptions', namespace: 'markstory')->all()->toArray());
         $this->assertSame('CakePHP: 5.5', $packages->filterOptions()['cakephp']['cakephp-5-4']);
     }
 
@@ -262,10 +262,10 @@ class PackagesCacheTest extends TestCase
     {
         $packages = $this->fetchTable(PackagesTable::class);
         $this->assertCount(2, $packages->get(1, finder: 'publicDetails')->categories);
-        $this->assertCount(3, $packages->categoryOptions());
+        $this->assertCount(3, $packages->Categories->getTarget()->unhydratedFind('catalogueOptions')->all()->toArray());
         $importer = new AwesomeListImporter($packages, $this->createStub(Client::class), new AwesomeListParser());
         $importer->import("## Plugins\n### Assets\n- [Assets](https://github.com/markstory/asset_compress)\n");
-        $this->assertSame(['assets'], array_keys($packages->categoryOptions()));
+        $this->assertSame(['assets'], array_keys($packages->Categories->getTarget()->unhydratedFind('catalogueOptions')->all()->toArray()));
         $this->assertSame('assets', $packages->get(1, finder: 'publicDetails')->categories[0]->slug);
         $this->assertCount(1, $packages->get(1, finder: 'publicDetails')->categories);
     }
@@ -317,11 +317,11 @@ class PackagesCacheTest extends TestCase
     {
         $packages = $this->fetchTable(PackagesTable::class);
         $this->assertSame(26, $packages->find('catalogue', filters: [])->count());
-        $this->assertSame(1, $packages->namespaceStats('markstory')['plugins']);
+        $this->assertSame(1, $packages->unhydratedFind('namespaceStats', namespace: 'markstory')->firstOrFail()['plugins']);
         $io = $this->createStub(ConsoleIo::class);
         $io->method('ask')->willReturn('yes');
         new CleanCommand()->execute(new Arguments([], [], []), $io);
         $this->assertSame(0, $packages->find('catalogue', filters: [])->count());
-        $this->assertSame(0, $packages->namespaceStats('markstory')['plugins']);
+        $this->assertSame(0, $packages->unhydratedFind('namespaceStats', namespace: 'markstory')->firstOrFail()['plugins']);
     }
 }

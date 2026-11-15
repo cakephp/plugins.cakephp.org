@@ -64,7 +64,7 @@ class FeaturedPluginsIsland extends Island
     protected function featured(): array
     {
         $metadata = [];
-        foreach ($this->fetchTable(FeaturedPluginsTable::class)->find()->where(['enabled' => true])->all() as $entry) {
+        foreach ($this->fetchTable(FeaturedPluginsTable::class)->find('enabled')->all() as $entry) {
             $metadata[$entry->package] = ['logo' => $entry->logo, 'title' => $entry->title, 'description' => $entry->description];
         }
 

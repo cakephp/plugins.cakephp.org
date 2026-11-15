@@ -6,6 +6,8 @@ namespace App\Model\Table;
 use App\Model\Filter\PackagesCollection;
 use ArrayObject;
 use Cake\Cache\Cache;
+use Cake\Collection\Collection;
+use Cake\Collection\CollectionInterface;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
@@ -40,6 +42,8 @@ use Cake\Validation\Validator;
  */
 class PackagesTable extends Table
 {
+    use CatalogueCacheTrait;
+
     /**
      * Initialize method
      *
@@ -198,7 +202,7 @@ class PackagesTable extends Table
         ])->groupBy($this->aliasField('namespace'));
 
         if ($major !== null) {
-            $query->where($query->expr()->exists($this->publisherCompatibility($major)));
+            $query->find('cakephpCompatible', major: $major);
         }
 
         $search = mb_strtolower(trim($search));
@@ -222,54 +226,62 @@ class PackagesTable extends Table
     }
 
     /**
-     * Batch profile owners and two popular plugins for the visible publishers.
+     * Batch profile owners and two popular plugins, keyed by requested namespace.
      *
+     * @param \Cake\ORM\Query\SelectQuery<array<string, mixed>> $query Package query.
      * @param list<string> $namespaces Visible namespace names.
      * @param string $sort Popularity metric; plugin-count rankings preview monthly downloads.
      * @param string|null $major CakePHP major; null includes all versions.
-     * @return array<string, array{githubUrl: string|null, plugins: list<array{id: int, package: string, name: string}>}>
+     * @return \Cake\ORM\Query\SelectQuery
      */
-    public function publisherDetails(array $namespaces, string $sort = 'monthly_downloads', ?string $major = null): array
+    public function findPublisherDetails(SelectQuery $query, array $namespaces, string $sort = 'monthly_downloads', ?string $major = null): SelectQuery
     {
-        if ($namespaces === []) {
-            return [];
-        }
-        $details = array_fill_keys($namespaces, ['githubUrl' => null, 'plugins' => []]);
-        $owners = [];
         $metric = match ($sort) {
             'stars', 'downloads' => $sort,
             default => 'monthly_downloads',
         };
-        $packages = $this->find()->select(['id', 'namespace', 'package', 'repo_url'])
-            ->where(['namespace IN' => $namespaces])
+        $query->select(['id', 'namespace', 'package', 'repo_url'])
+            ->where($namespaces === [] ? ['1 = 0'] : ['namespace IN' => $namespaces])
             ->orderBy([
                 $this->aliasField($metric) => 'DESC',
                 $this->aliasField('package') => 'ASC',
             ]);
         if ($major !== null) {
-            $packages->select(['publisher_compatible' => $packages->expr()->exists($this->publisherCompatibility($major))]);
+            $query->select(['publisher_compatible' => $query->expr()->exists($this->publisherCompatibility($major))]);
         }
-        foreach ($this->cachePublicQuery($packages, 'publisher_details')->all() as $package) {
-            $namespace = $package->namespace;
-            $owner = $this->githubOwner($package->repo_url);
-            if ($owner !== null) {
-                $owners[$namespace][$owner] = true;
-            }
-            if (($major === null || $package->get('publisher_compatible')) && count($details[$namespace]['plugins']) < 2) {
-                $details[$namespace]['plugins'][] = [
-                    'id' => $package->id,
-                    'package' => $package->package,
-                    'name' => explode('/', $package->package, 2)[1],
-                ];
-            }
-        }
-        foreach ($owners as $namespace => $namespaceOwners) {
-            if (count($namespaceOwners) === 1) {
-                $details[$namespace]['githubUrl'] = 'https://github.com/' . array_key_first($namespaceOwners);
-            }
-        }
+        $query->formatResults(function (CollectionInterface $results) use ($namespaces, $major): CollectionInterface {
+            $groups = $results->groupBy('namespace')->map(function (array $rows) use ($major): array {
+                $packages = new Collection($rows);
+                $owners = array_values(array_unique($packages->map(fn(array|EntityInterface $row): ?string => $this->githubOwner($row['repo_url']))
+                    ->filter(static fn(?string $owner): bool => $owner !== null)->toList()));
 
-        return $details;
+                return [
+                    'githubUrl' => count($owners) === 1 ? 'https://github.com/' . $owners[0] : null,
+                    'plugins' => $packages->filter(static fn(array|EntityInterface $row): bool => $major === null || (bool)$row['publisher_compatible'])
+                        ->take(2)->map(static fn(array|EntityInterface $row): array => [
+                            'id' => $row['id'],
+                            'package' => $row['package'],
+                            'name' => explode('/', $row['package'], 2)[1],
+                        ])->toList(),
+                ];
+            })->toArray();
+
+            return new Collection(array_fill_keys($namespaces, ['githubUrl' => null, 'plugins' => []]))
+                ->map(static fn(array $empty, string|int $namespace): array => $groups[$namespace] ?? $empty);
+        });
+
+        return $this->cachePublicQuery($query, 'publisher_details_v2');
+    }
+
+    /**
+     * Select packages compatible with a CakePHP major without multiplying minor tags.
+     *
+     * @param \Cake\ORM\Query\SelectQuery $query Package query.
+     * @return \Cake\ORM\Query\SelectQuery
+     */
+    public function findCakephpCompatible(SelectQuery $query, string $major): SelectQuery
+    {
+        return $query->where($query->expr()->exists($this->publisherCompatibility($major)));
     }
 
     /**
@@ -314,36 +326,62 @@ class PackagesTable extends Table
     /**
      * Hero totals cover the namespace before any interactive filters are applied.
      *
-     * @return array{plugins: int, downloads: int, stars: int}
+     * @param \Cake\ORM\Query\SelectQuery<array<string, mixed>> $query Package query.
+     * @return \Cake\ORM\Query\SelectQuery
      */
-    public function namespaceStats(string $namespace): array
+    public function findNamespaceStats(SelectQuery $query, string $namespace): SelectQuery
     {
-        $query = $this->find('namespace', namespace: $namespace);
-        $query->select([
+        $query->find('namespace', namespace: $namespace)->select([
             'plugins' => $query->func()->count('*'),
             'downloads' => $query->func()->sum('Packages.downloads'),
             'stars' => $query->func()->sum('Packages.stars'),
-        ]);
-        $totals = $this->cachePublicQuery($query, 'namespace_stats')->first();
+        ])->formatResults(static fn(CollectionInterface $results): CollectionInterface => $results->map(static fn(array|EntityInterface $row): array => [
+            'plugins' => (int)$row['plugins'],
+            'downloads' => (int)($row['downloads'] ?? 0),
+            'stars' => (int)($row['stars'] ?? 0),
+        ]));
 
-        return [
-            'plugins' => (int)($totals?->get('plugins') ?? 0),
-            'downloads' => (int)($totals?->get('downloads') ?? 0),
-            'stars' => (int)($totals?->get('stars') ?? 0),
-        ];
+        return $this->cachePublicQuery($query, 'namespace_stats_v2');
     }
 
     /**
-     * Sitemap rows share the catalogue's Redis cache and import invalidation.
+     * Minimal ordered sitemap rows share catalogue import invalidation.
      *
-     * @return list<array{package: string, namespace: string}>
+     * @param \Cake\ORM\Query\SelectQuery $query Package query.
+     * @return \Cake\ORM\Query\SelectQuery
      */
-    public function sitemapPackages(): array
+    public function findSitemap(SelectQuery $query): SelectQuery
     {
-        $query = $this->unhydratedFind()->select(['package', 'namespace'])
-            ->orderByAsc('package');
+        return $this->cachePublicQuery($query->select(['package', 'namespace'])->orderByAsc('package'), 'sitemap_packages');
+    }
 
-        return $this->cachePublicQuery($query, 'sitemap_packages')->all()->toList();
+    /**
+     * Aggregate complete monthly download totals without treating unknown values as zero.
+     *
+     * @param \Cake\ORM\Query\SelectQuery<array<string, mixed>> $query Package query.
+     * @return \Cake\ORM\Query\SelectQuery
+     */
+    public function findEcosystemTotals(SelectQuery $query): SelectQuery
+    {
+        return $query->select([
+            'plugins' => $query->func()->count('*'),
+            'monthly_downloads' => $query->func()->sum('Packages.monthly_downloads'),
+            'monthly_known' => $query->func()->count('Packages.monthly_downloads'),
+        ])->formatResults(static fn(CollectionInterface $results): CollectionInterface => $results->map(static fn(array|EntityInterface $row): array => [
+            'plugins' => (int)$row['plugins'],
+            'monthly_downloads' => (int)$row['monthly_known'] === (int)$row['plugins'] ? (int)($row['monthly_downloads'] ?? 0) : null,
+        ]));
+    }
+
+    /**
+     * Distinct nonempty Composer publishers can be counted or projected further.
+     *
+     * @param \Cake\ORM\Query\SelectQuery $query Package query.
+     * @return \Cake\ORM\Query\SelectQuery
+     */
+    public function findNamespaces(SelectQuery $query): SelectQuery
+    {
+        return $query->select(['namespace'])->where(['namespace !=' => ''])->distinct();
     }
 
     /**
@@ -354,56 +392,44 @@ class PackagesTable extends Table
     public function ecosystemStats(): array
     {
         return Cache::remember('ecosystem_stats_v2', function (): array {
-            $query = $this->unhydratedFind();
-            $totals = $query->select([
-                'plugins' => $query->func()->count('*'),
-                'monthly_downloads' => $query->func()->sum('Packages.monthly_downloads'),
-                'monthly_known' => $query->func()->count('Packages.monthly_downloads'),
-            ])->first();
-            $plugins = (int)($totals['plugins'] ?? 0);
-            $publishers = $this->find()->select(['namespace'])->where(['namespace !=' => ''])->distinct()->count();
+            $totals = $this->unhydratedFind('ecosystemTotals')->firstOrFail();
+            $publishers = $this->find('namespaces')->count();
             $major = $this->publisherMajors()[0] ?? null;
             $currentSupport = null;
             if ($major !== null) {
-                $compatible = $this->find();
                 $currentSupport = [
                     'major' => $major,
-                    'plugins' => $compatible->where($compatible->expr()->exists($this->publisherCompatibility($major)))->count(),
+                    'plugins' => $this->find('cakephpCompatible', major: $major)->count(),
                 ];
             }
 
             return [
-                'plugins' => $plugins,
+                'plugins' => $totals['plugins'],
                 'publishers' => $publishers,
-                'monthly_downloads' => (int)($totals['monthly_known'] ?? 0) === $plugins
-                    ? (int)($totals['monthly_downloads'] ?? 0)
-                    : null,
+                'monthly_downloads' => $totals['monthly_downloads'],
                 'current_support' => $currentSupport,
             ];
         }, 'catalogue');
     }
 
     /**
-     * Link only an unambiguous GitHub repository owner, never guess from the Composer prefix.
+     * Resolve one unambiguous GitHub URL from all repositories in a namespace.
+     * Consume with all()->first() so SQL pagination cannot hide conflicting owners.
      *
-     * @phpstan-impure
+     * @param \Cake\ORM\Query\SelectQuery<array<string, mixed>> $query Package query.
+     * @return \Cake\ORM\Query\SelectQuery
      */
-    public function namespaceGithubUrl(string $namespace): ?string
+    public function findNamespaceGithubUrl(SelectQuery $query, string $namespace): SelectQuery
     {
-        $owners = [];
-        $query = $this->find('namespace', namespace: $namespace)->select(['repo_url'])->distinct();
-        $repositories = $this->cachePublicQuery($query, 'namespace_github')->all();
-        foreach ($repositories as $package) {
-            $owner = $this->githubOwner($package->repo_url);
-            if ($owner !== null) {
-                $owners[$owner] = true;
-            }
-            if (count($owners) > 1) {
-                return null;
-            }
-        }
+        $query->find('namespace', namespace: $namespace)->select(['repo_url'])->distinct()
+            ->formatResults(function (CollectionInterface $results): CollectionInterface {
+                $owners = array_values(array_unique($results->map(fn(array|EntityInterface $row): ?string => $this->githubOwner($row['repo_url']))
+                    ->filter(static fn(?string $owner): bool => $owner !== null)->toList()));
 
-        return $owners !== [] ? 'https://github.com/' . array_key_first($owners) : null;
+                return new Collection([['url' => count($owners) === 1 ? 'https://github.com/' . $owners[0] : null]]);
+            });
+
+        return $this->cachePublicQuery($query, 'namespace_github_v2');
     }
 
     /**
@@ -463,29 +489,6 @@ class PackagesTable extends Table
     }
 
     /**
-     * @return array<string, array{name: string, count: int}> Categories and counts within the current catalogue scope.
-     */
-    public function categoryOptions(?string $namespace = null): array
-    {
-        $query = $this->Categories->find();
-        $query->select(['Categories.slug', 'Categories.name', 'package_count' => $query->func()->count('CategoryMemberships.package_id')])
-            ->leftJoin(['CategoryMemberships' => 'categories_packages'], ['CategoryMemberships.category_id = Categories.id'])
-            ->groupBy(['Categories.id', 'Categories.slug', 'Categories.name'])
-            ->orderByAsc('Categories.name');
-        if ($namespace !== null) {
-            $query->where([
-                'CategoryMemberships.package_id IN' => $this->find('namespace', namespace: $namespace)->select(['id']),
-            ]);
-        }
-        $options = [];
-        foreach ($this->cachePublicQuery($query, 'categories')->all() as $category) {
-            $options[$category->get('slug')] = ['name' => $category->get('name'), 'count' => (int)$category->get('package_count')];
-        }
-
-        return $options;
-    }
-
-    /**
      * Cache version choices in descending semantic-version order.
      *
      * @return array{cakephp: array<string, string>, php: array<string, string>}
@@ -508,39 +511,5 @@ class PackagesTable extends Table
 
             return $options;
         }, 'catalogue');
-    }
-
-    /**
-     * Cache final query results and optional pagination totals, never island snapshots.
-     *
-     * @template TSubject of \Cake\Datasource\EntityInterface|array
-     * @param \Cake\ORM\Query\SelectQuery<TSubject> $query Public read query.
-     * @return \Cake\ORM\Query\SelectQuery<TSubject>
-     */
-    private function cachePublicQuery(SelectQuery $query, string $scope, bool $count = false): SelectQuery
-    {
-        $query->cache(static fn(SelectQuery $query): string => self::publicCacheKey($query, $scope), 'catalogue');
-        if ($count) {
-            $query->counter(static function (SelectQuery $query) use ($scope): int {
-                return Cache::remember(self::publicCacheKey($query, $scope . '_count'), $query->count(...), 'catalogue');
-            });
-        }
-
-        return $query;
-    }
-
-    /**
-     * Resolve after pagination so SQL includes its limit, offset, order and bindings.
-     *
-     * @param \Cake\ORM\Query\SelectQuery $query Final public read query.
-     */
-    private static function publicCacheKey(SelectQuery $query, string $scope): string
-    {
-        return $scope . '_' . hash('sha256', serialize([
-            $query->getConnection()->configName(),
-            $query->sql(),
-            $query->getValueBinder()->bindings(),
-            $query->isHydrationEnabled(),
-        ]));
     }
 }

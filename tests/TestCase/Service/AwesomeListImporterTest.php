@@ -40,7 +40,7 @@ class AwesomeListImporterTest extends TestCase
         $this->assertSame($expected, $importer->import($markdown));
         $this->assertSame($expected, $importer->import($markdown));
         $this->assertSame(2, $packages->Categories->junction()->find()->count());
-        $this->assertSame(['assets', 'development'], array_keys($packages->categoryOptions()));
+        $this->assertSame(['assets', 'development'], array_keys($packages->Categories->getTarget()->unhydratedFind('catalogueOptions')->all()->toArray()));
         $after = $packages->get(1, contain: ['Tags', 'Categories']);
         $this->assertEquals($before->tags, $after->tags);
         $this->assertSame($before->latest_stable_version, $after->latest_stable_version);

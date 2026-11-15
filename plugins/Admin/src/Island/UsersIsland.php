@@ -144,24 +144,7 @@ class UsersIsland extends AdminIsland
             throw new BadRequestException('Invalid user filters.');
         }
         $table = $this->fetchTable(UsersTable::class);
-        $query = $table->find();
-        if (trim($this->search) !== '') {
-            $search = '%' . trim($this->search) . '%';
-            $query->where([
-                'OR' => [
-                    'Users.username LIKE' => $search,
-                    'Users.email LIKE' => $search,
-                    'Users.first_name LIKE' => $search,
-                    'Users.last_name LIKE' => $search,
-                ],
-            ]);
-        }
-        if ($roleFilter !== null) {
-            $query->where(['Users.role' => $roleFilter]);
-        }
-        if ($status !== null) {
-            $query->where(['Users.is_active' => $status === UserStatus::Active]);
-        }
+        $query = $table->find('adminListing', search: $this->search, role: $roleFilter, status: $status);
 
         return [
             'users' => $this->paginate($query),

@@ -5,6 +5,7 @@ namespace App\Model\Table;
 
 use ADmad\SocialAuth\Model\Entity\SocialProfile;
 use App\Model\Enum\UserRole;
+use App\Model\Enum\UserStatus;
 use Cake\Database\Type\EnumType;
 use Cake\Datasource\EntityInterface;
 use Cake\Http\Exception\ForbiddenException;
@@ -113,6 +114,35 @@ class UsersTable extends Table
     public function findActive(SelectQuery $query): SelectQuery
     {
         return $query->where(['Users.is_active' => true]);
+    }
+
+    /**
+     * Compose management filters independently of the island's pagination state.
+     *
+     * @param \Cake\ORM\Query\SelectQuery<\App\Model\Entity\User> $query User query.
+     * @return \Cake\ORM\Query\SelectQuery<\App\Model\Entity\User>
+     */
+    public function findAdminListing(SelectQuery $query, string $search = '', ?UserRole $role = null, ?UserStatus $status = null): SelectQuery
+    {
+        if (trim($search) !== '') {
+            $search = '%' . trim($search) . '%';
+            $query->where([
+                'OR' => [
+                    'Users.username LIKE' => $search,
+                    'Users.email LIKE' => $search,
+                    'Users.first_name LIKE' => $search,
+                    'Users.last_name LIKE' => $search,
+                ],
+            ]);
+        }
+        if ($role instanceof UserRole) {
+            $query->where(['Users.role' => $role]);
+        }
+        if ($status instanceof UserStatus) {
+            $query->where(['Users.is_active' => $status === UserStatus::Active]);
+        }
+
+        return $query;
     }
 
     /**

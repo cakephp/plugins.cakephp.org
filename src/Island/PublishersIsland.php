@@ -102,7 +102,7 @@ class PublishersIsland extends Island
         foreach ($publishers as $publisher) {
             $namespaces[] = $publisher['namespace'];
         }
-        $details = $packages->publisherDetails($namespaces, $this->sort, $major);
+        $details = $packages->unhydratedFind('publisherDetails', namespaces: $namespaces, sort: $this->sort, major: $major)->all()->toArray();
 
         return [
             'publishers' => $publishers,

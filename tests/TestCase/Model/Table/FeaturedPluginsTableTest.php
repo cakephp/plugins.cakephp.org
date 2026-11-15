@@ -98,6 +98,7 @@ class FeaturedPluginsTableTest extends TestCase
     {
         $table = $this->fetchTable(FeaturedPluginsTable::class);
         $table->updateAll(['enabled' => false], ['id' => 2]);
+        $this->assertSame(0, $table->find('enabled')->where(['package' => 'cakedc/users'])->count());
         $this->fetchTable(PackagesTable::class)->deleteAll(['package' => 'markstory/asset_compress']);
         $this->assertSame(2, $table->find('adminListing', status: FeaturedPluginStatus::Enabled)->count());
         $this->assertSame(1, $table->find('adminListing', status: FeaturedPluginStatus::Disabled)->count());

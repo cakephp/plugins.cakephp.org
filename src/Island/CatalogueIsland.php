@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Island;
 
+use App\Model\Table\CategoriesTable;
 use App\Model\Table\PackagesTable;
 use Cake\Http\Exception\BadRequestException;
 use Interact\Attribute\Action;
@@ -152,7 +153,7 @@ class CatalogueIsland extends Island
             throw new BadRequestException('Search query is too long.');
         }
         $options = $this->packages->filterOptions();
-        $categoryOptions = $this->packages->categoryOptions($this->namespace);
+        $categoryOptions = $this->fetchTable(CategoriesTable::class)->unhydratedFind('catalogueOptions', namespace: $this->namespace)->all()->toArray();
         if (!array_key_exists($this->category, $categoryOptions)) {
             $this->category = '';
         }

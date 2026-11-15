@@ -7,6 +7,7 @@ use App\Model\Table\PackagesTable;
 use Cake\Cache\Cache;
 use Cake\TestSuite\TestCase;
 use Override;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Stringable;
@@ -40,7 +41,7 @@ class PackagesTableTest extends TestCase
             'asset-management' => ['name' => 'Asset Management', 'count' => 1],
             'authentication-authorization' => ['name' => 'Authentication & Authorization', 'count' => 1],
             'code-analysis' => ['name' => 'Code Analysis', 'count' => 1],
-        ], $this->fetchTable(PackagesTable::class)->categoryOptions());
+        ], $this->fetchTable(PackagesTable::class)->Categories->getTarget()->unhydratedFind('catalogueOptions')->all()->toArray());
     }
 
     /**
@@ -203,12 +204,12 @@ class PackagesTableTest extends TestCase
             'plugins' => 23,
             'downloads' => 22701,
             'stars' => 2001,
-        ], $packages->namespaceStats('vendor'));
+        ], $packages->unhydratedFind('namespaceStats', namespace: 'vendor')->firstOrFail());
         $this->assertSame([
             'plugins' => 0,
             'downloads' => 0,
             'stars' => 0,
-        ], $packages->namespaceStats('missing'));
+        ], $packages->unhydratedFind('namespaceStats', namespace: 'missing')->firstOrFail());
         $this->assertSame([
             'asset-management' => [
                 'name' => 'Asset Management',
@@ -218,8 +219,8 @@ class PackagesTableTest extends TestCase
                 'name' => 'Code Analysis',
                 'count' => 1,
             ],
-        ], $packages->categoryOptions('markstory'));
-        $this->assertSame([], $packages->categoryOptions('vendor'));
+        ], $packages->Categories->getTarget()->unhydratedFind('catalogueOptions', namespace: 'markstory')->all()->toArray());
+        $this->assertSame([], $packages->Categories->getTarget()->unhydratedFind('catalogueOptions', namespace: 'vendor')->all()->toArray());
         $this->assertSame(1, $packages->find('catalogue', filters: ['awesome' => true], namespace: 'markstory')->count());
         $this->assertSame(0, $packages->find('catalogue', filters: ['search' => 'users'], namespace: 'markstory')->count());
         $this->assertSame(0, $packages->find('catalogue', filters: ['category' => 'authentication-authorization'], namespace: 'markstory')->count());
@@ -231,24 +232,57 @@ class PackagesTableTest extends TestCase
     public function testNamespaceGithubProfile(): void
     {
         $packages = $this->fetchTable(PackagesTable::class);
-        $this->assertSame('https://github.com/vendor', $packages->namespaceGithubUrl('vendor'));
-        $packages->updateAll(['repo_url' => 'https://www.github.com/Actual-Owner/plugin.git'], ['id' => 1]);
-        $this->assertSame('https://github.com/actual-owner', $packages->namespaceGithubUrl('markstory'));
-        $packages->updateAll(['repo_url' => 'git@github.com:Actual-Owner/plugin.git'], ['id' => 1]);
-        $this->assertSame('https://github.com/actual-owner', $packages->namespaceGithubUrl('markstory'));
+        $this->assertSame('https://github.com/vendor', $packages->unhydratedFind('namespaceGithubUrl', namespace: 'vendor')->all()->first()['url']);
         $packages->updateAll(['repo_url' => 'https://github.com/another-owner/plugin'], ['id' => 2]);
-        $this->assertNull($packages->namespaceGithubUrl('vendor'));
-        $unsupportedUrls = [
-            'https://gitlab.com/markstory/plugin',
-            'https://github.com.example.com/markstory/plugin',
-            'https://github.com/markstory',
-            'https://github.com/invalid_owner/plugin',
+        $this->assertNull($packages->unhydratedFind('namespaceGithubUrl', namespace: 'vendor')->all()->first()['url']);
+        $this->assertNull($packages->unhydratedFind('namespaceGithubUrl', namespace: 'missing')->all()->first()['url']);
+    }
+
+    /**
+     * Repository formats resolve independently of the Composer namespace.
+     */
+    #[DataProvider('repositoryUrls')]
+    public function testGithubOwnerUrlFormats(string $url, ?string $expected): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        $packages->updateAll(['repo_url' => $url], ['id' => 1]);
+        $this->assertSame($expected, $packages->unhydratedFind('namespaceGithubUrl', namespace: 'markstory')->all()->first()['url']);
+    }
+
+    /**
+     * @return array<string, array{string, string|null}>
+     */
+    public static function repositoryUrls(): array
+    {
+        return [
+            'https' => ['https://www.github.com/Actual-Owner/plugin.git', 'https://github.com/actual-owner'],
+            'ssh' => ['git@github.com:Actual-Owner/plugin.git', 'https://github.com/actual-owner'],
+            'another host' => ['https://gitlab.com/markstory/plugin', null],
+            'lookalike host' => ['https://github.com.example.com/markstory/plugin', null],
+            'missing repository' => ['https://github.com/markstory', null],
+            'invalid owner' => ['https://github.com/invalid_owner/plugin', null],
         ];
-        foreach ($unsupportedUrls as $url) {
-            $packages->updateAll(['repo_url' => $url], ['id' => 1]);
-            $this->assertNull($packages->namespaceGithubUrl('markstory'));
-        }
-        $this->assertNull($packages->namespaceGithubUrl('missing'));
+    }
+
+    /**
+     * Read finders preserve additional conditions and deferred query execution.
+     */
+    public function testReadFindersRemainComposable(): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        $this->assertSame([
+            'package' => 'vendor/package-23',
+            'namespace' => 'vendor',
+        ], $packages->unhydratedFind('sitemap')->find('namespace', namespace: 'vendor')
+            ->orderByDesc('package', true)->firstOrFail());
+        $this->assertSame([
+            'plugins' => 1,
+            'downloads' => 998,
+            'stars' => 98,
+        ], $packages->find('namespaceStats', namespace: 'vendor')->where(['id' => 2])->firstOrFail());
+        $this->assertSame([
+            'missing' => ['githubUrl' => null, 'plugins' => []],
+        ], $packages->unhydratedFind('publisherDetails', namespaces: ['missing'])->all()->toArray());
     }
 
     /**
@@ -294,15 +328,15 @@ class PackagesTableTest extends TestCase
     public function testPublisherDetails(): void
     {
         $packages = $this->fetchTable(PackagesTable::class);
-        $details = $packages->publisherDetails(['vendor', 'markstory']);
+        $details = $packages->unhydratedFind('publisherDetails', namespaces: ['vendor', 'markstory'])->all()->toArray();
         $this->assertSame(['vendor/package-01', 'vendor/package-02'], array_column($details['vendor']['plugins'], 'package'));
         $this->assertSame('https://github.com/vendor', $details['vendor']['githubUrl']);
         $this->assertCount(1, $details['markstory']['plugins']);
         $packages->updateAll(['stars' => 999, 'repo_url' => 'https://github.com/another-owner/plugin'], ['id' => 24]);
-        $this->assertNull($packages->publisherDetails(['vendor'])['vendor']['githubUrl']);
-        $this->assertSame(['vendor/package-23', 'vendor/package-01'], array_column($packages->publisherDetails(['vendor'], 'stars')['vendor']['plugins'], 'package'));
-        $this->assertSame(['vendor/package-01', 'vendor/package-02'], array_column($packages->publisherDetails(['vendor'], 'plugins')['vendor']['plugins'], 'package'));
-        $this->assertSame([], $packages->publisherDetails([]));
+        $this->assertNull($packages->unhydratedFind('publisherDetails', namespaces: ['vendor'])->all()->toArray()['vendor']['githubUrl']);
+        $this->assertSame(['vendor/package-23', 'vendor/package-01'], array_column($packages->unhydratedFind('publisherDetails', namespaces: ['vendor'], sort: 'stars')->all()->toArray()['vendor']['plugins'], 'package'));
+        $this->assertSame(['vendor/package-01', 'vendor/package-02'], array_column($packages->unhydratedFind('publisherDetails', namespaces: ['vendor'], sort: 'plugins')->all()->toArray()['vendor']['plugins'], 'package'));
+        $this->assertSame([], $packages->unhydratedFind('publisherDetails', namespaces: [])->all()->toArray());
     }
 
     /**
@@ -332,7 +366,7 @@ class PackagesTableTest extends TestCase
         $vendor = $packages->unhydratedFind('publishers', major: '5', search: 'vendor')->first();
         $this->assertEquals(22, $vendor['plugins']);
         $this->assertEquals(1925, $vendor['monthly_downloads']);
-        $details = $packages->publisherDetails(['vendor'], major: '5');
+        $details = $packages->unhydratedFind('publisherDetails', namespaces: ['vendor'], major: '5')->all()->toArray();
         $this->assertSame(['package-01', 'package-02'], array_column($details['vendor']['plugins'], 'name'));
         $this->assertNull($details['vendor']['githubUrl']);
         $this->assertSame('cakedc', $packages->unhydratedFind('publishers', major: '4')->first()['namespace']);

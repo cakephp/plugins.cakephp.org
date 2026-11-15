@@ -111,4 +111,15 @@ class FeaturedPluginsTable extends Table
 
         return $query;
     }
+
+    /**
+     * Public editorial selection can be further scoped without duplicating its rule.
+     *
+     * @param \Cake\ORM\Query\SelectQuery<\App\Model\Entity\FeaturedPlugin> $query Featured entry query.
+     * @return \Cake\ORM\Query\SelectQuery<\App\Model\Entity\FeaturedPlugin>
+     */
+    public function findEnabled(SelectQuery $query): SelectQuery
+    {
+        return $query->where([$this->aliasField('enabled') => true]);
+    }
 }
