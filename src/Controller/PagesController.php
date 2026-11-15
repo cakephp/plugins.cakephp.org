@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
+use Cake\Routing\Attribute\Route;
 use Cake\View\Exception\MissingTemplateException;
 use Override;
 
@@ -56,6 +57,9 @@ class PagesController extends AppController
      *   be found and not in debug mode.
      * @throws \Cake\View\Exception\MissingTemplateException In debug mode.
      */
+    #[Route('/requirements', name: 'page:requirements', methods: ['GET'], defaults: ['page' => 'requirements'], pass: ['page'])]
+    #[Route('/pages/*', methods: ['GET'])]
+    #[Route('/pages', methods: ['GET'])]
     public function display(string ...$path): ?Response
     {
         if ($path === []) {

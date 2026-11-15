@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\View\IslandTemplateView;
 use Cake\Cache\Engine\FileEngine;
+use Cake\Cache\Engine\PhpEngine;
 use Cake\Cache\Engine\RedisEngine;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
@@ -115,6 +116,14 @@ return [
         'awesomeAliases' => [],
     ],
 
+    'AttributeResolver' => [
+        'default' => [
+            'paths' => ['src/Controller/**/*Controller.php', 'src/Controller/*Controller.php', 'src/Event/**/*.php', 'src/Event/*.php'],
+            'cache' => '_cake_attributes_',
+            'validateFiles' => filter_var(env('DEBUG', false), FILTER_VALIDATE_BOOLEAN),
+        ],
+    ],
+
     'CakeVite' => [
         'devServer' => [
             'url' => env('VITE_DEV_SERVER_URL', env('DDEV_PRIMARY_URL', 'http://localhost') . ':5173'),
@@ -135,6 +144,12 @@ return [
      * Configure the cache adapters.
      */
     'Cache' => [
+        '_cake_attributes_' => [
+            'className' => PhpEngine::class,
+            'prefix' => 'plugins_cake_attributes_',
+            'path' => CACHE . 'attributes' . DS,
+            'duration' => 0,
+        ],
         'catalogue' => [
             'className' => RedisEngine::class,
             'prefix' => 'plugins_catalogue_',

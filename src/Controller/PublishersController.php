@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\Routing\Attribute\Route;
+
 /**
  * Hosts the public publisher directory.
  */
@@ -21,6 +23,7 @@ class PublishersController extends AppController
     /**
      * Render the directory island in the shared application layout.
      */
+    #[Route('/publishers', name: 'publisher:index', methods: ['GET'])]
     public function index(): void
     {
     }

@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use function Cake\Database\Expression\{greaterThanOrEquals, notEquals};
+
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Query\SelectQuery;
@@ -46,8 +48,8 @@ class CategoriesTable extends Table
     {
         $packageJoin = ['CataloguePackages.id = CategoryMemberships.package_id'];
         if (!$includeDevelopment) {
-            $packageJoin['CataloguePackages.latest_stable_version IS NOT'] = null;
-            $packageJoin['CataloguePackages.downloads >='] = 10;
+            $packageJoin['CataloguePackages.latest_stable_version'] = notEquals(null);
+            $packageJoin['CataloguePackages.downloads'] = greaterThanOrEquals(10);
         }
         $query->select(['Categories.slug', 'Categories.name', 'package_count' => $query->func()->count('CataloguePackages.id')])
             ->leftJoin(['CategoryMemberships' => 'categories_packages'], ['CategoryMemberships.category_id = Categories.id'])

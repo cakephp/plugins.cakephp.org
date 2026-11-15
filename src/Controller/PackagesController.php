@@ -6,12 +6,16 @@ namespace App\Controller;
 use App\Model\Table\PackagesTable;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
+use Cake\Routing\Attribute\Extensions;
+use Cake\Routing\Attribute\Route;
 
 /**
  * Hosts the public catalogue; islands own subsequent interactions.
  */
 class PackagesController extends AppController
 {
+    private const string PACKAGE_SEGMENT = '[A-Za-z0-9][A-Za-z0-9_.-]*';
+
     /**
      * Allow anonymous catalogue visits.
      */
@@ -24,6 +28,9 @@ class PackagesController extends AppController
     /**
      * Render the catalogue island in the normal application layout.
      */
+    #[Route('/', name: 'plugin:index', methods: ['GET'])]
+    #[Route('/packages', methods: ['GET'])]
+    #[Extensions(['json'])]
     public function index(): void
     {
     }
@@ -31,6 +38,7 @@ class PackagesController extends AppController
     /**
      * Host a scoped catalogue with totals that do not change while filtering.
      */
+    #[Route('/plugins/{namespace}', name: 'plugin:namespace', methods: ['GET'], patterns: ['namespace' => self::PACKAGE_SEGMENT])]
     public function byNamespace(string $namespace): ?Response
     {
         $canonicalNamespace = strtolower($namespace);
@@ -59,6 +67,7 @@ class PackagesController extends AppController
     /**
      * Provide a normal detail URL for direct links and browsers without JavaScript.
      */
+    #[Route('/plugins/{namespace}/{name}', name: 'plugin:view', methods: ['GET'], patterns: ['namespace' => self::PACKAGE_SEGMENT, 'name' => self::PACKAGE_SEGMENT])]
     public function view(string $namespace, string $name): void
     {
         $package = $this->fetchTable(PackagesTable::class)->find('publicDetails')

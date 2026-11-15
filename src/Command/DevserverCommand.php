@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace App\Command;
 
 use Cake\Command\Command;
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Exception\StopException;
 use Override;
@@ -58,31 +56,25 @@ class DevserverCommand extends Command
     /**
      * Implement this method with your command's logic.
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIo $io The console io
      * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIo $io): ?int
+    public function execute(): ?int
     {
         $cwd = getcwd();
         if ($cwd === false) {
             throw new StopException('Cannot read CWD');
         }
-
         // Input is a 'server'.
         // Servers have a name, command to run, and environment vars.
-        $io->verbose('Starting bin/cake/server');
+        $this->io->verbose('Starting bin/cake/server');
         $cakeCommand = ['bin/cake', 'server'];
         $npmCommand = ['npm', 'run', 'dev'];
-
         $cakeProcess = new Process($cakeCommand, $cwd, ['CAKE_DEVSERVER' => '1', 'PATH' => getenv('PATH')]);
         $npmProcess = new Process($npmCommand, $cwd);
-
         $cakeProcess->start();
-        $io->verbose('Cake server started');
+        $this->io->verbose('Cake server started');
         $npmProcess->start();
-        $io->verbose('Starting npm run dev');
-
+        $this->io->verbose('Starting npm run dev');
         $servers = [
             [
                 'name' => 'cake',
@@ -102,10 +94,10 @@ class DevserverCommand extends Command
                 if (!$process->isRunning()) {
                     $poll = false;
                     $exitCode = $process->getExitCode();
-                    $io->error(sprintf('%s has died with code %s.', $name, $exitCode));
+                    $this->io->error(sprintf('%s has died with code %s.', $name, $exitCode));
                     $errorOutput = trim($process->getErrorOutput());
                     if ($errorOutput !== '') {
-                        $io->error(sprintf('%s | %s', $name, $errorOutput));
+                        $this->io->error(sprintf('%s | %s', $name, $errorOutput));
                     }
                     break;
                 }
@@ -115,7 +107,7 @@ class DevserverCommand extends Command
                 if (!empty($output)) {
                     foreach (explode("\n", trim($output)) as $line) {
                         if ($line !== '') {
-                            $io->info(sprintf('%s | %s', $name, $line));
+                            $this->io->info(sprintf('%s | %s', $name, $line));
                         }
                     }
                 }
@@ -124,7 +116,7 @@ class DevserverCommand extends Command
                 if (!empty($error)) {
                     foreach (explode("\n", trim($error)) as $line) {
                         if ($line !== '') {
-                            $io->comment(sprintf('%s | %s', $name, $line));
+                            $this->io->comment(sprintf('%s | %s', $name, $line));
                         }
                     }
                 }
@@ -132,16 +124,14 @@ class DevserverCommand extends Command
 
             usleep(100); // Small delay to prevent high CPU usage
         }
-
-        $io->verbose('Start shutdown');
+        $this->io->verbose('Start shutdown');
         foreach ($servers as $server) {
             $process = $server['process'];
             if ($process->isRunning()) {
                 $process->stop(1); // graceful timeout of 1 second
             }
         }
-        $io->out('Shutdown complete');
-
+        $this->io->out('Shutdown complete');
         // We exit error as, normally this process gets killed with ctrl-c, and we
         // should only get here if a server died.
         return static::CODE_ERROR;

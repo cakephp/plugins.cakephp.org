@@ -20,7 +20,7 @@ use Override;
 class FeaturedPlugin extends Entity
 {
     #[Override]
-    protected array $_accessible = [
+    protected array $patchable = [
         'package' => true,
         'enabled' => true,
         'logo' => true,

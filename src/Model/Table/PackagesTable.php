@@ -18,6 +18,7 @@ use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use Override;
+use function Cake\Database\Expression\{greaterThanOrEquals, in, like, notEquals};
 
 /**
  * Packages Model
@@ -173,20 +174,20 @@ class PackagesTable extends Table
             $query->find('released');
         }
         $query->find('search', search: $filters)
-            ->contain(['CommunityPicks', 'Categories', 'Tags' => static fn(SelectQuery $tags) => $tags->orderByDesc('Tags.label')]);
+            ->contain(['CommunityPicks', 'Categories', 'Tags' => static fn(SelectQuery $tags): SelectQuery => $tags->orderByDesc('Tags.label')]);
         if (!empty($filters['featured'])) {
-            $query->where(['CommunityPicks.id IS NOT' => null]);
+            $query->where(['CommunityPicks.id' => notEquals(null)]);
         }
         if (!empty($filters['category']) || !empty($filters['awesome'])) {
             $junction = $this->Categories->junction();
             $alias = $junction->getAlias();
             $membership = $junction->find()->select([$alias . '.package_id'])
-                ->where(static fn(QueryExpression $exp) => $exp->equalFields($alias . '.package_id', 'Packages.id'));
+                ->where(static fn(QueryExpression $exp): QueryExpression => $exp->equalFields($alias . '.package_id', 'Packages.id'));
             if (!empty($filters['category'])) {
                 $membership->innerJoin(['CurationCategory' => 'categories'], ['CurationCategory.id = ' . $alias . '.category_id'])
                     ->where(['CurationCategory.slug' => $filters['category']]);
             }
-            $query->where(static fn(QueryExpression $exp) => $exp->exists($membership));
+            $query->where(static fn(QueryExpression $exp): QueryExpression => $exp->exists($membership));
         }
         if (!empty($filters['exclude_categories'])) {
             $query->find('withoutCategories', slugs: $filters['exclude_categories']);
@@ -212,10 +213,10 @@ class PackagesTable extends Table
         $alias = $junction->getAlias();
         $membership = $junction->find()->select([$alias . '.fk_id'])
             ->innerJoin(['ExcludedTag' => $this->Tags->getTarget()->getTable()], ['ExcludedTag.id = ' . $alias . '.tag_id'])
-            ->where([$alias . '.fk_model' => $this->getAlias(), 'ExcludedTag.slug IN' => $slugs])
-            ->where(static fn(QueryExpression $exp) => $exp->equalFields($alias . '.fk_id', 'Packages.id'));
+            ->where([$alias . '.fk_model' => $this->getAlias(), 'ExcludedTag.slug' => in($slugs)])
+            ->where(static fn(QueryExpression $exp): QueryExpression => $exp->equalFields($alias . '.fk_id', 'Packages.id'));
 
-        return $query->where(static fn(QueryExpression $exp) => $exp->notExists($membership));
+        return $query->where(static fn(QueryExpression $exp): QueryExpression => $exp->notExists($membership));
     }
 
     /**
@@ -237,10 +238,10 @@ class PackagesTable extends Table
         $alias = $junction->getAlias();
         $membership = $junction->find()->select([$alias . '.package_id'])
             ->innerJoin(['ExcludedCategory' => $this->Categories->getTarget()->getTable()], ['ExcludedCategory.id = ' . $alias . '.category_id'])
-            ->where(['ExcludedCategory.slug IN' => $slugs])
-            ->where(static fn(QueryExpression $exp) => $exp->equalFields($alias . '.package_id', 'Packages.id'));
+            ->where(['ExcludedCategory.slug' => in($slugs)])
+            ->where(static fn(QueryExpression $exp): QueryExpression => $exp->equalFields($alias . '.package_id', 'Packages.id'));
 
-        return $query->where(static fn(QueryExpression $exp) => $exp->notExists($membership));
+        return $query->where(static fn(QueryExpression $exp): QueryExpression => $exp->notExists($membership));
     }
 
     /**
@@ -253,8 +254,8 @@ class PackagesTable extends Table
     public function findReleased(SelectQuery $query): SelectQuery
     {
         return $query->where([
-            $this->aliasField('latest_stable_version') . ' IS NOT' => null,
-            $this->aliasField('downloads') . ' >=' => 10,
+            $this->aliasField('latest_stable_version') => notEquals(null),
+            $this->aliasField('downloads') => greaterThanOrEquals(10),
         ]);
     }
 
@@ -288,12 +289,12 @@ class PackagesTable extends Table
             'plugins' => $query->func()->count('*'),
             'downloads' => $query->func()->sum($this->aliasField('downloads')),
             'monthly_downloads' => $query->expr()->case()
-                ->when($query->expr()->eq($query->func()->count($this->aliasField('monthly_downloads')), $query->func()->count('*')))
+                ->when($query->expr()->equals($query->func()->count($this->aliasField('monthly_downloads')), $query->func()->count('*')))
                 ->then($query->func()->sum($this->aliasField('monthly_downloads'))),
             'stars' => $query->func()->sum($this->aliasField('stars')),
             'latest_release' => $query->func()->max($this->aliasField('latest_stable_release_date'))->setReturnType('string'),
         ])->where([
-            $this->aliasField('namespace') . ' !=' => '',
+            $this->aliasField('namespace') => notEquals(''),
         ])->groupBy($this->aliasField('namespace'));
 
         if ($major !== null) {
@@ -304,7 +305,7 @@ class PackagesTable extends Table
 
         $search = mb_strtolower(trim($search));
         if ($search !== '') {
-            $query->where($query->expr()->gt(new FunctionExpression('INSTR', [
+            $query->where($query->expr()->greaterThan(new FunctionExpression('INSTR', [
                 $this->aliasField('namespace') => 'identifier',
                 $search,
             ]), 0, 'integer'));
@@ -338,7 +339,7 @@ class PackagesTable extends Table
             default => 'monthly_downloads',
         };
         $query->select(['id', 'namespace', 'package', 'repo_url', 'latest_stable_version', 'downloads'])
-            ->where($namespaces === [] ? ['1 = 0'] : ['namespace IN' => $namespaces])
+            ->where($namespaces === [] ? ['1 = 0'] : ['namespace' => in($namespaces)])
             ->orderBy([
                 $this->aliasField($metric) => 'DESC',
                 $this->aliasField('package') => 'ASC',
@@ -402,11 +403,11 @@ class PackagesTable extends Table
             ->innerJoin(['PublisherVersion' => $this->Tags->getTarget()->getTable()], ['PublisherVersion.id = ' . $alias . '.tag_id'])
             ->where([
                 $alias . '.fk_model' => $this->getAlias(),
-                'PublisherVersion.slug LIKE' => CakephpVersion::isDevelopmentLabel($major)
+                'PublisherVersion.slug' => like(CakephpVersion::isDevelopmentLabel($major)
                     ? CakephpVersion::developmentSlug((int)$major)
-                    : 'cakephp-' . $major . '-%',
+                    : 'cakephp-' . $major . '-%'),
             ])
-            ->where(static fn(QueryExpression $exp) => $exp->equalFields($alias . '.fk_id', 'Packages.id'));
+            ->where(static fn(QueryExpression $exp): QueryExpression => $exp->equalFields($alias . '.fk_id', 'Packages.id'));
     }
 
     /**
@@ -491,7 +492,7 @@ class PackagesTable extends Table
      */
     public function findNamespaces(SelectQuery $query): SelectQuery
     {
-        return $query->select(['namespace'])->where(['namespace !=' => ''])->distinct();
+        return $query->select(['namespace'])->where(['namespace' => notEquals('')])->distinct();
     }
 
     /**
@@ -570,7 +571,7 @@ class PackagesTable extends Table
     public function findFeaturedCandidates(SelectQuery $query, string $search = ''): SelectQuery
     {
         return $query->select(['id', 'package'])
-            ->where(['package LIKE' => '%' . trim($search) . '%'])
+            ->where(['package' => like('%' . trim($search) . '%')])
             ->orderByAsc('package');
     }
 
@@ -596,9 +597,9 @@ class PackagesTable extends Table
             $options = [];
             foreach (['cakephp' => 'CakePHP', 'php' => 'PHP'] as $key => $label) {
                 $query = $this->Tags->find('list', keyField: 'slug', valueField: 'label')
-                    ->where(['slug LIKE' => $key . '-%']);
+                    ->where(['slug' => like($key . '-%')]);
                 if ($key === 'cakephp') {
-                    $query->where(['slug IN' => CakephpVersion::slugs()]);
+                    $query->where(['slug' => in(CakephpVersion::slugs())]);
                 }
                 /** @var array<string, string> $tags Scalar list results, keyed by version slug. */
                 $tags = $query->toArray();

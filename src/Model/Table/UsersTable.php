@@ -15,6 +15,7 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use RuntimeException;
+use function Cake\Database\Expression\like;
 
 /**
  * Users Model
@@ -122,10 +123,10 @@ class UsersTable extends Table
             $search = '%' . trim($search) . '%';
             $query->where([
                 'OR' => [
-                    'Users.username LIKE' => $search,
-                    'Users.email LIKE' => $search,
-                    'Users.first_name LIKE' => $search,
-                    'Users.last_name LIKE' => $search,
+                    'Users.username' => like($search),
+                    'Users.email' => like($search),
+                    'Users.first_name' => like($search),
+                    'Users.last_name' => like($search),
                 ],
             ]);
         }

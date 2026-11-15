@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use App\Model\Table\PackagesTable;
 use Cake\Http\Exception\NotFoundException;
+use Cake\Routing\Attribute\Route;
 use Cake\Routing\Router;
 use Cake\View\XmlView;
 
@@ -14,6 +15,8 @@ use Cake\View\XmlView;
 class SitemapsController extends AppController
 {
     private const int PAGE_SIZE = 1000;
+
+    private const array PAGE_PATTERNS = ['type' => 'pages|plugins|publishers', 'page' => '[1-9][0-9]{0,8}'];
 
     /**
      * Crawlers do not need an authenticated session or search processing.
@@ -28,6 +31,7 @@ class SitemapsController extends AppController
     /**
      * Advertise only populated sitemap pages.
      */
+    #[Route('/sitemap.xml', name: 'sitemap:index', methods: ['GET', 'HEAD'])]
     public function index(): void
     {
         $sitemaps = [];
@@ -47,6 +51,7 @@ class SitemapsController extends AppController
     /**
      * Each document contains at most 1,000 URLs; missing pages return 404.
      */
+    #[Route('/sitemap-{type}-{page}.xml', name: 'sitemap:view', methods: ['GET', 'HEAD'], patterns: self::PAGE_PATTERNS)]
     public function view(string $type, string $page): void
     {
         $entries = $this->entries()[$type] ?? [];

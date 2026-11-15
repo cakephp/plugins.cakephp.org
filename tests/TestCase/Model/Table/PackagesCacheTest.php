@@ -11,7 +11,7 @@ use App\Service\AwesomeListParser;
 use App\Service\PackagistImporter;
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\FileEngine;
-use Cake\Console\Arguments;
+use Cake\Command\CacheClearCommand;
 use Cake\Console\ConsoleIo;
 use Cake\Http\Client;
 use Cake\TestSuite\TestCase;
@@ -181,6 +181,39 @@ class PackagesCacheTest extends TestCase
                 $this->assertSame($total, $query->count());
             }
         }
+    }
+
+    /**
+     * CakePHP 5's serialized entity storage must not be read by CakePHP 6.
+     */
+    public function testDeployCacheClearRemovesPreviousFrameworkEntriesWithoutHydrating(): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        $query = $packages->find('catalogue', filters: [])->orderByAsc('Packages.id')->limit(2)->cache(false);
+        $rows = $query->all();
+        $oldKey = 'catalogue_' . hash('sha256', serialize([
+            $query->getConnection()->configName(),
+            $query->sql(),
+            $query->getValueBinder()->bindings(),
+            $query->isHydrationEnabled(),
+        ]));
+        Cache::write($oldKey, $rows, 'catalogue');
+        // Seed the former serialized field name as bytes, without hydrating incompatible objects.
+        $file = TMP . 'tests' . DS . 'catalogue' . DS . 'test_catalogue_' . $oldKey;
+        $contents = file_get_contents($file);
+        $this->assertIsString($contents);
+        $legacy = str_replace(serialize("\0*\0dynamicFields"), serialize("\0*\0_properties"), $contents, $replacements);
+        $this->assertGreaterThan(0, $replacements);
+        file_put_contents($file, $legacy);
+
+        $io = $this->createStub(ConsoleIo::class);
+        new CacheClearCommand()->setName('cake cache clear')->run(['catalogue'], $io);
+        $this->assertFileDoesNotExist($file);
+
+        $fresh = $packages->find('catalogue', filters: [])->orderByAsc('Packages.id')->limit(2)->all()->first();
+        $this->assertNotNull($fresh);
+        $this->assertSame('markstory/asset_compress', $fresh->package);
+        $this->assertNotEmpty($fresh->tags);
     }
 
     /**
@@ -368,7 +401,7 @@ class PackagesCacheTest extends TestCase
         $this->assertSame(1, $packages->unhydratedFind('namespaceStats', namespace: 'markstory')->firstOrFail()['plugins']);
         $io = $this->createStub(ConsoleIo::class);
         $io->method('ask')->willReturn('yes');
-        new CleanCommand()->execute(new Arguments([], [], []), $io);
+        new CleanCommand()->setName('cake clean')->run([], $io);
         $this->assertSame(0, $packages->find('catalogue', filters: [])->count());
         $this->assertSame(0, $packages->unhydratedFind('namespaceStats', namespace: 'markstory')->firstOrFail()['plugins']);
     }

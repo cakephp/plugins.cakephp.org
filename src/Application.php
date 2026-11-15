@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace App;
 
 use ADmad\SocialAuth\Middleware\SocialAuthMiddleware;
-use App\Event\AfterGithubIdentify;
 use App\Middleware\ThemeCookieMiddleware;
 use App\Model\Table\PackagesTable;
 use App\Model\Table\UsersTable;
@@ -34,11 +33,14 @@ use Authorization\Exception\MissingIdentityException;
 use Authorization\Middleware\AuthorizationMiddleware;
 use Authorization\Middleware\RequestAuthorizationMiddleware;
 use Authorization\Policy\MapResolver;
+use Cake\Container\Container;
+use Cake\Container\ContainerInterface;
 use Cake\Core\Configure;
-use Cake\Core\ContainerInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
+use Cake\Event\AttributeEventListenerConnector;
+use Cake\Event\EventManagerInterface;
 use Cake\Http\BaseApplication;
 use Cake\Http\Client;
 use Cake\Http\Client\ClientEvent;
@@ -49,7 +51,8 @@ use Cake\Http\ServerRequest;
 use Cake\ORM\Locator\TableLocator;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
-use League\Container\ReflectionContainer;
+use Cake\Routing\Route\DashedRoute;
+use Cake\Routing\RouteBuilder;
 use Packagist\Api\Client as PackagistClient;
 use Psr\Http\Message\ServerRequestInterface;
 use SocialConnect\OAuth2\Provider\GitHub;
@@ -81,13 +84,25 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
     }
 
     /**
-     * Resolve authentication event listeners through CakePHP's container.
+     * Discover attribute listeners and resolve their dependencies through the container.
      *
-     * @return list<class-string<\Cake\Event\EventListenerInterface>>
+     * @param \Cake\Event\EventManagerInterface $eventManager Application event manager.
+     * @return \Cake\Event\EventManagerInterface
      */
-    public function eventListeners(): array
+    public function events(EventManagerInterface $eventManager): EventManagerInterface
     {
-        return [AfterGithubIdentify::class];
+        new AttributeEventListenerConnector($eventManager, listenerResolver: $this->getContainer()->get(...))->connect();
+
+        return $eventManager;
+    }
+
+    /**
+     * Discover application and plugin routes declared on controller actions.
+     */
+    public function routes(RouteBuilder $routes): void
+    {
+        $routes->setRouteClass(DashedRoute::class);
+        $routes->connectAttributes();
     }
 
     /**
@@ -173,14 +188,16 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
     /**
      * Register application container services.
      *
-     * @param \Cake\Core\ContainerInterface $container The Container to update.
+     * @param \Cake\Container\ContainerInterface $container The Container to update.
      * @return void
      * @link https://book.cakephp.org/5/en/development/dependency-injection.html#dependency-injection
      */
     public function services(ContainerInterface $container): void
     {
-        // Interact constructs fresh island roots separately from cached service dependencies.
-        $container->delegate(new ReflectionContainer(cacheResolutions: !Configure::read('debug')));
+        // CakePHP autowires dependencies; Interact uses getNew() for fresh island roots.
+        if ($container instanceof Container) {
+            $container->disableAutoWiring()->enableAutoWiring(cache: !Configure::read('debug'));
+        }
         $container->addShared(PackagesTable::class, static fn(): RepositoryInterface => FactoryLocator::get('Table')->get(PackagesTable::class));
         $container->addShared(Client::class);
         $container->addShared(GithubApiService::class)->addArguments([

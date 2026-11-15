@@ -34,7 +34,7 @@ class User extends Entity
      * @var array<string, bool>
      */
     #[Override]
-    protected array $_accessible = [
+    protected array $patchable = [
         '*' => true,
         'id' => false,
         'role' => false,

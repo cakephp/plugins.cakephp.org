@@ -5,7 +5,7 @@
  */
 use App\Model\Enum\UserRole;
 
-$minimal = $minimal ?? false;
+$minimal ??= false;
 $requirements = $this->getRequest()->getPath() === '/requirements';
 $publishers = $this->getRequest()->getPath() === '/publishers';
 $loggedIn = !$minimal && $this->Identity->isLoggedIn();

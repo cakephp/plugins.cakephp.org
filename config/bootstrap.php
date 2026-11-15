@@ -32,6 +32,7 @@ require __DIR__ . DIRECTORY_SEPARATOR . 'paths.php';
  */
 require CORE_PATH . 'config' . DS . 'bootstrap.php';
 
+use Cake\AttributeResolver\AttributeResolver;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Configure\Engine\PhpConfig;
@@ -70,6 +71,7 @@ require CAKE . 'functions.php';
 if (!env('APP_NAME') && file_exists(CONFIG . '.env')) {
     $dotenv = new Loader([CONFIG . '.env']);
     $dotenv->parse()
+        ->skipExisting()
         ->putenv()
         ->toEnv()
         ->toServer();
@@ -183,6 +185,7 @@ unset($fullBaseUrl);
  * This will also remove the loaded config data from memory.
  */
 Cache::setConfig(Configure::consume('Cache'));
+AttributeResolver::setConfig(Configure::consume('AttributeResolver'));
 ConnectionManager::setConfig(Configure::consume('Datasources'));
 TransportFactory::setConfig(Configure::consume('EmailTransport'));
 Mailer::setConfig(Configure::consume('Email'));

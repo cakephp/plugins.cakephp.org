@@ -16,6 +16,8 @@ use_dns_when_possible: true
 composer_version: "2"
 web_environment:
     - REDIS_URL=redis://redis:6379
+    - DATABASE_URL=mariadb://db:db@db/db
+    - DATABASE_TEST_URL=mariadb://db:db@db/db_test
 corepack_enable: false
 nodejs_version: "24"
 web_extra_exposed_ports:

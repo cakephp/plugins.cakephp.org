@@ -148,11 +148,11 @@ class SeoTest extends TestCase
      */
     private function document(): DOMXPath
     {
-        $this->assertNotNull($this->_response);
+        $this->assertNotNull($this->response);
         $document = new DOMDocument();
         $previous = libxml_use_internal_errors(true);
         try {
-            $document->loadHTML((string)$this->_response->getBody());
+            $document->loadHTML((string)$this->response->getBody());
         } finally {
             libxml_clear_errors();
             libxml_use_internal_errors($previous);

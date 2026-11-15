@@ -5,7 +5,7 @@ namespace App\Test\TestCase\Middleware;
 
 use App\Island\ThemeToggleIsland;
 use App\Middleware\ThemeCookieMiddleware;
-use Cake\Http\Cookie\SameSiteEnum;
+use Cake\Http\Cookie\Enum\SameSite;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
@@ -39,7 +39,7 @@ class ThemeCookieMiddlewareTest extends TestCase
             $cookie = $response->getCookieCollection()->get('theme');
             $this->assertSame($expected, $cookie->getValue());
             $this->assertTrue($cookie->isHttpOnly());
-            $this->assertSame(SameSiteEnum::LAX, $cookie->getSameSite());
+            $this->assertSame(SameSite::LAX, $cookie->getSameSite());
             $this->assertSame('/', $cookie->getPath());
             $this->assertGreaterThan(time() + 300 * 86400, $cookie->getExpiresTimestamp());
             $this->assertNull($request->getSession()->read('Theme.pending'));
