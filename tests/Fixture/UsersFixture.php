@@ -17,6 +17,10 @@ class UsersFixture extends TestFixture
             ['id' => 2, 'username' => 'member', 'email' => 'member@example.com', 'first_name' => 'Normal', 'last_name' => 'Member', 'role' => 'user', 'is_active' => true, 'created' => '2026-01-02 00:00:00'],
             ['id' => 3, 'username' => 'suspended', 'email' => 'suspended@example.com', 'role' => 'user', 'is_active' => false, 'created' => '2026-01-03 00:00:00'],
         ];
+        foreach ($this->records as &$record) {
+            $record['modified'] = $record['created'];
+        }
+        unset($record);
         parent::init();
     }
 }
