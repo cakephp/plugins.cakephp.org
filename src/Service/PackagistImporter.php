@@ -178,7 +178,7 @@ class PackagistImporter
         $latestStable = end($stableVersions);
         $keywordRelease = $latestStable ?: null;
         if ($keywordRelease === null && $development !== []) {
-            $installVersion = $development[array_key_first($development)]['version'];
+            $installVersion = array_first($development)['version'];
             foreach ($versions as $version) {
                 if ($version->getVersion() === $installVersion) {
                     $keywordRelease = $version;
