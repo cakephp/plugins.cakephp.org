@@ -31,7 +31,26 @@ class PackagesCacheTest extends TestCase
      * @var list<string>
      */
     #[Override]
-    protected array $fixtures = ['app.FeaturedPlugins', 'app.Packages', 'app.Categories', 'app.CategoriesPackages', 'app.PublisherVersions', 'app.PublisherTagged'];
+    protected array $fixtures = [
+        'app.FeaturedPlugins', 'app.Packages', 'app.Categories', 'app.CategoriesPackages',
+        'app.Keywords', 'app.KeywordsPackages', 'app.PublisherVersions', 'app.PublisherTagged',
+    ];
+
+    /**
+     * Keyword counts and hydrated details share normal import cache invalidation.
+     */
+    public function testKeywordQueriesAndDetailsAreInvalidatedTogether(): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        $this->assertSame(1, $packages->find('catalogue', filters: ['keyword' => 'sass'])->count());
+        $this->assertCount(3, $packages->get(1, finder: 'publicDetails')->keywords);
+        $packages->Keywords->junction()->deleteAll(['package_id' => 1]);
+        $this->assertSame(1, $packages->find('catalogue', filters: ['keyword' => 'sass'])->count());
+        $this->assertCount(3, $packages->get(1, finder: 'publicDetails')->keywords);
+        Cache::clear('catalogue');
+        $this->assertSame(0, $packages->find('catalogue', filters: ['keyword' => 'sass'])->count());
+        $this->assertSame([], $packages->get(1, finder: 'publicDetails')->keywords);
+    }
 
     /**
      * @var array<string, mixed>

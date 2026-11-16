@@ -5,6 +5,7 @@ namespace App\Model\Table;
 
 use App\Model\Filter\PackagesCollection;
 use App\Utility\CakephpVersion;
+use App\Utility\ComposerKeyword;
 use ArrayObject;
 use Cake\Cache\Cache;
 use Cake\Collection\Collection;
@@ -27,6 +28,7 @@ use Override;
  * @property \Cake\ORM\Association\HasMany<\Tags\Model\Table\TaggedTable> $Tagged
  * @property \Cake\ORM\Association\BelongsToMany<\Tags\Model\Table\TagsTable> $Tags
  * @property \Cake\ORM\Association\BelongsToMany<\App\Model\Table\CategoriesTable> $Categories
+ * @property \Cake\ORM\Association\BelongsToMany<\App\Model\Table\KeywordsTable> $Keywords
  * @mixin \Search\Model\Behavior\SearchBehavior
  * @mixin \Tags\Model\Behavior\TagBehavior
  * @extends \Cake\ORM\Table<array{Search: \Search\Model\Behavior\SearchBehavior, Tag: \Tags\Model\Behavior\TagBehavior}, \App\Model\Entity\Package>
@@ -66,6 +68,9 @@ class PackagesTable extends Table
         $this->belongsToMany('Categories')
             ->setStrategy('select')
             ->setSort(['Categories.name' => 'ASC']);
+        $this->belongsToMany('Keywords')
+            ->setStrategy('select')
+            ->setSort(['Keywords.name' => 'ASC']);
         $this->hasOne('CommunityPicks', [
             'className' => FeaturedPluginsTable::class,
             'foreignKey' => 'package',
@@ -191,8 +196,27 @@ class PackagesTable extends Table
         if (!empty($filters['exclude_categories'])) {
             $query->find('withoutCategories', slugs: $filters['exclude_categories']);
         }
+        if (isset($filters['keyword']) && $filters['keyword'] !== '') {
+            $membership = $this->keywordMembership()->where(['SearchKeyword.name' => ComposerKeyword::normalize($filters['keyword'])]);
+            $query->where(static fn(QueryExpression $exp): QueryExpression => $exp->exists($membership));
+        }
 
         return $this->cachePublicQuery($query, 'catalogue', count: true);
+    }
+
+    /**
+     * Correlate keyword matches without multiplying package rows or totals.
+     *
+     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface>
+     */
+    public function keywordMembership(): SelectQuery
+    {
+        $junction = $this->Keywords->junction();
+        $alias = $junction->getAlias();
+
+        return $junction->find()->select([$alias . '.package_id'])
+            ->innerJoin(['SearchKeyword' => 'keywords'], ['SearchKeyword.id = ' . $alias . '.keyword_id'])
+            ->where(static fn(QueryExpression $exp): QueryExpression => $exp->equalFields($alias . '.package_id', 'Packages.id'));
     }
 
     /**
@@ -582,7 +606,7 @@ class PackagesTable extends Table
      */
     public function findPublicDetails(SelectQuery $query): SelectQuery
     {
-        return $this->cachePublicQuery($query->contain(['Tags', 'Categories']), 'details');
+        return $this->cachePublicQuery($query->contain(['Tags', 'Categories', 'Keywords']), 'details_v2');
     }
 
     /**

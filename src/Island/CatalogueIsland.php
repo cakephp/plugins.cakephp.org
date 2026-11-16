@@ -6,6 +6,7 @@ namespace App\Island;
 use App\Model\Table\CategoriesTable;
 use App\Model\Table\PackagesTable;
 use App\Utility\CakephpVersion;
+use App\Utility\ComposerKeyword;
 use App\Utility\FilterSelection;
 use Cake\Http\Exception\BadRequestException;
 use Interact\Attribute\Action;
@@ -30,6 +31,9 @@ class CatalogueIsland extends Island
 
     #[State(writable: true, url: true, history: true)]
     public string $category = '';
+
+    #[State(writable: true, url: true, history: true)]
+    public string $keyword = '';
 
     #[State(writable: true, url: 'awesome', history: true)]
     public bool $awesomeOnly = false;
@@ -102,6 +106,7 @@ class CatalogueIsland extends Island
             'excludedPhpSlugs',
             'excludedCategories',
             'category',
+            'keyword',
             'awesomeOnly',
             'featuredOnly',
         );
@@ -171,6 +176,16 @@ class CatalogueIsland extends Island
     }
 
     /**
+     * Select one exact keyword while preserving the current catalogue scope.
+     */
+    #[Action]
+    public function selectKeyword(string $name): void
+    {
+        $this->keyword = $name;
+        $this->paging->page = 1;
+    }
+
+    /**
      * Keep one included category while allowing multiple exclusions.
      */
     #[Action]
@@ -215,6 +230,7 @@ class CatalogueIsland extends Island
         $this->excludedPhpSlugs = [];
         $this->excludedCategories = [];
         $this->category = '';
+        $this->keyword = '';
         $this->awesomeOnly = false;
         $this->featuredOnly = false;
         $this->paging->page = 1;
@@ -230,6 +246,10 @@ class CatalogueIsland extends Island
         if (mb_strlen($this->search) > 100) {
             throw new BadRequestException('Search query is too long.');
         }
+        if (mb_strlen($this->keyword) > ComposerKeyword::MAX_LENGTH) {
+            throw new BadRequestException('Keyword is too long.');
+        }
+        $this->keyword = ComposerKeyword::normalize($this->keyword);
         $options = $this->packages->filterOptions();
         $this->excludedCakephpSlugs = $this->acceptedSlugs($this->excludedCakephpSlugs, $options['cakephp']);
         $this->excludedPhpSlugs = $this->acceptedSlugs($this->excludedPhpSlugs, $options['php']);
@@ -249,6 +269,7 @@ class CatalogueIsland extends Island
             'exclude_php_slugs' => $this->excludedPhpSlugs,
             'exclude_categories' => $this->excludedCategories,
             'category' => $this->category,
+            'keyword' => $this->keyword,
             'awesome' => $this->awesomeOnly,
             'featured' => $this->featuredOnly,
             'sort' => $this->paging->sort,
@@ -256,7 +277,7 @@ class CatalogueIsland extends Island
         ];
         $hasFilters = trim($this->search) !== '' || $this->cakephpSlugs !== [] || $this->phpSlugs !== []
             || $this->excludedCakephpSlugs !== [] || $this->excludedPhpSlugs !== [] || $this->excludedCategories !== []
-            || $this->category !== '' || $this->awesomeOnly || $this->featuredOnly;
+            || $this->category !== '' || $this->keyword !== '' || $this->awesomeOnly || $this->featuredOnly;
         $packages = $this->paginate($this->packages->find('catalogue', filters: $query, namespace: $this->namespace));
 
         return [

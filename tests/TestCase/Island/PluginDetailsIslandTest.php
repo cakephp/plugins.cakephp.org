@@ -19,7 +19,18 @@ class PluginDetailsIslandTest extends TestCase
      * @var list<string>
      */
     #[Override]
-    protected array $fixtures = ['app.Packages', 'plugin.Tags.Tags', 'plugin.Tags.Tagged'];
+    protected array $fixtures = ['app.Packages', 'app.Keywords', 'app.KeywordsPackages', 'plugin.Tags.Tags', 'plugin.Tags.Tagged'];
+
+    /**
+     * Both useful links and the empty state render through the shared details element.
+     */
+    public function testKeywordsAreShownOnlyWhenUseful(): void
+    {
+        $this->testIsland('PluginDetails')->call('show', 1)
+            ->assertSee('Keywords')->assertSee('keyword=sass')
+            ->assertSee('Provided by the plugin author.')->assertDontSee('keyword=cakephp')
+            ->call('show', 3)->assertDontSee('Keywords');
+    }
 
     /**
      * Opening another plugin replaces the previous plugin's content.

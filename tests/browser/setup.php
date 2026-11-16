@@ -5,6 +5,8 @@ use App\Application;
 use App\Test\Fixture\CategoriesFixture;
 use App\Test\Fixture\CategoriesPackagesFixture;
 use App\Test\Fixture\FeaturedPluginsFixture;
+use App\Test\Fixture\KeywordsFixture;
+use App\Test\Fixture\KeywordsPackagesFixture;
 use App\Test\Fixture\PackagesFixture;
 use App\Test\Fixture\UsersFixture;
 use Cake\Cache\Cache;
@@ -53,6 +55,12 @@ foreach (new CategoriesFixture()->records as $record) {
 }
 foreach (new CategoriesPackagesFixture()->records as $record) {
     $connection->insert('categories_packages', $record);
+}
+foreach (new KeywordsFixture()->records as $record) {
+    $connection->insert('keywords', $record);
+}
+foreach (new KeywordsPackagesFixture()->records as $record) {
+    $connection->insert('keywords_packages', $record);
 }
 foreach ([1 => ['cakephp-5-4', 'CakePHP: 5.4'], 2 => ['php-8-5', 'PHP: 8.5'], 3 => ['cakephp-4-4', 'CakePHP: 4.4']] as $id => [$slug, $label]) {
     $connection->insert('tags_tags', ['id' => $id, 'slug' => $slug, 'label' => $label, 'created' => '2026-01-01', 'modified' => '2026-01-01']);

@@ -521,6 +521,15 @@ body::before {
 .plugin-section-hint {
     @apply mt-2 text-[0.8125rem] text-muted;
 }
+.plugin-keyword-links {
+    @apply flex flex-wrap gap-2;
+}
+.keyword-link {
+    @apply h-auto min-h-8 max-w-full px-2.5 py-1 text-[0.8125rem] whitespace-normal wrap-anywhere hover:border-primary hover:text-primary;
+}
+.selected-keyword {
+    @apply h-auto min-h-8 max-w-full gap-1 px-2.5 py-1 whitespace-normal wrap-anywhere;
+}
 .plugin-version-section {
     & h3 { @apply mb-1; }
 }

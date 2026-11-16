@@ -83,6 +83,22 @@ in `Packages.awesomeAliases` in `config/app.php`:
 Both importers and the Markdown parser are registered in `Application::services()`.
 The console command receives its importers through CakePHP's container.
 
+## Composer keywords
+
+The normal Packagist sync imports keywords from each plugin's latest stable
+release, or its selected installation release for development-only plugins.
+Keywords extend name and description search. Plugin details show useful terms
+as links to an exact keyword filter, which combines with the directory's other
+filters and works on namespace pages too.
+
+Keywords are author-provided metadata, stored separately from compatibility tags
+and community-curated categories. Generic terms (`cake`, `cakephp`,
+`cakephp-plugin`, `php`, `plugin`, and `plugins`) remain searchable but are hidden
+from plugin details. An empty keyword set needs no special handling by authors.
+
+Apply migrations and run `bin/cake sync_packages --source packagist` to populate
+keywords on an existing installation.
+
 ## Administration
 
 Sign in with GitHub, then grant your account admin access:

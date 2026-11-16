@@ -13,7 +13,7 @@ class PackagesCollection extends FilterCollection
      */
     public function initialize(): void
     {
-        $this->add('search', 'Search.Like', [
+        $this->add('search', KeywordSearch::class, [
             'before' => true,
             'after' => true,
             'fieldMode' => 'OR',

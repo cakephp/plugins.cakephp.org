@@ -29,6 +29,7 @@ class PackagesControllerTest extends TestCase
     protected array $fixtures = [
         'app.FeaturedPlugins', 'app.Packages',
         'app.Categories', 'app.CategoriesPackages',
+        'app.Keywords', 'app.KeywordsPackages',
         'plugin.Tags.Tags',
         'plugin.Tags.Tagged',
     ];
@@ -103,6 +104,8 @@ class PackagesControllerTest extends TestCase
         $this->assertResponseContains('category=code-analysis');
         $this->assertResponseContains('Awesome CakePHP');
         $this->assertResponseContains('href="/plugins/markstory"');
+        $this->assertResponseContains('keyword=sass');
+        $this->assertResponseNotContains('keyword=cakephp');
         $this->assertResponseContains('rel="canonical" href="' . Router::url([
             '_name' => 'plugin:view',
             'namespace' => 'markstory',

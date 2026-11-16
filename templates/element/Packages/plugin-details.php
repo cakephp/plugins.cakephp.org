@@ -93,6 +93,19 @@ $groups = [
             </p>
         </section>
     <?php endif; ?>
+    <?php if ($package->visible_keywords !== []) : ?>
+        <section class="plugin-details-section" aria-label="<?= __('Keywords') ?>">
+            <h3><?= __('Keywords') ?></h3>
+            <div class="plugin-keyword-links">
+                <?php foreach ($package->visible_keywords as $keyword) : ?>
+                    <a class="keyword-link badge badge-outline"
+                       href="<?= $this->Url->build(['_name' => 'plugin:index', '?' => ['keyword' => $keyword->name]]) ?>"
+                       data-filter-package-keyword data-keyword-name="<?= h($keyword->name) ?>"><?= h($keyword->name) ?></a>
+                <?php endforeach; ?>
+            </div>
+            <p class="plugin-section-hint"><?= __('Provided by the plugin author.') ?></p>
+        </section>
+    <?php endif; ?>
     <?php if ($package->latest_stable_version !== null || $developmentMajor !== null) : ?>
         <section class="plugin-details-section" aria-label="<?= __('Installation') ?>">
             <h3><?= __('Install with Composer') ?></h3>

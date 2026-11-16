@@ -5,6 +5,7 @@ namespace App\Service;
 
 use App\Model\Table\PackagesTable;
 use App\Utility\CakephpVersion;
+use App\Utility\ComposerKeyword;
 use Cake\Cache\Cache;
 use Cake\I18n\Date;
 use Cake\Log\Log;
@@ -73,7 +74,10 @@ class PackagistImporter
                 $result['skipped']++;
             } else {
                 $entity = $this->packages->find()->where(['package' => $name])->first() ?? $this->packages->newEmptyEntity();
+                $keywords = $this->packages->Keywords->forNames($data['keyword_names']);
+                unset($data['keyword_names']);
                 $entity = $this->packages->patchEntity($entity, $data);
+                $entity->set('keywords', $keywords);
                 if ($this->packages->save($entity)) {
                     $result['saved']++;
                 } else {
@@ -106,7 +110,7 @@ class PackagistImporter
     }
 
     /**
-     * @return array{package: string, description: string, repo_url: string, downloads: int, monthly_downloads: int, stars: int, tag_list: list<string>, latest_stable_version: ?string, latest_stable_release_date: ?\Cake\I18n\Date, is_abandoned: bool, development_compatibility: array<int, DevelopmentRelease>}
+     * @return array{package: string, description: string, repo_url: string, downloads: int, monthly_downloads: int, stars: int, tag_list: list<string>, keyword_names: list<string>, latest_stable_version: ?string, latest_stable_release_date: ?\Cake\I18n\Date, is_abandoned: bool, development_compatibility: array<int, DevelopmentRelease>}
      */
     private function getDataForPackage(string $packageName): array
     {
@@ -126,6 +130,7 @@ class PackagistImporter
                 'monthly_downloads' => $downloads->getMonthly(),
                 'stars' => $metaDetails->getGithubStars(),
                 'tag_list' => [],
+                'keyword_names' => [],
                 'latest_stable_version' => null,
                 'latest_stable_release_date' => null,
                 'is_abandoned' => true,
@@ -171,6 +176,25 @@ class PackagistImporter
         });
         /** @var \Packagist\Api\Result\Package\Version|false $latestStable */
         $latestStable = end($stableVersions);
+        $keywordRelease = $latestStable ?: null;
+        if ($keywordRelease === null && $development !== []) {
+            $installVersion = $development[array_key_first($development)]['version'];
+            foreach ($versions as $version) {
+                if ($version->getVersion() === $installVersion) {
+                    $keywordRelease = $version;
+                    break;
+                }
+            }
+        }
+        $keywords = [];
+        foreach ($keywordRelease?->getKeywords() ?? [] as $keyword) {
+            if (is_string($keyword)) {
+                $keyword = ComposerKeyword::normalize($keyword);
+                if (ComposerKeyword::isValid($keyword)) {
+                    $keywords[] = $keyword;
+                }
+            }
+        }
 
         return [
             'package' => $packageName,
@@ -180,6 +204,7 @@ class PackagistImporter
             'monthly_downloads' => $downloads->getMonthly(),
             'stars' => $metaDetails->getGithubStars(),
             'tag_list' => $meta,
+            'keyword_names' => array_values(array_unique($keywords)),
             'latest_stable_version' => $latestStable ? $latestStable->getVersion() : null,
             'latest_stable_release_date' => $this->extractReleaseDate($latestStable ?: null),
             'is_abandoned' => $metaDetails->isAbandoned(),

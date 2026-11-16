@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Entity;
 
+use App\Utility\ComposerKeyword;
 use Cake\ORM\Entity;
 use Override;
 use Tags\Model\Entity\Tag;
@@ -24,6 +25,8 @@ use Tags\Model\Entity\Tag;
  * @property \Cake\I18n\Date|null $latest_stable_release_date
  * @property \App\Model\Entity\FeaturedPlugin|null $community_pick
  * @property array<\App\Model\Entity\Category> $categories
+ * @property array<\App\Model\Entity\Keyword> $keywords
+ * @property-read array<\App\Model\Entity\Keyword> $visible_keywords
  * @property-read array<\Tags\Model\Entity\Tag> $cake_php_tags
  * @property-read array<int, array<\Tags\Model\Entity\Tag>> $cake_php_tag_groups
  * @property-read array<\Tags\Model\Entity\Tag> $php_tags
@@ -34,6 +37,16 @@ use Tags\Model\Entity\Tag;
  */
 class Package extends Entity
 {
+    /**
+     * Keep broad ecosystem terms available to search without crowding details.
+     *
+     * @return array<\App\Model\Entity\Keyword>
+     */
+    protected function _getVisibleKeywords(): array
+    {
+        return array_values(array_filter($this->keywords ?? [], static fn(Keyword $keyword): bool => ComposerKeyword::isVisible($keyword->name)));
+    }
+
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
      *
