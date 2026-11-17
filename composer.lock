@@ -245,12 +245,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/cakephp.git",
-                "reference": "0b8a615b422828db14d36533f5cfb4bcd9556f9f"
+                "reference": "66515f0653ff26a6d0e74c750b412aeb9813bf51"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/0b8a615b422828db14d36533f5cfb4bcd9556f9f",
-                "reference": "0b8a615b422828db14d36533f5cfb4bcd9556f9f",
+                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/66515f0653ff26a6d0e74c750b412aeb9813bf51",
+                "reference": "66515f0653ff26a6d0e74c750b412aeb9813bf51",
                 "shasum": ""
             },
             "require": {
@@ -301,7 +301,7 @@
                 "cakephp/validation": "self.version"
             },
             "require-dev": {
-                "boundwize/structarmed": "^0.19",
+                "boundwize/structarmed": "^0.19 || ^0.20",
                 "cakephp/cakephp-codesniffer": "6.x-dev",
                 "cakephp/mago-rules": "dev-main",
                 "http-interop/http-factory-tests": "^2.0",
@@ -364,8 +364,8 @@
                 "issues": "https://github.com/cakephp/cakephp/issues",
                 "source": "https://github.com/cakephp/cakephp"
             },
-            "time": "2026-11-14T13:01:57+00:00",
-            "published-time": "2026-11-14T13:02:03+00:00"
+            "time": "2026-11-17T12:06:28+00:00",
+            "published-time": "2026-11-17T12:06:35+00:00"
         },
         {
             "name": "cakephp/chronos",
@@ -438,12 +438,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/migrations.git",
-                "reference": "e988afbbf61366055fbb37803031323a557e1546"
+                "reference": "716405e68124d42ba749e0fe201cafc500411db7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/migrations/zipball/e988afbbf61366055fbb37803031323a557e1546",
-                "reference": "e988afbbf61366055fbb37803031323a557e1546",
+                "url": "https://api.github.com/repos/cakephp/migrations/zipball/716405e68124d42ba749e0fe201cafc500411db7",
+                "reference": "716405e68124d42ba749e0fe201cafc500411db7",
                 "shasum": ""
             },
             "require": {
@@ -491,8 +491,8 @@
                 "issues": "https://github.com/cakephp/migrations/issues",
                 "source": "https://github.com/cakephp/migrations"
             },
-            "time": "2026-11-09T09:53:24+00:00",
-            "published-time": "2026-11-09T09:53:32+00:00"
+            "time": "2026-11-16T11:52:56+00:00",
+            "published-time": "2026-11-16T11:53:06+00:00"
         },
         {
             "name": "cakephp/plugin-installer",
@@ -4649,11 +4649,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.3.5",
+            "version": "2.3.6",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/645a1bd6bead15fc1b8474137467961d0fa30a79",
-                "reference": "645a1bd6bead15fc1b8474137467961d0fa30a79",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/00cedebb76cc82c1592414fa4f616cefdccda16f",
+                "reference": "00cedebb76cc82c1592414fa4f616cefdccda16f",
                 "shasum": ""
             },
             "require": {
@@ -4709,8 +4709,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-11-03T12:14:22+00:00",
-            "published-time": "2026-11-03T12:14:36+00:00"
+            "time": "2026-11-15T19:58:26+00:00",
+            "published-time": "2026-11-15T19:58:39+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",

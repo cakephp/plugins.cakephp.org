@@ -24,6 +24,7 @@ use Packagist\Api\Result\Package\Version;
 use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionMethod;
 use UnexpectedValueException;
+use function Cake\Database\Expression\in;
 
 /**
  * App\Service\PackagistImporter Test Case
@@ -36,7 +37,81 @@ class PackagistImporterTest extends TestCase
      * @var list<string>
      */
     #[Override]
-    protected array $fixtures = ['app.Packages', 'app.Categories', 'app.CategoriesPackages', 'plugin.Tags.Tags', 'plugin.Tags.Tagged'];
+    protected array $fixtures = ['app.Packages', 'app.Categories', 'app.CategoriesPackages', 'app.Keywords', 'app.KeywordsPackages', 'plugin.Tags.Tags', 'plugin.Tags.Tagged'];
+
+    /**
+     * Stable keywords replace prior memberships without retaining historical or branch terms.
+     */
+    public function testKeywordSyncUsesLatestStableAndRemovesOldMemberships(): void
+    {
+        $stable = new Version();
+        $stable->fromArray([
+            'version' => '2.0.0', 'require' => ['cakephp/cakephp' => '^6.0'],
+            'keywords' => [' Sass ', 'SASS', "Static\t Analysis", 'cakephp', '', 'bad/term', 42, str_repeat('x', 192)],
+        ]);
+        $old = new Version();
+        $old->fromArray(['version' => '1.0.0', 'require' => ['cakephp/cakephp' => '^6.0'], 'keywords' => ['obsolete']]);
+        $branch = new Version();
+        $branch->fromArray(['version' => 'dev-main', 'require' => ['cakephp/cakephp' => '^6.0'], 'keywords' => ['unreleased']]);
+        $packages = $this->fetchTable(PackagesTable::class);
+        $importer = new PackagistImporter($packages, $this->developmentClient([$old, $branch, $stable], 10));
+        $this->assertSame(1, $importer->sync()['saved']);
+        $package = $packages->find()->contain(['Keywords'])->firstOrFail();
+        $this->assertSame(['cakephp', 'sass', 'static analysis'], array_column($package->keywords, 'name'));
+        $this->assertSame(0, $packages->Keywords->find()->where(['name' => in(['obsolete', 'unreleased'])])->count());
+        $vocabularyCount = $packages->Keywords->find()->count();
+        $this->assertSame(1, $importer->sync()['saved']);
+        $this->assertSame($vocabularyCount, $packages->Keywords->find()->count());
+        $this->assertSame(3, $packages->Keywords->junction()->find()->count());
+
+        $stable->fromArray(['keywords' => []]);
+        $this->assertSame(1, $importer->sync()['saved']);
+        $this->assertSame([], $packages->get($package->id, finder: 'publicDetails')->keywords);
+    }
+
+    /**
+     * A development-only plugin uses the same source release as its install command.
+     */
+    public function testKeywordSyncUsesSelectedDevelopmentRelease(): void
+    {
+        $next = new Version();
+        $next->fromArray(['version' => 'dev-next', 'time' => '2026-11-15', 'require' => ['cakephp/cakephp' => '6.x-dev'], 'keywords' => ['islands']]);
+        $old = new Version();
+        $old->fromArray(['version' => 'dev-old', 'time' => '2026-01-01', 'require' => ['cakephp/cakephp' => '6.x-dev'], 'keywords' => ['obsolete']]);
+        $packages = $this->fetchTable(PackagesTable::class);
+        new PackagistImporter($packages, $this->developmentClient([$old, $next]))->sync();
+        $this->assertSame(['islands'], array_column($packages->find()->contain(['Keywords'])->firstOrFail()->keywords, 'name'));
+    }
+
+    /**
+     * A failed associated save rolls back metadata and keyword changes together.
+     */
+    public function testFailedKeywordSavePreservesPackageAndMemberships(): void
+    {
+        $packages = $this->fetchTable(PackagesTable::class);
+        $version = new Version();
+        $version->fromArray(['version' => '2.0.0', 'require' => ['cakephp/cakephp' => '^6.0'], 'keywords' => ['islands']]);
+        $importer = new PackagistImporter($packages, $this->developmentClient([$version], 10));
+        $importer->sync();
+        $version->fromArray(['version' => '3.0.0', 'keywords' => ['new-term', 'blocked']]);
+        $keywords = $packages->Keywords->getTarget();
+        $listener = static function ($event, $entity): void {
+            if ($entity->get('name') === 'blocked') {
+                $event->stopPropagation();
+            }
+        };
+        $keywords->getEventManager()->on('Model.beforeSave', $listener);
+        try {
+            $result = $importer->sync();
+            $this->assertSame(1, $result['failed']);
+            $package = $packages->find()->contain(['Keywords'])->firstOrFail();
+            $this->assertSame('2.0.0', $package->latest_stable_version);
+            $this->assertSame(['islands'], array_column($package->keywords, 'name'));
+            $this->assertSame(0, $keywords->find()->where(['name' => in(['new-term', 'blocked'])])->count());
+        } finally {
+            $keywords->getEventManager()->off('Model.beforeSave', $listener);
+        }
+    }
 
     /**
      * Package metadata and version tags refresh without losing curation.

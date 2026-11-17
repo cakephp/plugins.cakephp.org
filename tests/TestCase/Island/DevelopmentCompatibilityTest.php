@@ -34,8 +34,12 @@ class DevelopmentCompatibilityTest extends TestCase
         ]);
         $packages->saveOrFail($package);
         Cache::clear('catalogue');
-        // MySQL normalizes JSON object key order; MariaDB preserves insertion order.
-        $this->assertEquals($development, $packages->get($package->id)->development_compatibility);
+        $storedDevelopment = $packages->get($package->id)->development_compatibility;
+        $this->assertNotNull($storedDevelopment);
+        // MySQL may reorder JSON object keys; values and types must survive unchanged.
+        ksort($development[6]);
+        ksort($storedDevelopment[6]);
+        $this->assertSame($development, $storedDevelopment);
         $this->assertSame(26, $packages->find('catalogue', filters: [])->count());
         $this->assertSame(['major' => '5', 'plugins' => 25], $packages->ecosystemStats()['current_support']);
         $this->assertSame(26, $packages->ecosystemStats()['plugins']);

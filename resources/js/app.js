@@ -75,10 +75,11 @@ const register = (Alpine) => {
             if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
             const sort = event.target.closest('.sort-option')
             if (sort) sort.closest('details')?.removeAttribute('open')
-            const control = event.target.closest('[data-version-group][data-version-slug], [data-clear-catalogue], [data-category-slug], [data-toggle-awesome], [data-toggle-featured]')
+            const control = event.target.closest('[data-version-group][data-version-slug], [data-clear-catalogue], [data-category-slug], [data-keyword-name], [data-toggle-awesome], [data-toggle-featured]')
             if (!control || !this.$el.contains(control)) return
             event.preventDefault()
             if (control.hasAttribute('data-clear-catalogue')) return this.$server.call('clearFilters')
+            if (control.hasAttribute('data-keyword-name')) return this.$server.call('selectKeyword', control.dataset.keywordName)
             if (control.hasAttribute('data-category-slug')) {
                 this.closeCategories(control.classList.contains('selected-category'))
                 return this.$server.call(control.hasAttribute('data-category-cycle') ? 'toggleCategory' : 'selectCategory', control.dataset.categorySlug)
@@ -98,6 +99,9 @@ const register = (Alpine) => {
         selectCategory(event) {
             this.closeCategories()
             return this.$server.call('selectCategory', event.detail.slug)
+        },
+        selectKeyword(event) {
+            return this.$server.call('selectKeyword', event.detail.name)
         },
         closeMenu(event) {
             const menu = event.target.closest('details[open]')
@@ -154,10 +158,12 @@ const register = (Alpine) => {
             if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
             const version = event.target.closest('[data-filter-package-version]')
             const category = event.target.closest('[data-filter-package-category]')
-            if (!version && !category) return
+            const keyword = event.target.closest('[data-filter-package-keyword]')
+            if (!version && !category && !keyword) return
             event.preventDefault()
             this.$refs.dialog.close()
-            if (category) this.$dispatch('catalogue-category', { slug: category.dataset.categorySlug })
+            if (keyword) this.$dispatch('catalogue-keyword', { name: keyword.dataset.keywordName })
+            else if (category) this.$dispatch('catalogue-category', { slug: category.dataset.categorySlug })
             else this.$dispatch('catalogue-version', { group: version.dataset.versionGroup, slug: version.dataset.versionSlug })
         },
     }))

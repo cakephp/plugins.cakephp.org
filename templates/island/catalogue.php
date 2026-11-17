@@ -14,6 +14,7 @@
  * @var list<string> $excludedCategories
  * @var array<string, array{name: string, count: int}> $categoryOptions
  * @var string $category
+ * @var string $keyword
  * @var bool $featuredOnly
  * @var bool $awesomeOnly
  * @var string|null $namespace
@@ -46,9 +47,12 @@ $clearCategoryUrl = $this->Url->build($catalogueRoute + [
 ], [
     'escape' => false,
 ]);
+$clearKeywordUrl = $this->Url->build($catalogueRoute + [
+    '?' => array_replace($catalogueQuery, ['keyword' => '']),
+], ['escape' => false]);
 ?>
 <div class="directory pt-4 md:pt-5 site-width" x-data="catalogue" @click="activate($event)" @keydown.escape="closeMenu($event)"
-     @catalogue-version.window="selectVersion($event)" @catalogue-category.window="selectCategory($event)">
+     @catalogue-version.window="selectVersion($event)" @catalogue-category.window="selectCategory($event)" @catalogue-keyword.window="selectKeyword($event)">
     <div class="catalogue-discovery">
         <div class="mb-4 flex items-center gap-3 md:gap-4">
             <?= $this->Form->create(null, [
@@ -68,7 +72,7 @@ $clearCategoryUrl = $this->Url->build($catalogueRoute + [
                     </svg>
                     <input type="search" name="search" id="package-search" value="<?= h($search) ?>"
                            x-interact:model.live="search" maxlength="100" autocomplete="off"
-                           placeholder="<?= __('Search by name or description') ?>" aria-controls="catalogue-results"
+                           placeholder="<?= __('Search by name, description or keyword') ?>" aria-controls="catalogue-results"
                            :aria-busy="!$server.error && ($server.dirty || $server.pending()) ? 'true' : 'false'">
                     <span class="flex shrink-0 items-center gap-2 text-sm leading-[1.6] text-muted" role="status" aria-label="<?= __('Updating results') ?>"
                           x-show="!$server.error && ($server.dirty || $server.pending())" x-cloak>
@@ -85,6 +89,9 @@ $clearCategoryUrl = $this->Url->build($catalogueRoute + [
                 <?= $this->Form->hidden('direction', ['value' => $catalogueQuery['direction']]) ?>
                 <?php if ($category !== '') : ?>
                     <?= $this->Form->hidden('category', ['value' => $category]) ?>
+                <?php endif; ?>
+                <?php if ($keyword !== '') : ?>
+                    <?= $this->Form->hidden('keyword', ['value' => $keyword]) ?>
                 <?php endif; ?>
                 <?php if ($featuredOnly) : ?>
                     <?= $this->Form->hidden('featured', ['value' => '1']) ?>
@@ -185,6 +192,13 @@ $clearCategoryUrl = $this->Url->build($catalogueRoute + [
                     <a class="selected-category badge badge-outline" href="<?= h($clearCategoryUrl) ?>" data-category-slug=""
                        aria-label="<?= h(__('Remove category filter: {0}', $categoryOptions[$category]['name'])) ?>">
                         <?= h($categoryOptions[$category]['name']) ?>
+                        <span aria-hidden="true">×</span>
+                    </a>
+                <?php endif; ?>
+                <?php if ($keyword !== '') : ?>
+                    <a class="selected-keyword badge badge-outline" href="<?= h($clearKeywordUrl) ?>" data-keyword-name=""
+                       aria-label="<?= h(__('Remove keyword filter: {0}', $keyword)) ?>">
+                        <?= h(__('Keyword: {0}', $keyword)) ?>
                         <span aria-hidden="true">×</span>
                     </a>
                 <?php endif; ?>

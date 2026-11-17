@@ -26,7 +26,49 @@ class CatalogueIslandTest extends TestCase
      * @var list<string>
      */
     #[Override]
-    protected array $fixtures = ['app.FeaturedPlugins', 'app.Packages', 'app.Categories', 'app.CategoriesPackages', 'plugin.Tags.Tags', 'plugin.Tags.Tagged'];
+    protected array $fixtures = [
+        'app.FeaturedPlugins', 'app.Packages', 'app.Categories', 'app.CategoriesPackages',
+        'app.Keywords', 'app.KeywordsPackages', 'plugin.Tags.Tags', 'plugin.Tags.Tagged',
+    ];
+
+    /**
+     * Keyword selection retains other filters and sorting, resets paging and clears independently.
+     */
+    public function testKeywordSelectionAndClearing(): void
+    {
+        $this->testIsland('Catalogue')->set('paging.page', 2)
+            ->call('selectKeyword', ' SASS ')->assertSet('keyword', 'sass')->assertSet('paging.page', 1)
+            ->assertSee('markstory/asset_compress')->assertDontSee('cakedc/users')
+            ->call('selectCategory', 'asset-management')->call('toggleAwesome')
+            ->set('paging.sort', 'stars')->call('selectKeyword', '')
+            ->assertSet('category', 'asset-management')->assertSet('awesomeOnly', true)->assertSet('paging.sort', 'stars')
+            ->call('selectKeyword', 'sass')->call('clearFilters')
+            ->assertSet('keyword', '')->assertSet('category', '')->assertSet('awesomeOnly', false)->assertSet('paging.sort', 'stars');
+    }
+
+    /**
+     * Exact keyword URLs preserve unknown terms rather than silently broadening results.
+     */
+    public function testKeywordUrlsAndNamespaceScope(): void
+    {
+        $request = new ServerRequest(['url' => '/?keyword=OAuth2']);
+        $this->testIsland('Catalogue', request: $request)->assertSet('keyword', 'oauth2')
+            ->assertSee('cakedc/users')->assertSee('Keyword: oauth2');
+        $this->testIsland('Catalogue', ['namespace' => 'vendor'])->call('selectKeyword', 'sass')
+            ->assertSet('namespace', 'vendor')->assertSet('keyword', 'sass')->assertSee('No plugins found');
+        $this->testIsland('Catalogue')->call('selectKeyword', 'unknown-term')
+            ->assertSee('Keyword: unknown-term')->assertSee('No plugins found');
+    }
+
+    /**
+     * Bound keyword input like the existing free-text search.
+     */
+    public function testOversizedKeywordIsRejected(): void
+    {
+        $island = $this->testIsland('Catalogue');
+        $this->expectException(BadRequestException::class);
+        $island->call('selectKeyword', str_repeat('a', 192));
+    }
 
     /**
      * Category and membership changes are live, reloadable and reset pagination.
