@@ -14,17 +14,18 @@ permissions:
 
 jobs:
   testsuite:
+    name: PHPUnit (${{ matrix.database }})
     runs-on: ubuntu-24.04
     services:
-      mysql:
-        image: mysql:9.6
+      database:
+        image: ${{ matrix.database-image }}
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: plugins_cakephp_test
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-cmd="${{ matrix.database-health-command }}"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=10
@@ -34,6 +35,14 @@ jobs:
         include:
           - php-version: '8.5'
             dependencies: 'highest'
+            database: mysql
+            database-image: mysql:9.6
+            database-health-command: mysqladmin ping -h 127.0.0.1 -proot
+          - php-version: '8.5'
+            dependencies: 'highest'
+            database: mariadb
+            database-image: mariadb:10.11
+            database-health-command: mariadb-admin ping -h 127.0.0.1 -proot
 
     steps:
     - uses: actions/checkout@v7
@@ -58,7 +67,7 @@ jobs:
     - name: Run PHPUnit
       run: vendor/bin/phpunit
       env:
-        DATABASE_TEST_URL: mysql://root:root@127.0.0.1:3306/plugins_cakephp_test?encoding=utf8mb4
+        DATABASE_TEST_URL: ${{ matrix.database }}://root:root@127.0.0.1:3306/plugins_cakephp_test?encoding=utf8mb4
         AUTH_ID_GITHUB: someid
         AUTH_SECRET_GITHUB: somesecret
 

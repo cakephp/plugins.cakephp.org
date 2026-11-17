@@ -19,5 +19,5 @@ class Category extends Entity
      * @var array<string, bool>
      */
     #[Override]
-    protected array $_accessible = ['name' => true, 'slug' => true];
+    protected array $patchable = ['name' => true, 'slug' => true];
 }

@@ -13,6 +13,7 @@ use Cake\Cache\Cache;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlite;
 use Cake\Datasource\ConnectionManager;
+use Cake\TestSuite\ConnectionHelper;
 use Migrations\TestSuite\Migrator;
 
 require dirname(__DIR__, 2) . '/vendor/autoload.php';
@@ -28,6 +29,8 @@ if (
 }
 // Fixture schema reflection must use the same isolated database as the browser server.
 ConnectionManager::alias('default', 'test');
+// Rebuild the schema so local runs exercise the same fresh migrations as CI.
+ConnectionHelper::dropTables('default');
 // Only catalogue and tag tables are needed; OAuth itself is not exercised here.
 new Migrator()->runMany([
     [

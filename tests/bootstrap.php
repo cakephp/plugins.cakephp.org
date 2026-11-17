@@ -48,6 +48,8 @@ Cache::setConfig('catalogue', ['className' => NullEngine::class]);
 // Migrations rebuild fixture schemas; never reuse metadata from the development database.
 Cache::drop('_cake_model_');
 Cache::setConfig('_cake_model_', ['className' => NullEngine::class]);
+Cache::drop('_cake_attributes_');
+Cache::setConfig('_cake_attributes_', ['className' => NullEngine::class]);
 
 if (empty($_SERVER['HTTP_HOST']) && !Configure::read('App.fullBaseUrl')) {
     Configure::write('App.fullBaseUrl', 'http://localhost');

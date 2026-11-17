@@ -6,7 +6,6 @@ namespace App\Command;
 use App\Service\AwesomeListImporter;
 use App\Service\PackagistImporter;
 use Cake\Command\Command;
-use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Log\Log;
@@ -60,16 +59,15 @@ class SyncPackagesCommand extends Command
     }
 
     /**
-     * @param \Cake\Console\Arguments $args Command arguments.
-     * @param \Cake\Console\ConsoleIo $io Console output.
+     * Refresh the selected catalogue sources using CakePHP's command context.
      */
-    public function execute(Arguments $args, ConsoleIo $io): int
+    public function execute(): int
     {
-        if ($args->getOption('source') !== 'awesome') {
-            $this->importPackages($io);
+        if ($this->args->getOption('source') !== 'awesome') {
+            $this->importPackages();
         }
-        if ($args->getOption('source') !== 'packagist' && !$this->importCuration($io)) {
-            return $args->getOption('source') === 'awesome' ? self::CODE_ERROR : self::CODE_SUCCESS;
+        if ($this->args->getOption('source') !== 'packagist' && !$this->importCuration()) {
+            return $this->args->getOption('source') === 'awesome' ? self::CODE_ERROR : self::CODE_SUCCESS;
         }
 
         return self::CODE_SUCCESS;
@@ -78,40 +76,40 @@ class SyncPackagesCommand extends Command
     /**
      * Report package import progress and cleanup results.
      */
-    private function importPackages(ConsoleIo $io): void
+    private function importPackages(): void
     {
-        $io->out('Fetching package list from Packagist...');
+        $this->io->out('Fetching package list from Packagist...');
         /** @var \Cake\Console\Helper\ProgressHelper $progress */
-        $progress = $io->helper('Progress');
-        $result = $this->packagist->sync(static function (string $name, int $current, int $total) use ($io, $progress): void {
+        $progress = $this->io->helper('Progress');
+        $result = $this->packagist->sync(function (string $name, int $current, int $total) use ($progress): void {
             if ($current === 1) {
-                $io->out(sprintf('Found <info>%d</info> packages. Processing...', $total));
+                $this->io->out(sprintf('Found <info>%d</info> packages. Processing...', $total));
                 $progress->init(['total' => $total, 'width' => 60]);
             }
-            $io->out(sprintf('[%d/%d] %s', $current, $total, $name), 1, ConsoleIo::VERBOSE);
+            $this->io->out(sprintf('[%d/%d] %s', $current, $total, $name), 1, ConsoleIo::VERBOSE);
             $progress->increment()->draw();
         });
-        $io->out('');
-        $io->out(sprintf('Sync complete. Saved: %d, Skipped: %d, Failed: %d', $result['saved'], $result['skipped'], $result['failed']));
-        $io->out(sprintf('Cleanup complete. Deleted: %d, Failed: %d', $result['deleted'], $result['deleteFailed']));
+        $this->io->out('');
+        $this->io->out(sprintf('Sync complete. Saved: %d, Skipped: %d, Failed: %d', $result['saved'], $result['skipped'], $result['failed']));
+        $this->io->out(sprintf('Cleanup complete. Deleted: %d, Failed: %d', $result['deleted'], $result['deleteFailed']));
     }
 
     /**
      * A failed curation refresh must not invalidate a completed package import.
      */
-    private function importCuration(ConsoleIo $io): bool
+    private function importCuration(): bool
     {
-        $io->out('Refreshing Awesome CakePHP categories...');
+        $this->io->out('Refreshing Awesome CakePHP categories...');
         try {
             $curation = $this->awesome->sync();
-            $io->out(sprintf('Awesome CakePHP: %d plugins matched, %d repository links unmatched.', $curation['matched'], count($curation['unmatched'])));
+            $this->io->out(sprintf('Awesome CakePHP: %d plugins matched, %d repository links unmatched.', $curation['matched'], count($curation['unmatched'])));
             foreach ($curation['unmatched'] as $repository) {
-                $io->out('Unmatched or ambiguous: ' . $repository, 1, ConsoleIo::VERBOSE);
+                $this->io->out('Unmatched or ambiguous: ' . $repository, 1, ConsoleIo::VERBOSE);
             }
 
             return true;
         } catch (Throwable $exception) {
-            $io->warning('Awesome CakePHP refresh failed; previous curation retained. ' . $exception->getMessage());
+            $this->io->warning('Awesome CakePHP refresh failed; previous curation retained. ' . $exception->getMessage());
             Log::warning('Awesome CakePHP refresh failed: ' . $exception->getMessage());
 
             return false;

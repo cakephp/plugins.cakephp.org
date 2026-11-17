@@ -5,11 +5,13 @@ namespace App\Test\TestCase\Event;
 
 use ADmad\SocialAuth\Middleware\SocialAuthMiddleware;
 use ADmad\SocialAuth\Model\Entity\SocialProfile;
+use App\Application;
 use App\Event\AfterGithubIdentify;
 use App\Model\Enum\UserRole;
 use App\Model\Table\UsersTable;
 use App\Service\GithubApiService;
 use Cake\Event\Event;
+use Cake\Event\EventManager;
 use Cake\Http\Client;
 use Cake\Http\TestSuite\HttpClientTrait;
 use Cake\TestSuite\TestCase;
@@ -52,7 +54,11 @@ class AfterGithubIdentifyTest extends TestCase
 
         $listener = new AfterGithubIdentify(new GithubApiService(new Client()));
         $listener->setTableLocator($this->getTableLocator());
-        $listener->afterIdentify(new Event(SocialAuthMiddleware::EVENT_AFTER_IDENTIFY), $user);
+        $manager = EventManager::instance(new EventManager());
+        $app = new Application(CONFIG);
+        $app->getContainer()->addShared(AfterGithubIdentify::class, $listener);
+        $app->events($manager);
+        $manager->dispatch(new Event(SocialAuthMiddleware::EVENT_AFTER_IDENTIFY, null, ['user' => $user]));
 
         $this->assertSame($expectedRole, $user->role);
         $this->assertSame($expectedDeveloper, $user->is_cakephp_dev);

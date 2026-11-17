@@ -14,6 +14,7 @@ use Composer\Semver\VersionParser;
 use Packagist\Api\Client as PackagistClient;
 use Packagist\Api\Result\Package\Version;
 use UnexpectedValueException;
+use function Cake\Database\Expression\notIn;
 
 /**
  * Imports eligible Packagist plugins and their compatibility metadata.
@@ -94,7 +95,7 @@ class PackagistImporter
         }
         $stale = $this->packages->find();
         if ($touchedIds !== []) {
-            $stale->where(['id NOT IN' => $touchedIds]);
+            $stale->where(['id' => notIn($touchedIds)]);
         }
         foreach ($stale->all() as $package) {
             if ($this->packages->delete($package)) {

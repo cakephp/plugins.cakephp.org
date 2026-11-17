@@ -57,7 +57,7 @@ class Package extends Entity
      * @var array<string, bool>
      */
     #[Override]
-    protected array $_accessible = [
+    protected array $patchable = [
         'id' => false,
         'namespace' => false,
         '*' => true,

@@ -30,7 +30,7 @@ RUN composer install \
 
 RUN DEBUG=false bin/cake plugin assets symlink
 
-RUN mkdir -p logs tmp tmp/cache/models tmp/cache/persistent tmp/cache/views tmp/sessions tmp/tests /config/caddy /data/caddy \
+RUN mkdir -p logs tmp tmp/cache/attributes tmp/cache/models tmp/cache/persistent tmp/cache/views tmp/sessions tmp/tests /config/caddy /data/caddy \
     && chown -R www-data:www-data logs tmp /config/caddy /data/caddy \
     && chmod -R 775 logs tmp
 

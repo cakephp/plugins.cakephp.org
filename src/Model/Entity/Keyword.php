@@ -17,5 +17,5 @@ class Keyword extends Entity
      * @var array<string, bool>
      */
     #[Override]
-    protected array $_accessible = ['name' => true];
+    protected array $patchable = ['name' => true];
 }

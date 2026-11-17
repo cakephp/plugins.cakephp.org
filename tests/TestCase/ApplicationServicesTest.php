@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase;
 
+use ADmad\SocialAuth\Middleware\SocialAuthMiddleware;
 use App\Application;
 use App\Command\SyncPackagesCommand;
 use App\Event\AfterGithubIdentify;
@@ -12,12 +13,12 @@ use App\Model\Table\PackagesTable;
 use App\Service\AwesomeListImporter;
 use App\Service\GithubProfileService;
 use App\Service\PackagistImporter;
+use Cake\Container\Container;
 use Cake\Core\Configure;
-use Cake\Core\Container;
+use Cake\Event\EventManager;
 use Cake\Http\Client;
 use Cake\Http\Client\Response;
 use Cake\TestSuite\TestCase;
-use Interact\Container\Services;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
@@ -40,6 +41,17 @@ class ApplicationServicesTest extends TestCase
     }
 
     /**
+     * The membership listener is discovered from attributes without an implementedEvents() map.
+     */
+    public function testAttributeListenersAreRegisteredThroughTheContainer(): void
+    {
+        $manager = new EventManager();
+        $app = new Application(CONFIG);
+        $app->events($manager);
+        $this->assertCount(1, array_merge(...$manager->prioritisedListeners(SocialAuthMiddleware::EVENT_AFTER_IDENTIFY)));
+    }
+
+    /**
      * Autowired services still receive explicit HTTP overrides and scalar configuration.
      */
     public function testAutowiringRespectsConfiguredDependencies(): void
@@ -56,7 +68,7 @@ class ApplicationServicesTest extends TestCase
             ['HTTP/1.1 200 OK', 'Content-Type: application/json'],
             '{"login":"autowiring-example","bio":"Configured dependencies"}',
         ));
-        $container->addShared(Client::class, $client, true);
+        $container->addShared(Client::class, $client);
         $profile = $container->get(GithubProfileService::class)->profile('autowiring-example');
         $this->assertSame('Configured dependencies', $profile['bio']);
     }
@@ -88,14 +100,14 @@ class ApplicationServicesTest extends TestCase
         Configure::write('debug', $debug);
         $container = new Container();
         new Application(dirname(__DIR__, 2) . '/config')->services($container);
-        $publishers = Services::fresh($container, PublishersIsland::class);
+        $publishers = $container->getNew(PublishersIsland::class);
         $publishers->search = 'vendor';
-        $otherPublishers = Services::fresh($container, PublishersIsland::class);
+        $otherPublishers = $container->getNew(PublishersIsland::class);
         $this->assertNotSame($publishers, $otherPublishers);
         $this->assertSame('', $otherPublishers->search);
-        $profile = Services::fresh($container, NamespaceProfileIsland::class);
+        $profile = $container->getNew(NamespaceProfileIsland::class);
         $profile->namespace = 'vendor';
-        $otherProfile = Services::fresh($container, NamespaceProfileIsland::class);
+        $otherProfile = $container->getNew(NamespaceProfileIsland::class);
         $this->assertNotSame($profile, $otherProfile);
         $this->assertSame('', $otherProfile->namespace);
     }

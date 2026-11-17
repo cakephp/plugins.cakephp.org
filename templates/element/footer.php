@@ -3,7 +3,7 @@
  * @var \App\View\AppView $this
  * @var bool|null $minimal
  */
-$minimal = $minimal ?? false;
+$minimal ??= false;
 ?>
 <footer class="site-footer">
     <div class="site-width">

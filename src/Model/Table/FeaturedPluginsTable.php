@@ -12,6 +12,7 @@ use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use function Cake\Database\Expression\{equals, like};
 
 /**
  * Editorial configuration stays independent of imported catalogue records.
@@ -131,10 +132,10 @@ class FeaturedPluginsTable extends Table
     {
         $query->contain(['CataloguePackages']);
         if (trim($search) !== '') {
-            $query->where(['FeaturedPlugins.package LIKE' => '%' . trim($search) . '%']);
+            $query->where(['FeaturedPlugins.package' => like('%' . trim($search) . '%')]);
         }
         if ($status === FeaturedPluginStatus::Unavailable) {
-            $query->where(['CataloguePackages.id IS' => null]);
+            $query->where(['CataloguePackages.id' => equals(null)]);
         } elseif ($status instanceof FeaturedPluginStatus) {
             $query->where(['FeaturedPlugins.enabled' => $status === FeaturedPluginStatus::Enabled]);
         }

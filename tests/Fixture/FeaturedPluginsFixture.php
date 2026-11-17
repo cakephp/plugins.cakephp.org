@@ -17,6 +17,10 @@ class FeaturedPluginsFixture extends TestFixture
             ['id' => 2, 'package' => 'cakedc/users', 'enabled' => true, 'logo' => null, 'created' => '2026-01-01 00:00:00'],
             ['id' => 3, 'package' => 'dereuromark/cakephp-tools', 'enabled' => true, 'logo' => null, 'created' => '2026-01-01 00:00:00'],
         ];
+        foreach ($this->records as &$record) {
+            $record['modified'] = $record['created'];
+        }
+        unset($record);
         parent::init();
     }
 }

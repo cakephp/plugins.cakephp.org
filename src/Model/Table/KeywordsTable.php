@@ -8,6 +8,7 @@ use App\Utility\ComposerKeyword;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use function Cake\Database\Expression\in;
 
 /**
  * @extends \Cake\ORM\Table<array{}, \App\Model\Entity\Keyword>
@@ -55,7 +56,7 @@ class KeywordsTable extends Table
         if ($names === []) {
             return [];
         }
-        $existing = $this->find()->where(['name IN' => $names])->all()->indexBy('name')->toArray();
+        $existing = $this->find()->where(['name' => in($names)])->all()->indexBy('name')->toArray();
 
         return array_map(fn(string $name): Keyword => $existing[$name] ?? $this->newEntity(['name' => $name]), $names);
     }

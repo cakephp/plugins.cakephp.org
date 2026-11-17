@@ -8,6 +8,7 @@ use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Http\Client;
 use RuntimeException;
+use function Cake\Database\Expression\notIn;
 
 /**
  * Updates local curation only after the complete upstream list has been parsed.
@@ -98,7 +99,7 @@ class AwesomeListImporter
                     $junction->getConnection()->insert('categories_packages', ['category_id' => $category->get('id'), 'package_id' => $id]);
                 }
             }
-            $categories->deleteAll($active === [] ? [] : ['id NOT IN' => $active]);
+            $categories->deleteAll($active === [] ? [] : ['id' => notIn($active)]);
         });
         Cache::clear('catalogue');
 

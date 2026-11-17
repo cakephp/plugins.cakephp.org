@@ -180,8 +180,8 @@ class SitemapsControllerTest extends TestCase
      */
     private function urls(string $root = 'urlset', string $item = 'url'): array
     {
-        $this->assertNotNull($this->_response);
-        $document = new SimpleXMLElement((string)$this->_response->getBody());
+        $this->assertNotNull($this->response);
+        $document = new SimpleXMLElement((string)$this->response->getBody());
         $this->assertSame($root, $document->getName());
         $this->assertSame('http://www.sitemaps.org/schemas/sitemap/0.9', $document->getDocNamespaces()[''] ?? null);
         $document->registerXPathNamespace('s', 'http://www.sitemaps.org/schemas/sitemap/0.9');

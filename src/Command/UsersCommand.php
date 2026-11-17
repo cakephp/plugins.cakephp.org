@@ -8,8 +8,6 @@ use App\Model\Enum\UserStatus;
 use App\Model\Table\UsersTable;
 use App\Service\UserAccessService;
 use Cake\Command\Command;
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use DomainException;
 
@@ -32,35 +30,35 @@ class UsersCommand extends Command
     /**
      * Explicit options are idempotent; without options, prompt with current values.
      */
-    public function execute(Arguments $args, ConsoleIo $io): int
+    public function execute(): int
     {
         $users = $this->fetchTable(UsersTable::class);
-        $user = $users->find()->where(['username' => $args->getArgument('username')])->first();
+        $user = $users->find()->where(['username' => $this->args->getArgument('username')])->first();
         if ($user === null) {
-            $io->err('User not found. Sign in with GitHub first.');
+            $this->io->err('User not found. Sign in with GitHub first.');
 
             return self::CODE_ERROR;
         }
-        $io->out(sprintf('%s: %s, %s', $user->username, $user->role->value, UserStatus::fromActive($user->is_active)->value));
-        $role = $args->getOption('role');
-        $active = $args->getOption('active');
+        $this->io->out(sprintf('%s: %s, %s', $user->username, $user->role->value, UserStatus::fromActive($user->is_active)->value));
+        $role = $this->args->getOption('role');
+        $active = $this->args->getOption('active');
         if ($role === null && $active === null) {
-            $role = $io->askChoice('Role', array_column(UserRole::cases(), 'value'), $user->role->value);
-            $active = $io->askChoice('Active', ['yes', 'no'], $user->is_active ? 'yes' : 'no');
+            $role = $this->io->askChoice('Role', array_column(UserRole::cases(), 'value'), $user->role->value);
+            $active = $this->io->askChoice('Active', ['yes', 'no'], $user->is_active ? 'yes' : 'no');
         }
         if ($role !== null && !is_string($role)) {
-            $io->err('Role must be a named role.');
+            $this->io->err('Role must be a named role.');
 
             return self::CODE_ERROR;
         }
         try {
             $user = new UserAccessService($users)->update((int)$user->id, $role !== null ? UserRole::from($role) : $user->role, $active === null ? $user->is_active : $active === 'yes');
         } catch (DomainException $exception) {
-            $io->err($exception->getMessage());
+            $this->io->err($exception->getMessage());
 
             return self::CODE_ERROR;
         }
-        $io->out(sprintf('Saved %s: %s, %s', $user->username, $user->role->value, UserStatus::fromActive($user->is_active)->value));
+        $this->io->out(sprintf('Saved %s: %s, %s', $user->username, $user->role->value, UserStatus::fromActive($user->is_active)->value));
 
         return self::CODE_SUCCESS;
     }

@@ -9,8 +9,8 @@ use App\Model\Table\PackagesTable;
 use App\Service\PackagistImporter;
 use App\Utility\CakephpVersion;
 use Cake\Cache\Cache;
+use Cake\Container\Container;
 use Cake\Core\Configure;
-use Cake\Core\Container;
 use Cake\Http\Client;
 use Cake\Http\Client\ClientEvent;
 use Cake\Http\Client\Response;
@@ -24,6 +24,7 @@ use Packagist\Api\Result\Package\Version;
 use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionMethod;
 use UnexpectedValueException;
+use function Cake\Database\Expression\in;
 
 /**
  * App\Service\PackagistImporter Test Case
@@ -57,7 +58,7 @@ class PackagistImporterTest extends TestCase
         $this->assertSame(1, $importer->sync()['saved']);
         $package = $packages->find()->contain(['Keywords'])->firstOrFail();
         $this->assertSame(['cakephp', 'sass', 'static analysis'], array_column($package->keywords, 'name'));
-        $this->assertSame(0, $packages->Keywords->find()->where(['name IN' => ['obsolete', 'unreleased']])->count());
+        $this->assertSame(0, $packages->Keywords->find()->where(['name' => in(['obsolete', 'unreleased'])])->count());
         $vocabularyCount = $packages->Keywords->find()->count();
         $this->assertSame(1, $importer->sync()['saved']);
         $this->assertSame($vocabularyCount, $packages->Keywords->find()->count());
@@ -106,7 +107,7 @@ class PackagistImporterTest extends TestCase
             $package = $packages->find()->contain(['Keywords'])->firstOrFail();
             $this->assertSame('2.0.0', $package->latest_stable_version);
             $this->assertSame(['islands'], array_column($package->keywords, 'name'));
-            $this->assertSame(0, $keywords->find()->where(['name IN' => ['new-term', 'blocked']])->count());
+            $this->assertSame(0, $keywords->find()->where(['name' => in(['new-term', 'blocked'])])->count());
         } finally {
             $keywords->getEventManager()->off('Model.beforeSave', $listener);
         }

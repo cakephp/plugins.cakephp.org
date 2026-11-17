@@ -8,11 +8,11 @@ use App\Model\Entity\User;
 use App\Model\Enum\UserRole;
 use App\Model\Table\UsersTable;
 use App\Service\GithubApiService;
+use Cake\Event\Attribute\EventListener;
 use Cake\Event\EventInterface;
-use Cake\Event\EventListenerInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
 
-class AfterGithubIdentify implements EventListenerInterface
+class AfterGithubIdentify
 {
     use LocatorAwareTrait;
 
@@ -24,24 +24,13 @@ class AfterGithubIdentify implements EventListenerInterface
     }
 
     /**
-     * Returns a list of events this object is interested in.
-     *
-     * @return array<string, string>
-     */
-    public function implementedEvents(): array
-    {
-        return [
-            SocialAuthMiddleware::EVENT_AFTER_IDENTIFY => 'afterIdentify',
-        ];
-    }
-
-    /**
      * After identify callback.
      *
      * @param \Cake\Event\EventInterface<object> $event The event instance.
      * @param \App\Model\Entity\User $user The user entity.
      * @return void
      */
+    #[EventListener(SocialAuthMiddleware::EVENT_AFTER_IDENTIFY)]
     public function afterIdentify(EventInterface $event, User $user): void
     {
         $token = $user->social_profile->access_token->getToken();

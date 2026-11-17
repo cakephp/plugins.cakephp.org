@@ -6,8 +6,6 @@ namespace App\Command;
 use App\Model\Table\PackagesTable;
 use Cake\Cache\Cache;
 use Cake\Command\Command;
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
 use Override;
 
 /**
@@ -44,28 +42,23 @@ class CleanCommand extends Command
     /**
      * Implement this method with your command's logic.
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIo $io The console io
      * @return void The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIo $io): void
+    public function execute(): void
     {
-        $confirmation = $io->ask(
+        $confirmation = $this->io->ask(
             'Are you sure you want to clean all packages data and related tags? This action cannot be undone. (yes/no)',
         );
         if (strtolower($confirmation) !== 'yes' && strtolower($confirmation) !== 'y') {
-            $io->out('Aborting.');
+            $this->io->out('Aborting.');
 
             return;
         }
-
         $packagesTable = $this->fetchTable(PackagesTable::class);
         $allPackages = $packagesTable->find()->all();
-
         foreach ($allPackages as $package) {
             $packagesTable->delete($package);
         }
-
         Cache::clear('catalogue');
     }
 }

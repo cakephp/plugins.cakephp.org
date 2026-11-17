@@ -6,26 +6,26 @@
     "homepage": "https://cakephp.org",
     "require": {
         "php": "^8.5",
-        "admad/cakephp-social-auth": "^2.2",
-        "cakephp/authentication": "^4.0",
-        "cakephp/authorization": "^3.0",
-        "cakephp/cakephp": "5.4.*",
-        "cakephp/migrations": "^5.0.0",
+        "admad/cakephp-social-auth": "dev-cake6",
+        "cakephp/authentication": "^5.0@dev",
+        "cakephp/authorization": "^4.0@dev",
+        "cakephp/cakephp": "^6.0@dev",
+        "cakephp/migrations": "dev-fix/6.x-php85-ci",
         "cakephp/plugin-installer": "^2.0",
-        "dereuromark/cakephp-tags": "^3.0",
-        "friendsofcake/search": "^7.5",
-        "josbeir/cakephp-interact": "^0.2.1",
-        "josbeir/cakephp-vite": "^0.1.4",
+        "dereuromark/cakephp-tags": "dev-cake6",
+        "friendsofcake/search": "dev-cake6",
+        "josbeir/cakephp-interact": "dev-cake6",
+        "josbeir/cakephp-vite": "dev-cake6",
         "knplabs/packagist-api": "^3.0",
         "league/commonmark": "^2.7",
         "mobiledetect/mobiledetectlib": "^4.8.03"
     },
     "require-dev": {
-        "cakedc/cakephp-phpstan": "^4.0",
-        "cakephp/bake": "^3.0.0",
-        "cakephp/cakephp-codesniffer": "^5.0",
-        "cakephp/debug_kit": "^5.0.0",
-        "dereuromark/cakephp-ide-helper": "^2.16.8",
+        "cakedc/cakephp-phpstan": "dev-5.next-cake6",
+        "cakephp/bake": "^4.0@dev",
+        "cakephp/cakephp-codesniffer": "^6.0@dev",
+        "cakephp/debug_kit": "^6.0@dev",
+        "dereuromark/cakephp-ide-helper": "dev-cake6",
         "josegonzalez/dotenv": "^4.0",
         "phpunit/phpunit": "^13.2"
     },
@@ -74,5 +74,7 @@
         "rector-setup": "cp composer.json composer.backup && composer require --dev rector/rector:\"~2.8.3\" && mv composer.backup composer.json",
         "rector-check": "vendor/bin/rector process --dry-run",
         "rector-fix": "vendor/bin/rector process"
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
